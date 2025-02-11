@@ -21,6 +21,11 @@ print("Reading frequency list")
 df = pd.read_csv(args.frequency_path, sep="\t")
 print("Removing tagged entries")
 df = df[df['tag'].isna()]
+print("Computing cumulative sums")
+df['cumulative_sum'] = df['TOT'].cumsum()
+
+total_frequency_real = df["TOT"].sum()
+
 print(f"Limiting to the first {N_CUTOFF} entries")
 df = df.head(N_CUTOFF)
 
@@ -33,12 +38,17 @@ def sample_word(df):
     return df.sample(n=1).iloc[0]
 
 print("Sampling words")
+total_frequency = 0
 while len(sample) < 1000:
     sampled_row = sample_word(df)
     word = sampled_row["TOKEN"]
     frequency = sampled_row["TOT"]
+    cumulative_sum = sampled_row["cumulative_sum"]
+    total_frequency += frequency
+
+    key = (frequency, cumulative_sum, word)
     # If word was already sampled by chance, try again
-    if (frequency, word) in sample:
+    if key in sample:
         continue
 
     # If no vector is available, try again
@@ -46,7 +56,7 @@ while len(sample) < 1000:
         continue
 
     vector = model[word].tolist()
-    sample[(frequency, word)] = (vector)
+    sample[key] = (vector)
 
 print("Sorting by frequency")
 keys = sorted(sample.keys(), reverse=True)
@@ -54,9 +64,11 @@ keys = sorted(sample.keys(), reverse=True)
 output_vectors = ""
 for key in keys:
     vector = sample[key]
-    frequency, word = key
+    frequency, cumulative_sum, word = key
+    percentile = cumulative_sum / total_frequency_real
 
-    vector_as_text = word + " " +  str(frequency) + " " + " ".join(map(str, vector))
+    vector_expanded = " ".join(map(str, vector))
+    vector_as_text = f"{word} {str(frequency)} {percentile} {vector_expanded}"
     output_vectors += vector_as_text + "\n"
 
 # Turn into valid w2v type
