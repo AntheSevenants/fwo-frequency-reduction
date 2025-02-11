@@ -27,18 +27,18 @@ df = df.head(N_CUTOFF)
 print("Reading vectors")
 model = KeyedVectors.load_word2vec_format(args.vectors_path)
 
-sampled_words = set()
-sampled_vectors = []
+sample = {}
 
 def sample_word(df):
     return df.sample(n=1).iloc[0]
 
 print("Sampling words")
-while len(sampled_words) < 1000:
+while len(sample) < 1000:
     sampled_row = sample_word(df)
     word = sampled_row["TOKEN"]
+    frequency = sampled_row["TOT"]
     # If word was already sampled by chance, try again
-    if word in sampled_words:
+    if (word, frequency) in sample:
         continue
 
     # If no vector is available, try again
@@ -46,17 +46,18 @@ while len(sampled_words) < 1000:
         continue
 
     vector = model[word].tolist()
-    sampled_vectors.append(vector)
-    sampled_words.add(word)
+    sample[(word, frequency)] = (vector)
 
 output_vectors = ""
-for index, word in enumerate(sampled_words):
-    vector_as_text = word + " " + " ".join(map(str,sampled_vectors[index]))
+for key, vector in sample.items():
+    word, frequency = key
+
+    vector_as_text = word + " " +  str(frequency) + " " + " ".join(map(str, sample[key]))
     output_vectors += vector_as_text + "\n"
 
 # Turn into valid w2v type
-output_text = f"{str(len(sampled_words))} {model.vector_size}\n{output_vectors}"
+output_text = f"{str(len(sample))} {model.vector_size}\n{output_vectors}"
 
 # Output to file
-with open(args.output_path, "wt") as writer:
+with open("vectors.txt", "wt") as writer:
     writer.write(output_text)
