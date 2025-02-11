@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  rstudio:
+    image: "anthesevenants/stats:rstudio"
+    ports: 
+      - 8787:8787
+      - 8788:8788
+    environment:
+      DISABLE_AUTH: true
+    volumes:
+      - .:/home/rstudio/stats/:Z
+      - ../materials/:/home/rstudio/materials/:Z

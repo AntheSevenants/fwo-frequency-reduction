@@ -1,0 +1,18 @@
+# I don't really care about storage, I care about reusability
+# So, the base image will be the rocker/rstudio image
+# This already contains R and R studio, which is mostly what we'll need
+FROM rocker/rstudio:4
+
+# First, I copy all dependencies into the container
+COPY renv.lock renv.lock
+
+# Install some linux libraries that R packages need
+RUN apt-get update && apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev libodbc2 libxt6
+
+# Then, I install 'renv', and then restore all dependencies
+# renv will download and install everything as needed
+RUN R -q -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
+RUN R -q -e "renv::restore()"
+
+
+# This image can now be used to launch an R Studio environment
