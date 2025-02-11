@@ -38,7 +38,7 @@ while len(sample) < 1000:
     word = sampled_row["TOKEN"]
     frequency = sampled_row["TOT"]
     # If word was already sampled by chance, try again
-    if (word, frequency) in sample:
+    if (frequency, word) in sample:
         continue
 
     # If no vector is available, try again
@@ -46,13 +46,17 @@ while len(sample) < 1000:
         continue
 
     vector = model[word].tolist()
-    sample[(word, frequency)] = (vector)
+    sample[(frequency, word)] = (vector)
+
+print("Sorting by frequency")
+keys = sorted(sample.keys(), reverse=True)
 
 output_vectors = ""
-for key, vector in sample.items():
-    word, frequency = key
+for key in keys:
+    vector = sample[key]
+    frequency, word = key
 
-    vector_as_text = word + " " +  str(frequency) + " " + " ".join(map(str, sample[key]))
+    vector_as_text = word + " " +  str(frequency) + " " + " ".join(map(str, vector))
     output_vectors += vector_as_text + "\n"
 
 # Turn into valid w2v type
