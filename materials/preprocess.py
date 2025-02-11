@@ -13,6 +13,7 @@ parser.add_argument('output_path', type=str, help='the output path for the vecto
 args = parser.parse_args()
 
 N_CUTOFF = 10000
+BOOTSTRAP_N = 10
 
 if args.sample_n < N_CUTOFF:
     raise ValueError(f"Sample size is bigger than cutoff size ({N_CUTOFF})")
@@ -37,26 +38,32 @@ sample = {}
 def sample_word(df):
     return df.sample(n=1).iloc[0]
 
-print("Sampling words")
-total_frequency = 0
-while len(sample) < 1000:
-    sampled_row = sample_word(df)
+def add_row_to_sample(sampled_row):
     word = sampled_row["TOKEN"]
     frequency = sampled_row["TOT"]
     cumulative_sum = sampled_row["cumulative_sum"]
-    total_frequency += frequency
 
     key = (frequency, cumulative_sum, word)
     # If word was already sampled by chance, try again
     if key in sample:
-        continue
+        return
 
     # If no vector is available, try again
     if word not in model.key_to_index:
-        continue
+        return
 
     vector = model[word].tolist()
     sample[key] = (vector)
+
+print("Bootstrapping sample")
+top_n = df.head(BOOTSTRAP_N)
+for index, row in df.iterrows():
+    add_row_to_sample(row)
+
+print("Sampling words")
+while len(sample) < 1000:
+    sampled_row = sample_word(df)
+    add_row_to_sample(sampled_row)
 
 print("Sorting by frequency")
 keys = sorted(sample.keys(), reverse=True)
