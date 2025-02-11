@@ -22,6 +22,10 @@ print("Reading frequency list")
 df = pd.read_csv(args.frequency_path, sep="\t")
 print("Removing tagged entries")
 df = df[df['tag'].isna()]
+print("Removing non-alphanumeric entries")
+df = df[df.TOKEN.str.isalpha()]
+print("Filtering other weird tokens")
+df = df[~df.TOKEN.isin(["xxx", "ggg"])]
 print("Computing cumulative sums")
 df['cumulative_sum'] = df['TOT'].cumsum()
 
