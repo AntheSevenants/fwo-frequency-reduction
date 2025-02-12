@@ -1,4 +1,4 @@
-extensions [ csv array ]
+extensions [ csv array matrix ]
 
 globals [
   bonk
@@ -50,7 +50,7 @@ to step
     let random-index weighted-random-index
 
     ; get the right vector from the vocabulary
-    let random-vector (array:item vocabulary random-index)
+    let random-vector (matrix:get-row vocabulary random-index)
     ; get the other information
     let token (item random-index tokens)
     let frequency (item random-index frequencies)
@@ -68,8 +68,8 @@ to step
       ; Q: should random dimension be full? TODO
       let random-dimension-index random num-dimensions
       ; Do reduction
-      ;set random-vector (replace-item random-dimension-index random-vector 0)
-      array:set random-vector random-dimension-index 0
+      set random-vector (replace-item random-dimension-index random-vector 0)
+      ;array:set random-vector random-dimension-index 0
     ]
 
     ; Now, let's ask another turtle
@@ -81,7 +81,8 @@ to step
 
     if communication-successful? [
       ; Replace the vector in the agent's vocabulary as well
-      array:set vocabulary random-index random-vector
+      matrix:set-row vocabulary random-index random-vector
+      ;array:set vocabulary random-index random-vector
       ;set vocabulary (replace-item random-index vocabulary random-vector)
     ]
   ]
@@ -152,13 +153,13 @@ to load-vectors
 
   ; Remove the first three columns from the matrix
   set matrix (map [inner-list -> but-first but-first inner-list] matrix)
-  ; Convert to array (bouth outer and inner)
-  set vectors array:from-list(map [ _sublist -> array:from-list _sublist ] matrix)
+  ; Convert to matrix (both outer and inner)
+  set vectors matrix:from-row-list matrix
 
   print(vectors)
 
   ; Set the number of dimenions
-  set num-dimensions (array:length (array:item vectors 0))
+  set num-dimensions (last matrix:dimensions vectors)
 
   ; Set cumulative frequencies for the random choice
   set cumulative-frequencies compute-cumulative frequencies
