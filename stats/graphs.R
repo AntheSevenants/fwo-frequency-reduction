@@ -18,17 +18,17 @@ ggplot(df, aes(x = rank, y = frequency)) +
   geom_point(aes(color = "real")) +
   geom_line(aes(color = "real")) +
   geom_line(aes(y = theoretical_zipf, color = "estimated"), linetype = "dashed") +
-  labs(title = "Sampled frequencies from Corpus Spoken Dutch",
+  labs(title = "Sampled frequencies from Corpus Spoken Dutch (CGN)",
        x = "Rank",
        y = "Frequency",
-       color = "Legend") +
+       color = "Value types") +
   scale_color_manual(values = c("real" = "black", "estimated" = "red"), labels=
-                       c("Estimated value", "Real value"))
+                       c("Theoretrical Zipfian value", "Real CGN frequency"))
 
 ggplot(df, aes(x = rank, y = percentile)) +
   geom_point(aes()) +
   geom_line(aes()) +
-  labs(title = "Sampled frequencies from Corpus Spoken Dutch",
+  labs(title = "Sampled frequencies from Corpus Spoken Dutch (CGN)",
        x = "Rank",
        y = "Percentile") +
   scale_y_continuous(labels = scales::percent)
