@@ -10,6 +10,7 @@ globals [
   total-frequency
   cumulative-frequencies
   num-dimensions
+  num-tokens
 ]
 
 ; turtles all have their own specialised version of the vocabulary
@@ -75,8 +76,6 @@ to step
     ; Now, let's ask another turtle
     ask one-of other turtles [
       set hearing? true
-
-
     ]
 
     if communication-successful? [
@@ -141,6 +140,49 @@ to-report token-reduction-prior [ percentile ]
   report 1
 end
 
+to-report euclidean-distance [vector1 vector2]
+  report -1
+end
+
+to-report find-nearest-neighbor-index [target-vector candidate-vectors]
+  ; Duplicate the target-vector so it is as big as the entire vocabulary
+  set target-vector n-values num-tokens [i -> target-vector]
+  ; Turn it into a matrix
+  set target-vector matrix:from-row-list target-vector
+  let nearest-vector-index nobody
+  let min-distance nobody
+
+;  print(matrix:dimensions target-vector)
+;  print(matrix:dimensions candidate-vectors)
+
+  ; Subtract the target values from the candidates
+  let result-matrix matrix:minus candidate-vectors target-vector
+  ; Now, take the square root of all elements to lose the sign
+  set result-matrix matrix:map [el -> el ^ 2] result-matrix
+
+  print(result-matrix)
+  print(matrix:dimensions result-matrix)
+
+  ; Now, let's create a matrix size (1 x dim) to get the sum of each row
+  let multiplication-matrix matrix:make-constant num-dimensions 1 1
+
+  ; Technically, I should sqrt the result but this transformation won't change the outcome, so I won't
+  let distances matrix:times result-matrix multiplication-matrix
+  ; Get the first column, because its one-dimensional, and convert to list
+  set distances matrix:get-column distances 0
+
+  set nearest-vector-index (item (min distances) distances)
+
+  report nearest-vector-index
+end
+
+to vector-test
+  let target-vector (matrix:get-row vectors 0)
+
+  let nearest-vector-index (find-nearest-neighbor-index target-vector vectors)
+  print(nearest-vector-index)
+end
+
 to load-vectors
   let matrix but-first (csv:from-file "materials/vectors.txt" " ")
 
@@ -160,6 +202,8 @@ to load-vectors
 
   ; Set the number of dimenions
   set num-dimensions (last matrix:dimensions vectors)
+  ; Set the number of tokens
+  set num-tokens (length tokens)
 
   ; Set cumulative frequencies for the random choice
   set cumulative-frequencies compute-cumulative frequencies
@@ -289,6 +333,23 @@ reduction-prior
 1
 %
 HORIZONTAL
+
+BUTTON
+10
+170
+102
+203
+NIL
+vector-test
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
