@@ -11,6 +11,12 @@ globals [
   cumulative-frequencies
   num-dimensions
   num-tokens
+
+  communication-successful?
+
+  successful-turns
+  failed-turns
+  turns
 ]
 
 ; turtles all have their own specialised version of the vocabulary
@@ -22,6 +28,7 @@ turtles-own [
 
 to setup
   clear-all
+  reset-ticks
 
   load-vectors
 
@@ -40,6 +47,11 @@ to setup
   ask turtles [
    set vocabulary vectors
   ]
+
+  set communication-successful? false
+  set successful-turns 0
+  set failed-turns 0
+  set turns 0
 end
 
 ; at model run time, we select two random turtles
@@ -58,11 +70,10 @@ to step
     let percentile (item random-index percentiles)
 
     let reduction-probability (random-float 1) * (token-reduction-prior percentile)
-    print(token)
-    print(reduction-probability)
+    ;print(token)
+    ;print(reduction-probability)
 
     let is-reducing? false
-    let communication-successful? false
     if reduction-probability <= (reduction-prior / 100) [
       set is-reducing? true
 
@@ -76,14 +87,25 @@ to step
     ; Now, let's ask another turtle
     ask one-of other turtles [
       set hearing? true
+
+      let heard-index (find-nearest-neighbor-index random-vector vocabulary)
+      ;print(random-index)
+      ;print(heard-index)
+      ; if the hearer heard it correctly, communication is successful
+      set communication-successful? (heard-index = random-index)
     ]
 
-    if communication-successful? [
+    ifelse communication-successful? [
       ; Replace the vector in the agent's vocabulary as well
       matrix:set-row vocabulary random-index random-vector
       ;array:set vocabulary random-index random-vector
       ;set vocabulary (replace-item random-index vocabulary random-vector)
+
+      set successful-turns (successful-turns + 1)
+    ] [
+      set failed-turns (failed-turns + 1)
     ]
+    set turns (turns + 1)
   ]
 
   ask turtles [
@@ -91,6 +113,9 @@ to step
     set speaking? false
     set hearing? false
   ]
+
+  set communication-successful? false
+  tick
 end
 
 to go
@@ -103,7 +128,7 @@ to paint
     set color green
   ] hearing? [
     set shape "hearer"
-    set color green
+    set color ifelse-value (communication-successful?) [ green ] [ red ]
   ] [
     set shape "person"
     set color grey
@@ -160,8 +185,8 @@ to-report find-nearest-neighbor-index [target-vector candidate-vectors]
   ; Now, take the square root of all elements to lose the sign
   set result-matrix matrix:map [el -> el ^ 2] result-matrix
 
-  print(result-matrix)
-  print(matrix:dimensions result-matrix)
+  ;print(result-matrix)
+  ;print(matrix:dimensions result-matrix)
 
   ; Now, let's create a matrix size (1 x dim) to get the sum of each row
   let multiplication-matrix matrix:make-constant num-dimensions 1 1
@@ -171,7 +196,8 @@ to-report find-nearest-neighbor-index [target-vector candidate-vectors]
   ; Get the first column, because its one-dimensional, and convert to list
   set distances matrix:get-column distances 0
 
-  set nearest-vector-index (item (min distances) distances)
+  set min-distance (min distances)
+  set nearest-vector-index (position (min distances) distances)
 
   report nearest-vector-index
 end
@@ -350,6 +376,25 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+10
+310
+215
+460
+communicative success
+time
+count
+0.0
+100.0
+0.0
+100.0
+true
+false
+"" ""
+PENS
+"success" 1.0 0 -13840069 true "" "plot (successful-turns / turns) * 100"
+"fail" 1.0 0 -2674135 true "" "plot (failed-turns / turns) * 100"
 
 @#$#@#$#@
 ## WHAT IS IT?
