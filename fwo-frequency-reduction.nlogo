@@ -49,9 +49,10 @@ to setup
   ]
 
   set communication-successful? false
-  set successful-turns 0
-  set failed-turns 0
-  set turns 0
+  ; I set these to one to sidestep division by zero on startup
+  set successful-turns 1
+  set failed-turns 1
+  set turns 1
 end
 
 ; at model run time, we select two random turtles
@@ -74,7 +75,7 @@ to step
     ;print(reduction-probability)
 
     let is-reducing? false
-    if reduction-probability <= (reduction-prior / 100) [
+    if reduction-probability <= (reduction-prior / 100) and count-non-zeros random-vector > 1 [
       set is-reducing? true
 
       ; Q: should random dimension be full? TODO
@@ -115,6 +116,7 @@ to step
   ]
 
   set communication-successful? false
+  plot-zero-ratios
   tick
 end
 
@@ -208,6 +210,48 @@ to vector-test
   let nearest-vector-index (find-nearest-neighbor-index target-vector vectors)
   print(nearest-vector-index)
 end
+
+to-report zero-ratio [ lst ]
+  report (count-zeros lst / length lst)
+end
+
+to-report count-zeros [ lst ]
+  report length filter [ x -> x = 0 ] lst
+end
+
+to-report count-non-zeros [ lst ]
+  report length filter [ x -> x != 0 ] lst
+end
+
+to-report fully-reduced-ratio
+  let fully-reduced 0
+
+  ; Loop over all rows from 0 to 99
+  (foreach (range num-tokens) [ row ->
+    if all? turtles [ count-non-zeros matrix:get-row vocabulary row = 1 ] [
+      set fully-reduced fully-reduced + 1
+    ]
+  ])
+
+  report fully-reduced / num-tokens
+end
+
+to plot-zero-ratios
+  set-current-plot "Zero ratios"
+  ;set-current-plot-pen "pen-0"
+
+  ; Loop over all rows from 0 to 99
+  (foreach (range num-tokens) [ row ->
+    if row mod 10 = 0 [
+      let median-zero-ratio mean [ zero-ratio matrix:get-row vocabulary row ] of turtles
+      ;print(median-zero-ratio)
+      create-temporary-plot-pen (word "word " row)
+      set-plot-pen-color (row + 1) * 5
+      plotxy turns (median-zero-ratio * 100) + (row / 20)
+    ]
+  ])
+end
+
 
 to load-vectors
   let matrix but-first (csv:from-file "materials/vectors.txt" " ")
@@ -324,7 +368,7 @@ num-turtles
 num-turtles
 0
 100
-50.0
+100.0
 1
 1
 NIL
@@ -354,7 +398,7 @@ reduction-prior
 reduction-prior
 0
 100
-50.0
+100.0
 1
 1
 %
@@ -395,6 +439,41 @@ false
 PENS
 "success" 1.0 0 -13840069 true "" "plot (successful-turns / turns) * 100"
 "fail" 1.0 0 -2674135 true "" "plot (failed-turns / turns) * 100"
+
+PLOT
+675
+10
+1240
+460
+Zero ratios
+ratio of zeroes
+time
+0.0
+10.0
+0.0
+100.0
+true
+true
+"clear-plot" ""
+PENS
+
+PLOT
+10
+470
+215
+630
+fully reduced ratios
+time
+ratio
+0.0
+10.0
+0.0
+100.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot fully-reduced-ratio * 100"
 
 @#$#@#$#@
 ## WHAT IS IT?
