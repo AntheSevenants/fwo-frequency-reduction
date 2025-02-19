@@ -76,5 +76,5 @@ class ReductionModel(mesa.Model):
     def step(self):
         self.datacollector.collect(self)
         self.agents.do("reset")
-        self.random.choice(self.agents).interact()
-        #self.agents.shuffle_do("interact")
+        #self.random.choice(self.agents).interact()
+        self.agents.shuffle_do("interact")
