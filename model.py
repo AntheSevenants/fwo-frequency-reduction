@@ -47,6 +47,8 @@ class ReductionModel(mesa.Model):
 
         self.tokens_chosen = { token: 0 for token in self.tokens }
 
+        self.confusion_matrix = np.zeros((self.num_tokens, self.num_tokens))
+
         # print(vectors.shape)
 
         # We copy the vectors to the vocabulary of the agent

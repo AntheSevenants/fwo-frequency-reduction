@@ -41,6 +41,9 @@ class ReductionAgent(mesa.Agent):
         frequency = self.model.frequencies[random_index]
         percentile = self.model.percentiles[random_index]
 
+        # Save that this token was chosen
+        self.model.tokens_chosen[token] += 1
+
         # Compute the reduction probability by multiplying the random chance by the chance depending on the percentile
         # TODO perhaps later implement this prior
         reduction_probability = self.model.random.uniform(0, 1) * self.model.token_reduction_prior(percentile)
@@ -67,6 +70,9 @@ class ReductionAgent(mesa.Agent):
         other_agent.hearing = True
         heard_index = self.model.find_nearest_neighbour_index(other_agent.vocabulary, random_vector)
         communication_successful = heard_index == random_index
+
+        # Save data for the confusion matrix
+        self.model.confusion_matrix[random_index][heard_index] += 1
 
         # If communication is successful, put the reduced vector in the vocabulary
         if communication_successful:
