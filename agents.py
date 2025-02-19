@@ -32,7 +32,7 @@ class ReductionAgent(mesa.Agent):
             random_index = self.model.random.randrange(0, self.model.num_tokens)
 
         # Get the right vector from the vocabulary
-        random_vector = self.vocabulary[random_index, :]
+        random_vector = self.vocabulary[random_index, :].copy()
 
         # print(random_vector)
     
@@ -65,7 +65,7 @@ class ReductionAgent(mesa.Agent):
                 other_agent = None
 
         other_agent.hearing = True
-        heard_index = self.model.find_nearest_neighbour_index(self.vocabulary, random_vector)
+        heard_index = self.model.find_nearest_neighbour_index(other_agent.vocabulary, random_vector)
         communication_successful = heard_index == random_index
 
         # If communication is successful, put the reduced vector in the vocabulary
