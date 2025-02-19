@@ -3,12 +3,12 @@ import mesa
 import numpy as np
 
 from agents import ReductionAgent
-from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio
+from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, distances_to_probabilities_softmax, distances_to_probabilities_linear
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -24,6 +24,8 @@ class ReductionModel(mesa.Model):
 
         # Whether to show all the words in the plot
         self.show_all_words = show_all_words
+        # Whether communication uses one-shot matching of vectors
+        self.one_shot_nn = one_shot_nn
         
         self.vectors = vectors
         self.tokens = tokens
@@ -69,12 +71,20 @@ class ReductionModel(mesa.Model):
     def token_reduction_prior(self, percentile):
         return 1
     
-    def do_nearest_neighbour(self, vocabulary, target_vector)
+    def do_nearest_neighbour(self, vocabulary, target_vector):
         return np.linalg.norm(vocabulary - target_vector, axis=1)
     
     def find_nearest_neighbour_index(self, vocabulary, target_vector):
         distances = self.do_nearest_neighbour(vocabulary, target_vector)
         return np.argmin(distances)
+    
+    def get_nearest_neighbour_distribution(self, vocabulary, target_vector):
+        distances = self.do_nearest_neighbour(vocabulary, target_vector)
+        print(distances)
+        probabilities = distances_to_probabilities_linear(distances)
+        print(probabilities)
+
+        return probabilities
 
     def step(self):
         self.datacollector.collect(self)
