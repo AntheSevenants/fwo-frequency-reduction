@@ -69,8 +69,11 @@ class ReductionModel(mesa.Model):
     def token_reduction_prior(self, percentile):
         return 1
     
+    def do_nearest_neighbour(self, vocabulary, target_vector)
+        return np.linalg.norm(vocabulary - target_vector, axis=1)
+    
     def find_nearest_neighbour_index(self, vocabulary, target_vector):
-        distances = np.linalg.norm(vocabulary - target_vector, axis=1)
+        distances = self.do_nearest_neighbour(vocabulary, target_vector)
         return np.argmin(distances)
 
     def step(self):
