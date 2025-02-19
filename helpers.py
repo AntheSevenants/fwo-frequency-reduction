@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+EPSILON = 0.000001
+
 def load_vectors(file_path):
     # Load and skip first row
     df = pd.read_csv(file_path, sep=" ", header=None, skiprows=1)
@@ -46,3 +48,31 @@ def compute_communicative_failure(model):
         return 0
     else:
         return model.failed_turns / model.total_turns
+    
+def compute_tokens_chosen(model):
+    return model.tokens_chosen
+    
+def distances_to_probabilities_linear(distances):
+    # Add a small value so distance is never truly zero
+    distances = distances + EPSILON
+
+    # Step 1: Invert the distances
+    inverted_distances = 1 / distances
+
+    # Step 2: Normalize the inverted distances to form a probability distribution
+    probabilities = inverted_distances / np.sum(inverted_distances)
+
+    return probabilities
+    
+def distances_to_probabilities_softmax(distances):
+    # Add a small value so distance is never truly zero
+    distances = distances + EPSILON
+
+    # Make distances negative
+    neg_distances = -distances
+
+    # Apply the softmax function
+    exp_distances = np.exp(neg_distances)
+    probabilities = exp_distances / np.sum(exp_distances)
+
+    return probabilities
