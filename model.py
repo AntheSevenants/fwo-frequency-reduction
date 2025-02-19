@@ -3,7 +3,7 @@ import mesa
 import numpy as np
 
 from agents import ReductionAgent
-from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, distances_to_probabilities_softmax, distances_to_probabilities_linear
+from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
@@ -45,6 +45,8 @@ class ReductionModel(mesa.Model):
         self.total_turns = 0
         self.turns = []
 
+        self.tokens_chosen = { token: 0 for token in self.tokens }
+
         # print(vectors.shape)
 
         # We copy the vectors to the vocabulary of the agent
@@ -61,7 +63,8 @@ class ReductionModel(mesa.Model):
         self.datacollector = mesa.DataCollector(
             model_reporters={"words_zero_ratio": compute_mean_non_zero_ratio,
                              "communicative_success": compute_communicative_success,
-                             "communicative_failure": compute_communicative_failure }
+                             "communicative_failure": compute_communicative_failure,
+                              "tokens_chosen": compute_tokens_chosen }
         )
         
     def weighted_random_index(self):
