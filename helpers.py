@@ -102,6 +102,9 @@ def compute_communicative_failure(model):
     
 def compute_tokens_chosen(model):
     return model.tokens_chosen
+
+def compute_confusion_matrix(model):
+    return model.confusion_matrix.copy()
     
 def distances_to_probabilities_linear(distances):
     # Add a small value so distance is never truly zero
