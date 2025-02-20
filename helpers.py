@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 EPSILON = 0.000001
+N_CUTOFF = 10000
 
 def load_vectors(file_path):
     # Load and skip first row
@@ -14,6 +15,51 @@ def load_vectors(file_path):
     vectors = np.asmatrix(vectors)
 
     return vectors, tokens, frequencies, percentiles
+
+def load_info(file_path):
+    df = pd.read_csv(file_path, sep="\t")
+
+    frequencies = df["frequency"].to_list()
+    percentiles = df["percentile"].to_list()
+    tokens = df["token"].to_list()
+
+    return tokens, frequencies, percentiles
+
+def generate_vectors():
+    pass
+
+def generate_zipfian_sample(n_large=170000, n_sample=100, zipf_param=0.9):
+    # Generate Zipfian probabilities for the "larger" dataset that we will sample from
+    ranks = np.arange(1, n_large + 1)
+    probabilities = 1 / np.power(ranks, zipf_param)
+    probabilities /= probabilities.sum() # Normalise to sum to 1
+    
+    # Compute cumulative distribution function
+    cumulative_percentiles = np.cumsum(probabilities)
+    
+    # Sample n_sample items, ensuring Zipfian sampling
+    sampled_indices = np.random.choice(ranks, size=n_sample, replace=False, p=probabilities)
+    sampled_indices.sort()  # Keep order for clarity
+    
+    # Get corresponding cumulative percentiles
+    sampled_percentiles = [cumulative_percentiles[idx - 1] for idx in sampled_indices]
+    
+    return list(zip(sampled_indices, sampled_percentiles))
+
+def generate_word_vectors(vocabulary_size=1000, dimensions=300, seed=42):
+    np.random.seed(seed)
+
+    # Generate random vectors with uniform distribution in [0,1]
+    vectors = np.random.rand(vocabulary_size, dimensions)
+    
+    # Normalize to unit length to ensure even distribution in space
+    # Works as follows:
+    # 1. for each row, compute: sqrt(row-element-1^2 + row-element-2^2)
+    # 2. divide row elementwise by result, which makes it so the distribution in space is comparable
+    vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
+    
+    # Convert to matrix!
+    return np.asmatrix(vectors)
 
 def count_non_zeroes(vector):
     return np.nonzero(vector)[1]
