@@ -105,6 +105,11 @@ def compute_tokens_chosen(model):
 
 def compute_confusion_matrix(model):
     return model.confusion_matrix.copy()
+
+def compute_average_vocabulary(model):
+    vocabularies = [ agent.vocabulary for agent in model.agents ]
+    vocabularies = np.array(vocabularies)
+    return np.mean(vocabularies, axis=0)
     
 def distances_to_probabilities_linear(distances):
     # Add a small value so distance is never truly zero
