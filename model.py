@@ -8,7 +8,7 @@ from helpers import compute_communicative_success, compute_communicative_failure
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -31,6 +31,7 @@ class ReductionModel(mesa.Model):
         self.tokens = tokens
         self.frequencies = frequencies
         self.percentiles = percentiles
+        self.ranks = ranks
         self.num_tokens = len(self.tokens)
         
         self.cumulative_frequencies = np.cumsum(frequencies)

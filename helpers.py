@@ -16,19 +16,24 @@ def load_vectors(file_path):
 
     return vectors, tokens, frequencies, percentiles
 
-def load_info(file_path):
+def load_info(file_path, theoretical=False):
     df = pd.read_csv(file_path, sep="\t")
 
     frequencies = df["frequency"].to_list()
-    percentiles = df["percentile"].to_list()
+    if not theoretical:
+        percentiles = df["percentile"].to_list()
+    else:
+        percentiles = df["theoretical_percentile"].to_list()
+        percentiles[-1] = 1 # prevent out of bounds
     tokens = df["token"].to_list()
+    ranks = df["rank"].to_list()
 
-    return tokens, frequencies, percentiles
+    return tokens, frequencies, percentiles, ranks
 
 def generate_vectors():
     pass
 
-def generate_zipfian_sample(n_large=170000, n_sample=100, zipf_param=0.9):
+def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
     # Generate Zipfian probabilities for the "larger" dataset that we will sample from
     ranks = np.arange(1, n_large + 1)
     probabilities = 1 / np.power(ranks, zipf_param)
