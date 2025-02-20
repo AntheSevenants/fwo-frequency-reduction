@@ -92,7 +92,11 @@ class ReductionModel(mesa.Model):
         return probabilities
 
     def step(self):
-        self.datacollector.collect(self)
+        self.successful_turns = 0
+        self.failed_turns = 0
+        self.total_turns = 0
+
         self.agents.do("reset")
         #self.random.choice(self.agents).interact()
         self.agents.shuffle_do("interact")
+        self.datacollector.collect(self)
