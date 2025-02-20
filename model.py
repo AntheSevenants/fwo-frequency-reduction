@@ -3,7 +3,7 @@ import mesa
 import numpy as np
 
 from agents import ReductionAgent
-from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear
+from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
@@ -41,14 +41,11 @@ class ReductionModel(mesa.Model):
         #
         # Communication success
         #
-        self.successful_turns = 0
-        self.failed_turns = 0
-        self.total_turns = 0
+        self.confusion_matrix = np.zeros((self.num_tokens, self.num_tokens))
+        self.reset()
         self.turns = []
 
         self.tokens_chosen = { token: 0 for token in self.tokens }
-
-        self.confusion_matrix = np.zeros((self.num_tokens, self.num_tokens))
 
         # print(vectors.shape)
 
@@ -67,7 +64,8 @@ class ReductionModel(mesa.Model):
             model_reporters={"words_zero_ratio": compute_mean_non_zero_ratio,
                              "communicative_success": compute_communicative_success,
                              "communicative_failure": compute_communicative_failure,
-                              "tokens_chosen": compute_tokens_chosen }
+                             "tokens_chosen": compute_tokens_chosen,
+                             "confusion_matrix": compute_confusion_matrix }
         )
         
     def weighted_random_index(self):
@@ -91,12 +89,15 @@ class ReductionModel(mesa.Model):
         print(probabilities)
 
         return probabilities
+    
+    def reset(self):
 
-    def step(self):
         self.successful_turns = 0
         self.failed_turns = 0
         self.total_turns = 0
 
+    def step(self):
+        self.reset()
         self.agents.do("reset")
         #self.random.choice(self.agents).interact()
         self.agents.shuffle_do("interact")
