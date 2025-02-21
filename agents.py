@@ -50,12 +50,13 @@ class ReductionAgent(mesa.Agent):
         # TODO perhaps later implement this prior
         # Also compute the ratio of communicative success, which we will turn into a probability
         communicative_success_probability = self.compute_communicative_success_probability()
-        reduction_probability = self.model.random.uniform(0, 1) * self.model.token_reduction_prior(percentile) * communicative_success_probability
+        reduction_probability = self.model.random.uniform(0, 1)
+        computed_reduction_prior = communicative_success_probability
         non_zero_indices = np.nonzero(random_vector)[1]
 
         is_reducing = False
         # With prevention for zeroing out vectors leaning on just one dimensions
-        if reduction_probability <= self.model.reduction_prior and len(non_zero_indices) > 1:
+        if reduction_probability < self.model.reduction_prior and len(non_zero_indices) > 1:
             is_reducing = True
 
             # Q: should random dimension be full?
@@ -100,6 +101,7 @@ class ReductionAgent(mesa.Agent):
 
         # Get the last n turns of the agent's memory
         memory_turns = self.turns[-self.model.last_n_turns:]
-        success_ratio = max(0, (memory_turns.count(True) / len(memory_turns)) - 0.5)
+        success_ratio = memory_turns.count(True) / len(memory_turns)
+        probability = max(0, 2 * (success_ratio - 0.5))
 
-        return success_ratio
+        return probability
