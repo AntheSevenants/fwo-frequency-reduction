@@ -12,6 +12,8 @@ class ReductionAgent(mesa.Agent):
         self.speaking = False
         self.hearing = False
 
+        self.turns = []
+
         #print(self.vocabulary.shape)
 
     def reset(self):
@@ -46,7 +48,9 @@ class ReductionAgent(mesa.Agent):
 
         # Compute the reduction probability by multiplying the random chance by the chance depending on the percentile
         # TODO perhaps later implement this prior
-        reduction_probability = self.model.random.uniform(0, 1) * self.model.token_reduction_prior(percentile)
+        # Also compute the ratio of communicative success, which we will turn into a probability
+        communicative_success_probability = self.compute_communicative_success_probability()
+        reduction_probability = self.model.random.uniform(0, 1) * self.model.token_reduction_prior(percentile) * communicative_success_probability
         non_zero_indices = np.nonzero(random_vector)[1]
 
         is_reducing = False
@@ -83,3 +87,19 @@ class ReductionAgent(mesa.Agent):
 
         self.model.total_turns += 1
         self.model.turns.append(communication_successful)
+
+        # This is used to keep track of the communicative success of the agent
+        self.turns.append(communication_successful)
+
+    def compute_communicative_success_probability(self):
+        # If last n turns, disable communicative memory and just always return 1
+        # If there are no turns to compute from, also return 1
+        if self.model.last_n_turns < 0 or len(self.turns) == 0:
+            return 1
+        # Else, compute the ratio of the past few turns
+
+        # Get the last n turns of the agent's memory
+        memory_turns = self.turns[-self.model.last_n_turns:]
+        success_ratio = max(0, (memory_turns.count(True) / len(memory_turns)) - 0.5)
+
+        return success_ratio

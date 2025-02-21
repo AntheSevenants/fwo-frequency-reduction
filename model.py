@@ -3,12 +3,12 @@ import mesa
 import numpy as np
 
 from agents import ReductionAgent
-from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary
+from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, last_n_turns=-1, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -37,6 +37,7 @@ class ReductionModel(mesa.Model):
         self.cumulative_frequencies = np.cumsum(frequencies)
         self.total_frequency = self.cumulative_frequencies[-1]
         self.zipfian_token_distribution = zipfian_token_distribution
+        self.last_n_turns = last_n_turns
 
         #
         # Communication success
@@ -66,7 +67,8 @@ class ReductionModel(mesa.Model):
                              "communicative_failure": compute_communicative_failure,
                              "tokens_chosen": compute_tokens_chosen,
                              "confusion_matrix": compute_confusion_matrix,
-                             "average_vocabulary": compute_average_vocabulary }
+                             "average_vocabulary": compute_average_vocabulary,
+                             "average_communicative_success_probability": compute_average_communicative_success_probability }
         )
         
     def weighted_random_index(self):

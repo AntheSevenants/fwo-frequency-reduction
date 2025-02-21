@@ -110,6 +110,10 @@ def compute_average_vocabulary(model):
     vocabularies = [ agent.vocabulary for agent in model.agents ]
     vocabularies = np.array(vocabularies)
     return np.mean(vocabularies, axis=0)
+
+def compute_average_communicative_success_probability(model):
+    communicative_success_probabilities = [ agent.compute_communicative_success_probability() for agent in model.agents ]
+    return np.mean(communicative_success_probabilities)
     
 def distances_to_probabilities_linear(distances):
     # Add a small value so distance is never truly zero
