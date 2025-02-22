@@ -63,8 +63,7 @@ def generate_word_vectors(vocabulary_size=1000, dimensions=300, seed=42):
     # 2. divide row elementwise by result, which makes it so the distribution in space is comparable
     vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
     
-    # Convert to matrix!
-    return np.asmatrix(vectors)
+    return np.asarray(vectors)
 
 def count_non_zeroes(vector):
     return np.nonzero(vector)[1]
@@ -76,17 +75,17 @@ def zero_ratio(vector):
     return (count_zeroes(vector) / vector.shape[1])
 
 def compute_mean_non_zero_ratio(model):
-    # Turn all vocabulary matrices into a tensor
-    # Shape: (num_agents, vocab_size (200), 100)
-    vocab_matrices = np.array([agent.vocabulary for agent in model.agents])
-
-    # Compute zero ratios for each row in every agent's vocabulary matrix
-    # Shape: (num_agents, vocab_size)
-    zero_ratios = (vocab_matrices == 0).sum(axis=2) / vocab_matrices.shape[2]
+    # For each agent, compute the zero ratio among all the exemplars and all the tokens
+    # This is a crazy computation, I know, but what it's doing is
+    # It looks for each token how many zeroes are in the vectors
+    # And because we know how many tokens are in memory, and how many dimensions there are, 
+    # we can compute a ratio of how many dimensions of the total are set to zero
+    # Shape: (1) x token count
+    zero_ratio_per_token_per_agent = np.array([ (agent.vocabulary == 0).sum(axis=2).sum(axis=1) / (model.num_tokens * model.num_dimensions) for agent in model.agents])
 
     # Compute the mean zero ratio over all agents
     # Shape: (vocab_size,)
-    return zero_ratios.mean(axis=0)
+    return zero_ratio_per_token_per_agent.mean(axis=0)
 
 def compute_communicative_success(model):
     if model.total_turns == 0:
@@ -107,7 +106,7 @@ def compute_confusion_matrix(model):
     return model.confusion_matrix.copy()
 
 def compute_average_vocabulary(model):
-    vocabularies = [ agent.vocabulary for agent in model.agents ]
+    vocabularies = [ agent.vocabulary.mean(axis=1) for agent in model.agents ]
     vocabularies = np.array(vocabularies)
     return np.mean(vocabularies, axis=0)
 

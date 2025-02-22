@@ -9,7 +9,7 @@ from helpers import compute_communicative_success, compute_communicative_failure
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, last_n_turns=-1, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, last_n_turns=-1, exemplar_memory_n=20, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -36,11 +36,14 @@ class ReductionModel(mesa.Model):
         self.num_tokens = len(self.tokens)
         self.num_dimensions = self.vectors.shape[1]
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
+
+        print(f"Lower dimension limit is {self.lower_dimension_limit}")
         
         self.cumulative_frequencies = np.cumsum(frequencies)
         self.total_frequency = self.cumulative_frequencies[-1]
         self.zipfian_token_distribution = zipfian_token_distribution
         self.last_n_turns = last_n_turns
+        self.exemplar_memory_n = exemplar_memory_n
 
         #
         # Communication success
@@ -86,7 +89,11 @@ class ReductionModel(mesa.Model):
         return np.linalg.norm(vocabulary - target_vector, axis=1)
     
     def find_nearest_neighbour_index(self, vocabulary, target_vector):
-        distances = self.do_nearest_neighbour(vocabulary, target_vector)
+        # With the exemplar model, we need to get an "average" representation across exemplars
+        # So we average to get a matrix of size: token count x dimension size
+        vocabulary_flat = vocabulary.mean(axis=1)
+
+        distances = self.do_nearest_neighbour(vocabulary_flat, target_vector)
         return np.argmin(distances)
     
     def get_nearest_neighbour_distribution(self, vocabulary, target_vector):

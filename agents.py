@@ -11,6 +11,9 @@ class ReductionAgent(mesa.Agent):
         super().__init__(model)
 
         self.vocabulary = self.model.vectors.copy() # weird behaviour when passed through the agentset
+        # Turn vocabulary into exemplar memory
+        # New shape: token count x exemplar length x dimension count
+        self.vocabulary = np.tile(self.vocabulary[:, np.newaxis, :], (1, self.model.exemplar_memory_n, 1))
         self.speaking = False
         self.hearing = False
 
@@ -25,6 +28,9 @@ class ReductionAgent(mesa.Agent):
         self.speaking = False
         self.hearing = False
 
+    def recover_vector_from_exemplar_memory(self, token_index, exemplar_index):
+        return self.vocabulary[token_index, exemplar_index, :].copy()
+
     def interact(self):
         # Define a dummy outcome for the communication
         communication_successful = False
@@ -38,8 +44,10 @@ class ReductionAgent(mesa.Agent):
         else:
             random_index = self.model.random.randrange(0, self.model.num_tokens)
 
+        exemplar_index = self.model.random.randrange(0, self.model.exemplar_memory_n)
+
         # Get the right vector from the vocabulary
-        random_vector = self.vocabulary[random_index, :].copy()
+        random_vector = self.recover_vector_from_exemplar_memory(random_index, exemplar_index)
 
         # print(random_vector)
     
@@ -57,7 +65,7 @@ class ReductionAgent(mesa.Agent):
         communicative_success_probability = self.compute_communicative_success_probability_token(random_index)
         reduction_probability = self.model.random.uniform(0, 1)
         computed_reduction_prior = communicative_success_probability
-        non_zero_indices = np.nonzero(random_vector)[1]
+        non_zero_indices = np.nonzero(random_vector)[0]
 
         is_reducing = False
         # With prevention for zeroing out vectors leaning on just one dimensions
@@ -69,7 +77,9 @@ class ReductionAgent(mesa.Agent):
             # Pick a random dimension from the non-zero dimensions
             random_dimension_index = np.random.choice(non_zero_indices.tolist())
             # Notice that I'm keeping the matrices two-dimensional because of performance reasons :)
-            random_vector[0,random_dimension_index] = 0
+            random_vector[random_dimension_index] = 0
+
+            # print(random_vector)
         
         other_agent = None
         while other_agent is None:
@@ -86,7 +96,7 @@ class ReductionAgent(mesa.Agent):
 
         # If communication is successful, put the reduced vector in the vocabulary
         if communication_successful:
-            self.vocabulary[random_index,:] = random_vector[0,:]
+            self.vector_to_exemplar_memory(random_index, random_vector)
             self.model.successful_turns += 1
         else:
             self.model.failed_turns += 1
@@ -97,6 +107,10 @@ class ReductionAgent(mesa.Agent):
         # This is used to keep track of the communicative success of the agent
         self.record_turn(random_index, communication_successful)
         #self.turns.append(communication_successful)
+
+    def vector_to_exemplar_memory(self, token_index, vector):
+        self.vocabulary[token_index, :-1, :] = self.vocabulary[token_index, 1:, :]
+        self.vocabulary[token_index, -1, :] = vector
 
     def record_turn(self, token_index, communication_successful):
         add_value_to_row(self.turns_per_word, token_index, int(communication_successful))
