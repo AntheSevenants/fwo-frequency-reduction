@@ -21,6 +21,9 @@ class ReductionAgent(mesa.Agent):
         # Create a success matrix with shape: token count x memory count
         # Fill it with ones (we are optimistic about communication upfront :-) )
         self.turns_per_word = np.full((self.model.num_tokens, self.model.last_n_turns), 1)
+        # Also keep a memory of whether reduction was applied or not
+        # Same dimensions, and fill it with zeroes (we do not assume any reduction in the past)
+        self.reduction_history = np.full((self.model.num_tokens, self.model.last_n_turns), 0)
 
         #print(self.vocabulary.shape)
 
@@ -106,6 +109,7 @@ class ReductionAgent(mesa.Agent):
 
         # This is used to keep track of the communicative success of the agent
         self.record_turn(random_index, communication_successful)
+        self.record_reduction(random_index, is_reducing)
         #self.turns.append(communication_successful)
 
     def vector_to_exemplar_memory(self, token_index, vector):
@@ -114,6 +118,9 @@ class ReductionAgent(mesa.Agent):
 
     def record_turn(self, token_index, communication_successful):
         add_value_to_row(self.turns_per_word, token_index, int(communication_successful))
+
+    def record_reduction(self, token_index, is_reducing):
+        add_value_to_row(self.reduction_history, token_index, int(is_reducing))
 
     def compute_communicative_success_probability_token(self, token_index):
         # If last n turns disabled, disable communicative memory and just always return 1

@@ -115,9 +115,15 @@ def compute_average_communicative_success_probability(model):
     return np.mean(communicative_success_probabilities)
 
 def compute_mean_communicative_success_per_token(model):
+    return inner_ratio_computation(model, "turns_per_word")
+
+def compute_mean_reduction_per_token(model):
+    return inner_ratio_computation(model, "reduction_history")
+
+def inner_ratio_computation(model, property):
     # Turn all communication memory matrices into a tensor
     # Shape: (num_agents, token count, memory count)
-    memory_matrices = np.array([agent.turns_per_word for agent in model.agents])
+    memory_matrices = np.array([getattr(agent, property) for agent in model.agents])
 
     # Now, first compute the mean for each token for each agent, then globally
     agentwise_memory = memory_matrices.mean(axis=2)
