@@ -3,7 +3,7 @@ import mesa
 import numpy as np
 
 from agents import ReductionAgent
-from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability
+from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
@@ -68,7 +68,8 @@ class ReductionModel(mesa.Model):
                              "tokens_chosen": compute_tokens_chosen,
                              "confusion_matrix": compute_confusion_matrix,
                              "average_vocabulary": compute_average_vocabulary,
-                             "average_communicative_success_probability": compute_average_communicative_success_probability }
+                             "average_communicative_success_probability": compute_average_communicative_success_probability,
+                             "mean_success_per_token": compute_mean_communicative_success_per_token }
         )
         
     def weighted_random_index(self):

@@ -114,6 +114,23 @@ def compute_average_vocabulary(model):
 def compute_average_communicative_success_probability(model):
     communicative_success_probabilities = [ agent.compute_communicative_success_probability() for agent in model.agents ]
     return np.mean(communicative_success_probabilities)
+
+def compute_mean_communicative_success_per_token(model):
+    # Initialize NumPy arrays for successes and counts
+    total_successes = np.zeros(model.num_tokens, dtype=int)
+    total_counts = np.zeros(model.num_tokens, dtype=int)
+
+    for agent in model.agents:
+        for token_index, token in enumerate(agent.turns_per_word):
+            # Count the total turns per token for this agent
+            total_turns = len(agent.turns_per_word[token_index])
+            # Count the number of successful turns per token for this agents
+            successes = agent.turns_per_word[token_index].count(True)
+            total_successes[token_index] += successes
+            total_counts[token_index] += total_turns
+
+     # Avoid division by zero
+    return np.divide(total_successes, total_counts, where=total_counts > 0)
     
 def distances_to_probabilities_linear(distances):
     # Add a small value so distance is never truly zero
