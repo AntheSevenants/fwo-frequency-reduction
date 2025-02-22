@@ -18,7 +18,7 @@ class ReductionAgent(mesa.Agent):
         self.hearing = False
 
         self.turns = []
-        # Create a success matrix with shame: token count x memory count
+        # Create a success matrix with shape: token count x memory count
         # Fill it with ones (we are optimistic about communication upfront :-) )
         self.turns_per_word = np.full((self.model.num_tokens, self.model.last_n_turns), 1)
 
