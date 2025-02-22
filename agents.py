@@ -61,7 +61,7 @@ class ReductionAgent(mesa.Agent):
 
         is_reducing = False
         # With prevention for zeroing out vectors leaning on just one dimensions
-        if reduction_probability < self.model.reduction_prior and len(non_zero_indices) > 1:
+        if reduction_probability < self.model.reduction_prior and len(non_zero_indices) > self.model.lower_dimension_limit:
             is_reducing = True
 
             # Q: should random dimension be full?

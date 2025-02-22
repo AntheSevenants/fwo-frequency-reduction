@@ -1,5 +1,6 @@
 
 import mesa
+import math
 import numpy as np
 
 from agents import ReductionAgent
@@ -33,6 +34,8 @@ class ReductionModel(mesa.Model):
         self.percentiles = percentiles
         self.ranks = ranks
         self.num_tokens = len(self.tokens)
+        self.num_dimensions = self.vectors.shape[1]
+        self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
         
         self.cumulative_frequencies = np.cumsum(frequencies)
         self.total_frequency = self.cumulative_frequencies[-1]
