@@ -81,7 +81,7 @@ def compute_mean_non_zero_ratio(model):
     # And because we know how many tokens are in memory, and how many dimensions there are, 
     # we can compute a ratio of how many dimensions of the total are set to zero
     # Shape: (1) x token count
-    zero_ratio_per_token_per_agent = np.array([ (agent.vocabulary == 0).sum(axis=2).sum(axis=1) / (model.num_tokens * model.num_dimensions) for agent in model.agents])
+    zero_ratio_per_token_per_agent = np.array([ (agent.vocabulary == 0).sum(axis=2).sum(axis=1) / (model.exemplar_memory_n * model.num_dimensions) for agent in model.agents])
 
     # Compute the mean zero ratio over all agents
     # Shape: (vocab_size,)
