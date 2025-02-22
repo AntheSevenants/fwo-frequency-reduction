@@ -1,6 +1,8 @@
 import mesa
 import numpy as np
 
+from helpers import add_value_to_row
+
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
 
@@ -13,7 +15,9 @@ class ReductionAgent(mesa.Agent):
         self.hearing = False
 
         self.turns = []
-        self.turns_per_word = [ [] for token in self.model.tokens ]
+        # Create a success matrix with shame: token count x memory count
+        # Fill it with ones (we are optimistic about communication upfront :-) )
+        self.turns_per_word = np.full((self.model.num_tokens, self.model.last_n_turns), 1)
 
         #print(self.vocabulary.shape)
 
@@ -95,18 +99,16 @@ class ReductionAgent(mesa.Agent):
         #self.turns.append(communication_successful)
 
     def record_turn(self, token_index, communication_successful):
-        self.turns_per_word[token_index].append(communication_successful)
+        add_value_to_row(self.turns_per_word, token_index, int(communication_successful))
 
     def compute_communicative_success_probability_token(self, token_index):
-        # If last n turns, disable communicative memory and just always return 1
-        # If there are no turns to compute from, also return 1
-        if self.model.last_n_turns < 0 or len(self.turns_per_word[token_index]) == 0:
+        # If last n turns disabled, disable communicative memory and just always return 1
+        if self.model.last_n_turns < 0:
             return 1
         # Else, compute the ratio of the past few turns
 
         # Get the last n turns of the agent's memory
-        memory_turns = self.turns_per_word[token_index][-self.model.last_n_turns:]
-        success_ratio = memory_turns.count(True) / len(memory_turns)
+        success_ratio = self.turns_per_word[token_index,].mean()
         probability = max(0, 2 * (success_ratio - 0.5))
 
         return probability

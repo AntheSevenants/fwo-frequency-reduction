@@ -116,21 +116,21 @@ def compute_average_communicative_success_probability(model):
     return np.mean(communicative_success_probabilities)
 
 def compute_mean_communicative_success_per_token(model):
-    # Initialize NumPy arrays for successes and counts
-    total_successes = np.zeros(model.num_tokens, dtype=int)
-    total_counts = np.zeros(model.num_tokens, dtype=int)
+    # Turn all communication memory matrices into a tensor
+    # Shape: (num_agents, token count, memory count)
+    memory_matrices = np.array([agent.turns_per_word for agent in model.agents])
 
-    for agent in model.agents:
-        for token_index, token in enumerate(agent.turns_per_word):
-            # Count the total turns per token for this agent
-            total_turns = len(agent.turns_per_word[token_index])
-            # Count the number of successful turns per token for this agents
-            successes = agent.turns_per_word[token_index].count(True)
-            total_successes[token_index] += successes
-            total_counts[token_index] += total_turns
+    # Now, first compute the mean for each token for each agent, then globally
+    agentwise_memory = memory_matrices.mean(axis=2)
+    tokenwise_memory = agentwise_memory.mean(axis=0)
 
-     # Avoid division by zero
-    return np.divide(total_successes, total_counts, where=total_counts > 0)
+    return tokenwise_memory
+
+def add_value_to_row(matrix, row_index, new_value):
+    matrix[row_index, :-1] = matrix[row_index, 1:]
+    matrix[row_index, -1] = new_value
+
+    return matrix
     
 def distances_to_probabilities_linear(distances):
     # Add a small value so distance is never truly zero
