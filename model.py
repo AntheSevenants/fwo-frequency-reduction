@@ -42,7 +42,7 @@ class ReductionModel(mesa.Model):
         self.cumulative_frequencies = np.cumsum(frequencies)
         self.total_frequency = self.cumulative_frequencies[-1]
         self.zipfian_token_distribution = zipfian_token_distribution
-        self.last_n_turns = last_n_turns
+        self.last_n_turns = exemplar_memory_n
         self.exemplar_memory_n = exemplar_memory_n
 
         #
