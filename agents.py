@@ -13,6 +13,7 @@ class ReductionAgent(mesa.Agent):
         self.hearing = False
 
         self.turns = []
+        self.turns_per_word = [ [] for token in self.model.tokens ]
 
         #print(self.vocabulary.shape)
 
@@ -49,7 +50,7 @@ class ReductionAgent(mesa.Agent):
         # Compute the reduction probability by multiplying the random chance by the chance depending on the percentile
         # TODO perhaps later implement this prior
         # Also compute the ratio of communicative success, which we will turn into a probability
-        communicative_success_probability = self.compute_communicative_success_probability()
+        communicative_success_probability = self.compute_communicative_success_probability_token(random_index)
         reduction_probability = self.model.random.uniform(0, 1)
         computed_reduction_prior = communicative_success_probability
         non_zero_indices = np.nonzero(random_vector)[1]
@@ -90,7 +91,25 @@ class ReductionAgent(mesa.Agent):
         self.model.turns.append(communication_successful)
 
         # This is used to keep track of the communicative success of the agent
-        self.turns.append(communication_successful)
+        self.record_turn(random_index, communication_successful)
+        #self.turns.append(communication_successful)
+
+    def record_turn(self, token_index, communication_successful):
+        self.turns_per_word[token_index].append(communication_successful)
+
+    def compute_communicative_success_probability_token(self, token_index):
+        # If last n turns, disable communicative memory and just always return 1
+        # If there are no turns to compute from, also return 1
+        if self.model.last_n_turns < 0 or len(self.turns) == 0:
+            return 1
+        # Else, compute the ratio of the past few turns
+
+        # Get the last n turns of the agent's memory
+        memory_turns = self.turns_per_word[token_index][-self.model.last_n_turns:]
+        success_ratio = memory_turns.count(True) / len(memory_turns)
+        probability = max(0, 2 * (success_ratio - 0.5))
+
+        return probability
 
     def compute_communicative_success_probability(self):
         # If last n turns, disable communicative memory and just always return 1
