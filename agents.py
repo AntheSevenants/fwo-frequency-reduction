@@ -100,7 +100,7 @@ class ReductionAgent(mesa.Agent):
     def compute_communicative_success_probability_token(self, token_index):
         # If last n turns, disable communicative memory and just always return 1
         # If there are no turns to compute from, also return 1
-        if self.model.last_n_turns < 0 or len(self.turns) == 0:
+        if self.model.last_n_turns < 0 or len(self.turns_per_word[token_index]) == 0:
             return 1
         # Else, compute the ratio of the past few turns
 
