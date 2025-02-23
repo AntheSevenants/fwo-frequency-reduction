@@ -65,6 +65,20 @@ def generate_word_vectors(vocabulary_size=1000, dimensions=300, seed=42):
     
     return np.asarray(vectors)
 
+def add_noise(vector, noise_std=0.01):
+    # Generate noise factors: 1 + epsilon
+    noise_factor = 1 + np.random.normal(0, noise_std, size=vector.shape)
+    
+    # Ensure that noise_factor is positive.
+    # Clip values to a minimum (e.g., 0.001) to avoid very small or negative multipliers.
+    noise_factor = np.clip(noise_factor, 0.001, None)
+    
+    # Optionally, if your model has dimensions that are intentionally zero, do not modify them.
+    noise_factor[vector == 0] = 1
+    
+    # Multiply the original vector by the noise factor.
+    return vector * noise_factor
+
 def count_non_zeroes(vector):
     return np.nonzero(vector)[1]
 

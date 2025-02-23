@@ -1,7 +1,7 @@
 import mesa
 import numpy as np
 
-from helpers import add_value_to_row
+from helpers import add_value_to_row, add_noise
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -97,9 +97,12 @@ class ReductionAgent(mesa.Agent):
 
         other_agent.hearing = True
 
+        # Add perceptual noise
+        random_vector_w_noise = add_noise(random_vector)
+
         attempts = 1
         while attempts <= 3:
-            heard_index = self.model.find_nearest_neighbour_index(other_agent.vocabulary, random_vector)
+            heard_index = self.model.find_nearest_neighbour_index(other_agent.vocabulary, random_vector_w_noise)
             communication_successful = heard_index == random_index
 
             # Save data for the confusion matrix
@@ -107,7 +110,7 @@ class ReductionAgent(mesa.Agent):
 
             # If communication is successful, put the reduced vector in the vocabulary
             if communication_successful:
-                self.vector_to_exemplar_memory(random_index, random_vector)
+                self.vector_to_exemplar_memory(random_index, random_vector_w_noise)
                 self.model.successful_turns += 1
             else:
                 self.model.failed_turns += 1
@@ -137,6 +140,9 @@ class ReductionAgent(mesa.Agent):
 
                 # Add this index from non zero indices
                 non_zero_indices = np.append(non_zero_indices, random_dimension_index)
+
+                # Add noise again
+                random_vector_w_noise = add_noise(random_vector)
 
                 # State that we are NOT reducing anymore
                 is_reducing = False
