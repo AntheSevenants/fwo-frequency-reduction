@@ -10,6 +10,7 @@ class ReductionAgent(mesa.Agent):
         # Pass the parameters to the parent class.
         super().__init__(model)
 
+        self.unreduced_vocabulary = self.model.vectors.copy()
         self.vocabulary = self.model.vectors.copy() # weird behaviour when passed through the agentset
         # Turn vocabulary into exemplar memory
         # New shape: token count x exemplar length x dimension count
@@ -83,6 +84,9 @@ class ReductionAgent(mesa.Agent):
             # Notice that I'm keeping the matrices two-dimensional because of performance reasons :)
             random_vector[random_dimension_index] = 0
 
+            # Remove item from non zero indices list
+            non_zero_indices = np.delete(non_zero_indices, np.where(non_zero_indices == random_dimension_index))
+
             # print(random_vector)
         
         other_agent = None
@@ -92,26 +96,49 @@ class ReductionAgent(mesa.Agent):
                 other_agent = None
 
         other_agent.hearing = True
-        heard_index = self.model.find_nearest_neighbour_index(other_agent.vocabulary, random_vector)
-        communication_successful = heard_index == random_index
 
-        # Save data for the confusion matrix
-        self.model.confusion_matrix[random_index][heard_index] += 1
+        attempts = 1
+        while attempts <= 3:
+            heard_index = self.model.find_nearest_neighbour_index(other_agent.vocabulary, random_vector)
+            communication_successful = heard_index == random_index
 
-        # If communication is successful, put the reduced vector in the vocabulary
-        if communication_successful:
-            self.vector_to_exemplar_memory(random_index, random_vector)
-            self.model.successful_turns += 1
-        else:
-            self.model.failed_turns += 1
+            # Save data for the confusion matrix
+            self.model.confusion_matrix[random_index][heard_index] += 1
 
-        self.model.total_turns += 1
-        self.model.turns.append(communication_successful)
+            # If communication is successful, put the reduced vector in the vocabulary
+            if communication_successful:
+                self.vector_to_exemplar_memory(random_index, random_vector)
+                self.model.successful_turns += 1
+            else:
+                self.model.failed_turns += 1
 
-        # This is used to keep track of the communicative success of the agent
-        self.record_turn(random_index, communication_successful)
-        self.record_reduction(random_index, is_reducing)
-        #self.turns.append(communication_successful)
+            self.model.total_turns += 1
+            self.model.turns.append(communication_successful)
+
+            # This is used to keep track of the communicative success of the agent
+            self.record_turn(random_index, communication_successful)
+            self.record_reduction(random_index, is_reducing)
+
+            # Attempt repair
+            if not communication_successful:
+                # Compute yes zero indices
+                total_indices = np.arange(0, self.model.num_dimensions)
+                zero_indices = np.setdiff1d(total_indices, non_zero_indices)
+                # For now, repair with just one dimension, but more radical may be possible later (TODO)
+                random_dimension_index = np.random.choice(tuple(zero_indices))
+
+                # Reinstate the original value
+                random_vector[random_dimension_index] = self.unreduced_vocabulary[random_index, random_dimension_index].copy()
+
+                # Add this index from non zero indices
+                non_zero_indices = np.append(non_zero_indices, random_dimension_index)
+
+                # State that we are NOT reducing anymore
+                is_reducing = False
+            else:
+                break
+        
+            attempts += 1
 
     def vector_to_exemplar_memory(self, token_index, vector):
         self.vocabulary[token_index, :-1, :] = self.vocabulary[token_index, 1:, :]
