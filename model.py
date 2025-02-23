@@ -15,6 +15,7 @@ class ReductionModel(mesa.Model):
         self.num_agents = num_agents
         self.reduction_prior = reduction_prior
         self.seed = seed
+        self.current_step = 0
 
         #
         # Visualisation stuff
@@ -119,3 +120,4 @@ class ReductionModel(mesa.Model):
         #self.random.choice(self.agents).interact()
         self.agents.shuffle_do("interact")
         self.datacollector.collect(self)
+        self.current_step += 1

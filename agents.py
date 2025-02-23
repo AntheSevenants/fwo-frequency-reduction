@@ -25,6 +25,8 @@ class ReductionAgent(mesa.Agent):
         # Also keep a memory of whether reduction was applied or not
         # Same dimensions, and fill it with zeroes (we do not assume any reduction in the past)
         self.reduction_history = np.full((self.model.num_tokens, self.model.last_n_turns), 0)
+        # Keep a memory of the last time a form was activated
+        self.activation_history = np.zeros((self.model.num_tokens, 1))
 
         #print(self.vocabulary.shape)
 
@@ -147,6 +149,8 @@ class ReductionAgent(mesa.Agent):
                 # State that we are NOT reducing anymore
                 is_reducing = False
             else:
+                # Only save activation if communication was successful
+                self.record_activation(random_index)
                 break
         
             attempts += 1
@@ -161,12 +165,19 @@ class ReductionAgent(mesa.Agent):
     def record_reduction(self, token_index, is_reducing):
         add_value_to_row(self.reduction_history, token_index, int(is_reducing))
 
+    def record_activation(self, token_index):
+        self.activation_history[token_index] = self.model.current_step
+
     def compute_reduction_success(self, token_index):
         EPSILON = 0.0001
         K = 4
         THETA = 0.5
         LAMBDA = 1
+        DELTA = 0.005
 
+        # Find out how long ago this form was last activated for this agent
+        activation_delta = self.model.current_step - self.activation_history[token_index]
+        decay_factor = np.exp(-DELTA * activation_delta)
         # Find where reductions occurred
         reduction_indices = np.where(self.reduction_history[token_index] == 1)[0]
         # Count successful reductions
@@ -176,6 +187,8 @@ class ReductionAgent(mesa.Agent):
 
         # Calculate the proportion of successful reductions
         proportion_successful = ((successful_reductions) + EPSILON) / (len(reduction_indices) + EPSILON)
+        # Decay
+        proportion_successful = proportion_successful * decay_factor
         uncertainty = np.sqrt((proportion_successful * (1 - proportion_successful)) + EPSILON / ((total_reductions) + EPSILON))
         p_reduce = (1 / (1 + np.exp(-K * (proportion_successful - THETA - LAMBDA * uncertainty))))
 
