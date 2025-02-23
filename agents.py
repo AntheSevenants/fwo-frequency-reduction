@@ -66,8 +66,9 @@ class ReductionAgent(mesa.Agent):
         # TODO perhaps later implement this prior
         # Also compute the ratio of communicative success, which we will turn into a probability
         communicative_success_probability = self.compute_communicative_success_probability_token(random_index)
+        reduction_success = self.compute_reduction_success(random_index)
         reduction_probability = self.model.random.uniform(0, 1)
-        computed_reduction_prior = communicative_success_probability
+        computed_reduction_prior = reduction_success
         non_zero_indices = np.nonzero(random_vector)[0]
 
         is_reducing = False
@@ -121,6 +122,17 @@ class ReductionAgent(mesa.Agent):
 
     def record_reduction(self, token_index, is_reducing):
         add_value_to_row(self.reduction_history, token_index, int(is_reducing))
+
+    def compute_reduction_success(self, token_index):
+        # Find where reductions occurred
+        reduction_indices = np.where(self.reduction_history[token_index] == 1)[0]
+        # Count successful reductions
+        successful_reductions = np.sum(self.turns_per_word[token_index, reduction_indices])
+
+        # Calculate the proportion of successful reductions
+        proportion_successful = (successful_reductions + 1) / (len(reduction_indices) + 1 + self.model.BASELINE_PROB)
+
+        return proportion_successful
 
     def compute_communicative_success_probability_token(self, token_index):
         # If last n turns disabled, disable communicative memory and just always return 1

@@ -36,6 +36,7 @@ class ReductionModel(mesa.Model):
         self.num_tokens = len(self.tokens)
         self.num_dimensions = self.vectors.shape[1]
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
+        self.BASELINE_PROB = 1
 
         print(f"Lower dimension limit is {self.lower_dimension_limit}")
         
