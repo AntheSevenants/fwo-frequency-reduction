@@ -124,6 +124,11 @@ class ReductionAgent(mesa.Agent):
                 # Compute yes zero indices
                 total_indices = np.arange(0, self.model.num_dimensions)
                 zero_indices = np.setdiff1d(total_indices, non_zero_indices)
+
+                # If no more dimensions left to restore, communication has simply failed
+                if len(zero_indices) == 0:
+                    break
+
                 # For now, repair with just one dimension, but more radical may be possible later (TODO)
                 random_dimension_index = np.random.choice(tuple(zero_indices))
 
