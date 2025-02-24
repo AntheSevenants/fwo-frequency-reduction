@@ -137,6 +137,8 @@ class ReductionAgent(mesa.Agent):
                 # For now, repair with just one dimension, but more radical may be possible later (TODO)
                 random_dimension_index = np.random.choice(tuple(zero_indices))
 
+                self.model.total_repairs += 1
+
                 # Reinstate the original value
                 random_vector[random_dimension_index] = self.unreduced_vocabulary[random_index, random_dimension_index].copy()
 

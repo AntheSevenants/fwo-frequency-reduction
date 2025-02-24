@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from agents import ReductionAgent
-from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token
+from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
@@ -79,7 +79,8 @@ class ReductionModel(mesa.Model):
                              "average_communicative_success_probability": compute_average_communicative_success_probability,
                              "mean_success_per_token": compute_mean_communicative_success_per_token,
                              "mean_reduction_per_token":
-                              compute_mean_reduction_per_token }
+                              compute_mean_reduction_per_token,
+                             "total_repairs": compute_repairs }
         )
         
     def weighted_random_index(self):
@@ -109,7 +110,7 @@ class ReductionModel(mesa.Model):
         return probabilities
     
     def reset(self):
-
+        self.total_repairs = 0
         self.successful_turns = 0
         self.failed_turns = 0
         self.total_turns = 0

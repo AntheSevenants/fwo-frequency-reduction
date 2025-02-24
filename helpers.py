@@ -134,6 +134,9 @@ def compute_mean_communicative_success_per_token(model):
 def compute_mean_reduction_per_token(model):
     return inner_ratio_computation(model, "reduction_history")
 
+def compute_repairs(model):
+    return model.total_repairs
+
 def inner_ratio_computation(model, property):
     # Turn all communication memory matrices into a tensor
     # Shape: (num_agents, token count, memory count)
