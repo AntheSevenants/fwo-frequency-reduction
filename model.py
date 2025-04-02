@@ -93,18 +93,3 @@ class ReductionModel(mesa.Model):
 
     def get_original_vector(self, token_index):
         return self.vectors[token_index, :]
-    
-    def get_neighbours(self, matrix, target_row_index, distance_threshold):
-        # Extract the target row
-        target_row = matrix[target_row_index]
-
-        # Calculate the Euclidean distance between the target row and all other rows
-        distances = np.linalg.norm(matrix - target_row, axis=1)
-
-        # Find the indices of rows within the distance threshold
-        neighbour_indices = np.where(distances <= distance_threshold)[0]
-
-        # Exclude the target row itself from the neighbours
-        #neighbour_indices = neighbour_indices[neighbour_indices != target_row_index]
-
-        return neighbour_indices
