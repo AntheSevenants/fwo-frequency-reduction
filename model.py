@@ -9,12 +9,13 @@ from helpers import compute_communicative_success, compute_communicative_failure
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, last_n_turns=-1, exemplar_memory_n=20, disable_reduction=False, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, zipfian_token_distribution=True, show_all_words=False, one_shot_nn=True, last_n_turns=-1, exemplar_memory_n=20, disable_reduction=False, always_reduction=False, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
         self.reduction_prior = reduction_prior
         self.disable_reduction = disable_reduction
+        self.always_reduction = always_reduction
         self.seed = seed
         self.current_step = 0
 

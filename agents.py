@@ -71,7 +71,7 @@ class ReductionAgent(mesa.Agent):
         communicative_success_probability = self.compute_communicative_success_probability_token(random_index)
         reduction_success = self.compute_reduction_success(random_index)
         reduction_probability = self.model.random.uniform(0, 1)
-        computed_reduction_prior = reduction_success
+        computed_reduction_prior = reduction_success if not self.model.always_reduction else 1
         non_zero_indices = np.nonzero(random_vector)[0]
 
         is_reducing = False
