@@ -33,9 +33,29 @@ class ReductionAgent(mesa.Agent):
             self.memory[i, :] = noisy_vector
             self.indices_in_memory[i] = token_index
 
+    def interact(self, other_agent, event_index):
+        # Define a dummy outcome for the communication
+        communication_successful = False
+
+        # Set this to the speaker
+        self.speaking = True
+
+        print(f"Event index: {event_index}")
+
+        # Decide upon the form that the speaker will use to communicate about this event
+        # TODO: multiple choices here: n nearest neighbour OR fixed size or?
+        # TODO: just figuring things out
+
+        # We get the indices of all vectors pertaining to the communicated event
+        matching_token_indices = np.where(self.indices_in_memory == event_index)[0].tolist()
+        # Then, we pick a random exemplar from this list
+        chosen_exemplar_base = self.model.random.choice(matching_token_indices)
+        
+        # Now, we make neighbourhood around this exemplar
+        neighbourhood = self.model.get_neighbours(self.memory, chosen_exemplar_base, 0.5)
+
+        print(neighbourhood)
+
     def reset(self):
         self.speaking = False
         self.hearing = False
-
-    def interact(self):
-        pass
