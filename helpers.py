@@ -179,10 +179,7 @@ def distances_to_probabilities_softmax(distances):
 
     return probabilities
     
-def get_neighbours(matrix, target_row_index, distance_threshold):
-    # Extract the target row
-    target_row = matrix[target_row_index]
-
+def get_neighbours(matrix, target_row, distance_threshold):
     # Calculate the Euclidean distance between the target row and all other rows
     distances = np.linalg.norm(matrix - target_row, axis=1)
 
