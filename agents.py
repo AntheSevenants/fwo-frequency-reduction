@@ -23,15 +23,13 @@ class ReductionAgent(mesa.Agent):
         self.memory = np.full((self.model.memory_size, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(self.model.memory_size, np.nan)
 
-        # We fill the memory for 50% to start with
-        initialisation_cap = math.floor(self.model.memory_size / 2)
-        for i in range(initialisation_cap):
-            # Get a random vector from memory and add noise
-            token_index = self.model.weighted_random_index()
+        for token_index in range(self.model.num_tokens):
+            # Get the vector from memory and add noise
             vector = self.model.get_original_vector(token_index)
             noisy_vector = add_noise(vector)
 
             # Save to memory
+            i = token_index
             self.memory[i, :] = noisy_vector
             self.indices_in_memory[i] = token_index
 
