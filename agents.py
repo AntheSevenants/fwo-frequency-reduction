@@ -2,7 +2,7 @@ import mesa
 import math
 import numpy as np
 
-from helpers import add_value_to_row, add_noise
+from helpers import add_value_to_row, add_noise, get_neighbours
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -23,15 +23,20 @@ class ReductionAgent(mesa.Agent):
         self.memory = np.full((self.model.memory_size, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(self.model.memory_size, np.nan)
 
+        i = 0
         for token_index in range(self.model.num_tokens):
             # Get the vector from memory and add noise
             vector = self.model.get_original_vector(token_index)
-            noisy_vector = add_noise(vector)
 
-            # Save to memory
-            i = token_index
-            self.memory[i, :] = noisy_vector
-            self.indices_in_memory[i] = token_index
+            # Add each token twice
+            for j in range(self.model.initial_token_count):
+                noisy_vector = add_noise(vector)
+
+                # Save to memory
+                self.memory[i, :] = noisy_vector
+                self.indices_in_memory[i] = token_index
+
+                i += 1
 
     def interact(self, other_agent, event_index):
         # Define a dummy outcome for the communication
@@ -52,7 +57,7 @@ class ReductionAgent(mesa.Agent):
         chosen_exemplar_base = self.model.random.choice(matching_token_indices)
         
         # Now, we make neighbourhood around this exemplar
-        neighbourhood = self.model.get_neighbours(self.memory, chosen_exemplar_base, 0.5)
+        neighbourhood = get_neighbours(self.memory, chosen_exemplar_base, 0.5)
 
         print(neighbourhood)
 
