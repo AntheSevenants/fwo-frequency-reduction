@@ -54,10 +54,11 @@ class ReductionAgent(mesa.Agent):
         # We get the indices of all vectors pertaining to the communicated event
         matching_token_indices = np.where(self.indices_in_memory == event_index)[0].tolist()
         # Then, we pick a random exemplar from this list
-        chosen_exemplar_base = self.model.random.choice(matching_token_indices)
+        chosen_exemplar_base_index = self.model.random.choice(matching_token_indices)
+        chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
         
         # Now, we make neighbourhood around this exemplar
-        neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_base, 0.5)
+        neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, 0.5)
         # We select only the phonetic representations of the rows of this concept,
         # then stack everything into a single matrix ...
         selected_rows = self.memory[neighbourhood_indices]
