@@ -38,6 +38,14 @@ class ReductionAgent(mesa.Agent):
 
                 i += 1
 
+        self.current_memory_index = i
+
+    def commit_to_memory(self, vector, concept_index):
+        self.memory[self.current_memory_index, :] = vector
+        self.indices_in_memory[self.current_memory_index] = concept_index
+
+        self.current_memory_index += 1
+
     def interact(self, hearer_agent, event_index):
         # Define a dummy outcome for the communication
         communication_successful = False
@@ -102,6 +110,11 @@ class ReductionAgent(mesa.Agent):
         # Communication is successful if the right concept is identified
         communication_successful = event_index == heard_concept_index
         
+        # TODO: For now, I'm saving a form if it was successfully recognised by the hearer
+        if communication_successful:
+            self.commit_to_memory(spoken_token_vector, heard_concept_index)
+
+        print(f"Communication successful: {communication_successful}")
 
     def reset(self):
         self.speaking = False
