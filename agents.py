@@ -57,9 +57,13 @@ class ReductionAgent(mesa.Agent):
         chosen_exemplar_base = self.model.random.choice(matching_token_indices)
         
         # Now, we make neighbourhood around this exemplar
-        neighbourhood = get_neighbours(self.memory, chosen_exemplar_base, 0.5)
-
-        print(neighbourhood)
+        neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_base, 0.5)
+        # We select only the phonetic representations of the rows of this concept,
+        # then stack everything into a single matrix ...
+        selected_rows = self.memory[neighbourhood_indices]
+        neighbourhood_matrix = np.vstack(selected_rows)
+        # ... and then we turn it into a single representation that we can emit
+        resulting_token = np.mean(neighbourhood_matrix, axis=0)
 
     def reset(self):
         self.speaking = False
