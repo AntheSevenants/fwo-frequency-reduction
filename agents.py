@@ -38,9 +38,13 @@ class ReductionAgent(mesa.Agent):
 
                 i += 1
 
-    def interact(self, other_agent, event_index):
+    def interact(self, hearer_agent, event_index):
         # Define a dummy outcome for the communication
         communication_successful = False
+
+        # - - - - - - - - - -
+        # P R O D U C T I O N
+        # - - - - - - - - - -
 
         # Set this to the speaker
         self.speaking = True
@@ -58,13 +62,42 @@ class ReductionAgent(mesa.Agent):
         chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
         
         # Now, we make neighbourhood around this exemplar
-        neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, 0.5)
+        speaker_neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, 0.5)
         # We select only the phonetic representations of the rows of this concept,
         # then stack everything into a single matrix ...
-        selected_rows = self.memory[neighbourhood_indices]
-        neighbourhood_matrix = np.vstack(selected_rows)
+        speaker_selected_rows = self.memory[speaker_neighbourhood_indices]
+        speaker_neighbourhood_matrix = np.vstack(speaker_selected_rows)
         # ... and then we turn it into a single representation that we can emit
-        resulting_token = np.mean(neighbourhood_matrix, axis=0)
+        spoken_token_vector = np.mean(speaker_neighbourhood_matrix, axis=0)
+
+        # - - - - - - - - -
+        # R E C E P T I O N
+        # - - - - - - - - -
+
+        # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
+        hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, 0.5)
+        # We check what concepts they are connected to
+        hearer_concept_values = self.indices_in_memory[hearer_neighbourhood_indices]
+        unique, counts = np.unique(hearer_concept_values, return_counts=True)
+
+        if len(unique) == 0:
+            print("No tokens in this neighbourhood")
+            heard_concept_index = None
+        
+        sorted_indices = np.argsort(counts)[::-1]
+        unique = unique[sorted_indices]
+        counts = counts[sorted_indices]
+
+        if len(counts) > 1:
+            if counts[0] > counts[1]:
+                heard_concept_index = unique[0]
+            else:
+                heard_concept_index = None
+        else:
+            heard_concept_index = unique[0]
+
+        communication_successful = event_index == heard_concept_index
+        print(communication_successful)
 
     def reset(self):
         self.speaking = False
