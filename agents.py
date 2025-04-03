@@ -170,6 +170,10 @@ class ReductionAgent(mesa.Agent):
             self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
 
             self.model.failed_turns += 1
+    
+        if heard_concept_index is not None:
+            # Save data for the confusion matrix
+            self.model.confusion_matrix[event_index][heard_concept_index] += 1
 
         self.model.total_turns += 1
 
