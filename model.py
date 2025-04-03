@@ -63,17 +63,25 @@ class ReductionModel(mesa.Model):
             self.grid.place_agent(a, (i, j))
 
         self.datacollector = mesa.DataCollector(
-            model_reporters={}
+            model_reporters={"communicative_success": compute_communicative_success,
+                             "communicative_failure": compute_communicative_failure}
         )
 
     def reset(self):
-        pass
+        self.total_repairs = 0
+        self.successful_turns = 0
+        self.failed_turns = 0
+        self.total_turns = 0
 
     def step(self):
         self.reset()
-        #self.agents.do("reset")
-        #self.agents.shuffle_do("interact")
+        self.agents.do("reset")
+        self.agents.shuffle_do("interact_do")
 
+        self.datacollector.collect(self)
+        self.current_step += 1
+
+    def step_unitary(self):
         # Pick speaker and hearer agent
         speaker_agent = self.random.choice(self.agents)
         # Make sure hearer agent does not equal speaker agent
@@ -84,9 +92,6 @@ class ReductionModel(mesa.Model):
         event_index = self.weighted_random_index()
 
         speaker_agent.interact(hearer_agent, event_index)
-
-        self.datacollector.collect(self)
-        self.current_step += 1
 
     def weighted_random_index(self):
         r = self.random.uniform(0, self.total_frequency)

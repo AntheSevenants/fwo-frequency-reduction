@@ -163,9 +163,15 @@ class ReductionAgent(mesa.Agent):
             # Increase the historical success score for this event (or token).
             # This could be a simple counter or a more elaborate moving average.
             self.success_history[event_index] = self.success_history.get(event_index, 0) + 1
+
+            self.model.successful_turns += 1
         else:
             # Optionally, penalize if the communication failed.
             self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
+
+            self.model.failed_turns += 1
+
+        self.model.total_turns += 1
 
     def reset(self):
         self.speaking = False
