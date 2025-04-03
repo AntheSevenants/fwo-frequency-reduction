@@ -146,11 +146,11 @@ class ReductionAgent(mesa.Agent):
             
             # We need to check if two forms share the top spot
             if counts[0] > counts[1]:
-                heard_concept_index = unique[0]
+                heard_concept_index = int(unique[0])
             else:
                 heard_concept_index = None
         else:
-            heard_concept_index = unique[0]
+            heard_concept_index = int(unique[0])
 
         # Communication is successful if the right concept is identified
         communication_successful = event_index == heard_concept_index
