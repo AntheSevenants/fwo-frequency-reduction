@@ -131,7 +131,7 @@ class ReductionAgent(mesa.Agent):
         # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
         hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, 0.5)
         # We check what concepts they are connected to
-        hearer_concept_values = self.indices_in_memory[hearer_neighbourhood_indices]
+        hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
         unique, counts = np.unique(hearer_concept_values, return_counts=True)
 
         # If no tokens were found within the vicinity, communication has failed
