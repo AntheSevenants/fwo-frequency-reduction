@@ -16,6 +16,8 @@ class ReductionAgent(mesa.Agent):
         self.speaking = False
         self.hearing = False
 
+        self.success_history = {}
+
         #print(self.vocabulary.shape)
 
     def init_memory(self):
@@ -46,6 +48,16 @@ class ReductionAgent(mesa.Agent):
 
         self.current_memory_index += 1
 
+    def interact_do(self):
+        event_index = self.model.weighted_random_index()
+        
+        while True:
+            hearer_agent = self.random.choice(self.model.agents)
+            if self != hearer_agent:
+                break
+
+        self.interact(hearer_agent, event_index)
+
     def interact(self, hearer_agent, event_index):
         # Define a dummy outcome for the communication
         communication_successful = False
@@ -57,7 +69,7 @@ class ReductionAgent(mesa.Agent):
         # Set this to the speaker
         self.speaking = True
 
-        print(f"Event index: {event_index}")
+        # print(f"Event index: {event_index}")
 
         # Decide upon the form that the speaker will use to communicate about this event
         # TODO: multiple choices here: n nearest neighbour OR fixed size or?
@@ -79,6 +91,40 @@ class ReductionAgent(mesa.Agent):
         spoken_token_vector = np.mean(speaker_neighbourhood_matrix, axis=0)
 
         # - - - - - - - - -
+        # R E D U C T I O N
+        # - - - - - - - - -
+
+        # Here we apply a reduction process which is influenced by both the L1 penalty
+        # (i.e. encouraging sparsity) and the past communicative success of this event.
+
+        # Compute the L1 penalty (the sum of absolute values)
+        l1_penalty = np.sum(np.abs(spoken_token_vector))
+        # print(f"L1 penalty: {l1_penalty}")
+
+        # Retrieve historical communicative success for this event token
+        # Assume self.success_history is a dict that maps event indices to a success score.
+        # Default to 1 if there's no history yet.
+        historical_success = self.success_history.get(event_index, 1)
+
+        # Define parameters that weigh the L1 penalty and the historical success
+        lambda_param = 1.0  # strength of sparsity effect; adjust as needed
+        mu_param = 1.0      # strength of the success factor; adjust as needed
+
+        # Compute the reduction probability. Here a sigmoid function is used to map the combined signal
+        reduction_prob = 1 / (1 + np.exp(lambda_param * l1_penalty - mu_param * historical_success))
+        # print(f"Reduction probability: {reduction_prob:.3f}")
+
+        # Decide whether to apply reduction based on the computed probability.
+        if self.model.random.random() < reduction_prob:
+            # Apply L1-based soft thresholding to encourage further sparsity
+            threshold = 0.1  # the threshold value can be adjusted
+            spoken_token_vector = np.sign(spoken_token_vector) * np.maximum(np.abs(spoken_token_vector) - threshold, 0)
+            # print("Reduction applied: Token vector sparsified.")
+        else:
+            pass
+            # print("No reduction applied.")
+
+        # - - - - - - - - -
         # R E C E P T I O N
         # - - - - - - - - -
 
@@ -90,15 +136,14 @@ class ReductionAgent(mesa.Agent):
 
         # If no tokens were found within the vicinity, communication has failed
         if len(unique) == 0:
-            print("No tokens in this neighbourhood")
+            # print("No tokens in this neighbourhood")
             heard_concept_index = None
-        
-        # We check what form is the most represented in the neighbourhood
-        sorted_indices = np.argsort(counts)[::-1]
-        unique = unique[sorted_indices]
-        counts = counts[sorted_indices]
-
-        if len(counts) > 1:
+        elif len(counts) > 1:
+            # We check what form is the most represented in the neighbourhood
+            sorted_indices = np.argsort(counts)[::-1]
+            unique = unique[sorted_indices]
+            counts = counts[sorted_indices]
+            
             # We need to check if two forms share the top spot
             if counts[0] > counts[1]:
                 heard_concept_index = unique[0]
@@ -109,12 +154,18 @@ class ReductionAgent(mesa.Agent):
 
         # Communication is successful if the right concept is identified
         communication_successful = event_index == heard_concept_index
+        # print(f"Communication successful: {communication_successful}")
         
         # TODO: For now, I'm saving a form if it was successfully recognised by the hearer
         if communication_successful:
             self.commit_to_memory(spoken_token_vector, heard_concept_index)
-
-        print(f"Communication successful: {communication_successful}")
+            
+            # Increase the historical success score for this event (or token).
+            # This could be a simple counter or a more elaborate moving average.
+            self.success_history[event_index] = self.success_history.get(event_index, 0) + 1
+        else:
+            # Optionally, penalize if the communication failed.
+            self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
 
     def reset(self):
         self.speaking = False
