@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from collections import defaultdict
+
 EPSILON = 0.000001
 N_CUTOFF = 10000
 
@@ -100,6 +102,36 @@ def compute_mean_non_zero_ratio(model):
     # Compute the mean zero ratio over all agents
     # Shape: (vocab_size,)
     return zero_ratio_per_token_per_agent.mean(axis=0)
+
+def compute_mean_agent_l1(model):
+    mean_l1_per_agent = np.array([ np.nanmean(agent.memory.sum(axis=1)) for agent in model.agents ])
+
+    return mean_l1_per_agent.mean()
+
+def compute_mean_token_l1(model):
+    agentwise_memory = np.zeros((model.num_agents, model.num_tokens))
+
+    for agent_index, agent in enumerate(model.agents):
+        matrix = agent.memory
+        tokens = agent.indices_in_memory
+        token_indices = defaultdict(list)
+
+        for i, token in enumerate(tokens):
+            if np.isnan(token):
+                continue
+            
+            token_indices[token].append(i)
+
+        # token_index = index of the token
+        # indices = the exemplars in the memory corresponding to this token
+        for token_index, indices in token_indices.items():
+            token_index = int(token_index)
+            agentwise_memory[agent_index, token_index] = matrix[indices].sum(axis=1).mean()
+
+    return agentwise_memory.mean(axis=0)
+    # tokenwise_memory = agentwise_memory.mean(axis=2)
+    # return tokenwise_memory
+    #agent_token_averages.append(token_averages)
 
 def compute_communicative_success(model):
     if model.total_turns == 0:
