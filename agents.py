@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 from helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest
-from model import NeighbourhoodTypes
+from neighbourhood_types import NeighbourhoodTypes
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""

@@ -5,10 +5,7 @@ import numpy as np
 
 from agents import ReductionAgent
 from helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason
-
-class NeighbourhoodTypes:
-    SPATIAL = 0
-    NEAREST = 1
+from neighbourhood_types import NeighbourhoodTypes
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
