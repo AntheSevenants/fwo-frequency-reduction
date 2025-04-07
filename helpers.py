@@ -145,6 +145,9 @@ def compute_communicative_failure(model):
     else:
         return model.failed_turns / model.total_turns
     
+def compute_fail_reason(model):
+    return model.fail_reason
+    
 def compute_tokens_chosen(model):
     return model.tokens_chosen
 
