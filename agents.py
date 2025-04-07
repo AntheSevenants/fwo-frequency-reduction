@@ -21,9 +21,10 @@ class ReductionAgent(mesa.Agent):
         #print(self.vocabulary.shape)
 
     def init_memory(self):
-        # We create a memory with a very large size (won't be used completely)
-        self.memory = np.full((self.model.memory_size, self.model.num_dimensions), np.nan)
-        self.indices_in_memory = np.full(self.model.memory_size, np.nan)
+        # We create a memory with a very large size
+        model_memory_size = self.model.initial_token_count * self.model.num_tokens
+        self.memory = np.full((model_memory_size, self.model.num_dimensions), np.nan)
+        self.indices_in_memory = np.full(model_memory_size, np.nan)
 
         i = 0
         for token_index in range(self.model.num_tokens):
@@ -40,13 +41,12 @@ class ReductionAgent(mesa.Agent):
 
                 i += 1
 
-        self.current_memory_index = i
+        # Now, delete all nans
+        self.memory = self.memory[~np.isnan(self.memory[:,1])]
 
     def commit_to_memory(self, vector, concept_index):
-        self.memory[self.current_memory_index, :] = vector
-        self.indices_in_memory[self.current_memory_index] = concept_index
-
-        self.current_memory_index += 1
+        self.memory = np.vstack([self.memory, vector])
+        self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
 
     def interact_do(self):
         event_index = self.model.weighted_random_index()
