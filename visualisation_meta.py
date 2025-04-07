@@ -1,4 +1,7 @@
+import numpy as np
 import matplotlib.pyplot as plt
+
+from umap import UMAP
 
 def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_func):
     fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(12, 12))
