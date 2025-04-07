@@ -230,6 +230,6 @@ def get_neighbours_nearest(matrix, target_row, n=2):
     distances = np.linalg.norm(matrix - target_row, axis=1)
 
     # Find the index of the nearest neighbours
-    neighbour_indices = np.argsort(distances)[:2]
+    neighbour_indices = np.argsort(distances)[:n]
 
     return neighbour_indices
