@@ -225,3 +225,11 @@ def get_neighbours(matrix, target_row, distance_threshold):
     #neighbour_indices = neighbour_indices[neighbour_indices != target_row_index]
 
     return neighbour_indices
+
+def get_neighbours_nearest(matrix, target_row, n=2):
+    distances = np.linalg.norm(matrix - target_row, axis=1)
+
+    # Find the index of the nearest neighbours
+    neighbour_indices = np.argsort(distances)[:2]
+
+    return neighbour_indices

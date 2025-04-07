@@ -2,7 +2,8 @@ import mesa
 import math
 import numpy as np
 
-from helpers import add_value_to_row, add_noise, get_neighbours
+from helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest
+from model import NeighbourhoodTypes
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -82,7 +83,11 @@ class ReductionAgent(mesa.Agent):
         chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
         
         # Now, we make neighbourhood around this exemplar
-        speaker_neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, 0.5)
+        if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL: 
+            speaker_neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
+            speaker_neighbourhood_indices = get_neighbours_nearest(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)            
+
         # We select only the phonetic representations of the rows of this concept,
         # then stack everything into a single matrix ...
         speaker_selected_rows = self.memory[speaker_neighbourhood_indices]
@@ -129,7 +134,11 @@ class ReductionAgent(mesa.Agent):
         # - - - - - - - - -
 
         # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
-        hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, 0.5)
+        if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
+            hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
+            hearer_neighbourhood_indices = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+
         # We check what concepts they are connected to
         hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
         unique, counts = np.unique(hearer_concept_values, return_counts=True)
