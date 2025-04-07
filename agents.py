@@ -134,10 +134,14 @@ class ReductionAgent(mesa.Agent):
         hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
         unique, counts = np.unique(hearer_concept_values, return_counts=True)
 
+        # Set communication to false to begin with
+        communication_successful = False
+
         # If no tokens were found within the vicinity, communication has failed
         if len(unique) == 0:
             # print("No tokens in this neighbourhood")
             heard_concept_index = None
+            self.model.fail_reason["no_tokens"] += 1
         elif len(counts) > 1:
             # We check what form is the most represented in the neighbourhood
             sorted_indices = np.argsort(counts)[::-1]
@@ -147,13 +151,18 @@ class ReductionAgent(mesa.Agent):
             # We need to check if two forms share the top spot
             if counts[0] > counts[1]:
                 heard_concept_index = int(unique[0])
+
+                if event_index == heard_concept_index:
+                    communication_successful = True
+                else:
+                    self.model.fail_reason["wrong_winner"] += 1
             else:
                 heard_concept_index = None
+                self.model.fail_reason["shared_top"] += 1
         else:
             heard_concept_index = int(unique[0])
+            communication_successful = True
 
-        # Communication is successful if the right concept is identified
-        communication_successful = event_index == heard_concept_index
         # print(f"Communication successful: {communication_successful}")
         
         # TODO: For now, I'm saving a form if it was successfully recognised by the hearer
