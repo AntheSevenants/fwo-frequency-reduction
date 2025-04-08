@@ -50,7 +50,6 @@ def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
         # plt.ylim([0, 1])
     else:
         pass
-        ax.set_ylim([0, 1])
 
     chosen_word_indices = range(0, n)
     legend_values = [ model.tokens[chosen_word_index] for chosen_word_index in chosen_word_indices ]
