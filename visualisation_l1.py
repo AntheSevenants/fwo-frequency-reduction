@@ -41,9 +41,9 @@ def make_l1_token_plot(model, show_all_words=False, ax=None):
     legend_values = [ f"{model.tokens[chosen_word_index]} {model.ranks[chosen_word_index]}" for chosen_word_index in chosen_word_indices ]
     ax.legend(legend_values)
 
-def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
+def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
-    matrix_3d = np.stack(df["mean_token_l1"].to_numpy())
+    matrix_3d = np.stack(df[attribute].to_numpy())
 
     if ax is None:
         ax = plt
@@ -68,6 +68,9 @@ def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
         ax.plot(matrix_3d[:, i] + jitter, color=color, label=f"{model.tokens[i]} {model.ranks[i]}")
 
     ax.legend(legend_values)
+
+def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
+    property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax)
 
 def make_fail_reason_plot(model, ax=None):
     # Get the fail reason data from the data collector
