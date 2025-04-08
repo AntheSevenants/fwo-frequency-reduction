@@ -146,6 +146,7 @@ class ReductionAgent(mesa.Agent):
 
         # Set communication to false to begin with
         communication_successful = False
+        check_right_form = False
 
         # If no tokens were found within the vicinity, communication has failed
         if len(unique) == 0:
@@ -161,16 +162,19 @@ class ReductionAgent(mesa.Agent):
             # We need to check if two forms share the top spot
             if counts[0] > counts[1]:
                 heard_concept_index = int(unique[0])
-
-                if event_index == heard_concept_index:
-                    communication_successful = True
-                else:
-                    self.model.fail_reason["wrong_winner"] += 1
+                check_right_form = True
             else:
                 heard_concept_index = None
                 self.model.fail_reason["shared_top"] += 1
         else:
             heard_concept_index = int(unique[0])
+            check_right_form = True
+
+        if check_right_form:
+            if event_index == heard_concept_index:
+                communication_successful = True
+            else:
+                self.model.fail_reason["wrong_winner"] += 1
 
         # print(f"Communication successful: {communication_successful}")
         
