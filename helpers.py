@@ -133,6 +133,15 @@ def compute_mean_token_l1(model):
     # return tokenwise_memory
     #agent_token_averages.append(token_averages)
 
+def compute_mean_exemplar_count(model):
+    agentwise_count = np.zeros((model.num_agents, model.num_tokens))
+
+    for agent_index, agent in enumerate(model.agents):
+        token_counts = np.bincount(agent.indices_in_memory)
+        agentwise_count[int(agent_index), :] = token_counts
+    
+    return agentwise_count.mean(axis=0)
+
 def compute_communicative_success(model):
     if model.total_turns == 0:
         return 0
