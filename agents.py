@@ -113,10 +113,11 @@ class ReductionAgent(mesa.Agent):
 
         # Define parameters that weigh the L1 penalty and the historical success
         lambda_param = 1.0  # strength of sparsity effect; adjust as needed
-        mu_param = 1.0      # strength of the success factor; adjust as needed
+        mu_param = 0.1      # strength of the success factor; adjust as needed
+        intercept = 3
 
         # Compute the reduction probability. Here a sigmoid function is used to map the combined signal
-        reduction_prob = 1 / (1 + np.exp(lambda_param * l1_penalty - mu_param * historical_success))
+        reduction_prob = 1 / (1 + np.exp(-lambda_param * l1_penalty + intercept - mu_param * historical_success))
         # print(f"Reduction probability: {reduction_prob:.3f}")
 
         # Decide whether to apply reduction based on the computed probability.
@@ -170,7 +171,6 @@ class ReductionAgent(mesa.Agent):
                 self.model.fail_reason["shared_top"] += 1
         else:
             heard_concept_index = int(unique[0])
-            communication_successful = True
 
         # print(f"Communication successful: {communication_successful}")
         
