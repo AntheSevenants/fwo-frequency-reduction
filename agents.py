@@ -25,7 +25,7 @@ class ReductionAgent(mesa.Agent):
         # We create a memory with a very large size
         model_memory_size = self.model.initial_token_count * self.model.num_tokens
         self.memory = np.full((model_memory_size, self.model.num_dimensions), np.nan)
-        self.indices_in_memory = np.full(model_memory_size, np.nan)
+        self.indices_in_memory = np.full(model_memory_size, np.nan, dtype=np.int64)
 
         i = 0
         for token_index in range(self.model.num_tokens):
@@ -121,7 +121,7 @@ class ReductionAgent(mesa.Agent):
         # print(f"Reduction probability: {reduction_prob:.3f}")
 
         # Decide whether to apply reduction based on the computed probability.
-        if self.model.random.random() < reduction_prob:
+        if self.model.random.random() < reduction_prob and not self.model.disable_reduction:
             # Apply L1-based soft thresholding to encourage further sparsity
             threshold = 0.1  # the threshold value can be adjusted
             spoken_token_vector = np.maximum(spoken_token_vector - threshold, threshold)
