@@ -72,6 +72,9 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None):
 def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
     property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax)
 
+def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
+    property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax)
+
 def make_fail_reason_plot(model, ax=None):
     # Get the fail reason data from the data collector
     df = model.datacollector.get_model_vars_dataframe()
