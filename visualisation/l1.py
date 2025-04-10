@@ -75,6 +75,15 @@ def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
 def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
     property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax)
 
+def words_mean_exemplar_count_bar(model, ax=None):
+    if ax is None:
+        ax = plt
+    else:
+        pass
+
+    frequency_counts = model.datacollector.get_model_vars_dataframe()["mean_exemplar_count"].iloc[-1]
+    ax.bar(model.tokens, frequency_counts)    
+
 def make_fail_reason_plot(model, ax=None):
     # Get the fail reason data from the data collector
     df = model.datacollector.get_model_vars_dataframe()
