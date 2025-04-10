@@ -7,7 +7,7 @@ import pandas as pd
 
 from gensim.models import KeyedVectors
 
-from helpers import generate_zipfian_sample
+from model.helpers import generate_zipfian_sample
 
 parser = argparse.ArgumentParser(description='preprocess - sample words from a CGN frequency list and associate them with vectors')
 parser.add_argument('frequency_path', type=str, help='the file path to your COREX frequency list')
