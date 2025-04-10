@@ -22,10 +22,17 @@ class ReductionAgent(mesa.Agent):
         #print(self.vocabulary.shape)
 
     def init_memory(self):
-        # We create a memory with a very large size
+        # The model we are building has a maximum size. However, it is not yet maximum size at bootup time.
+        # So I'm just keeping the flexible size code. Needs must :-).
         model_memory_size = self.model.initial_token_count * self.model.num_tokens
+
+        if model_memory_size > self.model.memory_size:
+            raise ValueError(f"Initial agent memory size is {model_memory_size}, exceeding the memory limit of {self.model.memory_size}")
+
         self.memory = np.full((model_memory_size, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(model_memory_size, np.nan, dtype=np.int64)
+        self.last_used = np.full(model_memory_size, 0, dtype=np.int64)
+        self.frequency_count = np.full(model_memory_size, 1, dtype=np.int64)
 
         i = 0
         for token_index in range(self.model.num_tokens):
@@ -42,12 +49,36 @@ class ReductionAgent(mesa.Agent):
 
                 i += 1
 
-        # Now, delete all nans
+        # Now, delete all nans (though there should not be any nans!)
         self.memory = self.memory[~np.isnan(self.memory[:,1])]
-
+    
     def commit_to_memory(self, vector, concept_index):
-        self.memory = np.vstack([self.memory, vector])
-        self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
+        # If the memory is full, we need to remove the oldest form eligible for removal
+        if self.memory.shape[0] == self.model.memory_size:
+            # We look for indices which are associated with tokens that have more than one exemplar in memory
+            eligible_indices = [ i for i in range(self.model.num_tokens)
+                                 if self.frequency_count[self.indices_in_memory[i]] > self.model.initial_token_count ]
+
+            if not eligible_indices:
+                # This should rarely happen if you always ensure every token retains at least one exemplar.
+                raise Exception(f"Cannot remove an exemplar from memory as no types have frequencies over {self.model.initial_token_count}")
+        
+            # We choose the index which is the oldest
+            remove_index = min(eligible_indices, key=lambda i: self.last_used[i])
+
+            # Now, subtract one from the frequency counts for the associated token
+            self.frequency_count[self.indices_in_memory[remove_index]] -= 1
+
+            # And now we can replace the old exemplar with the new one!
+            self.memory[remove_index, :] = vector
+            self.indices_in_memory[remove_index] = concept_index
+            self.last_used[remove_index] = self.model.current_step
+            self.frequency_count[concept_index] += 1
+        else:
+            self.memory = np.vstack([self.memory, vector])
+            self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
+            self.last_used = np.append(self.last_used, self.model.current_step)
+            self.frequency_count[concept_index] += 1
 
     def interact_do(self):
         event_index = self.model.weighted_random_index()
