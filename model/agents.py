@@ -34,7 +34,7 @@ class ReductionAgent(mesa.Agent):
 
         self.memory = np.full((model_memory_size, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(model_memory_size, np.nan, dtype=np.int64)
-        self.last_used = np.full(model_memory_size, 0, dtype=np.int64)
+        self.last_used = np.full(self.model.memory_size, 0, dtype=np.int64)
         self.frequency_count = np.full(model_memory_size, 1, dtype=np.int64)
 
         i = 0
@@ -56,16 +56,13 @@ class ReductionAgent(mesa.Agent):
         self.memory = self.memory[~np.isnan(self.memory[:,1])]
 
     def update_last_used(self, index=None):
-        if self.memory.shape[0] == self.model.memory_size:
-            self.last_used[index] = self.model.current_step
-        else:
-            self.last_used = np.append(self.last_used, self.model.current_step)
+        self.last_used[index] = self.model.current_step
     
     def commit_to_memory(self, vector, concept_index):
         # If the memory is full, we need to remove the oldest form eligible for removal
         if self.memory.shape[0] == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
-            eligible_indices = [ i for i in range(self.model.num_tokens)
+            eligible_indices = [ i for i in range(self.model.indices_in_memory)
                                  if self.frequency_count[self.indices_in_memory[i]] > self.model.initial_token_count ]
 
             if not eligible_indices:
