@@ -54,6 +54,12 @@ class ReductionAgent(mesa.Agent):
 
         # Now, delete all nans (though there should not be any nans!)
         self.memory = self.memory[~np.isnan(self.memory[:,1])]
+
+    def update_last_used(self, index=None):
+        if self.memory.shape[0] == self.model.memory_size:
+            self.last_used[index] = self.model.current_step
+        else:
+            self.last_used = np.append(self.last_used, self.model.current_step)
     
     def commit_to_memory(self, vector, concept_index):
         # If the memory is full, we need to remove the oldest form eligible for removal
@@ -75,12 +81,12 @@ class ReductionAgent(mesa.Agent):
             # And now we can replace the old exemplar with the new one!
             self.memory[remove_index, :] = vector
             self.indices_in_memory[remove_index] = concept_index
-            self.last_used[remove_index] = self.model.current_step
+            self.update_last_used(remove_index)
             self.frequency_count[concept_index] += 1
         else:
             self.memory = np.vstack([self.memory, vector])
             self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
-            self.last_used = np.append(self.last_used, self.model.current_step)
+            self.update_last_used()
             self.frequency_count[concept_index] += 1
 
     def interact_do(self):
