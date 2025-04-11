@@ -124,6 +124,8 @@ class ReductionAgent(mesa.Agent):
         
         if self.model.production_model == ProductionModels.SINGLE_EXEMPLAR:
             spoken_token_vector = chosen_exemplar_vector
+            # Update last used characteristics for this index
+            self.update_last_used(chosen_exemplar_base_index)
         else:    
         # Now, we make neighbourhood around this exemplar
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL: 
@@ -137,6 +139,10 @@ class ReductionAgent(mesa.Agent):
             speaker_neighbourhood_matrix = np.vstack(speaker_selected_rows)
             # ... and then we turn it into a single representation that we can emit
             spoken_token_vector = np.mean(speaker_neighbourhood_matrix, axis=0)
+
+            for speaker_neighbourhood_index in speaker_neighbourhood_indices:
+                # Update last used characteristics for this index
+                self.update_last_used(speaker_neighbourhood_index)
 
         # - - - - - - - - -
         # R E D U C T I O N
@@ -194,6 +200,10 @@ class ReductionAgent(mesa.Agent):
         # We check what concepts they are connected to
         hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
         unique, counts = np.unique(hearer_concept_values, return_counts=True)
+
+        # Update last used indices for forms that were activated upon reception
+        for hearer_neighbourhood_index in hearer_neighbourhood_indices:
+            self.update_last_used(hearer_neighbourhood_index)
 
         # Set communication to false to begin with
         communication_successful = False
