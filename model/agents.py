@@ -62,7 +62,7 @@ class ReductionAgent(mesa.Agent):
         # If the memory is full, we need to remove the oldest form eligible for removal
         if self.memory.shape[0] == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
-            eligible_indices = [ i for i in range(self.model.indices_in_memory)
+            eligible_indices = [ i for i in range(self.indices_in_memory.size)
                                  if self.frequency_count[self.indices_in_memory[i]] > self.model.initial_token_count ]
 
             if not eligible_indices:
