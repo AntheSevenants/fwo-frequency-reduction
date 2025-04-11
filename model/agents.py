@@ -4,6 +4,7 @@ import numpy as np
 
 from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest
 from model.types.neighbourhood import NeighbourhoodTypes
+from model.types.production import ProductionModels
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -113,18 +114,21 @@ class ReductionAgent(mesa.Agent):
         chosen_exemplar_base_index = self.model.random.choice(matching_token_indices)
         chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
         
+        if self.model.production_model == ProductionModels.SINGLE_EXEMPLAR:
+            spoken_token_vector = chosen_exemplar_vector
+        else:    
         # Now, we make neighbourhood around this exemplar
-        if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL: 
-            speaker_neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
-        elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
-            speaker_neighbourhood_indices = get_neighbours_nearest(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)            
+            if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL: 
+                speaker_neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
+            elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
+                speaker_neighbourhood_indices = get_neighbours_nearest(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)            
 
-        # We select only the phonetic representations of the rows of this concept,
-        # then stack everything into a single matrix ...
-        speaker_selected_rows = self.memory[speaker_neighbourhood_indices]
-        speaker_neighbourhood_matrix = np.vstack(speaker_selected_rows)
-        # ... and then we turn it into a single representation that we can emit
-        spoken_token_vector = np.mean(speaker_neighbourhood_matrix, axis=0)
+            # We select only the phonetic representations of the rows of this concept,
+            # then stack everything into a single matrix ...
+            speaker_selected_rows = self.memory[speaker_neighbourhood_indices]
+            speaker_neighbourhood_matrix = np.vstack(speaker_selected_rows)
+            # ... and then we turn it into a single representation that we can emit
+            spoken_token_vector = np.mean(speaker_neighbourhood_matrix, axis=0)
 
         # - - - - - - - - -
         # R E D U C T I O N

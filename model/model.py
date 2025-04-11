@@ -6,11 +6,12 @@ import numpy as np
 from model.agents import ReductionAgent
 from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count
 from model.types.neighbourhood import NeighbourhoodTypes
+from model.types.production import ProductionModels
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -22,6 +23,7 @@ class ReductionModel(mesa.Model):
         self.current_step = 0
         self.neighbourhood_size = neighbourhood_size
         self.neighbourhood_type = neighbourhood_type
+        self.production_model = production_model
 
         #
         # Visualisation stuff
