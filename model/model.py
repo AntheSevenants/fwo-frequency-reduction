@@ -9,11 +9,13 @@ from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes
 from model.types.feedback import FeedbackTypes
+from model.types.repair import Repair
+
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, feedback_type=FeedbackTypes.FEEDBACK, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -28,6 +30,7 @@ class ReductionModel(mesa.Model):
         self.production_model = production_model
         self.reduction_mode = reduction_mode
         self.feedback_type = feedback_type
+        self.repair = repair
 
         #
         # Visualisation stuff
@@ -114,3 +117,11 @@ class ReductionModel(mesa.Model):
 
     def get_original_vector(self, token_index):
         return self.vectors[token_index, :]
+    
+    def do_repair(self, spoken_vector, token_index):
+        # First, stack both vectors
+        original_vector = self.get_original_vector(token_index)
+        combined_vector = np.vstack((spoken_vector, original_vector)).mean(axis=0)
+
+        # TODO: decide on better mechanism
+        return combined_vector.mean(axis=0)

@@ -7,6 +7,7 @@ from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes
 from model.types.feedback import FeedbackTypes
+from model.types.repair import Repair
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -188,51 +189,63 @@ class ReductionAgent(mesa.Agent):
         # R E C E P T I O N
         # - - - - - - - - -
 
-        # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
-        if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
-            hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
-        elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
-            hearer_neighbourhood_indices = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+        for attempt in range(1):
+            # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
+            if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
+                hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+            elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
+                hearer_neighbourhood_indices = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
 
-        # We check what concepts they are connected to
-        hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
-        unique, counts = np.unique(hearer_concept_values, return_counts=True)
+            # We check what concepts they are connected to
+            hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
+            unique, counts = np.unique(hearer_concept_values, return_counts=True)
 
-        # Update last used indices for forms that were activated upon reception
-        for hearer_neighbourhood_index in hearer_neighbourhood_indices:
-            self.update_last_used(hearer_neighbourhood_index)
+            # Update last used indices for forms that were activated upon reception
+            for hearer_neighbourhood_index in hearer_neighbourhood_indices:
+                self.update_last_used(hearer_neighbourhood_index)
 
-        # Set communication to false to begin with
-        communication_successful = False
-        check_right_form = False
+            # Set communication to false to begin with
+            communication_successful = False
+            check_right_form = False
 
-        # If no tokens were found within the vicinity, communication has failed
-        if len(unique) == 0:
-            # print("No tokens in this neighbourhood")
-            heard_concept_index = None
-            self.model.fail_reason["no_tokens"] += 1
-        elif len(counts) > 1:
-            # We check what form is the most represented in the neighbourhood
-            sorted_indices = np.argsort(counts)[::-1]
-            unique = unique[sorted_indices]
-            counts = counts[sorted_indices]
-            
-            # We need to check if two forms share the top spot
-            if counts[0] > counts[1]:
+            # If no tokens were found within the vicinity, communication has failed
+            if len(unique) == 0:
+                # print("No tokens in this neighbourhood")
+                heard_concept_index = None
+                self.model.fail_reason["no_tokens"] += 1
+                break
+            elif len(counts) > 1:
+                # We check what form is the most represented in the neighbourhood
+                sorted_indices = np.argsort(counts)[::-1]
+                unique = unique[sorted_indices]
+                counts = counts[sorted_indices]
+                
+                # We need to check if two forms share the top spot
+                if counts[0] > counts[1]:
+                    heard_concept_index = int(unique[0])
+                    check_right_form = True
+                else:
+                    heard_concept_index = None
+                    self.model.fail_reason["shared_top"] += 1
+
+                    if self.model.repair == Repair.REPAIR:
+                        # Try again
+                        spoken_token_vector = self.model.do_repair(spoken_token_vector, event_index)
+                        continue
+                    elif self.model.repair == Repair.NO_REPAIR:
+                        break
+                    else:
+                        raise ValueError("Repair option not recognised")
+            else:
                 heard_concept_index = int(unique[0])
                 check_right_form = True
-            else:
-                heard_concept_index = None
-                self.model.fail_reason["shared_top"] += 1
-        else:
-            heard_concept_index = int(unique[0])
-            check_right_form = True
-
-        if check_right_form:
-            if event_index == heard_concept_index:
-                communication_successful = True
-            else:
-                self.model.fail_reason["wrong_winner"] += 1
+    
+            if check_right_form:
+                if event_index == heard_concept_index:
+                    communication_successful = True
+                else:
+                    self.model.fail_reason["wrong_winner"] += 1
+            break
 
         # print(f"Communication successful: {communication_successful}")
         
