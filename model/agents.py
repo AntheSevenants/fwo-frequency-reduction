@@ -5,6 +5,7 @@ import numpy as np
 from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
+from model.types.reduction import ReductionModes
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -134,26 +135,34 @@ class ReductionAgent(mesa.Agent):
         # R E D U C T I O N
         # - - - - - - - - -
 
-        # Here we apply a reduction process which is influenced by both the L1 penalty
-        # (i.e. encouraging sparsity) and the past communicative success of this event.
+        # I currently don't know whether the whole L1 thing is even necessary for reduction.
+        # So I programmed two modes: a success-dependent one and a "dumb" one which just always reduces under a certain threshold
 
-        # Compute the L1 penalty (the sum of absolute values)
-        l1_penalty = np.sum(np.abs(spoken_token_vector))
-        # print(f"L1 penalty: {l1_penalty}")
+        if self.model.reduction_mode == ReductionModes.ALWAYS:
+            reduction_prob = self.model.reduction_prior
+        elif self.model.reduction_mode == ReductionModes.SUCCESS_DEPENDENT:
+            # Here we apply a reduction process which is influenced by both the L1 penalty
+            # (i.e. encouraging sparsity) and the past communicative success of this event.
 
-        # Retrieve historical communicative success for this event token
-        # Assume self.success_history is a dict that maps event indices to a success score.
-        # Default to 1 if there's no history yet.
-        historical_success = self.success_history.get(event_index, 1)
+            # Compute the L1 penalty (the sum of absolute values)
+            l1_penalty = np.sum(np.abs(spoken_token_vector))
+            # print(f"L1 penalty: {l1_penalty}")
 
-        # Define parameters that weigh the L1 penalty and the historical success
-        lambda_param = 1.0  # strength of sparsity effect; adjust as needed
-        mu_param = 0.1      # strength of the success factor; adjust as needed
-        intercept = 7
+            # Retrieve historical communicative success for this event token
+            # Assume self.success_history is a dict that maps event indices to a success score.
+            # Default to 1 if there's no history yet.
+            historical_success = self.success_history.get(event_index, 1)
 
-        # Compute the reduction probability. Here a sigmoid function is used to map the combined signal
-        reduction_prob = 1 / (1 + np.exp(-lambda_param * l1_penalty + intercept - mu_param * historical_success))
-        # print(f"Reduction probability: {reduction_prob:.3f}")
+            # Define parameters that weigh the L1 penalty and the historical success
+            lambda_param = 1.0  # strength of sparsity effect; adjust as needed
+            mu_param = 0.1      # strength of the success factor; adjust as needed
+            intercept = 7
+
+            # Compute the reduction probability. Here a sigmoid function is used to map the combined signal
+            reduction_prob = 1 / (1 + np.exp(-lambda_param * l1_penalty + intercept - mu_param * historical_success))
+            # print(f"Reduction probability: {reduction_prob:.3f}")
+        else:
+            raise ValueError("Reduction mode not recognised")
 
         # Decide whether to apply reduction based on the computed probability.
         if self.model.random.random() < reduction_prob and not self.model.disable_reduction:
