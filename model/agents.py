@@ -6,6 +6,7 @@ from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neigh
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes
+from model.types.feedback import FeedbackTypes
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -222,7 +223,6 @@ class ReductionAgent(mesa.Agent):
 
         # print(f"Communication successful: {communication_successful}")
         
-        # TODO: For now, I'm saving a form if it was successfully recognised by the hearer
         if communication_successful:
             self.commit_to_memory(spoken_token_vector, heard_concept_index)
             
@@ -232,6 +232,11 @@ class ReductionAgent(mesa.Agent):
 
             self.model.successful_turns += 1
         else:
+            # If there is no feedback mechanism, also save form when speaker misheard
+            if self.model.feedback_type == FeedbackTypes.NO_FEEDBACK and heard_concept_index is not None:
+                self.commit_to_memory(spoken_token_vector, heard_concept_index)
+
+
             # Optionally, penalize if the communication failed.
             self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
 
