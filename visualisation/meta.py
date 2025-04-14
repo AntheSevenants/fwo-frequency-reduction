@@ -83,6 +83,8 @@ def make_umap_plot_inner(vocabulary, percentiles, ax=None):
     x,y = zip(*proj_2d)
     ax.scatter(x, y, c=percentiles, cmap='gray')
 
+    return ax
+
 def make_umap_plot(model, step, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
     if step < 0:
@@ -90,4 +92,7 @@ def make_umap_plot(model, step, ax=None):
     else:
         vocabulary = df["average_vocabulary"].iloc[step]
 
-    make_umap_plot_inner(vocabulary, model.percentiles, ax)
+    ax = make_umap_plot_inner(vocabulary, model.percentiles, ax)
+    step = step * model.datacollector_step_size
+    ax.set_title(f"UMAP plot of tokens (t = {step})")
+    ax
