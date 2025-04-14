@@ -34,15 +34,19 @@ def make_mean_l1_plot(model, smooth=True, ax=None):
 def make_communicative_success_macro_plot(model, smooth=True, ax=None):
     return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)")
 
-def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None):
+def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False):
     df = model.datacollector.get_model_vars_dataframe()
     matrix_3d = np.stack(df[attribute].to_numpy())
 
     if ax is None:
         ax = plt
-        # plt.ylim([0, 1])
+
+        if ratio:
+            plt.ylim([0, 1])
     else:
-        pass
+        if ratio:
+            ax.set_ylim([0, 1])
+
 
     chosen_word_indices = range(0, n)
     legend_values = [ model.tokens[chosen_word_index] for chosen_word_index in chosen_word_indices ]
@@ -75,6 +79,9 @@ def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None
 
 def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None):
     property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)")
+
+def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None):
+    property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True)
 
 def words_mean_exemplar_count_bar(model, ax=None):
     if ax is None:

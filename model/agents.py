@@ -37,6 +37,7 @@ class ReductionAgent(mesa.Agent):
         self.indices_in_memory = np.full(model_memory_size, np.nan, dtype=np.int64)
         self.last_used = np.full(self.model.memory_size, 0, dtype=np.int64)
         self.frequency_count = np.full(model_memory_size, 1, dtype=np.int64)
+        self.token_good_origin = np.full(model_memory_size, np.nan, dtype=np.int64)
 
         i = 0
         for token_index in range(self.model.num_tokens):
@@ -50,6 +51,7 @@ class ReductionAgent(mesa.Agent):
                 # Save to memory
                 self.memory[i, :] = noisy_vector
                 self.indices_in_memory[i] = token_index
+                self.token_good_origin[i] = 1
 
                 i += 1
 
@@ -63,12 +65,12 @@ class ReductionAgent(mesa.Agent):
                 random_vector = self.model.get_original_vector(random_index)
                 noisy_vector = add_noise(random_vector)
 
-                self.commit_to_memory(noisy_vector, random_index)
+                self.commit_to_memory(noisy_vector, random_index, good_origin=True)
 
     def update_last_used(self, index=None):
         self.last_used[index] = self.model.current_step
     
-    def commit_to_memory(self, vector, concept_index):
+    def commit_to_memory(self, vector, concept_index, good_origin=True):
         # If the memory is full, we need to remove the oldest form eligible for removal
         if self.memory.shape[0] == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
@@ -88,11 +90,13 @@ class ReductionAgent(mesa.Agent):
             # And now we can replace the old exemplar with the new one!
             self.memory[remove_index, :] = vector
             self.indices_in_memory[remove_index] = concept_index
+            self.token_good_origin[remove_index] = int(good_origin)
             self.update_last_used(remove_index)
             self.frequency_count[concept_index] += 1
         else:
             self.memory = np.vstack([self.memory, vector])
             self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
+            self.token_good_origin = np.append(self.token_good_origin, int(good_origin))
             self.update_last_used()
             self.frequency_count[concept_index] += 1
 
@@ -264,7 +268,7 @@ class ReductionAgent(mesa.Agent):
         # print(f"Communication successful: {communication_successful}")
         
         if communication_successful:
-            self.commit_to_memory(spoken_token_vector, heard_concept_index)
+            self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=True)
             
             # Increase the historical success score for this event (or token).
             # This could be a simple counter or a more elaborate moving average.
@@ -275,7 +279,7 @@ class ReductionAgent(mesa.Agent):
         else:
             # If there is no feedback mechanism, also save form when speaker misheard
             if self.model.feedback_type == FeedbackTypes.NO_FEEDBACK and heard_concept_index is not None:
-                self.commit_to_memory(spoken_token_vector, heard_concept_index)
+                self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
 
 
             # Optionally, penalize if the communication failed.
