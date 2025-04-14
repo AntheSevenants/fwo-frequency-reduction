@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from visualisation.meta import formatter
 
-def make_mean_l1_plot(model, smooth=True, ax=None):
+def make_general_plot(model, attribute, smooth=True, ax=None, title=None):
     df = model.datacollector.get_model_vars_dataframe()
 
     if ax is None:
@@ -16,35 +16,23 @@ def make_mean_l1_plot(model, smooth=True, ax=None):
         window_length = 100
         polyorder = 1
         
-        y_smooth_repairs = savgol_filter(df["mean_agent_l1"], window_length, polyorder)
+        y_smooth_repairs = savgol_filter(df[attribute], window_length, polyorder)
         
         ax.plot(y_smooth_repairs, color="blue")
     else:
-        ax.plot(df["mean_agent_l1"], color="green")
+        ax.plot(df[attribute], color="green")
 
-    ax.set_title("Mean L1 (across tokens, across agents)")
+    if title is not None:
+        ax.set_title(title)
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
     
     return ax
 
-def make_l1_token_plot(model, show_all_words=False, ax=None):
-    df = model.datacollector.get_model_vars_dataframe()
-    matrix_3d = np.stack(df["mean_token_l1"].to_numpy())
+def make_mean_l1_plot(model, smooth=True, ax=None):
+    return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)")
 
-    if ax is None:
-        ax = plt
-        # plt.ylim([0, 1])
-    else:
-        pass
-        # ax.set_ylim([0, 1])
-
-    steps = math.floor(len(model.tokens) / 10)
-
-    ax.plot(matrix_3d[::,::steps if not show_all_words else 1])
-    chosen_word_indices = range(0, model.num_tokens, steps if not show_all_words else 1)
-    legend_values = [ f"{model.tokens[chosen_word_index]} {model.ranks[chosen_word_index]}" for chosen_word_index in chosen_word_indices ]
-    ax.legend(legend_values)
-    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
+def make_communicative_success_macro_plot(model, smooth=True, ax=None):
+    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)")
 
 def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None):
     df = model.datacollector.get_model_vars_dataframe()
