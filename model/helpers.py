@@ -177,6 +177,28 @@ def compute_average_vocabulary(model):
     vocabularies = np.array(vocabularies)
     return np.mean(vocabularies, axis=0)
 
+def compute_average_vocabulary_flexible(model):
+    agentwise_memory = np.zeros((model.num_agents, model.num_tokens, model.num_dimensions))
+
+    for agent_index, agent in enumerate(model.agents):
+        matrix = agent.memory
+        tokens = agent.indices_in_memory
+        token_indices = defaultdict(list)
+
+        for i, token in enumerate(tokens):
+            if np.isnan(token):
+                continue
+            
+            token_indices[token].append(i)
+
+        # token_index = index of the token
+        # indices = the exemplars in the memory corresponding to this token
+        for token_index, indices in token_indices.items():
+            token_index = int(token_index)
+            agentwise_memory[agent_index, token_index, :] = matrix[indices].mean(axis=0)
+
+    return agentwise_memory.mean(axis=0)
+
 def compute_average_communicative_success_probability(model):
     communicative_success_probabilities = [ agent.compute_communicative_success_probability() for agent in model.agents ]
     return np.mean(communicative_success_probabilities)
