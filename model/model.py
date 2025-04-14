@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from model.agents import ReductionAgent
-from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible
+from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes
@@ -85,7 +85,7 @@ class ReductionModel(mesa.Model):
                              "confusion_matrix": compute_confusion_matrix,
                              "fail_reason": compute_fail_reason,
                              "mean_exemplar_count": compute_mean_exemplar_count,
-                             "average_vocabulary": compute_average_vocabulary_flexible }
+                             "success_per_token": compute_communicative_success_per_token }
         )
 
         self.datacollector.collect(self)
@@ -95,6 +95,8 @@ class ReductionModel(mesa.Model):
             self.total_repairs = 0
             self.successful_turns = 0
             self.failed_turns = 0
+            self.success_per_token = np.zeros(self.num_tokens)
+            self.failure_per_token = np.zeros(self.num_tokens)
             self.total_turns = 0
             self.fail_reason = { "no_tokens": 0, "wrong_winner": 0, "shared_top": 0 }
 
