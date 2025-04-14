@@ -56,6 +56,15 @@ class ReductionAgent(mesa.Agent):
         # Now, delete all nans (though there should not be any nans!)
         self.memory = self.memory[~np.isnan(self.memory[:,1])]
 
+        # To prevent certain model anomalies, we prefill the memory
+        if self.model.prefill_memory:
+            while self.memory.shape[0] < self.model.memory_size:
+                random_index = self.model.weighted_random_index()
+                random_vector = self.model.get_original_vector(random_index)
+                noisy_vector = add_noise(random_vector)
+
+                self.commit_to_memory(noisy_vector, random_index)
+
     def update_last_used(self, index=None):
         self.last_used[index] = self.model.current_step
     
