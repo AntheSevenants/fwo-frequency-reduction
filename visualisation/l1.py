@@ -85,6 +85,9 @@ def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
 def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
     property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
 
+def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None):
+    property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)")
+
 def words_mean_exemplar_count_bar(model, ax=None):
     if ax is None:
         ax = plt
