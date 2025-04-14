@@ -178,7 +178,7 @@ class ReductionAgent(mesa.Agent):
         # Decide whether to apply reduction based on the computed probability.
         if self.model.random.random() < reduction_prob and not self.model.disable_reduction:
             # Apply L1-based soft thresholding to encourage further sparsity
-            threshold = 0.05  # the threshold value can be adjusted
+            threshold = 1  # the threshold value can be adjusted
             spoken_token_vector = np.maximum(spoken_token_vector - threshold, threshold)
             # print("Reduction applied: Token vector sparsified.")
         else:

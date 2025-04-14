@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+from scipy.spatial.distance import pdist, squareform
 from collections import defaultdict
 
 EPSILON = 0.000001
@@ -56,14 +57,8 @@ def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
 def generate_word_vectors(vocabulary_size=1000, dimensions=300, seed=42):
     np.random.seed(seed)
 
-    # Generate random vectors with uniform distribution in [0,1]
-    vectors = np.random.rand(vocabulary_size, dimensions)
-    
-    # Normalize to unit length to ensure even distribution in space
-    # Works as follows:
-    # 1. for each row, compute: sqrt(row-element-1^2 + row-element-2^2)
-    # 2. divide row elementwise by result, which makes it so the distribution in space is comparable
-    vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
+    # Generate random vectors with values ranging from 0 to 100
+    vectors = np.random.randint(0, 100, size=(vocabulary_size, dimensions))
     
     return np.asarray(vectors)
 
