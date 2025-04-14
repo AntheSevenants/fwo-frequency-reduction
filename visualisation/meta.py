@@ -82,4 +82,4 @@ def make_umap_plot(model, step, ax=None):
     else:
         vocabulary = df["average_vocabulary"].iloc[step]
 
-    make_umap_plot_inner(model, vocabulary, model.percentiles, ax)
+    make_umap_plot_inner(vocabulary, model.percentiles, ax)
