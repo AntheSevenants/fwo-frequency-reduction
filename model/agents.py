@@ -189,8 +189,9 @@ class ReductionAgent(mesa.Agent):
         # Decide whether to apply reduction based on the computed probability.
         if self.model.random.random() < reduction_prob and not self.model.disable_reduction:
             # Apply L1-based soft thresholding to encourage further sparsity
+            reduction_strength = 15
             threshold = 15  # the threshold value can be adjusted
-            spoken_token_vector = np.maximum(spoken_token_vector - threshold, threshold)
+            spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
             # print("Reduction applied: Token vector sparsified.")
         else:
             pass
@@ -270,6 +271,7 @@ class ReductionAgent(mesa.Agent):
             self.success_history[event_index] = self.success_history.get(event_index, 0) + 1
 
             self.model.successful_turns += 1
+            self.model.success_per_token[event_index] += 1
         else:
             # If there is no feedback mechanism, also save form when speaker misheard
             if self.model.feedback_type == FeedbackTypes.NO_FEEDBACK and heard_concept_index is not None:
@@ -280,6 +282,7 @@ class ReductionAgent(mesa.Agent):
             self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
 
             self.model.failed_turns += 1
+            self.model.failure_per_token[event_index] += 1
     
         if heard_concept_index is not None:
             # Save data for the confusion matrix

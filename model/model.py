@@ -85,7 +85,8 @@ class ReductionModel(mesa.Model):
                              "confusion_matrix": compute_confusion_matrix,
                              "fail_reason": compute_fail_reason,
                              "mean_exemplar_count": compute_mean_exemplar_count,
-                             "success_per_token": compute_communicative_success_per_token }
+                             "success_per_token": compute_communicative_success_per_token,
+                             "communicative_success_macro": compute_communicative_success_macro_average }
         )
 
         self.datacollector.collect(self)
