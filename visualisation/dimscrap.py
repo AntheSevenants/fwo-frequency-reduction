@@ -3,6 +3,7 @@ import numpy as np
 import math
 
 from scipy.signal import savgol_filter
+from visualisation.meta import formatter
 
 def words_reduction_plot(model, show_all_words=False, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
@@ -103,6 +104,7 @@ def make_communication_plot(model, smooth=True, ax=None):
         ax.plot(df["communicative_failure"], color="red")
 
     ax.set_title("Global communicative success")
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
     
     return ax
 
@@ -142,6 +144,8 @@ def make_communicative_success_probability_plot(model, smooth=True, ax=None):
         ax.plot(y_smooth_success, color="blue")
     else:
         ax.plot(df["average_communicative_success_probability"], color="blue")
+
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
     
     return ax
 

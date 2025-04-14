@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 
 from umap import UMAP
 
+def formatter(x, pos, scale=100):
+    del pos
+    return str(int(x * scale))
+
 def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_func):
     fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(12, 12))
 
@@ -35,6 +39,9 @@ def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_f
     plt.show()
 
 def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwargs):
+    if model.datacollector_step_size != 1:
+        steps = [ int(step / model.datacollector_step_size) for step in steps ]
+
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 12))
 
     plot_function(model, step=steps[0], ax=ax1, **kwargs)
@@ -62,6 +69,7 @@ def make_confusion_plot(model, step, n=35, ax=None):
     ax.set_xticklabels(labels)
     ax.set_yticklabels(labels)
 
+    step = step * model.datacollector_step_size
     ax.set_title(f"Confusion matrix (t={step})", y=0.92, color="white")
 
     return ax

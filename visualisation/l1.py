@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from scipy.signal import savgol_filter
+from visualisation.meta import formatter
 
 def make_mean_l1_plot(model, smooth=True, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
@@ -22,6 +23,7 @@ def make_mean_l1_plot(model, smooth=True, ax=None):
         ax.plot(df["mean_agent_l1"], color="green")
 
     ax.set_title("Mean L1 (across tokens, across agents)")
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
     
     return ax
 
@@ -42,6 +44,7 @@ def make_l1_token_plot(model, show_all_words=False, ax=None):
     chosen_word_indices = range(0, model.num_tokens, steps if not show_all_words else 1)
     legend_values = [ f"{model.tokens[chosen_word_index]} {model.ranks[chosen_word_index]}" for chosen_word_index in chosen_word_indices ]
     ax.legend(legend_values)
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
 
 def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None):
     df = model.datacollector.get_model_vars_dataframe()
@@ -71,6 +74,8 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
 
     ax.legend(legend_values)
 
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
+
     if title is not None:
         ax.set_title(title)
 
@@ -96,8 +101,12 @@ def make_fail_reason_plot(model, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
     # Turn it into a pandas dataframe
     fail_reason = pd.DataFrame.from_records(df["fail_reason"])
+
+    # If we aggregate datacollector steps, correct for it here
+    group_size = 100 if model.datacollector_step_size == 1 else 1
+
     # Group all data in groups of 100 steps
-    grouped_df = fail_reason.groupby(np.arange(len(fail_reason)) // 100).sum()
+    grouped_df = fail_reason.groupby(np.arange(len(fail_reason)) // group_size).sum()
     # Make percentual overview
     grouped_df = grouped_df.div(grouped_df.sum(axis=1), axis=0).multiply(100)
 
@@ -108,3 +117,5 @@ def make_fail_reason_plot(model, ax=None):
 
     # Stacked bar plot
     grouped_df.plot(kind="bar", stacked=True, ax=ax, title="Communication failure reason")
+    
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
