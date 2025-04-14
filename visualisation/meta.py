@@ -64,17 +64,20 @@ def make_confusion_plot(model, step, n=35, ax=None):
 
     return ax
 
-def make_umap_plot(model, step, ax=None):
+def make_umap_plot_inner(vocabulary, percentiles, ax=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(5,5))
 
+    umap_2d = UMAP(n_components=2, init='random', random_state=0)
+    proj_2d = umap_2d.fit_transform(np.asarray(vocabulary))
+    x,y = zip(*proj_2d)
+    ax.scatter(x, y, c=percentiles, cmap='gray')
+
+def make_umap_plot(model, step, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
     if step < 0:
         vocabulary = model.vectors
     else:
         vocabulary = df["average_vocabulary"].iloc[step]
 
-    umap_2d = UMAP(n_components=2, init='random', random_state=0)
-    proj_2d = umap_2d.fit_transform(np.asarray(vocabulary))
-    x,y = zip(*proj_2d)
-    ax.scatter(x, y, c=model.percentiles, cmap='gray')
+    make_umap_plot_inner(model, vocabulary, model.percentiles, ax)
