@@ -20,6 +20,8 @@ def make_mean_l1_plot(model, smooth=True, ax=None):
         ax.plot(y_smooth_repairs, color="blue")
     else:
         ax.plot(df["mean_agent_l1"], color="green")
+
+    ax.set_title("Mean L1 (across tokens, across agents)")
     
     return ax
 
@@ -41,7 +43,7 @@ def make_l1_token_plot(model, show_all_words=False, ax=None):
     legend_values = [ f"{model.tokens[chosen_word_index]} {model.ranks[chosen_word_index]}" for chosen_word_index in chosen_word_indices ]
     ax.legend(legend_values)
 
-def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None):
+def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None):
     df = model.datacollector.get_model_vars_dataframe()
     matrix_3d = np.stack(df[attribute].to_numpy())
 
@@ -69,11 +71,14 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None):
 
     ax.legend(legend_values)
 
+    if title is not None:
+        ax.set_title(title)
+
 def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax)
+    property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)")
 
 def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax)
+    property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
 
 def words_mean_exemplar_count_bar(model, ax=None):
     if ax is None:
@@ -82,7 +87,9 @@ def words_mean_exemplar_count_bar(model, ax=None):
         pass
 
     frequency_counts = model.datacollector.get_model_vars_dataframe()["mean_exemplar_count"].iloc[-1]
-    ax.bar(model.tokens, frequency_counts)    
+    ax.bar(model.tokens, frequency_counts)   
+
+    ax.set_title("Mean exemplar count per token (across agents)") 
 
 def make_fail_reason_plot(model, ax=None):
     # Get the fail reason data from the data collector
@@ -100,4 +107,4 @@ def make_fail_reason_plot(model, ax=None):
         pass
 
     # Stacked bar plot
-    grouped_df.plot(kind="bar", stacked=True, ax=ax)
+    grouped_df.plot(kind="bar", stacked=True, ax=ax, title="Communication failure reason")

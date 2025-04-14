@@ -44,7 +44,7 @@ def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwa
 
 def make_confusion_plot(model, step, n=35, ax=None):
     if ax is None:
-        fig, ax = plt.subplots(figsize=(10,10))
+        fig, ax = plt.subplots(figsize=(15,10))
 
     df = model.datacollector.get_model_vars_dataframe()
     confusion_matrix = df["confusion_matrix"].iloc[step]
@@ -61,6 +61,8 @@ def make_confusion_plot(model, step, n=35, ax=None):
     
     ax.set_xticklabels(labels)
     ax.set_yticklabels(labels)
+
+    ax.set_title(f"Confusion matrix (t={step})", y=0.92, color="white")
 
     return ax
 

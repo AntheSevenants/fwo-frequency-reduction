@@ -101,6 +101,8 @@ def make_communication_plot(model, smooth=True, ax=None):
     else:
         ax.plot(df["communicative_success"], color="green")
         ax.plot(df["communicative_failure"], color="red")
+
+    ax.set_title("Global communicative success")
     
     return ax
 
