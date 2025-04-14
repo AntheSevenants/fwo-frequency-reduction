@@ -37,10 +37,10 @@ def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_f
 def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwargs):
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 12))
 
-    plot_function(model, step=steps[0] - 1, ax=ax1, **kwargs)
-    plot_function(model, step=steps[1] - 1, ax=ax2, **kwargs)
-    plot_function(model, step=steps[2] - 1, ax=ax3, **kwargs)
-    plot_function(model, step=model.steps - 1, ax=ax4, **kwargs)
+    plot_function(model, step=steps[0], ax=ax1, **kwargs)
+    plot_function(model, step=steps[1], ax=ax2, **kwargs)
+    plot_function(model, step=steps[2], ax=ax3, **kwargs)
+    plot_function(model, step=steps[3], ax=ax4, **kwargs)
 
 def make_confusion_plot(model, step, n=35, ax=None):
     if ax is None:
