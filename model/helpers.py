@@ -167,6 +167,10 @@ def compute_communicative_success_per_token(model):
     with np.errstate(invalid="ignore"):
         return model.success_per_token / (model.success_per_token + model.failure_per_token)
     
+def compute_communicative_success_macro_average(model):
+    with np.errstate(invalid="ignore"):
+        return np.nanmean(model.success_per_token / (model.success_per_token + model.failure_per_token))
+
 def compute_fail_reason(model):
     return model.fail_reason
     
