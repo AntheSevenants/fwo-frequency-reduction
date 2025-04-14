@@ -6,11 +6,19 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from visualisation.meta import formatter
 
-def make_general_plot(model, attribute, smooth=True, ax=None, title=None):
+def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=False):
     df = model.datacollector.get_model_vars_dataframe()
 
     if ax is None:
         ax = plt
+
+        if ratio:
+            plt.ylim([0, 1])
+    else:
+        if ratio:
+            ax.set_ylim([0, 1])
+
+
     
     if smooth:
         window_length = 100
@@ -32,7 +40,7 @@ def make_mean_l1_plot(model, smooth=True, ax=None):
     return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)")
 
 def make_communicative_success_macro_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)")
+    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True)
 
 def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False):
     df = model.datacollector.get_model_vars_dataframe()
@@ -78,7 +86,7 @@ def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None
     property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
 
 def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)")
+    property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True)
 
 def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None):
     property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True)
