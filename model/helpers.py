@@ -239,15 +239,30 @@ def get_neighbours(matrix, target_row, distance_threshold):
     # Find the indices of rows within the distance threshold
     neighbour_indices = np.where(distances <= distance_threshold)[0]
 
+    # Disable weights (each neighbour counts equally)
+    weights = None
+
     # Exclude the target row itself from the neighbours
     #neighbour_indices = neighbour_indices[neighbour_indices != target_row_index]
 
-    return neighbour_indices
+    return neighbour_indices, weights
 
-def get_neighbours_nearest(matrix, target_row, n=2):
+def get_neighbours_nearest(matrix, target_row, n=2, weighted=False):
     distances = np.linalg.norm(matrix - target_row, axis=1)
 
     # Find the index of the nearest neighbours
     neighbour_indices = np.argsort(distances)[:n]
 
-    return neighbour_indices
+    if weighted:
+        distances = np.sort(distances)[:n]
+        
+        # Turn distances into weights
+        weights = 1 / distances
+
+        # Normalise the weights
+        weights /= np.sum(weights)
+    else:
+        # Disable weights
+        weights = None
+
+    return neighbour_indices, weights

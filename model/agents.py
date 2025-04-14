@@ -136,16 +136,18 @@ class ReductionAgent(mesa.Agent):
         else:    
         # Now, we make neighbourhood around this exemplar
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL: 
-                speaker_neighbourhood_indices = get_neighbours(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
+                speaker_neighbourhood_indices, speaker_weights = get_neighbours(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
-                speaker_neighbourhood_indices = get_neighbours_nearest(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)            
+                speaker_neighbourhood_indices, speaker_weights = get_neighbours_nearest(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
+            elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
+                speaker_neighbourhood_indices, speaker_weights = get_neighbours_nearest(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size, weighted=True)
 
             # We select only the phonetic representations of the rows of this concept,
             # then stack everything into a single matrix ...
             speaker_selected_rows = self.memory[speaker_neighbourhood_indices]
             speaker_neighbourhood_matrix = np.vstack(speaker_selected_rows)
             # ... and then we turn it into a single representation that we can emit
-            spoken_token_vector = np.mean(speaker_neighbourhood_matrix, axis=0)
+            spoken_token_vector = np.average(speaker_neighbourhood_matrix, axis=0, weights=speaker_weights)
 
             for speaker_neighbourhood_index in speaker_neighbourhood_indices:
                 # Update last used characteristics for this index
@@ -187,7 +189,7 @@ class ReductionAgent(mesa.Agent):
         # Decide whether to apply reduction based on the computed probability.
         if self.model.random.random() < reduction_prob and not self.model.disable_reduction:
             # Apply L1-based soft thresholding to encourage further sparsity
-            threshold = 1  # the threshold value can be adjusted
+            threshold = 15  # the threshold value can be adjusted
             spoken_token_vector = np.maximum(spoken_token_vector - threshold, threshold)
             # print("Reduction applied: Token vector sparsified.")
         else:
@@ -201,9 +203,11 @@ class ReductionAgent(mesa.Agent):
         for attempt in range(1):
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
-                hearer_neighbourhood_indices = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
-                hearer_neighbourhood_indices = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+            elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size, weighted=True)
 
             # We check what concepts they are connected to
             hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
