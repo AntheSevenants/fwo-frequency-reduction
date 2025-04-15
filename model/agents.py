@@ -64,8 +64,7 @@ class ReductionAgent(mesa.Agent):
 
                 self.commit_to_memory(noisy_vector, random_index, good_origin=True)
 
-    def update_last_used(self, index=None):
-        # TODO: there's something wrong with last used
+    def update_last_used(self, index):
         self.last_used[index] = self.model.current_step
     
     def commit_to_memory(self, vector, concept_index, good_origin=True):
@@ -86,9 +85,7 @@ class ReductionAgent(mesa.Agent):
             self.frequency_count[self.indices_in_memory[remove_index]] -= 1
             # First, look up which concept this index is currently associated to
             old_concept_index = self.indices_in_memory[remove_index]
-
-            # At initialisation, memory is filled with nans for performance reasons
-            # TODO: remove this hack, I don't think it's worth it
+            
             # We remove the index from the concept to tokens mapping
             self.indices_per_token[old_concept_index].remove(remove_index)
 
@@ -110,7 +107,7 @@ class ReductionAgent(mesa.Agent):
             self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
             self.indices_per_token[concept_index].append(add_index)
             self.token_good_origin = np.append(self.token_good_origin, int(good_origin))
-            self.update_last_used()
+            self.update_last_used(add_index)
             self.frequency_count[concept_index] += 1
 
             self.num_exemplars_in_memory += 1
