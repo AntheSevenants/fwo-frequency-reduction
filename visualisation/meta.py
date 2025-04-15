@@ -1,7 +1,10 @@
+import math
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 from umap import UMAP
+from matplotlib.colors import ListedColormap
 
 def formatter(x, pos, scale=100):
     del pos
@@ -39,9 +42,6 @@ def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_f
     plt.show()
 
 def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwargs):
-    if model.datacollector_step_size != 1:
-        steps = [ int(step / model.datacollector_step_size) for step in steps ]
-
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 12))
 
     plot_function(model, step=steps[0], ax=ax1, **kwargs)
@@ -52,6 +52,9 @@ def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwa
 def make_confusion_plot(model, step, n=35, ax=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(15,10))
+        
+    if model.datacollector_step_size != 1:
+        step = step // model.datacollector_step_size
 
     df = model.datacollector.get_model_vars_dataframe()
     confusion_matrix = df["confusion_matrix"].iloc[step]
@@ -90,9 +93,46 @@ def make_umap_plot(model, step, ax=None):
     if step < 0:
         vocabulary = model.vectors
     else:
+        if model.datacollector_step_size != 1:
+            step = step // model.datacollector_step_size
+
         vocabulary = df["average_vocabulary"].iloc[step]
 
     ax = make_umap_plot_inner(vocabulary, model.percentiles, ax)
     step = step * model.datacollector_step_size
     ax.set_title(f"UMAP plot of tokens (t = {step})")
     ax
+
+def make_umap_full_vocabulary_plot(model, step, n=10, ax=None):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=(5,5))
+        
+    if model.datacollector_step_size != 1:
+        step = step // model.datacollector_step_size
+
+    df = model.datacollector.get_model_vars_dataframe()
+    vocabulary = df["full_vocabulary"].iloc[step]
+    indices = df["full_indices"].iloc[step]
+    labels = model.tokens[:n]
+
+    # Get only those indices which correspond to the top n
+    eligible_indices = [ index for index in range(model.num_tokens) if indices[index] < n ]
+
+    vocabulary = vocabulary[eligible_indices, :]
+    indices = indices[eligible_indices]
+
+    # Get colour for each data point
+    colours = [ "red", "green", "blue", "brown", "yellow", "purple", "black", "pink" ]
+    colours = ListedColormap(colours)
+
+    umap_2d = UMAP(n_components=2, init='random', random_state=0)
+    proj_2d = umap_2d.fit_transform(np.asarray(vocabulary))
+    x,y = zip(*proj_2d)
+    
+    scatter = ax.scatter(x, y, c=indices, cmap=colours)
+    ax.legend(handles=scatter.legend_elements()[0], labels=labels)
+
+    step = step * model.datacollector_step_size
+    ax.set_title(f"UMAP plot of exemplars (t = {step})")
+
+    return ax
