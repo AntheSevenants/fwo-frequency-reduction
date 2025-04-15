@@ -36,7 +36,7 @@ class ReductionAgent(mesa.Agent):
         self.memory = np.full((0, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(0, np.nan, dtype=np.int64)
         self.indices_per_token = [ [] for token in range(self.model.num_tokens) ]
-        self.last_used = np.full(self.model.memory_size, 0, dtype=np.int64)
+        self.last_used = np.full(0, 0, dtype=np.int64)
         self.frequency_count = np.full(self.model.num_tokens, 1, dtype=np.int64)
         self.token_good_origin = np.full(0, np.nan, dtype=np.int64)
         self.num_exemplars_in_memory = 0
@@ -64,8 +64,12 @@ class ReductionAgent(mesa.Agent):
 
                 self.commit_to_memory(noisy_vector, random_index, good_origin=True)
 
-    def update_last_used(self, index):
-        self.last_used[index] = self.model.current_step
+    def update_last_used(self, index, grow=False):
+        if not grow:
+            self.last_used[index] = self.model.current_step
+        else:
+            self.last_used = np.append(self.last_used, self.model.current_step)
+
     
     def commit_to_memory(self, vector, concept_index, good_origin=True):
         # If the memory is full, we need to remove the oldest form eligible for removal
@@ -85,7 +89,7 @@ class ReductionAgent(mesa.Agent):
             self.frequency_count[self.indices_in_memory[remove_index]] -= 1
             # First, look up which concept this index is currently associated to
             old_concept_index = self.indices_in_memory[remove_index]
-            
+
             # We remove the index from the concept to tokens mapping
             self.indices_per_token[old_concept_index].remove(remove_index)
 
@@ -107,7 +111,7 @@ class ReductionAgent(mesa.Agent):
             self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
             self.indices_per_token[concept_index].append(add_index)
             self.token_good_origin = np.append(self.token_good_origin, int(good_origin))
-            self.update_last_used(add_index)
+            self.update_last_used(add_index, grow=True)
             self.frequency_count[concept_index] += 1
 
             self.num_exemplars_in_memory += 1
