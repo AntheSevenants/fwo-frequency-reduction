@@ -33,13 +33,14 @@ class ReductionAgent(mesa.Agent):
         if model_memory_size > self.model.memory_size:
             raise ValueError(f"Initial agent memory size is {model_memory_size}, exceeding the memory limit of {self.model.memory_size}")
 
-        self.memory = np.full((model_memory_size, self.model.num_dimensions), np.nan)
-        self.indices_in_memory = np.full(model_memory_size, np.nan, dtype=np.int64)
+        self.memory = np.full((0, self.model.num_dimensions), np.nan)
+        self.indices_in_memory = np.full(0, np.nan, dtype=np.int64)
+        self.indices_per_token = [ [] for token in range(self.model.num_tokens) ]
         self.last_used = np.full(self.model.memory_size, 0, dtype=np.int64)
-        self.frequency_count = np.full(model_memory_size, 1, dtype=np.int64)
-        self.token_good_origin = np.full(model_memory_size, np.nan, dtype=np.int64)
+        self.frequency_count = np.full(self.model.num_tokens, 1, dtype=np.int64)
+        self.token_good_origin = np.full(0, np.nan, dtype=np.int64)
+        self.num_exemplars_in_memory = 0
 
-        i = 0
         for token_index in range(self.model.num_tokens):
             # Get the vector from memory and add noise
             vector = self.model.get_original_vector(token_index)
@@ -48,19 +49,15 @@ class ReductionAgent(mesa.Agent):
             for j in range(self.model.initial_token_count):
                 noisy_vector = add_noise(vector)
 
-                # Save to memory
-                self.memory[i, :] = noisy_vector
-                self.indices_in_memory[i] = token_index
-                self.token_good_origin[i] = 1
-
-                i += 1
+                # Save the vector to memory
+                self.commit_to_memory(noisy_vector, token_index, good_origin=True)
 
         # Now, delete all nans (though there should not be any nans!)
         self.memory = self.memory[~np.isnan(self.memory[:,1])]
 
         # To prevent certain model anomalies, we prefill the memory
         if self.model.prefill_memory:
-            while self.memory.shape[0] < self.model.memory_size:
+            while self.num_exemplars_in_memory < self.model.memory_size:
                 random_index = self.model.weighted_random_index()
                 random_vector = self.model.get_original_vector(random_index)
                 noisy_vector = add_noise(random_vector)
@@ -68,11 +65,12 @@ class ReductionAgent(mesa.Agent):
                 self.commit_to_memory(noisy_vector, random_index, good_origin=True)
 
     def update_last_used(self, index=None):
+        # TODO: there's something wrong with last used
         self.last_used[index] = self.model.current_step
     
     def commit_to_memory(self, vector, concept_index, good_origin=True):
         # If the memory is full, we need to remove the oldest form eligible for removal
-        if self.memory.shape[0] == self.model.memory_size:
+        if self.num_exemplars_in_memory == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
             eligible_indices = [ i for i in range(self.indices_in_memory.size)
                                  if self.frequency_count[self.indices_in_memory[i]] > self.model.initial_token_count ]
@@ -86,19 +84,36 @@ class ReductionAgent(mesa.Agent):
 
             # Now, subtract one from the frequency counts for the associated token
             self.frequency_count[self.indices_in_memory[remove_index]] -= 1
+            # First, look up which concept this index is currently associated to
+            old_concept_index = self.indices_in_memory[remove_index]
+
+            # At initialisation, memory is filled with nans for performance reasons
+            # TODO: remove this hack, I don't think it's worth it
+            # We remove the index from the concept to tokens mapping
+            self.indices_per_token[old_concept_index].remove(remove_index)
 
             # And now we can replace the old exemplar with the new one!
             self.memory[remove_index, :] = vector
             self.indices_in_memory[remove_index] = concept_index
+            self.indices_per_token[concept_index].append(remove_index)
             self.token_good_origin[remove_index] = int(good_origin)
             self.update_last_used(remove_index)
             self.frequency_count[concept_index] += 1
+        # Else, just add to the index
         else:
+            # Because we're not removing a form, we don't have an index indicating where to add in the memory
+            # (that currently consists of nothing but nans)
+            # So we deduce the index from the number of forms currently in memory
+            add_index = self.num_exemplars_in_memory
+
             self.memory = np.vstack([self.memory, vector])
             self.indices_in_memory = np.append(self.indices_in_memory, concept_index)
+            self.indices_per_token[concept_index].append(add_index)
             self.token_good_origin = np.append(self.token_good_origin, int(good_origin))
             self.update_last_used()
             self.frequency_count[concept_index] += 1
+
+            self.num_exemplars_in_memory += 1
 
     def interact_do(self):
         event_index = self.model.weighted_random_index()
