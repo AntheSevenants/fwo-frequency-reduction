@@ -37,7 +37,7 @@ class ReductionAgent(mesa.Agent):
         self.indices_in_memory = np.full(0, np.nan, dtype=np.int64)
         self.indices_per_token = [ [] for token in range(self.model.num_tokens) ]
         self.last_used = np.full(0, 0, dtype=np.int64)
-        self.frequency_count = np.full(self.model.num_tokens, 1, dtype=np.int64)
+        self.frequency_count = np.full(self.model.num_tokens, 0, dtype=np.int64)
         self.token_good_origin = np.full(0, np.nan, dtype=np.int64)
         self.num_exemplars_in_memory = 0
 
@@ -75,8 +75,10 @@ class ReductionAgent(mesa.Agent):
         # If the memory is full, we need to remove the oldest form eligible for removal
         if self.num_exemplars_in_memory == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
-            eligible_indices = [ i for i in range(self.indices_in_memory.size)
-                                 if self.frequency_count[self.indices_in_memory[i]] > self.model.initial_token_count ]
+            eligible_indices = []
+            for token_index, frequency_count in enumerate(self.frequency_count):
+                if frequency_count > 1:
+                    eligible_indices += self.indices_per_token[token_index]
 
             if not eligible_indices:
                 # This should rarely happen if you always ensure every token retains at least one exemplar.
@@ -85,13 +87,20 @@ class ReductionAgent(mesa.Agent):
             # We choose the index which is the oldest
             remove_index = min(eligible_indices, key=lambda i: self.last_used[i])
 
-            # Now, subtract one from the frequency counts for the associated token
-            self.frequency_count[self.indices_in_memory[remove_index]] -= 1
             # First, look up which concept this index is currently associated to
             old_concept_index = self.indices_in_memory[remove_index]
+            # Then, subtract one from the frequency counts for the associated token
+            self.frequency_count[old_concept_index] -= 1
 
             # We remove the index from the concept to tokens mapping
             self.indices_per_token[old_concept_index].remove(remove_index)
+
+            # Add extra test to be absolutely certain that no token lacks exemplars
+            for token_index, exemplar_indices in enumerate(self.indices_per_token):
+                if len(exemplar_indices) == 0:
+                    raise ValueError(f"Token {token_index} has zero associated exemplars. This should never happen!\n\
+Old concept index was {old_concept_index}.\n\
+{token_index} has {self.frequency_count[token_index]} registered associated exemplar(s)")
 
             # And now we can replace the old exemplar with the new one!
             self.memory[remove_index, :] = vector
@@ -144,7 +153,12 @@ class ReductionAgent(mesa.Agent):
         # TODO: just figuring things out
 
         # We get the indices of all vectors pertaining to the communicated event
-        matching_token_indices = np.where(self.indices_in_memory == event_index)[0].tolist()
+        matching_token_indices = self.indices_per_token[event_index]
+        if len(matching_token_indices) == 0:
+            print(event_index)
+            print(self.frequency_count)
+            print(self.indices_per_token)
+            raise IndexError("Binkebonke")
         # Then, we pick a random exemplar from this list
         chosen_exemplar_base_index = self.model.random.choice(matching_token_indices)
         chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
