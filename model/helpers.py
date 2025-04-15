@@ -122,19 +122,10 @@ def compute_mean_token_l1(model):
 
     for agent_index, agent in enumerate(model.agents):
         matrix = agent.memory
-        tokens = agent.indices_in_memory
-        token_indices = defaultdict(list)
-
-        for i, token in enumerate(tokens):
-            if np.isnan(token):
-                continue
-            
-            token_indices[token].append(i)
-
+        
         # token_index = index of the token
         # indices = the exemplars in the memory corresponding to this token
-        for token_index, indices in token_indices.items():
-            token_index = int(token_index)
+        for token_index, indices in enumerate(agent.indices_per_token):
             agentwise_memory[agent_index, token_index] = matrix[indices].sum(axis=1).mean()
 
     return agentwise_memory.mean(axis=0)
@@ -176,19 +167,10 @@ def compute_token_good_origin(model):
 
     for agent_index, agent in enumerate(model.agents):
         good_origin = agent.token_good_origin
-        tokens = agent.indices_in_memory
-        token_indices = defaultdict(list)
-
-        for i, token in enumerate(tokens):
-            if np.isnan(token):
-                continue
-            
-            token_indices[token].append(i)
 
         # token_index = index of the token
         # indices = the exemplars in the memory corresponding to this token
-        for token_index, indices in token_indices.items():
-            token_index = int(token_index)
+        for token_index, indices in enumerate(agent.indices_per_token):
             agentwise_memory[agent_index, token_index] = good_origin[indices].mean()
 
     return agentwise_memory.mean(axis=0)
@@ -212,18 +194,10 @@ def compute_average_vocabulary_flexible(model):
 
     for agent_index, agent in enumerate(model.agents):
         matrix = agent.memory
-        tokens = agent.indices_in_memory
-        token_indices = defaultdict(list)
-
-        for i, token in enumerate(tokens):
-            if np.isnan(token):
-                continue
-            
-            token_indices[token].append(i)
 
         # token_index = index of the token
         # indices = the exemplars in the memory corresponding to this token
-        for token_index, indices in token_indices.items():
+        for token_index, indices in enumerate(agent.indices_per_token):
             token_index = int(token_index)
             agentwise_memory[agent_index, token_index, :] = matrix[indices].mean(axis=0)
 
