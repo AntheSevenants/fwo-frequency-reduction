@@ -42,6 +42,9 @@ def make_mean_l1_plot(model, smooth=True, ax=None):
 def make_communicative_success_macro_plot(model, smooth=True, ax=None):
     return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True)
 
+def make_mean_exemplar_age_plot(model, smooth=True, ax=None):
+    return make_general_plot(model, "mean_exemplar_age", ax=ax, smooth=smooth, title="Mean exemplar age (macro avg across agents)")
+
 def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False):
     df = model.datacollector.get_model_vars_dataframe()
     matrix_3d = np.stack(df[attribute].to_numpy())

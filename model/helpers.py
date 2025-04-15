@@ -216,6 +216,14 @@ def compute_mean_reduction_per_token(model):
 def compute_repairs(model):
     return model.total_repairs
 
+def compute_mean_exemplar_age(model):
+    agentwise_memory = np.zeros(model.num_agents)
+
+    for agent_index, agent in enumerate(model.agents):
+        agentwise_memory[agent_index] = (model.current_step - agent.last_used).mean()
+
+    return agentwise_memory.mean()
+
 def inner_ratio_computation(model, property):
     # Turn all communication memory matrices into a tensor
     # Shape: (num_agents, token count, memory count)
