@@ -116,7 +116,7 @@ def make_umap_full_vocabulary_plot(model, step, n=10, ax=None):
     labels = model.tokens[:n]
 
     # Get only those indices which correspond to the top n
-    eligible_indices = [ index for index in range(model.num_tokens) if indices[index] < n ]
+    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n ]
 
     vocabulary = vocabulary[eligible_indices, :]
     indices = indices[eligible_indices]
