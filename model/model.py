@@ -85,6 +85,7 @@ class ReductionModel(mesa.Model):
                              "confusion_matrix": compute_confusion_matrix,
                              "fail_reason": compute_fail_reason,
                              "mean_exemplar_count": compute_mean_exemplar_count,
+                             "average_vocabulary": compute_average_vocabulary_flexible,
                              "success_per_token": compute_communicative_success_per_token,
                              "communicative_success_macro": compute_communicative_success_macro_average,
                              "token_good_origin": compute_token_good_origin,
