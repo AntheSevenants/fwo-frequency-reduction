@@ -203,6 +203,16 @@ def compute_average_vocabulary_flexible(model):
 
     return agentwise_memory.mean(axis=0)
 
+def compute_full_vocabulary(model):
+    full_memory = np.vstack([agent.memory for agent in model.agents])
+
+    return full_memory
+
+def compute_concept_stack(model):
+    indices = np.concatenate([agent.indices_in_memory for agent in model.agents])
+
+    return indices
+
 def compute_average_communicative_success_probability(model):
     communicative_success_probabilities = [ agent.compute_communicative_success_probability() for agent in model.agents ]
     return np.mean(communicative_success_probabilities)
