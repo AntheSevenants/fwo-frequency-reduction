@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 from scipy.spatial.distance import pdist, squareform
+from sklearn.metrics import silhouette_score
 from collections import defaultdict
 
 EPSILON = 0.000001
@@ -245,13 +246,9 @@ def inner_ratio_computation(model, property):
 
     return tokenwise_memory
 
-def compute_vector_variation(model, step, n=10):
-    if model.datacollector_step_size != 1:
-        step = step // model.datacollector_step_size
-
-    df = model.datacollector.get_model_vars_dataframe()
-    vocabulary = df["full_vocabulary"].iloc[step]
-    indices = df["full_indices"].iloc[step]
+def compute_vector_variation(model, n=10):
+    vocabulary = compute_full_vocabulary(model)
+    indices = compute_concept_stack(model)
     labels = model.tokens[:n]
 
     # Get only those indices which correspond to the top n
@@ -284,6 +281,18 @@ def compute_vector_variation(model, step, n=10):
         })
 
     return pd.DataFrame.from_records(records)
+
+def compute_token_separation(model, n=10):
+    vocabulary = compute_full_vocabulary(model)
+    indices = compute_concept_stack(model)
+    # Get only those indices which correspond to the top n
+    eligible_exemplar_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n ]
+
+    exemplars = vocabulary[eligible_exemplar_indices, :]
+    exemplar_indices = indices[eligible_exemplar_indices]
+    exemplar_labels = [ model.tokens[index] for index in exemplar_indices ]
+
+    return silhouette_score(exemplars, exemplar_indices)
 
 def add_value_to_row(matrix, row_index, new_value):
     matrix[row_index, :-1] = matrix[row_index, 1:]
