@@ -245,6 +245,46 @@ def inner_ratio_computation(model, property):
 
     return tokenwise_memory
 
+def compute_vector_variation(model, step, n=10):
+    if model.datacollector_step_size != 1:
+        step = step // model.datacollector_step_size
+
+    df = model.datacollector.get_model_vars_dataframe()
+    vocabulary = df["full_vocabulary"].iloc[step]
+    indices = df["full_indices"].iloc[step]
+    labels = model.tokens[:n]
+
+    # Get only those indices which correspond to the top n
+    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n ]
+
+    vocabulary = vocabulary[eligible_indices, :]
+    indices = indices[eligible_indices]
+
+    records = []
+
+    for i in range(n):
+        vectors = []
+        for exemplar_index, token_index in enumerate(indices):
+            if token_index == i:
+                vectors.append(vocabulary[exemplar_index, :])
+
+        vectors = np.vstack(vectors)
+
+        distances = pdist(vectors, metric='euclidean')
+        mean_distance = np.mean(distances)
+        max_distance = np.max(distances)
+        min_distance = np.min(distances)
+
+        records.append({
+            "index": i,
+            "token": labels[i],
+            "mean": mean_distance,
+            "min" : min_distance,
+            "max": max_distance
+        })
+
+    return pd.DataFrame.from_records(records)
+
 def add_value_to_row(matrix, row_index, new_value):
     matrix[row_index, :-1] = matrix[row_index, 1:]
     matrix[row_index, -1] = new_value
