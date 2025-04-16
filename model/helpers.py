@@ -217,6 +217,11 @@ def compute_concept_stack(model):
 
     return indices
 
+def compute_full_vocabulary_ownership_stack(model):
+    agent_indices = np.concatenate([[agent_index] * model.agents[agent_index].memory.shape[0] for agent_index in range(model.num_agents)])
+
+    return agent_indices
+
 def compute_average_communicative_success_probability(model):
     communicative_success_probabilities = [ agent.compute_communicative_success_probability() for agent in model.agents ]
     return np.mean(communicative_success_probabilities)
