@@ -246,17 +246,7 @@ def inner_ratio_computation(model, property):
 
     return tokenwise_memory
 
-def compute_vector_variation(model, n=10):
-    vocabulary = compute_full_vocabulary(model)
-    indices = compute_concept_stack(model)
-    labels = model.tokens[:n]
-
-    # Get only those indices which correspond to the top n
-    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n ]
-
-    vocabulary = vocabulary[eligible_indices, :]
-    indices = indices[eligible_indices]
-
+def compute_vector_variation_inner(vocabulary, indices, labels, n):
     records = []
 
     for i in range(n):
@@ -266,6 +256,7 @@ def compute_vector_variation(model, n=10):
                 vectors.append(vocabulary[exemplar_index, :])
 
         vectors = np.vstack(vectors)
+        vector_count = vectors.shape[0]
 
         distances = pdist(vectors, metric='euclidean')
         mean_distance = np.mean(distances)
@@ -277,10 +268,38 @@ def compute_vector_variation(model, n=10):
             "token": labels[i],
             "mean": mean_distance,
             "min" : min_distance,
-            "max": max_distance
+            "max": max_distance,
+            "n": vector_count
         })
 
     return pd.DataFrame.from_records(records)
+
+def compute_vector_variation(model, n=10):
+    vocabulary = compute_full_vocabulary(model)
+    indices = compute_concept_stack(model)
+    labels = model.tokens[:n]
+
+    # Get only those indices which correspond to the top n
+    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n ]
+
+    vocabulary = vocabulary[eligible_indices, :]
+    indices = indices[eligible_indices]
+
+    return compute_vector_variation_inner(vocabulary, indices, labels, n)
+
+def compute_vector_variation_single_agent(model, agent_index, n=10):
+    vocabulary = model.agents[agent_index].memory
+    exemplar_to_token_mapping = model.agents[agent_index].indices_in_memory
+
+    labels = model.tokens[:n]
+
+    # Get only those indices which correspond to the top n
+    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if exemplar_to_token_mapping[exemplar_index] < n ]
+
+    vocabulary = vocabulary[eligible_indices, :]
+    indices = exemplar_to_token_mapping[eligible_indices]
+
+    return compute_vector_variation_inner(vocabulary, indices, labels, n)
 
 def compute_token_separation(model, n=10):
     vocabulary = compute_full_vocabulary(model)
