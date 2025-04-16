@@ -77,13 +77,16 @@ def add_noise_float(vector, noise_std=0.01):
     # Multiply the original vector by the noise factor.
     return vector * noise_factor
 
-def add_noise(vector, noise_std=5):
+def add_noise(vector, noise_std=1):
     # Generate noise factors: 1 + epsilon
-    noise_factor = np.random.normal(10, noise_std, size=vector.shape)
+    noise_factor = np.random.normal(5, noise_std, size=vector.shape)
     
     # Ensure that noise_factor is positive.
     # Clip values to a minimum (e.g., 0.001) to avoid very small or negative multipliers.
-    noise_factor = np.clip(noise_factor, 0.1, None)
+    noise_factor = np.clip(noise_factor, 1, 100)
+
+    # Round to real  number
+    noise_factor = np.round(noise_factor, 0)
     
     # Optionally, if your model has dimensions that are intentionally zero, do not modify them.
     noise_factor[vector == 0] = 1
