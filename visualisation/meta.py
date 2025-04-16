@@ -103,7 +103,7 @@ def make_umap_plot(model, step, ax=None):
     ax.set_title(f"UMAP plot of tokens (t = {step})")
     ax
 
-def make_umap_full_vocabulary_plot(model, step, n=10, ax=None):
+def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, ax=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(5,5))
         
@@ -113,10 +113,11 @@ def make_umap_full_vocabulary_plot(model, step, n=10, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
     vocabulary = df["full_vocabulary"].iloc[step]
     indices = df["full_indices"].iloc[step]
+    ownership_indices = df["full_vocabulary_owernship"].iloc[step]
     labels = model.tokens[:n]
 
     # Get only those indices which correspond to the top n
-    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n ]
+    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n and (agent_filter is None or ownership_indices[exemplar_index] == agent_filter) ]
 
     vocabulary = vocabulary[eligible_indices, :]
     indices = indices[eligible_indices]
