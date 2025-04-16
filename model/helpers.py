@@ -321,6 +321,25 @@ def compute_token_separation(model, n=10):
 
     return silhouette_score(exemplars, exemplar_indices)
 
+def compute_token_separation_between_agents(model, token_index, agent_index_1, agent_index_2):
+    vocabulary = compute_full_vocabulary(model)
+    exemplar_indices = compute_concept_stack(model)
+    ownership_indices = compute_full_vocabulary_ownership_stack(model)
+    
+    exemplar_indices_agent_1 = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if exemplar_indices[exemplar_index] == token_index and ownership_indices[exemplar_index] == agent_index_1 ]
+    exemplar_indices_agent_2 = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if exemplar_indices[exemplar_index] == token_index and ownership_indices[exemplar_index] == agent_index_2 ]
+
+    if len(exemplar_indices_agent_1) + len(exemplar_indices_agent_2) <= 2:
+        raise ValueError("Not enough exemplars to compare exemplars")
+
+    vocabulary_agent_1 = vocabulary[exemplar_indices_agent_1, :]
+    vocabulary_agent_2 = vocabulary[exemplar_indices_agent_2, :]
+    full_vocabulary = np.vstack([ vocabulary_agent_1, vocabulary_agent_2 ])
+
+    agent_ownership_labels = np.concatenate([ [1] * vocabulary_agent_1.shape[0], [2] * vocabulary_agent_2.shape[0] ])
+
+    return silhouette_score(full_vocabulary, agent_ownership_labels)
+
 def add_value_to_row(matrix, row_index, new_value):
     matrix[row_index, :-1] = matrix[row_index, 1:]
     matrix[row_index, -1] = new_value
