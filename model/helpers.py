@@ -182,6 +182,9 @@ def compute_token_good_origin(model):
 def compute_fail_reason(model):
     return model.fail_reason
     
+def compute_outcomes(model):
+    return model.outcomes
+
 def compute_tokens_chosen(model):
     return model.tokens_chosen
 

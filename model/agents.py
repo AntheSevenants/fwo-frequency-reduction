@@ -261,6 +261,7 @@ Old concept index was {old_concept_index}.\n\
                 # print("No tokens in this neighbourhood")
                 heard_concept_index = None
                 self.model.fail_reason["no_tokens"] += 1
+                self.model.outcomes["no_tokens"] += 1
                 break
             elif len(counts) > 1:
                 # We check what form is the most represented in the neighbourhood
@@ -275,6 +276,7 @@ Old concept index was {old_concept_index}.\n\
                 else:
                     heard_concept_index = None
                     self.model.fail_reason["shared_top"] += 1
+                    self.model.outcomes["shared_top"] += 1
 
                     if self.model.repair == Repair.REPAIR:
                         # Try again
@@ -291,8 +293,10 @@ Old concept index was {old_concept_index}.\n\
             if check_right_form:
                 if event_index == heard_concept_index:
                     communication_successful = True
+                    self.model.outcomes["success"] += 1
                 else:
                     self.model.fail_reason["wrong_winner"] += 1
+                    self.model.outcomes["wrong_winner"] += 1
             break
 
         # print(f"Communication successful: {communication_successful}")

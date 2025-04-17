@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from model.agents import ReductionAgent
-from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack
+from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes
@@ -84,6 +84,7 @@ class ReductionModel(mesa.Model):
                              "mean_token_l1": compute_mean_token_l1,
                              "confusion_matrix": compute_confusion_matrix,
                              "fail_reason": compute_fail_reason,
+                             "outcomes": compute_outcomes,
                              "mean_exemplar_count": compute_mean_exemplar_count,
                              "average_vocabulary": compute_average_vocabulary_flexible,
                              "success_per_token": compute_communicative_success_per_token,
@@ -106,6 +107,7 @@ class ReductionModel(mesa.Model):
             self.failure_per_token = np.zeros(self.num_tokens)
             self.total_turns = 0
             self.fail_reason = { "no_tokens": 0, "wrong_winner": 0, "shared_top": 0 }
+            self.outcomes = { "no_tokens": 0, "wrong_winner": 0, "shared_top": 0, "success": 0 }
 
     def step(self):
         self.reset()

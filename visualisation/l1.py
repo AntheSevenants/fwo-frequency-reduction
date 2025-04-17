@@ -105,11 +105,14 @@ def words_mean_exemplar_count_bar(model, ax=None):
 
     ax.set_title("Mean exemplar count per token (across agents)") 
 
-def make_fail_reason_plot(model, ax=None):
+def make_fail_reason_plot(model, include_success=False, ax=None):
     # Get the fail reason data from the data collector
     df = model.datacollector.get_model_vars_dataframe()
     # Turn it into a pandas dataframe
-    fail_reason = pd.DataFrame.from_records(df["fail_reason"])
+    if not include_success:
+        fail_reason = pd.DataFrame.from_records(df["fail_reason"])
+    else:
+        fail_reason = pd.DataFrame.from_records(df["outcomes"])
 
     # If we aggregate datacollector steps, correct for it here
     group_size = 100 if model.datacollector_step_size == 1 else 1
@@ -125,6 +128,10 @@ def make_fail_reason_plot(model, ax=None):
         pass
 
     # Stacked bar plot
-    grouped_df.plot(kind="bar", stacked=True, ax=ax, title="Communication failure reason")
+    if not include_success:
+        title = "Communication failure reason"
+    else:
+        title = "Communication outcomes"
+    grouped_df.plot(kind="bar", stacked=True, ax=ax, title=title)
     
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
