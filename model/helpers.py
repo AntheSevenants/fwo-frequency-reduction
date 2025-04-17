@@ -158,6 +158,12 @@ def compute_communicative_failure(model):
     else:
         return model.failed_turns / model.total_turns
     
+def compute_reduction_success(model):
+    if model.total_turns == 0:
+        return 0
+    else:
+        return model.successful_reduced_turns / model.reduced_turns
+    
 def compute_communicative_success_per_token(model):
     with np.errstate(invalid="ignore"):
         return model.success_per_token / (model.success_per_token + model.failure_per_token)

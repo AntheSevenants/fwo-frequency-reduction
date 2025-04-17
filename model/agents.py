@@ -220,8 +220,9 @@ Old concept index was {old_concept_index}.\n\
         else:
             raise ValueError("Reduction mode not recognised")
 
+        do_reduction = self.model.random.random() < reduction_prob and not self.model.disable_reduction
         # Decide whether to apply reduction based on the computed probability.
-        if self.model.random.random() < reduction_prob and not self.model.disable_reduction:
+        if do_reduction:
             # Apply L1-based soft thresholding to encourage further sparsity
             reduction_strength = 15
             threshold = 15  # the threshold value can be adjusted
@@ -325,6 +326,12 @@ Old concept index was {old_concept_index}.\n\
         if heard_concept_index is not None:
             # Save data for the confusion matrix
             self.model.confusion_matrix[event_index][heard_concept_index] += 1
+
+        if do_reduction:
+            self.model.reduced_turns += 1
+
+            if communication_successful:
+                self.successful_reduced_turns += 1
 
         self.model.total_turns += 1
 
