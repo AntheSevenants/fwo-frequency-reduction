@@ -331,7 +331,7 @@ Old concept index was {old_concept_index}.\n\
             self.model.reduced_turns += 1
 
             if communication_successful:
-                self.successful_reduced_turns += 1
+                self.model.successful_reduced_turns += 1
 
         self.model.total_turns += 1
 
