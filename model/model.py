@@ -7,7 +7,7 @@ from model.agents import ReductionAgent
 from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
-from model.types.reduction import ReductionModes
+from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
 
@@ -15,7 +15,7 @@ from model.types.repair import Repair
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, datacollector_step_size=100, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, datacollector_step_size=100, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -32,6 +32,7 @@ class ReductionModel(mesa.Model):
         self.neighbourhood_type = neighbourhood_type
         self.production_model = production_model
         self.reduction_mode = reduction_mode
+        self.reduction_method = reduction_method
         self.feedback_type = feedback_type
         self.repair = repair
 

@@ -2,10 +2,12 @@ import mesa
 import math
 import numpy as np
 
+import model.reduction
+
 from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
-from model.types.reduction import ReductionModes
+from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
 
@@ -223,10 +225,16 @@ Old concept index was {old_concept_index}.\n\
         do_reduction = self.model.random.random() < reduction_prob and not self.model.disable_reduction
         # Decide whether to apply reduction based on the computed probability.
         if do_reduction:
-            # Apply L1-based soft thresholding to encourage further sparsity
-            reduction_strength = 15
-            threshold = 15  # the threshold value can be adjusted
-            spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
+            if self.model.reduction_method == ReductionMethod.DIMENSION_SCRAP:
+                raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
+            elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
+                # Apply L1-based soft thresholding to encourage further sparsity
+                reduction_strength = 15
+                threshold = 15  # the threshold value can be adjusted
+                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
+            elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
+                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15)
+
             # print("Reduction applied: Token vector sparsified.")
         else:
             pass
