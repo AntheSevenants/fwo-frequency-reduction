@@ -103,7 +103,7 @@ def make_umap_plot(model, step, ax=None):
     ax.set_title(f"UMAP plot of tokens (t = {step})")
     ax
 
-def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, ax=None):
+def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, agent_comparison_filter=None, ax=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(5,5))
         
@@ -111,16 +111,27 @@ def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, ax=None
         step = step // model.datacollector_step_size
 
     df = model.datacollector.get_model_vars_dataframe()
-    vocabulary = df["full_vocabulary"].iloc[step]
-    indices = df["full_indices"].iloc[step]
+    full_vocabulary = df["full_vocabulary"].iloc[step]
+    exemplar_indices = df["full_indices"].iloc[step]
     ownership_indices = df["full_vocabulary_owernship"].iloc[step]
     labels = model.tokens[:n]
 
     # Get only those indices which correspond to the top n
-    eligible_indices = [ exemplar_index for exemplar_index in range(vocabulary.shape[0]) if indices[exemplar_index] < n and (agent_filter is None or ownership_indices[exemplar_index] == agent_filter) ]
+    eligible_indices = [ exemplar_index for exemplar_index in range(full_vocabulary.shape[0]) if exemplar_indices[exemplar_index] < n and (agent_filter is None or ownership_indices[exemplar_index] == agent_filter) ]
 
-    vocabulary = vocabulary[eligible_indices, :]
-    indices = indices[eligible_indices]
+    if agent_comparison_filter is not None:
+        eligible_indices_comparison = [ exemplar_index for exemplar_index in range(full_vocabulary.shape[0]) if exemplar_indices[exemplar_index] < n and ownership_indices[exemplar_index] == agent_comparison_filter ]
+
+    vocabulary = full_vocabulary[eligible_indices, :]
+    indices = exemplar_indices[eligible_indices]
+    border = len(indices)
+
+    if agent_comparison_filter is not None:
+        vocabulary_comparison = full_vocabulary[eligible_indices_comparison, :]
+        indices_comparison = exemplar_indices[eligible_indices_comparison]
+
+        vocabulary = np.vstack([ vocabulary, vocabulary_comparison ])
+        # indices = np.concatenate([ indices, indices_comparison ])
 
     # Get colour for each data point
     colours = [ "red", "green", "blue", "brown", "yellow", "purple", "black", "pink" ]
@@ -130,7 +141,10 @@ def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, ax=None
     proj_2d = umap_2d.fit_transform(np.asarray(vocabulary))
     x,y = zip(*proj_2d)
     
-    scatter = ax.scatter(x, y, c=indices, cmap=colours)
+    scatter = ax.scatter(x[:border], y[:border], c=indices, cmap=colours, marker="^", alpha=0.5)
+    if agent_comparison_filter is not None:
+        scatter = ax.scatter(x[border:], y[border:], c=indices_comparison, cmap=colours, marker="v", alpha=0.5)
+    
     ax.legend(handles=scatter.legend_elements()[0], labels=labels)
 
     step = step * model.datacollector_step_size
