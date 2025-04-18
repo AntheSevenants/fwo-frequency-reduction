@@ -198,7 +198,7 @@ Old concept index was {old_concept_index}.\n\
 
         if self.model.reduction_mode == ReductionModes.ALWAYS:
             reduction_prob = self.model.reduction_prior
-        elif self.model.reduction_mode == ReductionModes.SUCCESS_DEPENDENT:
+        elif self.model.reduction_mode == ReductionModes.L1_SUCCESS_DEPENDENT:
             # Here we apply a reduction process which is influenced by both the L1 penalty
             # (i.e. encouraging sparsity) and the past communicative success of this event.
 
@@ -233,7 +233,7 @@ Old concept index was {old_concept_index}.\n\
                 threshold = 15  # the threshold value can be adjusted
                 spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
-                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15)
+                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15, width_ratio=0.5)
 
             # print("Reduction applied: Token vector sparsified.")
         else:

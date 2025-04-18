@@ -1,6 +1,7 @@
 class ReductionModes:
     ALWAYS = 0
-    SUCCESS_DEPENDENT = 1
+    L1_SUCCESS_DEPENDENT = 1
+
 
 class ReductionMethod:
     DIMENSION_SCRAP = 0
