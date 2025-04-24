@@ -15,13 +15,14 @@ from model.types.repair import Repair
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, datacollector_step_size=100, seed=None):
+    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, datacollector_step_size=100, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
         self.reduction_prior = reduction_prior
         self.disable_reduction = disable_reduction
         self.memory_size = memory_size
+        self.success_memory_size = success_memory_size
         self.initial_token_count = initial_token_count
         self.prefill_memory = prefill_memory
         self.seed = seed

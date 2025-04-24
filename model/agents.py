@@ -1,5 +1,6 @@
 import mesa
 import math
+import warnings
 import numpy as np
 
 import model.reduction
@@ -42,6 +43,7 @@ class ReductionAgent(mesa.Agent):
         self.frequency_count = np.full(self.model.num_tokens, 0, dtype=np.int64)
         self.token_good_origin = np.full(0, np.nan, dtype=np.int64)
         self.num_exemplars_in_memory = 0
+        self.success_memory = np.full((self.model.num_tokens, self.model.success_memory_size), np.nan)
 
         for token_index in range(self.model.num_tokens):
             # Get the vector from memory and add noise
@@ -72,6 +74,14 @@ class ReductionAgent(mesa.Agent):
         else:
             self.last_used = np.append(self.last_used, self.model.current_step)
 
+    def get_macro_communicative_success(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
+
+            tokenwise_means = np.nanmean(self.success_memory, axis=1)
+            macro_mean = np.nanmean(tokenwise_means, axis=0)
+        
+            return macro_mean
     
     def commit_to_memory(self, vector, concept_index, good_origin=True):
         # If the memory is full, we need to remove the oldest form eligible for removal
@@ -219,6 +229,11 @@ Old concept index was {old_concept_index}.\n\
             # Compute the reduction probability. Here a sigmoid function is used to map the combined signal
             reduction_prob = 1 / (1 + np.exp(-lambda_param * l1_penalty + intercept - mu_param * historical_success))
             # print(f"Reduction probability: {reduction_prob:.3f}")
+        elif self.model.reduction_mode == ReductionModes.SUCCESS_DEPENDENT_MACRO:
+            reduction_prob = self.get_macro_communicative_success()
+            # Initialisation issue
+            if np.isnan(reduction_prob):
+                reduction_prob = 1
         else:
             raise ValueError("Reduction mode not recognised")
 
@@ -330,6 +345,10 @@ Old concept index was {old_concept_index}.\n\
 
             self.model.failed_turns += 1
             self.model.failure_per_token[event_index] += 1
+
+        # Save communicative success to the success memory
+        # TODO: actually, the agent can't *really* know whether communication was successful, right?
+        add_value_to_row(self.success_memory, event_index, int(communication_successful))
     
         if heard_concept_index is not None:
             # Save data for the confusion matrix
