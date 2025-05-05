@@ -259,9 +259,10 @@ Old concept index was {old_concept_index}.\n\
         # R E C E P T I O N
         # - - - - - - - - -
 
-        turns = 0
+        turns = 1
         neighbourhood_size = self.model.neighbourhood_size
-        for attempt in range(1):
+        while turns <= self.model.max_turns:
+            print(f"Turn: {turns}")
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
                 hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
@@ -295,6 +296,7 @@ Old concept index was {old_concept_index}.\n\
                     neighbourhood_size += self.model.neighbourhood_step_size
                     # Then, exit the loop to try another attempt at nearest neighbour etc.
                     # This does not really count as a turn, since the speaker did not speak again
+                    print("Growing neighbourhood")
                     continue
                 # Else, communication has failed!
                 else:
@@ -366,6 +368,8 @@ Old concept index was {old_concept_index}.\n\
                     self.model.register_outcome("wrong_winner")
 
             # That's all for this loop!
+
+            turns += 1
 
         # print(f"Communication successful: {communication_successful}")
         
