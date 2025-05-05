@@ -262,14 +262,14 @@ Old concept index was {old_concept_index}.\n\
         turns = 1
         neighbourhood_size = self.model.neighbourhood_size
         while turns <= self.model.max_turns:
-            print(f"Turn: {turns}")
+            # print(f"Turn: {turns}")
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size)
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, self.model.neighbourhood_size, weighted=True)
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
 
             # We check what concepts they are connected to
             hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
@@ -296,7 +296,7 @@ Old concept index was {old_concept_index}.\n\
                     neighbourhood_size += self.model.neighbourhood_step_size
                     # Then, exit the loop to try another attempt at nearest neighbour etc.
                     # This does not really count as a turn, since the speaker did not speak again
-                    print("Growing neighbourhood")
+                    # print("Growing neighbourhood")
                     continue
                 # Else, communication has failed!
                 else:
