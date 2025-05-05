@@ -5,7 +5,7 @@ import numpy as np
 
 import model.reduction
 
-from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest
+from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, counts_to_percentages
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
@@ -259,6 +259,7 @@ Old concept index was {old_concept_index}.\n\
         # R E C E P T I O N
         # - - - - - - - - -
 
+        turns = 0
         for attempt in range(1):
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
@@ -276,49 +277,84 @@ Old concept index was {old_concept_index}.\n\
             for hearer_neighbourhood_index in hearer_neighbourhood_indices:
                 self.update_last_used(hearer_neighbourhood_index)
 
-            # Set communication to false to begin with
+            # Flag: is the communication successful? The hearer usually doesn't know this
             communication_successful = False
+            # Flag: do we need to check whether the heard form is correct? The hearer usually doesn't know this
             check_right_form = False
+            # Flag: should the repair mechanism come into play? Counts as a speaking turn ("what?")
+            should_repair = False
 
-            # If no tokens were found within the vicinity, communication has failed
+            # No tokens were found within the vicinity
             if len(unique) == 0:
-                # print("No tokens in this neighbourhood")
                 heard_concept_index = None
-                self.model.register_outcome("no_tokens")
-                break
+
+                # If growing the neighbourhood is allowed, do so
+                if self.model.grow_neighbourhood:
+                    # TODO: grow neighourhood size
+                    # Then, exit the loop to try another attempt at nearest neighbour etc.
+                    # This does not really count as a turn, since the speaker did not speak again
+                    continue
+                # Else, communication has failed!
+                else:
+                    heard_concept_index = None
+                    self.model.register_outcome("no_tokens")
+            # If multiple counts were found, we need to check a few things
             elif len(counts) > 1:
                 # We check what form is the most represented in the neighbourhood
                 sorted_indices = np.argsort(counts)[::-1]
                 unique = unique[sorted_indices]
                 counts = counts[sorted_indices]
-                
-                # We need to check if two forms share the top spot
-                if counts[0] > counts[1]:
+
+                # For the confidence judgement, we turn the counts into percentages
+                percentages = counts_to_percentages(counts)
+                confident_judgement = percentages[0] >= self.model.confidence_threshold
+
+                # If confidence judgement is turned on, and the judgemnt is not confident
+                if self.model.confidence_judgement and not confident_judgement:
+                    heard_concept_index = None
+                    self.model.register_outcome("not_confident")
+
+                    # Say: "what?"
+                    should_repair = True
+                    break # leave the if statement so the fail reason remains correct
+                # Else, we check if two forms share the top spot
+                # If not, all is good!
+                elif counts[0] > counts[1]:
                     heard_concept_index = int(unique[0])
                     check_right_form = True
+                # If the two top forms share the spot, communication also fails
                 else:
                     heard_concept_index = None
-                    self.model.register_outcome("shared_top")
 
-                    if self.model.repair == Repair.REPAIR:
-                        # Try again
-                        spoken_token_vector = self.model.do_repair(spoken_token_vector, event_index)
-                        continue
-                    elif self.model.repair == Repair.NO_REPAIR:
-                        break
-                    else:
-                        raise ValueError("Repair option not recognised")
+                    self.model.register_outcome("shared_top")
+                    should_repair = True
+            # Only one type of form was heard, so the outcome is clear
             else:
                 heard_concept_index = int(unique[0])
                 check_right_form = True
-    
+
+            # There are multiple types of repair, so I've generalised quite a bit
+            if should_repair:
+                if self.model.repair == Repair.REPAIR:
+                    # Make the vector more full and try again
+                    spoken_token_vector = self.model.do_repair(spoken_token_vector, event_index)
+                    turns += 1
+                    continue # forces another attempt
+                elif self.model.repair == Repair.NO_REPAIR:
+                    break
+                else:
+                    raise ValueError("Repair option not recognised")
+                
+            # If we got here, it means that there is a unique form that was chosen
+            # (and also that we are confident enough if confidence is at play)
             if check_right_form:
                 if event_index == heard_concept_index:
                     communication_successful = True
                     self.model.register_outcome("success", success=True)
                 else:
                     self.model.register_outcome("wrong_winner")
-            break
+
+            # That's all for this loop!
 
         # print(f"Communication successful: {communication_successful}")
         

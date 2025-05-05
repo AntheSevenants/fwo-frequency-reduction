@@ -414,3 +414,8 @@ def get_neighbours_nearest(matrix, target_row, n=2, weighted=False):
         weights = None
 
     return neighbour_indices, weights
+
+def counts_to_percentages(arr):
+    total_sum = np.sum(arr)
+    percentages = arr / total_sum
+    return percentages
