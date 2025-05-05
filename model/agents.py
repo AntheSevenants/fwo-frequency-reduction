@@ -335,9 +335,18 @@ Old concept index was {old_concept_index}.\n\
 
             # There are multiple types of repair, so I've generalised quite a bit
             if should_repair:
-                if self.model.repair == Repair.REPAIR:
+                if self.model.repair == Repair.MEAN:
                     # Make the vector more full and try again
-                    spoken_token_vector = self.model.do_repair(spoken_token_vector, event_index)
+                    # First, stack both vectors
+                    original_vector = self.get_original_vector(event_index)
+                    combined_vector = np.vstack((spoken_token_vector, original_vector)).mean(axis=0)
+                    spoken_token_vector = combined_vector.mean(axis=0)
+                    
+                    turns += 1
+                    continue # forces another attempt
+                elif self.model.repair == Repair.NEGATIVE_REDUCTION:
+                    # Now, the speaker will neduce negatively
+                    spoken_token_vector = np.maximum(spoken_token_vector + reduction_strength, 100)
                     turns += 1
                     continue # forces another attempt
                 elif self.model.repair == Repair.NO_REPAIR:

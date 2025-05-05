@@ -150,14 +150,6 @@ class ReductionModel(mesa.Model):
     def get_original_vector(self, token_index):
         return self.vectors[token_index, :]
     
-    def do_repair(self, spoken_vector, token_index):
-        # First, stack both vectors
-        original_vector = self.get_original_vector(token_index)
-        combined_vector = np.vstack((spoken_vector, original_vector)).mean(axis=0)
-
-        # TODO: decide on better mechanism
-        return combined_vector.mean(axis=0)
-    
     def register_outcome(self, outcome, success=False):
         if not success:
             self.fail_reason[outcome] += 1
