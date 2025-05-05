@@ -260,6 +260,7 @@ Old concept index was {old_concept_index}.\n\
         # - - - - - - - - -
 
         turns = 0
+        neighbourhood_size = self.model.neighbourhood_size
         for attempt in range(1):
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
@@ -290,7 +291,8 @@ Old concept index was {old_concept_index}.\n\
 
                 # If growing the neighbourhood is allowed, do so
                 if self.model.grow_neighbourhood:
-                    # TODO: grow neighourhood size
+                    # Grow by the selected step size
+                    neighbourhood_size += self.model.neighbourhood_step_size
                     # Then, exit the loop to try another attempt at nearest neighbour etc.
                     # This does not really count as a turn, since the speaker did not speak again
                     continue
