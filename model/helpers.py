@@ -117,7 +117,7 @@ def compute_mean_non_zero_ratio(model):
     return zero_ratio_per_token_per_agent.mean(axis=0)
 
 def compute_mean_agent_l1(model):
-    mean_l1_per_agent = np.array([ np.nanmean(agent.memory.sum(axis=1)) for agent in model.agents ])
+    mean_l1_per_agent = np.array([ np.nanmean(agent.memory.sum(axis=1) / model.num_dimensions) for agent in model.agents ])
 
     return mean_l1_per_agent.mean()
 
