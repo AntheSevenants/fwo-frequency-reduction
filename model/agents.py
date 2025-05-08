@@ -165,7 +165,7 @@ Old concept index was {old_concept_index}.\n\
         # TODO: just figuring things out
 
         # We get the indices of all vectors pertaining to the communicated event
-        matching_token_indices = self.indices_per_token[event_index]
+        matching_token_indices = self.indices_per_token[event_index].copy()
         if len(matching_token_indices) == 0:
             print(event_index)
             print(self.frequency_count)
@@ -173,6 +173,9 @@ Old concept index was {old_concept_index}.\n\
             raise IndexError("Binkebonke")
         # Then, we pick a random exemplar from this list
         chosen_exemplar_base_index = self.model.random.choice(matching_token_indices)
+        # Remove the chosen exemplar from the matching list
+        matching_token_indices.remove(chosen_exemplar_base_index)
+        # Retrieve the vector from the memory
         chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
         
         if self.model.production_model == ProductionModels.SINGLE_EXEMPLAR:
@@ -353,6 +356,20 @@ Old concept index was {old_concept_index}.\n\
                     spoken_token_vector = np.maximum(spoken_token_vector + reduction_strength, 100)
                     turns += 1
                     continue # forces another attempt
+                elif self.model.repair == Repair.PICK_ANOTHER:
+                    # Pick another form, without reduction
+                    # If no form is available, exit and give up
+                    if len(matching_token_indices) > 0:
+                        chosen_exemplar_base_index = self.model.random.choice(matching_token_indices)
+                    else:
+                        break # exit loop
+
+                    # Remove the chosen exemplar from the matching list
+                    matching_token_indices.remove(chosen_exemplar_base_index)
+                    # Retrieve the vector from the memory
+                    chosen_exemplar_vector = self.memory[chosen_exemplar_base_index]
+                    turns += 1
+                    continue # force another attempt
                 elif self.model.repair == Repair.NO_REPAIR:
                     break
                 else:
