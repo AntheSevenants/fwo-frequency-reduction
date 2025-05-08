@@ -339,6 +339,18 @@ Old concept index was {old_concept_index}.\n\
             else:
                 heard_concept_index = int(unique[0])
                 check_right_form = True
+                
+            # If we got here, it means that there is a unique form that was chosen
+            # (and also that we are confident enough if confidence is at play)
+            if check_right_form:
+                if event_index == heard_concept_index:
+                    communication_successful = True
+                    self.model.register_outcome("success", success=True)
+                else:
+                    self.model.register_outcome("wrong_winner")
+
+                if FeedbackTypes.FEEDBACK and not communication_successful:
+                    should_repair = True
 
             # There are multiple types of repair, so I've generalised quite a bit
             if should_repair:
@@ -374,18 +386,8 @@ Old concept index was {old_concept_index}.\n\
                     break
                 else:
                     raise ValueError("Repair option not recognised")
-                
-            # If we got here, it means that there is a unique form that was chosen
-            # (and also that we are confident enough if confidence is at play)
-            if check_right_form:
-                if event_index == heard_concept_index:
-                    communication_successful = True
-                    self.model.register_outcome("success", success=True)
-                else:
-                    self.model.register_outcome("wrong_winner")
 
             # That's all for this loop!
-
             turns += 1
 
         # print(f"Communication successful: {communication_successful}")
