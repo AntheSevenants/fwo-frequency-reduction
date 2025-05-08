@@ -159,7 +159,7 @@ def compute_communicative_failure(model):
         return model.failed_turns / model.total_turns
     
 def compute_reduction_success(model):
-    if model.total_turns == 0:
+    if model.reduced_turns == 0:
         return 0
     else:
         return model.successful_reduced_turns / model.reduced_turns
