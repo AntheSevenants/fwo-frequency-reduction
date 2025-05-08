@@ -390,6 +390,8 @@ Old concept index was {old_concept_index}.\n\
             # That's all for this loop!
             turns += 1
 
+            break
+
         # print(f"Communication successful: {communication_successful}")
         
         if communication_successful:
