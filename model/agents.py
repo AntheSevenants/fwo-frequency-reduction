@@ -209,6 +209,8 @@ Old concept index was {old_concept_index}.\n\
         # I currently don't know whether the whole L1 thing is even necessary for reduction.
         # So I programmed two modes: a success-dependent one and a "dumb" one which just always reduces under a certain threshold
 
+        reduction_strength = self.model.reduction_strength
+
         if self.model.reduction_mode == ReductionModes.ALWAYS:
             reduction_prob = self.model.reduction_prior
         elif self.model.reduction_mode == ReductionModes.L1_SUCCESS_DEPENDENT:
@@ -247,7 +249,6 @@ Old concept index was {old_concept_index}.\n\
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
                 # Apply L1-based soft thresholding to encourage further sparsity
-                reduction_strength = 15
                 threshold = 15  # the threshold value can be adjusted
                 spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
