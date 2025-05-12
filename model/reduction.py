@@ -24,8 +24,11 @@ def reduction_mask(model, vector, reduction_strength, width_ratio=0.05, threshol
 
     return reduced_vector
 
-def angle_reduction(vector, distance):
+def angle_reduction(vector, distance, negative=False):
     angle = np.arctan2(vector[1], vector[0])
+
+    if negative:
+        distance = -distance
 
     vector[0] = max(0, vector[0] - distance * np.cos(angle))
     vector[1] = max(0, vector[1] - distance * np.sin(angle))
