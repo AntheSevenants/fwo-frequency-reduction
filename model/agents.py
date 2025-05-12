@@ -51,7 +51,7 @@ class ReductionAgent(mesa.Agent):
 
             # Add each token twice
             for j in range(self.model.initial_token_count):
-                noisy_vector = add_noise(vector)
+                noisy_vector = add_noise(vector, ceiling=self.model.value_ceil)
 
                 # Save the vector to memory
                 self.commit_to_memory(noisy_vector, token_index, good_origin=True)
@@ -253,6 +253,8 @@ Old concept index was {old_concept_index}.\n\
                 spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
                 spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15, width_ratio=0.5)
+            elif self.model.reduction_method == ReductionMethod.ANGLE:
+                spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength)
 
             # print("Reduction applied: Token vector sparsified.")
         else:
@@ -266,10 +268,16 @@ Old concept index was {old_concept_index}.\n\
         turns = 1
         neighbourhood_size = self.model.neighbourhood_size
         while turns <= self.model.max_turns:
+            toroidal = True # TODO
+            if toroidal:
+                toroidal_size = self.model.value_ceil
+            else:
+                toroidal_size = None
+
             # print(f"Turn: {turns}")
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
+                hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size, toroidal_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
                 hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
@@ -367,6 +375,10 @@ Old concept index was {old_concept_index}.\n\
                 elif self.model.repair == Repair.NEGATIVE_REDUCTION:
                     # Now, the speaker will neduce negatively
                     spoken_token_vector = np.maximum(spoken_token_vector + reduction_strength, 100)
+                    turns += 1
+                    continue # forces another attempt
+                elif self.model.repair == Repair.NEGATIVE_REDUCTION_ANGLE:
+                    spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength, negative=True)
                     turns += 1
                     continue # forces another attempt
                 elif self.model.repair == Repair.PICK_ANOTHER:

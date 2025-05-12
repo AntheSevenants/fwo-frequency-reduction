@@ -63,6 +63,14 @@ def generate_word_vectors(vocabulary_size=1000, dimensions=300, seed=42):
     
     return np.asarray(vectors)
 
+def generate_quarter_circle_vectors(radius=100, num_points=50):
+    # Angles from 0 to pi/2 (quarter circle)
+    angles = np.linspace(0, np.pi / 2, num_points)[:-1]
+    x = radius * np.cos(angles)
+    y = radius * np.sin(angles)
+    vectors = np.vstack((x, y)).T
+    return vectors, angles
+
 def add_noise_float(vector, noise_std=0.01):
     # Generate noise factors: 1 + epsilon
     noise_factor = 1 + np.random.normal(0, noise_std, size=vector.shape)
@@ -77,13 +85,13 @@ def add_noise_float(vector, noise_std=0.01):
     # Multiply the original vector by the noise factor.
     return vector * noise_factor
 
-def add_noise(vector, noise_std=1):
+def add_noise(vector, ceiling=100, noise_strength=5, noise_std=1):
     # Generate noise factors: 1 + epsilon
-    noise_factor = np.random.normal(5, noise_std, size=vector.shape)
+    noise_factor = np.random.normal(noise_strength, noise_std, size=vector.shape)
     
     # Ensure that noise_factor is positive.
     # Clip values to a minimum (e.g., 0.001) to avoid very small or negative multipliers.
-    noise_factor = np.clip(noise_factor, 1, 100)
+    noise_factor = np.clip(noise_factor, 1, ceiling)
 
     # Round to real  number
     noise_factor = np.round(noise_factor, 0)
@@ -379,8 +387,46 @@ def distances_to_probabilities_softmax(distances):
     probabilities = exp_distances / np.sum(exp_distances)
 
     return probabilities
+
+def get_neighbours(matrix, target_row, distance_threshold, toroidal_size=0):
+    if toroidal_size == 0:
+        return get_neighbours_linear(matrix, target_row, distance_threshold)
+    else:
+        return get_neighbours_toroidal(matrix, target_row, distance_threshold, toroidal_size)
+
+def get_neighbours_toroidal(matrix, target_row, distance_threshold=2, yx_max=100):
+    cx, cy = target_row
+    radius_sq = distance_threshold ** 2
+    height = yx_max
+    # List of centers to check: main + wrapped versions
+    centers = [(cx, cy)]
+
+    # Apply toroidal wrapping rules
+    if cx - distance_threshold < 0:
+        # Left edge wraps to bottom
+        centers.append((0 + cy, 0 - cx))
+    if cy - distance_threshold < 0:
+        # Bottom edge wraps to right
+        centers.append((height - cx, height - cy))
+        
+    # Convert to array for broadcasting
+    centers = np.array(centers)
+
+    # Result mask
+    inside_mask = np.zeros(matrix.shape[0], dtype=bool)
+
+    for wrapped_cx, wrapped_cy in centers:
+        dx = matrix[:, 0] - wrapped_cx
+        dy = matrix[:, 1] - wrapped_cy
+        dist_sq = dx**2 + dy**2
+        inside_mask |= dist_sq <= radius_sq
+
+    indices = np.nonzero(inside_mask)[0]
+    weights = None
+
+    return indices, weights
     
-def get_neighbours(matrix, target_row, distance_threshold):
+def get_neighbours_linear(matrix, target_row, distance_threshold):
     # Calculate the Euclidean distance between the target row and all other rows
     distances = np.linalg.norm(matrix - target_row, axis=1)
 
