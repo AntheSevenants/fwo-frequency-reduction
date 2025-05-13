@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.colors import ListedColormap
@@ -96,7 +97,6 @@ def get_vocabulary_info(model, step, n=10, agent_filter=None, agent_comparison_f
 
     # Get colour for each data point
     colours = [ "red", "green", "blue", "brown", "yellow", "purple", "black", "pink", "grey", "teal" ]
-    colours = ListedColormap(colours)
 
     return vocabulary, random_vector, indices, colours, labels, indices_comparison, border
 
@@ -108,6 +108,8 @@ def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_co
     vocabulary, random_vector, indices, colours, labels, indices_comparison, border = get_vocabulary_info(model, step, n, agent_filter, agent_comparison_filter)    
     x = vocabulary[:,0]
     y = vocabulary[:,1]
+    
+    colours = ListedColormap(colours)
     
     scatter = ax.scatter(x[:border], y[:border], c=indices, cmap=colours, marker="^", alpha=0.5)
     if agent_comparison_filter is not None:
@@ -161,6 +163,8 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     X = r * np.cos(theta_cone)
     Y = r * np.sin(theta_cone)
     Z = np.int64(max_radius) - r
+    
+    colours = ListedColormap(colours)
 
     # 3. Plot the vectors on the cone wall
     ax.scatter(X[:border], Y[:border], Z[:border], label='Mapped vectors', c=indices, cmap=colours, marker="^", alpha=0.5)
@@ -190,3 +194,92 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     plt.show()
 
     return ax
+
+def make_angle_vocabulary_plot_3d_interactive(model, step, n=10, agent_filter=None, agent_comparison_filter=None):
+    max_radius = model.value_ceil
+    vocabulary, random_vector, indices, colours, labels, indices_comparison, border = get_vocabulary_info(model, step, n, agent_filter, agent_comparison_filter)
+
+    # Cone surface
+    theta_vals = np.linspace(0, 2 * np.pi, 100)
+    r_vals = np.linspace(0, max_radius, 50)
+    R, T = np.meshgrid(r_vals, theta_vals)
+    Xc = R * np.cos(T)
+    Yc = R * np.sin(T)
+    Zc = max_radius - R  # 45° cone
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Surface(
+        x=Xc, y=Yc, z=Zc,
+        opacity=0.5,
+        showscale=False,
+        colorscale=[[0, 'lightgray'], [1, 'lightgray']],
+        name='Cone'
+    ))
+
+    # Map 2D points onto cone
+    x = vocabulary[:,0]
+    y = vocabulary[:,1]
+    r = np.linalg.norm(vocabulary, axis=1)
+    theta = np.arctan2(y, x)
+    theta_cone = (theta / (0.5 * np.pi)) * 2 * np.pi
+
+    X = r * np.cos(theta_cone)
+    Y = r * np.sin(theta_cone)
+    Z = max_radius - r
+
+    # Vectors
+    # fig.add_trace(go.Scatter3d(
+    #     x=X[:border], y=Y[:border], z=Z[:border],
+    #     mode='markers',
+    #     marker=dict(size=4, color=indices, colorscale=colours),
+    #     name='Mapped vectors'
+    # ))
+
+    
+    fig.add_trace(go.Scatter3d(
+        x=X[:border], y=Y[:border], z=Z[:border],
+        mode='text',
+        text=[str(i) for i in indices[:border]],
+        textposition='middle center',
+        textfont=dict(size=10, color='blue'),
+        name='Mapped indices'
+    ))
+
+    if agent_comparison_filter is not None:
+        fig.add_trace(go.Scatter3d(
+            x=X[border:], y=Y[border:], z=Z[border:],
+            mode='markers',
+            marker=dict(size=4, color=indices_comparison, colorscale=colours),
+            name='Comparison vectors'
+        ))
+
+    # Origin
+    fig.add_trace(go.Scatter3d(
+        x=[0], y=[0], z=[max_radius],
+        mode='markers',
+        marker=dict(color='black', size=6),
+        name='Origin'
+    ))
+
+    # Vertical axis
+    fig.add_trace(go.Scatter3d(
+        x=[0, 0], y=[0, 0], z=[0, max_radius],
+        mode='lines',
+        line=dict(color='green', width=4),
+        name='Cone axis'
+    ))
+
+    fig.update_layout(
+        title='3D Cone with Interactive Mapping',
+        scene=dict(
+            xaxis_title='X',
+            yaxis_title='Y',
+            zaxis_title='Z',
+            aspectmode='cube',
+        ),
+        margin=dict(l=0, r=0, b=0, t=30),
+        showlegend=True
+    )
+
+    fig.show()
