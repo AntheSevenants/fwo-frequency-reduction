@@ -111,7 +111,7 @@ def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_co
     
     colours = ListedColormap(colours)
     
-    scatter = ax.scatter(x[:border], y[:border], c=indices, cmap=colours, marker="^", alpha=0.5)
+    scatter = ax.scatter(x[:border], y[:border], c=indices, cmap=colours, marker="^", alpha=0.9)
     if agent_comparison_filter is not None:
         scatter = ax.scatter(x[border:], y[border:], c=indices_comparison, cmap=colours, marker="v", alpha=0.5)
 
