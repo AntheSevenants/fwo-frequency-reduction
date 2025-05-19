@@ -23,6 +23,7 @@ class ReductionAgent(mesa.Agent):
 
         self.speaking = False
         self.hearing = False
+        self.no = None
 
         self.success_history = {}
 
@@ -147,6 +148,92 @@ Old concept index was {old_concept_index}.\n\
 
         self.interact(hearer_agent, event_index)
 
+    def get_vector_neighbours(self, spoken_token_vector, hearer_agent, neighbourhood_size, toroidal_size):
+        if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size, toroidal_size)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
+        
+        # We check what concepts they are connected to
+        hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
+        unique, counts = np.unique(hearer_concept_values, return_counts=True)
+
+        return unique, counts, hearer_neighbourhood_indices
+    
+    def reception_logic(self, unique, counts, event_index):
+        check_right_form = False
+        communication_successful = False
+        heard_concept_index = None
+        should_repair = False
+
+        # No tokens were found within the vicinity
+        if len(unique) == 0:
+            heard_concept_index = None
+
+            # If growing the neighbourhood is allowed, do so
+            if self.model.grow_neighbourhood:
+                # Grow by the selected step size
+                # Then, exit the loop to try another attempt at nearest neighbour etc.
+                # This does not really count as a turn, since the speaker did not speak again
+                # print("Growing neighbourhood")
+                return False
+            # Else, communication has failed!
+            else:
+                heard_concept_index = None
+                self.model.register_outcome("no_tokens")
+        # If multiple counts were found, we need to check a few things
+        elif len(counts) > 1:
+            # We check what form is the most represented in the neighbourhood
+            sorted_indices = np.argsort(counts)[::-1]
+            unique = unique[sorted_indices]
+            counts = counts[sorted_indices]
+
+            # For the confidence judgement, we turn the counts into percentages
+            percentages = counts_to_percentages(counts)
+            confident_judgement = percentages[0] >= self.model.confidence_threshold
+
+            # If confidence judgement is turned on, and the judgemnt is not confident
+            if self.model.confidence_judgement and not confident_judgement:
+                heard_concept_index = None
+                self.model.register_outcome("not_confident")
+
+                # Say: "what?"
+                should_repair = True
+                return communication_successful, heard_concept_index, should_repair
+            # Else, we check if two forms share the top spot
+            # If not, all is good!
+            elif counts[0] > counts[1]:
+                heard_concept_index = int(unique[0])
+                check_right_form = True
+            # If the two top forms share the spot, communication also fails
+            else:
+                heard_concept_index = None
+
+                self.model.register_outcome("shared_top")
+                should_repair = True
+        # Only one type of form was heard, so the outcome is clear
+        else:
+            heard_concept_index = int(unique[0])
+            check_right_form = True
+            
+        # If we got here, it means that there is a unique form that was chosen
+        # (and also that we are confident enough if confidence is at play)
+        if check_right_form:
+            if event_index == heard_concept_index:
+                communication_successful = True
+                self.model.register_outcome("success", success=True)
+            else:
+                self.model.register_outcome("wrong_winner")
+
+            if FeedbackTypes.FEEDBACK and not communication_successful:
+                should_repair = True
+
+        
+        return communication_successful, heard_concept_index, should_repair
+
+
     def interact(self, hearer_agent, event_index):
         # Define a dummy outcome for the communication
         communication_successful = False
@@ -244,6 +331,8 @@ Old concept index was {old_concept_index}.\n\
 
         do_reduction = self.model.random.random() < reduction_prob and not self.model.disable_reduction
         # Decide whether to apply reduction based on the computed probability.
+        # Save the current vector
+        unreduced_vector = spoken_token_vector.copy()
         if do_reduction:
             if self.model.reduction_method == ReductionMethod.DIMENSION_SCRAP:
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
@@ -261,6 +350,30 @@ Old concept index was {old_concept_index}.\n\
             pass
             # print("No reduction applied.")
 
+        toroidal = False # TODO
+        if toroidal:
+            toroidal_size = self.model.value_ceil
+        else:
+            toroidal_size = None
+
+        if self.model.self_check:
+            neighbourhood_size = self.model.neighbourhood_size
+
+            while True:
+                unique, counts, speaker_self_check_neighbourhood_indices = self.get_vector_neighbours(spoken_token_vector, self, neighbourhood_size, toroidal_size)
+            
+                reception_result = self.reception_logic(unique, counts, event_index)
+                if reception_result:
+                    understood_themselves, self_understood_concept_index, should_repair = self.reception_logic(unique, counts, event_index)
+                    break
+                else:
+                    # print("- Growing")
+                    neighbourhood_size += self.model.neighbourhood_step_size
+
+            # If the speaker wouldn't have understood themselves, turn back the reduction
+            if not understood_themselves:
+                spoken_token_vector = unreduced_vector
+
         # - - - - - - - - -
         # R E C E P T I O N
         # - - - - - - - - -
@@ -268,98 +381,29 @@ Old concept index was {old_concept_index}.\n\
         turns = 1
         neighbourhood_size = self.model.neighbourhood_size
         while turns <= self.model.max_turns:
-            toroidal = True # TODO
-            if toroidal:
-                toroidal_size = self.model.value_ceil
-            else:
-                toroidal_size = None
-
             # print(f"Turn: {turns}")
             # Now, we see what tokens are in the neighbourhood for the hearer in the spoken region
-            if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size, toroidal_size)
-            elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
-            elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
-                hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
-
-            # We check what concepts they are connected to
-            hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
-            unique, counts = np.unique(hearer_concept_values, return_counts=True)
+            unique, counts, hearer_neighbourhood_indices = self.get_vector_neighbours(spoken_token_vector, hearer_agent, neighbourhood_size, toroidal_size)
+            
+            # print(len(unique), neighbourhood_size)
 
             # Update last used indices for forms that were activated upon reception
             for hearer_neighbourhood_index in hearer_neighbourhood_indices:
                 self.update_last_used(hearer_neighbourhood_index)
-
-            # Flag: is the communication successful? The hearer usually doesn't know this
-            communication_successful = False
-            # Flag: do we need to check whether the heard form is correct? The hearer usually doesn't know this
-            check_right_form = False
-            # Flag: should the repair mechanism come into play? Counts as a speaking turn ("what?")
-            should_repair = False
-
-            # No tokens were found within the vicinity
-            if len(unique) == 0:
-                heard_concept_index = None
-
-                # If growing the neighbourhood is allowed, do so
-                if self.model.grow_neighbourhood:
-                    # Grow by the selected step size
-                    neighbourhood_size += self.model.neighbourhood_step_size
-                    # Then, exit the loop to try another attempt at nearest neighbour etc.
-                    # This does not really count as a turn, since the speaker did not speak again
-                    # print("Growing neighbourhood")
-                    continue
-                # Else, communication has failed!
-                else:
-                    heard_concept_index = None
-                    self.model.register_outcome("no_tokens")
-            # If multiple counts were found, we need to check a few things
-            elif len(counts) > 1:
-                # We check what form is the most represented in the neighbourhood
-                sorted_indices = np.argsort(counts)[::-1]
-                unique = unique[sorted_indices]
-                counts = counts[sorted_indices]
-
-                # For the confidence judgement, we turn the counts into percentages
-                percentages = counts_to_percentages(counts)
-                confident_judgement = percentages[0] >= self.model.confidence_threshold
-
-                # If confidence judgement is turned on, and the judgemnt is not confident
-                if self.model.confidence_judgement and not confident_judgement:
-                    heard_concept_index = None
-                    self.model.register_outcome("not_confident")
-
-                    # Say: "what?"
-                    should_repair = True
-                    break # leave the if statement so the fail reason remains correct
-                # Else, we check if two forms share the top spot
-                # If not, all is good!
-                elif counts[0] > counts[1]:
-                    heard_concept_index = int(unique[0])
-                    check_right_form = True
-                # If the two top forms share the spot, communication also fails
-                else:
-                    heard_concept_index = None
-
-                    self.model.register_outcome("shared_top")
-                    should_repair = True
-            # Only one type of form was heard, so the outcome is clear
-            else:
-                heard_concept_index = int(unique[0])
-                check_right_form = True
                 
-            # If we got here, it means that there is a unique form that was chosen
-            # (and also that we are confident enough if confidence is at play)
-            if check_right_form:
-                if event_index == heard_concept_index:
-                    communication_successful = True
-                    self.model.register_outcome("success", success=True)
-                else:
-                    self.model.register_outcome("wrong_winner")
-
-                if FeedbackTypes.FEEDBACK and not communication_successful:
-                    should_repair = True
+            reception_result = self.reception_logic(unique, counts, event_index)
+            if reception_result:
+                communication_successful, heard_concept_index, should_repair = self.reception_logic(unique, counts, event_index)
+            else:
+                # print("- Growing")
+                neighbourhood_size += self.model.neighbourhood_step_size
+                # if neighbourhood_size > 1000:
+                #     print("Things are going amiss!")
+                #     print("Agent #:", self.no)
+                #     print("Hearer agent #:", hearer_agent.no)
+                #     print("Event index:", event_index)
+                #     self.model.stop()
+                continue
 
             # There are multiple types of repair, so I've generalised quite a bit
             if should_repair:
@@ -378,6 +422,7 @@ Old concept index was {old_concept_index}.\n\
                     turns += 1
                     continue # forces another attempt
                 elif self.model.repair == Repair.NEGATIVE_REDUCTION_ANGLE:
+                    # print("- Repairing angle")
                     spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength, negative=True)
                     turns += 1
                     continue # forces another attempt

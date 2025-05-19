@@ -388,8 +388,8 @@ def distances_to_probabilities_softmax(distances):
 
     return probabilities
 
-def get_neighbours(matrix, target_row, distance_threshold, toroidal_size=0):
-    if toroidal_size == 0:
+def get_neighbours(matrix, target_row, distance_threshold, toroidal_size=None):
+    if toroidal_size is None:
         return get_neighbours_linear(matrix, target_row, distance_threshold)
     else:
         return get_neighbours_toroidal(matrix, target_row, distance_threshold, toroidal_size)
