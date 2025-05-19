@@ -6,31 +6,23 @@ from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
 
-from mesa.batchrunner import batch_run
+from batchrunner import batch_run
 
-NUM_AGENTS = 25
-NUM_DIMENSIONS = 100
-NUM_TOKENS = 100
-VALUE_CEIL = 100
-# vectors, tokens, frequencies, percentiles = load_vectors(f"materials/vectors-{NUM_DIMENSIONS}.txt")
-tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{NUM_TOKENS}.tsv", theoretical=True)
+from datetime import datetime
 
-# Overwrite vectors with my own
-vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=NUM_DIMENSIONS)
+import pandas as pd
+import os
 
-params = { "num_agents": NUM_AGENTS,
-           "vectors": vectors,
-           "tokens": tokens,
-           "frequencies": frequencies,
-           "percentiles": percentiles,
-           "ranks": ranks,
-           "reduction_prior": 0.5,
+
+params = { "num_agents": 25,
+           "num_tokens": 100,
            "memory_size": 1000,
-           "value_ceil": 100,
+           "num_dimensions": 100,
+           "reduction_prior": 0.5,
            "initial_token_count": 1,
            "prefill_memory": True,
            "neighbourhood_type": NeighbourhoodTypes.SPATIAL,
-           "neigbourhood_size": 25,
+           "neighbourhood_size": 25,
            "neighbourhood_step_size": 25,
            "reduction_strength": 15,
            "production_model": ProductionModels.SINGLE_EXEMPLAR,
@@ -44,14 +36,25 @@ params = { "num_agents": NUM_AGENTS,
            "datacollector_step_size": 100 }
 
 if __name__ == '__main__':
+    now = datetime.now() # current date and time
+    date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
+
+    run_folder = f"models/{date_time}/"
+    os.makedirs(run_folder, exist_ok=True)
+
     results = batch_run(
         ReductionModel,
+        date_time,
         parameters=params,
-        iterations=5,
-        max_steps=100,
-        number_processes=8,
-        data_collection_period=-1,
+        iterations=1,
+        max_steps=10000,
+        number_processes=None,
+        data_collection_period=100,
         display_progress=True,
     )
 
-    print(results)
+    csv_filename = f"{run_folder}run_infos.csv"
+    br_df = pd.DataFrame(results)
+    br_df.to_csv(csv_filename)
+
+#     print(results)

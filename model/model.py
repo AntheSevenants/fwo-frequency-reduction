@@ -10,12 +10,12 @@ from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
-
+from model.helpers import load_vectors, load_info, generate_word_vectors
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, vectors=[], tokens=[], frequencies=[], percentiles=[], ranks=[], reduction_prior = 0.5, memory_size=1000, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, datacollector_step_size=100, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, datacollector_step_size=100, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -59,13 +59,18 @@ class ReductionModel(mesa.Model):
 
         # The grid is just for visualisation purposes, it doesn't do anything
         self.grid = mesa.space.SingleGrid(10, 10, True)
+
+        tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{num_tokens}.tsv", theoretical=True)
+        # Overwrite vectors with my own
+        vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions)
+
         self.vectors = vectors
         self.tokens = tokens
         self.frequencies = frequencies
         self.percentiles = percentiles
         self.ranks = ranks
-        self.num_tokens = len(self.tokens)
-        self.num_dimensions = self.vectors.shape[1]
+        self.num_tokens = num_tokens
+        self.num_dimensions = num_dimensions
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
 
         print(f"Lower dimension limit is {self.lower_dimension_limit}")
