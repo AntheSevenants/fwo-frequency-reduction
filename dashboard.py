@@ -53,6 +53,9 @@ def index():
     parameter_mapping = None
     constants_mapping = None
 
+    reserved_keywords = [ "run", "filter" ]
+    no_selection = len(list(set(selected_parameters) - set(reserved_keywords))) == 0
+
     if selected_run is not None:
         run_infos = get_run_infos(selected_run)
 
@@ -71,7 +74,7 @@ def index():
             else:
                 parameter_mapping[column] = [ str(value) for value in unique_values.tolist() ]
 
-        if len(selected_parameters) == 1:
+        if no_selection:
             for parameter in parameter_mapping:
                 selected_parameters[parameter] = parameter_mapping[parameter][0]
 
@@ -81,7 +84,7 @@ def index():
             # Create a mask to select the right model
             mask = pd.Series(True, index=run_infos.index)
             for column, value in selected_parameters.items():
-                if column == "run":
+                if column in ["run"]:
                     continue
 
                 mask &= (run_infos[column].astype(str) == value)
@@ -104,6 +107,7 @@ def index():
                            selected_parameters=selected_parameters,
                            parameter_mapping=parameter_mapping,
                            constants_mapping=constants_mapping,
+                           no_selection=no_selection,
                            graphs=GRAPHS,
                            enum_mapping=ENUM_MAPPING,
                            get_enum_name=get_enum_name)
