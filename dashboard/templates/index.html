@@ -16,6 +16,7 @@
     </div>
     {% else %}
     <div class="container d-flex align-items-center pt-4" style="min-height: 100vh;">
+        <input id="input_note">
     {% for graph_name in graphs %}
         <img src='{{ url_for("generate_graph", graph_name=graph_name, selected_run=selected_run, selected_run_id=selected_run_id) }}?v=99999'>
     {% endfor %}
