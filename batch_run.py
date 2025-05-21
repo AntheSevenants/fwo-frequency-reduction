@@ -55,6 +55,6 @@ if __name__ == '__main__':
 
     csv_filename = f"{run_folder}run_infos.csv"
     br_df = pd.DataFrame(results)
-    br_df.to_csv(csv_filename)
+    br_df.to_csv(csv_filename, index=False)
 
 #     print(results)
