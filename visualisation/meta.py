@@ -41,6 +41,8 @@ def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_f
     plt.tight_layout()
     plt.show()
 
+    return fig
+
 def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwargs):
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12, 12))
 
@@ -48,6 +50,8 @@ def make_layout_plot(model, plot_function, steps=[100, 1000, 5000, 10000], **kwa
     plot_function(model, step=steps[1], ax=ax2, **kwargs)
     plot_function(model, step=steps[2], ax=ax3, **kwargs)
     plot_function(model, step=steps[3], ax=ax4, **kwargs)
+
+    return fig
 
 def make_confusion_plot(model, step, n=35, ax=None):
     if ax is None:
@@ -101,7 +105,8 @@ def make_umap_plot(model, step, ax=None):
     ax = make_umap_plot_inner(vocabulary, model.percentiles, ax)
     step = step * model.datacollector_step_size
     ax.set_title(f"UMAP plot of tokens (t = {step})")
-    ax
+    
+    return ax
 
 def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, agent_comparison_filter=None, ax=None):
     if ax is None:
