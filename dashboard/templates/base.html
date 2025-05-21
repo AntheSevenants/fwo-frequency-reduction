@@ -55,6 +55,23 @@
             {% if selected_run is not none %}
             <div class="card mb-3">
                 <div class="card-header text-white">
+                    <div class="wrapper"><i class="bi bi-funnel-fill"></i></div> Filter graphs
+                </div>
+                <div class="card-body">
+                    <div class="form-floating">
+                        <select name="filter" class="form-select mb-2 interactive"
+                            aria-label="Dropdown external variable selection" id="select_external">
+                            <option value="none" {{ "selected" if selected_filter is none }}>All graphs</option>
+                            {% for graph_name in all_graphs %}
+                            <option value="{{ graph_name }}" {{ "selected" if selected_filter==graph_name }}>{{ graph_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="select_external">Available graphs:</label>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header text-white">
                     <div class="wrapper"><i class="bi bi-sliders"></i></div> Parameter selection
                 </div>
                 <div class="card-body">

@@ -48,13 +48,26 @@ app.secret_key = 'secret_key_for_sessions'
 def index():
     runs = get_runs()
     selected_run = request.args.get('run')
+    selected_filter = request.args.get('filter')
     selected_run_id = None
     selected_parameters = dict(request.args)
     parameter_mapping = None
     constants_mapping = None
 
+    
+
     reserved_keywords = [ "run", "filter" ]
     no_selection = len(list(set(selected_parameters) - set(reserved_keywords))) == 0
+
+    if selected_filter == "no":
+        selected_filter = None
+    elif selected_filter in GRAPHS:
+        graphs = [ selected_filter ]
+    else:
+        selected_filter = None
+    
+    if selected_filter is None:
+        graphs = GRAPHS.copy()
 
     if selected_run is not None:
         run_infos = get_run_infos(selected_run)
@@ -84,7 +97,7 @@ def index():
             # Create a mask to select the right model
             mask = pd.Series(True, index=run_infos.index)
             for column, value in selected_parameters.items():
-                if column in ["run"]:
+                if column in reserved_keywords:
                     continue
 
                 mask &= (run_infos[column].astype(str) == value)
@@ -105,10 +118,12 @@ def index():
                            selected_run=selected_run,
                            selected_run_id=selected_run_id,
                            selected_parameters=selected_parameters,
+                           selected_filter=selected_filter,
                            parameter_mapping=parameter_mapping,
                            constants_mapping=constants_mapping,
                            no_selection=no_selection,
-                           graphs=GRAPHS,
+                           graphs=graphs,
+                           all_graphs=GRAPHS,
                            enum_mapping=ENUM_MAPPING,
                            get_enum_name=get_enum_name)
 
