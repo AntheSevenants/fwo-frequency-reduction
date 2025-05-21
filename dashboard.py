@@ -10,6 +10,7 @@ import math
 import pickle
 import json
 import argparse
+import threading
 
 import model.types
 import model.types.feedback
@@ -43,6 +44,8 @@ graphs_in_memory = {}
 
 app = Flask(__name__, template_folder="dashboard/templates/", static_folder="dashboard/static/")
 app.secret_key = 'secret_key_for_sessions'
+
+graph_lock = threading.Lock()
 
 @app.route('/')
 def index():
@@ -186,16 +189,17 @@ def generate_graph(graph_name, selected_run, selected_run_id):
     if not selected_run_id in graphs_in_memory[selected_run]:
         graphs_in_memory[selected_run][selected_run_id] = {}
 
-    if not graph_name in graphs_in_memory[selected_run][selected_run_id]:
-        figure = generate_plot(graph_name, model)
-        buffer = BytesIO()
-        figure.savefig(buffer, format='png')
-        # Store in cache
-        image_bytes = buffer.getvalue()
-        graphs_in_memory[selected_run][selected_run_id][graph_name] = image_bytes
-    else:
-        image_bytes = graphs_in_memory[selected_run][selected_run_id][graph_name]
-        #buffer.seek(0)
+    with graph_lock:
+        if not graph_name in graphs_in_memory[selected_run][selected_run_id]:
+            figure = generate_plot(graph_name, model)
+            buffer = BytesIO()
+            figure.savefig(buffer, format='png')
+            # Store in cache
+            image_bytes = buffer.getvalue()
+            graphs_in_memory[selected_run][selected_run_id][graph_name] = image_bytes
+        else:
+            image_bytes = graphs_in_memory[selected_run][selected_run_id][graph_name]
+            #buffer.seek(0)
 
     # Wrap in new buffer (else I get a closed buffer error)
     return send_file(BytesIO(image_bytes), mimetype='image/png')
