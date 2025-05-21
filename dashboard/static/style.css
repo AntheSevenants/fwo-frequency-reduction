@@ -44,10 +44,18 @@ main {
 	text-align: left;
 }
 
+.container img {
+    max-height: 100vh;
+    max-width: calc(100vw - 325px);
+    height: auto;
+    width: auto;
+}
+
 #input_note {
+    background-color: transparent;
     position: absolute;
     width: 100%;
-    top: 1em;
+    top: 1em    ;
     left: 0;
     padding: 0;
 
