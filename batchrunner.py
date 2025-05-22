@@ -185,7 +185,7 @@ def _model_run_func(
     with open(model_filename, "ab") as model_file:
         pickle.dump(model, model_file)
 
-    data = [ { "run_id": run_id, **kwargs } ]
+    data = [ { "run_id": run_id, "max_steps": max_steps, **kwargs } ]
 
     return data
 
