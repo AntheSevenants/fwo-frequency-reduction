@@ -34,6 +34,11 @@ class ReductionAgent(mesa.Agent):
         # So I'm just keeping the flexible size code. Needs must :-).
         model_memory_size = self.model.initial_token_count * self.model.num_tokens
 
+        # If there is no shared vocabulary, copy the matrix and shuffle it
+        if self.model.jumble_vocabulary:
+            override_vectors = self.model.vectors.copy()
+            np.random.shuffle(override_vectors)
+
         if model_memory_size > self.model.memory_size:
             raise ValueError(f"Initial agent memory size is {model_memory_size}, exceeding the memory limit of {self.model.memory_size}")
 
@@ -47,8 +52,11 @@ class ReductionAgent(mesa.Agent):
         self.success_memory = np.full((self.model.num_tokens, self.model.success_memory_size), np.nan)
 
         for token_index in range(self.model.num_tokens):
-            # Get the vector from memory and add noise
-            vector = self.model.get_original_vector(token_index)
+            if not self.model.jumble_vocabulary:
+                # Get the vector from memory and add noise
+                vector = self.model.get_original_vector(token_index)
+            else:
+                vector = override_vectors[token_index, :]
 
             # Add each token twice
             for j in range(self.model.initial_token_count):
