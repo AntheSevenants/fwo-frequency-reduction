@@ -34,11 +34,6 @@ class ReductionAgent(mesa.Agent):
         # So I'm just keeping the flexible size code. Needs must :-).
         model_memory_size = self.model.initial_token_count * self.model.num_tokens
 
-        # If there is no shared vocabulary, copy the matrix and shuffle it
-        if self.model.jumble_vocabulary:
-            override_vectors = self.model.vectors.copy()
-            np.random.shuffle(override_vectors)
-
         if model_memory_size > self.model.memory_size:
             raise ValueError(f"Initial agent memory size is {model_memory_size}, exceeding the memory limit of {self.model.memory_size}")
 
@@ -56,7 +51,7 @@ class ReductionAgent(mesa.Agent):
                 # Get the vector from memory and add noise
                 vector = self.model.get_original_vector(token_index)
             else:
-                vector = override_vectors[token_index, :]
+                vector = np.random.randint(0, 100, self.model.num_dimensions)
 
             # Add each token twice
             for j in range(self.model.initial_token_count):
@@ -101,13 +96,15 @@ class ReductionAgent(mesa.Agent):
         if self.num_exemplars_in_memory == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
             eligible_indices = []
+            # Exception if we don't want to have multiple exemplars
+            override_frequency_floor = self.model.num_tokens == self.model.memory_size
             for token_index, frequency_count in enumerate(self.frequency_count):
-                if frequency_count > 1:
+                if frequency_count > 1 or (override_frequency_floor and token_index == concept_index):
                     eligible_indices += self.indices_per_token[token_index]
 
             if not eligible_indices:
                 # This should rarely happen if you always ensure every token retains at least one exemplar.
-                raise Exception(f"Cannot remove an exemplar from memory as no types have frequencies over {self.model.initial_token_count}")
+                raise Exception(f"Cannot remove an exemplar from memory as no types have frequencies over 1")
         
             # We choose the index which is the oldest
             remove_index = min(eligible_indices, key=lambda i: self.last_used[i])
@@ -122,7 +119,7 @@ class ReductionAgent(mesa.Agent):
 
             # Add extra test to be absolutely certain that no token lacks exemplars
             for token_index, exemplar_indices in enumerate(self.indices_per_token):
-                if len(exemplar_indices) == 0:
+                if len(exemplar_indices) == 0 and not override_frequency_floor:
                     raise ValueError(f"Token {token_index} has zero associated exemplars. This should never happen!\n\
 Old concept index was {old_concept_index}.\n\
 {token_index} has {self.frequency_count[token_index]} registered associated exemplar(s)")
@@ -170,6 +167,12 @@ Old concept index was {old_concept_index}.\n\
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.ONE_SHOT:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
+            # Get only the closest exemplar
+            highest_weight_index = np.argmax(hearer_weights)
+            hearer_neighbourhood_indices = [ hearer_neighbourhood_indices[highest_weight_index] ]
+
         
         # We check what concepts they are connected to
         hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
@@ -285,7 +288,7 @@ Old concept index was {old_concept_index}.\n\
             # Update last used characteristics for this index
             self.update_last_used(chosen_exemplar_base_index)
         else:    
-        # Now, we make neighbourhood around this exemplar
+            # Now, we make neighbourhood around this exemplar
             if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL: 
                 speaker_neighbourhood_indices, speaker_weights = get_neighbours(self.memory, chosen_exemplar_vector, self.model.neighbourhood_size)
             elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
@@ -353,8 +356,8 @@ Old concept index was {old_concept_index}.\n\
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
                 # Apply L1-based soft thresholding to encourage further sparsity
-                threshold = 15  # the threshold value can be adjusted
-                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, threshold)
+                threshold = self.model.reduction_strength  # the threshold value can be adjusted
+                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, 15)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
                 spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15, width_ratio=0.5)
             elif self.model.reduction_method == ReductionMethod.ANGLE:
@@ -403,7 +406,7 @@ Old concept index was {old_concept_index}.\n\
 
             # Update last used indices for forms that were activated upon reception
             for hearer_neighbourhood_index in hearer_neighbourhood_indices:
-                self.update_last_used(hearer_neighbourhood_index)
+                hearer_agent.update_last_used(hearer_neighbourhood_index)
                 
             reception_result = self.reception_logic(unique, counts, event_index)
             if reception_result:
