@@ -10,7 +10,7 @@ from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
-from model.helpers import load_vectors, load_info, generate_word_vectors
+from model.helpers import load_vectors, load_info, generate_word_vectors, generate_quarter_circle_vectors
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
@@ -63,9 +63,20 @@ class ReductionModel(mesa.Model):
         # The grid is just for visualisation purposes, it doesn't do anything
         self.grid = mesa.space.SingleGrid(10, 10, True)
 
-        tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{num_tokens}.tsv", theoretical=True)
+        num_tokens_override = 100
+        tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{num_tokens_override}.tsv", theoretical=True)
+
         # Overwrite vectors with my own
-        vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions)
+        if not self.toroidal:
+            vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions)
+        else:
+            tokens = tokens[0:num_tokens]
+            frequencies = frequencies[0:num_tokens]
+            percentiles = percentiles[0:num_tokens]
+            ranks = ranks[0:num_tokens]
+
+            vectors, angles = generate_quarter_circle_vectors(self.value_ceil - 20, num_points=num_tokens + 1)
+            np.random.shuffle(vectors)
 
         self.vectors = vectors
         self.tokens = tokens

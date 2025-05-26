@@ -350,8 +350,7 @@ Old concept index was {old_concept_index}.\n\
             pass
             # print("No reduction applied.")
 
-        toroidal = False # TODO
-        if toroidal:
+        if self.model.toroidal:
             toroidal_size = self.model.value_ceil
         else:
             toroidal_size = None
