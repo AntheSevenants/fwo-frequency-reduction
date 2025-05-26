@@ -71,7 +71,11 @@ class ReductionAgent(mesa.Agent):
         # To prevent certain model anomalies, we prefill the memory
         if self.model.prefill_memory:
             while self.num_exemplars_in_memory < self.model.memory_size:
-                random_index = self.model.weighted_random_index()
+                if self.model.zipfian_sampling:
+                    random_index = self.model.weighted_random_index()
+                else:
+                    random_index = self.model.true_random_index()
+
                 random_vector = self.model.get_original_vector(random_index)
                 noisy_vector = add_noise(random_vector)
 
@@ -147,7 +151,10 @@ Old concept index was {old_concept_index}.\n\
             self.num_exemplars_in_memory += 1
 
     def interact_do(self):
-        event_index = self.model.weighted_random_index()
+        if self.model.zipfian_sampling:
+            event_index = self.model.weighted_random_index()
+        else:
+            event_index = self.model.true_random_index()
         
         while True:
             hearer_agent = self.random.choice(self.model.agents)
