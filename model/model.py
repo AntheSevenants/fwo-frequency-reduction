@@ -9,13 +9,14 @@ from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
+from model.types.who_saves import WhoSaves
 from model.types.repair import Repair
 from model.helpers import load_vectors, load_info, generate_word_vectors, generate_quarter_circle_vectors
 
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, datacollector_step_size=100, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, datacollector_step_size=100, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -61,6 +62,9 @@ class ReductionModel(mesa.Model):
 
         # Toroidal space
         self.toroidal = toroidal
+
+        # Who saves?
+        self.who_saves = who_saves
 
         #
         # Visualisation stuff

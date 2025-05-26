@@ -11,6 +11,7 @@ from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
+from model.types.who_saves import WhoSaves
 
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
@@ -406,7 +407,8 @@ Old concept index was {old_concept_index}.\n\
 
             # Update last used indices for forms that were activated upon reception
             for hearer_neighbourhood_index in hearer_neighbourhood_indices:
-                hearer_agent.update_last_used(hearer_neighbourhood_index)
+                pass
+                # hearer_agent.update_last_used(hearer_neighbourhood_index)
                 
             reception_result = self.reception_logic(unique, counts, event_index)
             if reception_result:
@@ -470,7 +472,11 @@ Old concept index was {old_concept_index}.\n\
         # print(f"Communication successful: {communication_successful}")
         
         if communication_successful:
-            hearer_agent.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=True)
+            if self.model.who_saves in [ WhoSaves.HEARER, WhoSaves.BOTH ]:
+                hearer_agent.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=True)
+
+            if self.model.who_saves in [ WhoSaves.SPEAKER, WhoSaves.BOTH ]:
+                self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=True)
             
             # Increase the historical success score for this event (or token).
             # This could be a simple counter or a more elaborate moving average.
@@ -481,8 +487,11 @@ Old concept index was {old_concept_index}.\n\
         else:
             # If there is no feedback mechanism, also save form when speaker misheard
             if self.model.feedback_type == FeedbackTypes.NO_FEEDBACK and heard_concept_index is not None:
-                hearer_agent.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
+                if self.model.who_saves in [ WhoSaves.HEARER, WhoSaves.BOTH ]:
+                    hearer_agent.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
 
+                if self.model.who_saves in [ WhoSaves.SPEAKER, WhoSaves.BOTH ]:
+                    self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
 
             # Optionally, penalize if the communication failed.
             self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
