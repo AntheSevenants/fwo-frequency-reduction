@@ -470,7 +470,7 @@ Old concept index was {old_concept_index}.\n\
         # print(f"Communication successful: {communication_successful}")
         
         if communication_successful:
-            self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=True)
+            hearer_agent.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=True)
             
             # Increase the historical success score for this event (or token).
             # This could be a simple counter or a more elaborate moving average.
@@ -481,7 +481,7 @@ Old concept index was {old_concept_index}.\n\
         else:
             # If there is no feedback mechanism, also save form when speaker misheard
             if self.model.feedback_type == FeedbackTypes.NO_FEEDBACK and heard_concept_index is not None:
-                self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
+                hearer_agent.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
 
 
             # Optionally, penalize if the communication failed.
