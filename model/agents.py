@@ -407,8 +407,8 @@ Old concept index was {old_concept_index}.\n\
 
             # Update last used indices for forms that were activated upon reception
             for hearer_neighbourhood_index in hearer_neighbourhood_indices:
-                pass
-                # hearer_agent.update_last_used(hearer_neighbourhood_index)
+                if self.model.exemplar_hearing_equals_use:
+                    hearer_agent.update_last_used(hearer_neighbourhood_index)
                 
             reception_result = self.reception_logic(unique, counts, event_index)
             if reception_result:
