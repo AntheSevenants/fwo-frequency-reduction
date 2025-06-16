@@ -388,13 +388,13 @@ def distances_to_probabilities_softmax(distances):
 
     return probabilities
 
-def get_neighbours(matrix, target_row, distance_threshold, toroidal_size=None):
+def get_neighbours(matrix, target_row, distance_threshold, toroidal_size=None, weighted=False):
     if toroidal_size is None:
-        return get_neighbours_linear(matrix, target_row, distance_threshold)
+        return get_neighbours_linear(matrix, target_row, distance_threshold, weighted)
     else:
-        return get_neighbours_toroidal(matrix, target_row, distance_threshold, toroidal_size)
+        return get_neighbours_toroidal(matrix, target_row, distance_threshold, toroidal_size, weighted)
 
-def get_neighbours_toroidal(matrix, target_row, distance_threshold=2, yx_max=100):
+def get_neighbours_toroidal(matrix, target_row, distance_threshold=2, yx_max=100, weighted=False):
     cx, cy = target_row
     radius_sq = distance_threshold ** 2
     height = yx_max
@@ -414,6 +414,7 @@ def get_neighbours_toroidal(matrix, target_row, distance_threshold=2, yx_max=100
 
     # Result mask
     inside_mask = np.zeros(matrix.shape[0], dtype=bool)
+    weights = np.zeros(matrix.shape[0])
 
     for wrapped_cx, wrapped_cy in centers:
         dx = matrix[:, 0] - wrapped_cx
@@ -421,20 +422,38 @@ def get_neighbours_toroidal(matrix, target_row, distance_threshold=2, yx_max=100
         dist_sq = dx**2 + dy**2
         inside_mask |= dist_sq <= radius_sq
 
+        # Calculate weights as inverse of distance squared
+        weights[dist_sq <= radius_sq] = 1 / (dist_sq[dist_sq <= radius_sq] + 1e-10) 
+
     indices = np.nonzero(inside_mask)[0]
-    weights = None
+    
+    if weighted:
+        weights = weights[indices]
+        # Normalise the weights
+        weights /= np.sum(weights)
+    else:
+        weights = None
 
     return indices, weights
     
-def get_neighbours_linear(matrix, target_row, distance_threshold):
+def get_neighbours_linear(matrix, target_row, distance_threshold, weighted=False):
     # Calculate the Euclidean distance between the target row and all other rows
     distances = np.linalg.norm(matrix - target_row, axis=1)
 
     # Find the indices of rows within the distance threshold
     neighbour_indices = np.where(distances <= distance_threshold)[0]
+    
+    # Extract distances of the neighbours
+    neighbour_distances = distances[neighbour_indices]
 
-    # Disable weights (each neighbour counts equally)
-    weights = None
+    if weighted:
+        if len(neighbour_distances) > 0:
+            unnormalized_weights = np.exp(-neighbour_distances)
+            weights = unnormalized_weights / np.sum(unnormalized_weights)
+        else:
+            weights = np.array([])
+    else:
+        weights = None
 
     # Exclude the target row itself from the neighbours
     #neighbour_indices = neighbour_indices[neighbour_indices != target_row_index]

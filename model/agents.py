@@ -164,6 +164,8 @@ Old concept index was {old_concept_index}.\n\
     def get_vector_neighbours(self, spoken_token_vector, hearer_agent, neighbourhood_size, toroidal_size):
         if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size, toroidal_size)
+        if self.model.neighbourhood_type == NeighbourhoodTypes.SPATIAL_WEIGHTED:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours(hearer_agent.memory, spoken_token_vector, neighbourhood_size, toroidal_size, weighted=True)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.NEAREST:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
@@ -173,11 +175,21 @@ Old concept index was {old_concept_index}.\n\
             # Get only the closest exemplar
             highest_weight_index = np.argmax(hearer_weights)
             hearer_neighbourhood_indices = [ hearer_neighbourhood_indices[highest_weight_index] ]
+            hearer_weights = None
 
-        
-        # We check what concepts they are connected to
-        hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
-        unique, counts = np.unique(hearer_concept_values, return_counts=True)
+        if hearer_weights is None:
+            # We check what concepts they are connected to
+            hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
+            unique, counts = np.unique(hearer_concept_values, return_counts=True)
+        else:
+            hearer_concept_values = hearer_agent.indices_in_memory[hearer_neighbourhood_indices]
+            # print(hearer_weights.shape)
+            unique_concepts, inverse_indices = np.unique(hearer_concept_values, return_inverse=True)
+            weighted_counts = np.zeros(unique_concepts.shape)
+            np.add.at(weighted_counts, inverse_indices, hearer_weights)
+
+            unique = unique_concepts
+            counts = weighted_counts
 
         return unique, counts, hearer_neighbourhood_indices
     
@@ -383,13 +395,17 @@ Old concept index was {old_concept_index}.\n\
                 reception_result = self.reception_logic(unique, counts, event_index)
                 if reception_result:
                     understood_themselves, self_understood_concept_index, should_repair = self.reception_logic(unique, counts, event_index)
+
+                    percentages = counts_to_percentages(counts)
+                    confident_judgement = percentages[0] >= self.model.speaker_confidence_threshold
                     break
                 else:
                     # print("- Growing")
                     neighbourhood_size += self.model.neighbourhood_step_size
 
             # If the speaker wouldn't have understood themselves, turn back the reduction
-            if not understood_themselves:
+            # Or if the speaker is not confident!
+            if not understood_themselves or not confident_judgement:
                 spoken_token_vector = unreduced_vector
 
         # - - - - - - - - -
@@ -492,6 +508,11 @@ Old concept index was {old_concept_index}.\n\
 
                 if self.model.who_saves in [ WhoSaves.SPEAKER, WhoSaves.BOTH ]:
                     self.commit_to_memory(spoken_token_vector, heard_concept_index, good_origin=False)
+
+                # self.model.running = False
+                # print(event_index, "confused with", heard_concept_index)
+                # print("Speaker:", self.no, "Hearer:", hearer_agent.no)
+                # print("Reducing:", do_reduction)
 
             # Optionally, penalize if the communication failed.
             self.success_history[event_index] = max(self.success_history.get(event_index, 0) - 1, 0)
