@@ -39,7 +39,7 @@ def combine_plots(model, ax1_func, ax2_func, ax3_func, ax4_func, ax5_func, ax6_f
 
     # Adjust layout
     plt.tight_layout()
-    plt.show()
+    #plt.show()
 
     return fig
 
@@ -146,9 +146,9 @@ def make_umap_full_vocabulary_plot(model, step, n=10, agent_filter=None, agent_c
     proj_2d = umap_2d.fit_transform(np.asarray(vocabulary))
     x,y = zip(*proj_2d)
     
-    scatter = ax.scatter(x[:border], y[:border], c=indices, cmap=colours, marker="^", alpha=0.5)
+    scatter = ax.scatter(x[:border], y[:border], c=indices, cmap=colours, marker="^", alpha=0.1)
     if agent_comparison_filter is not None:
-        scatter = ax.scatter(x[border:], y[border:], c=indices_comparison, cmap=colours, marker="v", alpha=0.5)
+        scatter = ax.scatter(x[border:], y[border:], c=indices_comparison, cmap=colours, marker="v", alpha=0.1)
     
     ax.legend(handles=scatter.legend_elements()[0], labels=labels)
 
