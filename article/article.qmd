@@ -1,0 +1,47 @@
+---
+title: ""
+author:
+  - name: Anthe Sevenants
+    email: anthe.sevenants@kuleuven.be
+    orcid: 0000-0002-5055-770X
+    affiliations:
+      - name: KU Leuven
+  - name: Freek Van de Velde
+    email: freek.vandevelde@kuleuven.be
+    orcid: 0000-0003-3050-2207
+    affiliations:
+      - name: KU Leuven
+  - name: Dirk Speelman
+    email: dirk.speelman@kuleuven.be
+    orcid: 0000-0003-1561-1851
+    affiliations:
+      - name: KU Leuven
+  - name: Dirk Pijpops
+    email: dirk.pijpops@uantwerpen.be
+    orcid: 0000-0002-3820-8099
+    affiliations:
+      - name: Universiteit Antwerpen
+format:
+  html:
+    toc: true
+  docx:
+    toc: false
+editor: source
+title-block-banner: true
+bibliography: references.bib
+toc: true
+toc-depth: 4
+toc-location: left
+tbl-cap-location: bottom
+fig-cap-location: bottom
+number-sections: true
+reference-location: margin
+csl: chicago-author-date.csl
+df-print: kable
+abstract: |
+  TODO
+execute:
+  echo: false
+---
+
+todo
