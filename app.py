@@ -7,8 +7,8 @@ from mesa.visualization import SolaraViz, make_plot_component, make_space_compon
 from mesa.visualization.utils import update_counter
 from matplotlib.figure import Figure
 
-from model import ReductionModel
-from helpers import load_vectors
+from model.model import ReductionModel
+from model.helpers import load_vectors
 
 NUM_AGENTS = 100
 vectors, tokens, frequencies, percentiles = load_vectors("materials/vectors.txt")

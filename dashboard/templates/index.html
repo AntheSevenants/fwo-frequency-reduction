@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block head %}
+{{ super() }}
+<style type="text/css">
+</style>
+{% endblock %}
+{% block content %}
+    {% if no_selection %}
+    <div class="container d-flex justify-content-center align-items-center pt-4" style="min-height: 100vh;">
+        <div class="section row justify-content-center pb-5 w-100">
+            <div class="col-12 col-lg-5">
+                <p class="pt-2">Choose a model run to get started.</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <input id="input_note" spellcheck="false">
+    <div class="container d-flex align-items-center {{ 'justify-content-center' if selected_filter is not none }}" style="min-height: 100vh;">
+    {% for graph_name in graphs %}
+        <img src='{{ url_for("generate_graph", graph_name=graph_name, selected_run=selected_run, selected_run_id=selected_run_id) }}?v=99999'>
+    {% endfor %}
+    </div>
+    {% endif %}
+{% endblock %}

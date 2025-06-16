@@ -1,0 +1,70 @@
+main {
+	height: 100vh;
+	max-height: 100vh;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.sidebar {
+	background-color: #212529;
+	overflow-y: scroll;
+	width: 325px; 
+}
+
+.sidebar hr {
+	background-color: #eee;
+}
+
+.scrollable {
+	overflow-y: auto;
+	width: auto;
+}
+
+.card, .list-group-item {
+	background-color: transparent !important;
+	border-color: #54575A !important;
+}
+
+.card-header {
+	background-color: rgba(255, 255, 255, 0.3) !important;
+	text-align: center;
+}
+
+.wrapper {
+	position: relative;
+}
+
+.wrapper i {
+	position: absolute;
+	left: 0;
+}
+
+.card-header.secondary {
+	background-color: rgba(255, 255, 255, 0.5) !important;
+	text-align: left;
+}
+
+.container img {
+    max-height: 100vh;
+    max-width: calc(100vw - 325px);
+    height: auto;
+    width: auto;
+}
+
+#input_note {
+    background-color: transparent;
+    position: absolute;
+    width: 100%;
+    top: 1em    ;
+    left: 0;
+    padding: 0;
+
+    border: none;
+    font-size: 2em;
+
+    text-align: center;
+}
+
+#input_note:focus{
+    outline: none;
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Webfonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+
+    <!-- D3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.4.0/d3.min.js"
+        integrity="sha512-Z6ftZ637mRkU1XO362ackPirSbbU3AAf/Lg4lVkBzYn9vXMqpgrgFdKM+LFjDVnOC953ILKFR/nXP0bZBxV78Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <title>{% block title %}{% endblock %} - dashboard</title>
+    {% endblock %}
+
+    <style>
+    </style>
+</head>
+
+<body>
+    <main class="d-flex flex-nowrap">
+        <form class="d-flex flex-column flex-shrink-0 p-3 sidebar" action="/" method="GET" id="form_select_run">
+            <a href="./" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <img class="bi pe-none me-2" width="32" height="32" src="{{ url_for('static', filename='dash.png') }}" alt="Rainbow Dash">
+                <span class="fs-4">Dashboard</span>
+            </a>
+            <div>
+                <hr>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header text-white">
+                    <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run selection
+                </div>
+                <div class="card-body">
+                    <div class="form-floating">
+                        <select name="run" class="form-select mb-2 interactive"
+                            aria-label="Dropdown external variable selection" id="select_external">
+                            <option disabled {{ "selected" if selected_run is none }}>Choose run</option>
+                            {% for run in runs %}
+                            <option value="{{ run }}" {{ "selected" if selected_run==run }}>{{ run }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="select_external">Available runs:</label>
+                    </div>
+                </div>
+            </div>
+            {% if selected_run is not none %}
+            <div class="card mb-3">
+                <div class="card-header text-white">
+                    <div class="wrapper"><i class="bi bi-funnel-fill"></i></div> Filter graphs
+                </div>
+                <div class="card-body">
+                    <div class="form-floating">
+                        <select name="filter" class="form-select mb-2 interactive"
+                            aria-label="Dropdown external variable selection" id="select_external">
+                            <option value="none" {{ "selected" if selected_filter is none }}>All graphs</option>
+                            {% for graph_name in all_graphs %}
+                            <option value="{{ graph_name }}" {{ "selected" if selected_filter==graph_name }}>{{ graph_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="select_external">Available graphs:</label>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header text-white">
+                    <div class="wrapper"><i class="bi bi-sliders"></i></div> Parameter selection
+                </div>
+                <div class="card-body">
+                    {% for parameter in parameter_mapping if parameter_mapping[parameter] | length > 1  %}
+                    <div class="form-floating">
+                        <select class="form-select mb-2 interactive" name="{{ parameter }}"
+                            aria-label="Dropdown external variable selection">
+                            {% for value in parameter_mapping[parameter] %}
+                            {% set friendly_name = value %}
+                            {% set selected_index = 0 %}
+                            {% if parameter in selected_parameters %}
+                                {% set selected_index = parameter_mapping[parameter].index(selected_parameters[parameter]) %}
+                            {% endif %}
+                            {% if parameter in enum_mapping %}
+                                {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
+                            {% endif %}
+                            <option value="{{ value }}" {{ "selected" if loop.index0 == selected_index }}>{{ friendly_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="select_external">{{ parameter }}:</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header text-white">
+                    <div class="wrapper"><i class="bi bi-123"></i></div> Constants
+                </div>
+                <div class="card-body">
+                    {% for parameter in constants_mapping %}
+                    <div class="form-floating">
+                        <select class="form-select mb-2" disabled
+                            aria-label="Dropdown external variable selection">
+                            {% set value = constants_mapping[parameter] %}
+                            {% set friendly_name = constants_mapping[parameter] %}
+                            {% if parameter in enum_mapping %}
+                                {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
+                            {% endif %}
+                            <option value="{{ value }}">{{ friendly_name }}</option>
+                        </select>
+                        <label for="select_external">{{ parameter }}:</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </form>
+        <div class="flex-grow-1 scrollable" style="position: relative;">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+
+</html>
