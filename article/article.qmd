@@ -1,0 +1,191 @@
+---
+title: "FWO frequency reduction article"
+author:
+  - name: Anthe Sevenants
+    email: anthe.sevenants@kuleuven.be
+    orcid: 0000-0002-5055-770X
+    affiliations:
+      - name: KU Leuven
+  - name: Freek Van de Velde
+    email: freek.vandevelde@kuleuven.be
+    orcid: 0000-0003-3050-2207
+    affiliations:
+      - name: KU Leuven
+  - name: Dirk Speelman
+    email: dirk.speelman@kuleuven.be
+    orcid: 0000-0003-1561-1851
+    affiliations:
+      - name: KU Leuven
+  - name: Dirk Pijpops
+    email: dirk.pijpops@uantwerpen.be
+    orcid: 0000-0002-3820-8099
+    affiliations:
+      - name: Universiteit Antwerpen
+format:
+  html:
+    toc: true
+  docx:
+    toc: false
+filters:
+  - tikz
+editor: source
+title-block-banner: true
+bibliography: references.bib
+toc: true
+toc-depth: 4
+toc-location: left
+tbl-cap-location: bottom
+fig-cap-location: bottom
+number-sections: true
+reference-location: margin
+csl: chicago-author-date.csl
+df-print: kable
+abstract: |
+  TODO
+execute:
+  echo: false
+---
+
+## Introduction {#sec-introduction}
+
+Many processes in language change are characterised by frequency effects. Because of the way in which certain constructions are used more often than others, complex processes such as grammaticalisation can arise [todo]. Another example of a frequency effect is the reducing effect [bybee], which dictates that as constructions are used often, their phonetic representations become more sparse. Since the frequency of a construction is directly related to its reduction, this implies that high frequency constructions experience more severe reduction, while low frequency constructions experience reduction to a lesser extent.
+
+The reason for the reduction process is so-called "neuromotor automation", according to Bybee [todo]:
+
+> When sequences of neuromotor routines are repeated, their execution becomes more fluent [todo bybee]
+
+This process of neuromotor automation is assumed to be the result of two adjacent processes: temporal reduction and substantive reduction [Mowrey & Pagliuca + Pagliuca & Mowrey]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one, while substantive reduction entails the reduction in magnitude of an articulatory gesture. The combined effect of these two processes is known under the more general term "reduction".
+
+[^gesture]: An articulatory gesture can be defined as a movement of an articulator with an observable effect [todo].
+
+### Empirical traces of reduction
+
+[empirical displays of reducing effect]
+
+### "Cause" of reduction
+
+While we know from corpus studies that reduction patterns can indeed be found in textual data, and are therefore likely to exist, what we cannot glean from corpora is the causality that led to these patterns. As a corpus only shows the resulting *effect* of language use on a large scale, we cannot see the decisions on the level of the individual that caused there to be a reduction effect in the first place. We do not know, should reality have looked different, whether the reduction effect would still exist, as we do not know the factors that make the reduction effect occur. In other words, while we see the reducing effect in corpus data, we do not really know what *causes* it.
+
+To find the requirements of the reduction effect, we turn to computer simulations. Computer simulations allow one to virtualise our reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reduction effect. Our goal in this article is to investigate which set of requirements is needed for the agents in our computer model to exhibit reduction, exhibiting the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reduction effect, and try several assumptions in order to find the absolute minimum requirements needed for the reduction effect to occur.
+
+## Preconditions {#sec-preconditions}
+
+We mentioned in the previous section that our goal for this study is to find the minimal requirements which produce the reducing effect as defined by Bybee [todo] (see @sec-introduction). In this section, we go over some preconditions which we assume are necessary to model reduction in a linguistically accurate away. For this, we base ourselves on the usage-based linguistics paradigm, which views language as a complex-adaptive system, i.e. a system shaped through repeated use by different language users. This makes it a natural fit for our simulation experiments, which operate on the same principle.
+
+[todo: ik ben niet blij met hoe deze requirements "random" lijken, ze komen uit het niets. je hebt ze nodig maar dat weet je nog niet op dit punt. hoe oplossen?]
+
+A first precondition for the reduction is a basic principle of communication itself: shared code. Language users must refer to the same concepts using roughly the same constructions, lest they cannot communicate. The presence of a shared code does not inhibit the reorganisation of the linguistic system to be more sparse (i.e. reduction), but it is a prerequisite for a reorganisation nonetheless.
+
+A second precondition for reduction is related to the memory that a language user should have. We know from constructions like *I don't know* eroding into forms like *dunno* that higher-order storage and representation of constructions is necessary. If constructions were stored in a compositional way (i.e. only existing as the combination of lower-order building blocks), there would be no way for a construction as a whole to reduce. This indicates that any model of reduction should feature a memory that is based on exemplar theory [todo]: a memory built up as a collection of possible realisations of different constructions. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ...  [todo misschien nog iets over voordeel vanwege frequency effects]
+
+A third precondition for reduction is rooted in frequency. We know from corpus research that reduction affects high and low frequency constructions differently. Therefore, it is important that a model of reduction should implement linguistic frequently accurately, i.e. according to Zipf's Law [todo Zipf]. Zipf's Law dictates that many "units" in language (words, constructions, sounds ...) naturally occur according to a power law in which rank is inversely related to frequency. This means that the first item in a Zipfian distribution is twice as frequent as the second item, which in turn is twice as frequent as the third item, and so on. In practice, this leads to an extremely unbalanced distribution with few highly frequent items, and a long tail of infrequent items. This uneven distribution is also called an "A-curve" by @todo-kretzschmar. Note that, since linguistic items occur in an A-curve, so should the items in a language user's exemplar memory [todo Kretzschmar hst 3, also "probability matching" from Labov].
+
+A final precondition for reduction is that language users should have a tendency to reduce words. This tendency arises naturally out of the so-called "Principle of Least Effort" [todo zipf], which dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. This requires speakers to make an estimation of how much they can compress their utterance not to impede comprehension. This balance between energy conservation and utterance comprehension is a key dynamic behind reduction.
+
+Note that there is no built-in requirement which dictates that frequent forms should reduce faster and to a larger extent than less frequent forms. Rather, this is the emergent behaviour that needs to occur naturally out of the interplay of the different requirements.
+
+## Model design
+
+### Design overview
+
+Our simulation model design starts from the preconditions from @sec-preconditions. As such, we built a model architecture with the following properties:
+
+- a community of agents which is implied to share the same code
+- agent memories which allow the storage of different forms belonging to the same concept
+- a shared vocabulary, organised through a Zipfian distribution
+- a fixed probability for agents to reduce a form before uttering it
+
+### Formalisation of speech
+
+For our reduction simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Since this model pertains to oral communication, having vector representations comparable to those found in the Speech Recognition field is especially interesting given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [todo de smet]. Such reduction effects cannot be encoded in a typical written form, but they can be using vectors if we assume that the vectors encode phonetic information on all levels.
+
+For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $N \times m$, with $N$ being the number of constructions in the vocabulary of the agents and $m$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between 0 and 100 [todo aanpassen aan ondergrens?]. An example of the base vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples.
+
+|  Construction  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $m$ |
+| -------------- | ----- | ----- | ----- | ----- | ----- |
+| Construction 1 | 35    | 75    | 85    | ...   | 15    |
+| Construction 2 | 87    | 72    | 47    | ...   | 67    |
+| ... | | | | |
+| Construction $N$ | 65    | 45    | 57    | ...   | 88    |
+
+: Example base vector representations for the constructions in the simulation model. {#tbl-model_design_speech_vector_examples}
+
+[^parameters]: We will later discuss the exact parameters chosen.
+
+### Agent memory
+
+Each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times m$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
+
+|  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $m$ | Associated construction |
+| ---------- | ----- | ----- | ----- | --- | ----- | ------ |
+| Exemplar 1 | 31    | 42    | 100    | ...   | 15    | Construction 15 |
+| Exemplar 2 | 27    | 37    | 27    | ...   | 97    | Construction 87 |
+| ... | | | | |
+| Exemplar $L$ | 44    | 39    | 69    | ...   | 80    | Construction $N$ |
+
+: Example agent memory consisting of vector representations belonging to different constructions. {#tbl-model_design_agent_memory_example}
+
+At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $N$ exemplars in total. We then further fill this memory following Zipf's law (see @sec-preconditions): one additional representation is added until the number of exemplars reaches $L$. Because sampling is Zipfian, popular constructions are more likely to be well represented in an agent's memory than rare constructions ["probability matching", Labov]. Note that the Zipfian distribution of exemplars would be the natural outcome of communication anyway. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
+
+In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between different constructions to become lost.
+
+[ misschien todo prentje? ]
+
+Because an agent's memory is limited to size $L$, whenever a new form needs to be stored, an older form needs to be removed or "forgotten". We apply the logic that the oldest exemplar that is not the last exemplar left of a construction is deleted. In this way, we avoid situations where the only exemplar left of a construction is removed, which would cause issues with mutual comprehension later in the simulation. Of course, forgetting a specific construction is normal in real life, but we avoid this occurrence in the simulation in order to keep the simulation mechanics as straightforward as possible. An example of the forgetting mechanic is given in @tbl-model_design_forgetting_example.
+
+|  Exemplar  | Age in model steps | Associated construction | Exemplars left for construction |
+| ---- | -----        | -----                   | ----- |
+| Exemplar 1 | 1575 | Construction 15 | 2 |
+| ~~Exemplar 2~~ | 2789 | Construction 15 | 2 |
+| Exemplar 3 | 3009 | Construction 87 | 1 |
+| ... | | | | |
+| Exemplar $L$ | | | Construction $N$ |
+
+: An example of how "forgetting" an exemplar works in the model. Even though Exemplar 3 is the oldest exemplar in the memory, because it is the last exemplar associated with Construction 87, Exemplar 2 is removed instead. {#tbl-model_design_forgetting_example}
+
+### Reduction
+
+At speech time (see TODO), the speaker agent has the opportunity to reduce the exemplar vector representation that they retrieved from memory. Our implementation of reduction is extremely simple: a set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
+
+::: {#fig-model_design_reduction}
+```{.tikz}
+\usetikzlibrary{shapes.misc, positioning, decorations.pathreplacing}
+
+\begin{document}
+\begin{tikzpicture}[
+    box/.style={draw, minimum width=1cm, minimum height=1cm, font=\Large},
+    redbox/.style={box, fill=red!30},
+    brace/.style={decorate, decoration={brace, amplitude=5pt}},
+    arrow/.style={->, ultra thick}
+]
+
+\node[box] (A) {35};
+\node[box, right=0cm of A] (B) {37};
+\node[box, right=0cm of B] (C) {75};
+\node[box, right=0cm of C] (D) {85};
+\node[box, right=0cm of D] (E) {62};
+\node[redbox, right=0cm of E] (F) {15};
+
+\node[box, right=2cm of F] (G) {20};
+\node[box, right=0cm of G] (H) {22};
+\node[box, right=0cm of H] (I) {60};
+\node[box, right=0cm of I] (J) {70};
+\node[box, right=0cm of J] (K) {47};
+\node[redbox, right=0cm of K] (L) {15};
+
+\draw[brace] (A.north west) -- (F.north east);
+\draw[brace] (F.south east) -- (A.south west);
+\draw[brace] (G.north west) -- (L.north east);
+\draw[brace] (L.south east) -- (G.south west);
+
+\draw[arrow] ([xshift=0.5cm]F.east) -- ([xshift=-0.5cm]G.west);
+
+\end{tikzpicture}
+```
+
+How reduction works in our simulation. In this case, $R = 15$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 15 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.
+:::
+
+## Results
+
+## Discussion
