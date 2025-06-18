@@ -52,7 +52,7 @@ Many processes in language change are characterised by frequency effects. Becaus
 
 The reason for the reduction process is so-called "neuromotor automation", according to Bybee [todo]:
 
-> todo Bybee quote
+> When sequences of neuromotor routines are repeated, their execution becomes more fluent [todo bybee]
 
 This process of neuromotor automation is assumed to be the result of two adjacent processes: temporal reduction and substantive reduction [Mowrey & Pagliuca + Pagliuca & Mowrey]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one, while substantive reduction entails the reduction in magnitude of an articulatory gesture. The combined effect of these two processes is known under the more general term "reduction".
 
@@ -129,6 +129,8 @@ At the model initialisation stage, we seed each agent's exemplar memory with one
 
 In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between different constructions to become lost.
 
+[ misschien todo prentje? ]
+
 Because an agent's memory is limited to size $L$, whenever a new form needs to be stored, an older form needs to be removed or "forgotten". We apply the logic that the oldest exemplar that is not the last exemplar left of a construction is deleted. In this way, we avoid situations where the only exemplar left of a construction is removed, which would cause issues with mutual comprehension later in the simulation. Of course, forgetting a specific construction is normal in real life, but we avoid this occurrence in the simulation in order to keep the simulation mechanics as straightforward as possible. An example of the forgetting mechanic is given in @tbl-model_design_forgetting_example.
 
 |  Exemplar  | Age in model steps | Associated construction | Exemplars left for construction |
@@ -181,7 +183,7 @@ At speech time (see TODO), the speaker agent has the opportunity to reduce the e
 \end{tikzpicture}
 ```
 
-How reduction works in our simulation. In this case, $R = 15$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 15 has been subtracted from all dimensions, except for the last one, since its value is already at our floor value $R$.
+How reduction works in our simulation. In this case, $R = 15$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 15 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.
 :::
 
 ## Results
