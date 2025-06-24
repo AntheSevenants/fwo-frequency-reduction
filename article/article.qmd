@@ -69,6 +69,8 @@ While we know from corpus studies that reduction patterns can indeed be found in
 
 To find the requirements of the reduction effect, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reduction effect. Our goal in this article is to investigate which set of requirements is needed for the agents in our computer model to exhibit reduction, exhibiting the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reduction effect, and try several assumptions in order to find the absolute minimum requirements needed for the reduction effect to occur.
 
+[ uitleggen dat modelgedrag niets zegt over de werkelijkheid per se maar wel interessant is desondanks ]
+
 ## Preconditions {#sec-preconditions}
 
 We mentioned in the previous section that our goal for this study is to find the minimal requirements which produce the reducing effect as defined by Bybee [todo] (see @sec-introduction). In this section, we go over some preconditions which we assume are necessary to model reduction in a linguistically accurate away. For this, we base ourselves on the usage-based linguistics paradigm, which views language as a complex-adaptive system, i.e. a system shaped through repeated use by different language users. This makes it a natural fit for our simulation experiments, which operate on the same principle.
@@ -210,6 +212,12 @@ The core of our simulation is a "language game" [todo]. In a language game, a sp
 [^exceptions]: In the case of a tie, communication fails. In the case that no exemplars were selected, communication fails as well.
 
 ![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a concept, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](language_game.svg){#fig-model_design_language_game}
+
+## Methodology
+
+Uitleggen hoe we gaan werken. Met name: uitproberen en kijken naar bepaalde metrieken. Onze verwachtingen op voorhand oplijsten (welk gedrag moet het model vertonen?). Bijstellen indien nodig.
+
+Indien gedrag op punt: uitgaan van Ockam's razor. Dan één voor één de requirements weghalen om te controleren of ons model écht niet werkt zonder. Indien niet is alles in kannen en kruiken.
 
 ## Results
 
