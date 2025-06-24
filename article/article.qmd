@@ -221,6 +221,8 @@ Uitleggen hoe we gaan werken. Met name: uitproberen en kijken naar bepaalde metr
 
 Indien gedrag op punt: uitgaan van Ockam's razor. Dan één voor één de requirements weghalen om te controleren of ons model écht niet werkt zonder. Indien niet is alles in kannen en kruiken.
 
+In addition, though some tradeoff between communicative effort and communicative success is to be expected, it is imperative that communication between agents remains successful. If the language system has reorganised itself in a way that makes effective communication impossible, 
+
 ## Results
 
 ## Discussion
