@@ -75,7 +75,7 @@ While the real world is far messier and noisier than the idealised world represe
 
 ## Preconditions {#sec-preconditions}
 
-We mentioned in the previous section that our goal for this study is to find the minimal requirements which produce the reducing effect as defined by Bybee [todo] (see @sec-introduction). In this section, we go over some preconditions which we assume are necessary to model reduction in a linguistically accurate away. For this, we base ourselves on the usage-based linguistics paradigm, which views language as a complex-adaptive system, i.e. a system shaped through repeated use by different language users. This makes it a natural fit for our simulation experiments, which operate on the same principle.
+We mentioned in the previous section that our goal for this study is to find the minimal requirements which produce the reducing effect as defined by Bybee [todo] (see @sec-introduction). In this section, we go over some preconditions which we assume are necessary to model reduction in a linguistically accurate away. For this, we base ourselves on empirical research [as recommended by Loreto] in the usage-based linguistics paradigm [todo referentie]. Usage-based linguistics views language as a complex-adaptive system, i.e. a system shaped through repeated use by different language users [todo referentie]. This makes it a natural fit for our simulation experiments, which operate on the same principle.
 
 [todo: ik ben niet blij met hoe deze requirements "random" lijken, ze komen uit het niets. je hebt ze nodig maar dat weet je nog niet op dit punt. hoe oplossen?]
 
