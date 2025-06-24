@@ -144,7 +144,7 @@ Because an agent's memory is limited to size $L$, whenever a new form needs to b
 
 : An example of how "forgetting" an exemplar works in the model. Even though Exemplar 3 is the oldest exemplar in the memory, because it is the last exemplar associated with Construction 87, Exemplar 2 is removed instead. {#tbl-model_design_forgetting_example}
 
-### Reduction
+### Reduction {#sec-reduction}
 
 At speech time (see TODO), the speaker agent has the opportunity to reduce the exemplar vector representation that they retrieved from memory. Our implementation of reduction is extremely simple: a set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
 
@@ -152,7 +152,6 @@ At speech time (see TODO), the speaker agent has the opportunity to reduce the e
 ```{.tikz}
 \usetikzlibrary{shapes.misc, positioning, decorations.pathreplacing}
 
-\begin{document}
 \begin{tikzpicture}[
     box/.style={draw, minimum width=1cm, minimum height=1cm, font=\Large},
     redbox/.style={box, fill=red!30},
@@ -186,6 +185,31 @@ At speech time (see TODO), the speaker agent has the opportunity to reduce the e
 
 How reduction works in our simulation. In this case, $R = 15$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 15 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.
 :::
+
+### Language game and course of the simulation
+
+We mentioned that we estimate that the interaction between agents, given specific preconditions, is naturally conducive to reducing behaviour. In this section, we will explain this interactional behaviour of our virtual speakers and hearers in more detail.
+
+[todo uitleggen hoe sprekers en hoorders geselecteerd worden]
+
+The core of our simulation is a "language game" [todo]. In a language game, a speaker and a hearer agent perform a joint task rooted in language, the execution of this task naturally exerting some influence on the way language is used or organised. In our simulation, the goal of the language game is for the speaker to communicate a specific construction to the hearer, which the hearer then has to understand successfully. The exact course of the language game is as follows:
+
+**Speaker**
+
+1. The speaker chooses a construction to utter from the $N$ constructions available. The probability of each construction is influenced by the Zipfian A-curve, discussed in @sec-preconditions, to mirror the frequency imbalance inherent to natural language.
+2. The speaker chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. There is no mechanism influencing the probability of a specific exemplar being chosen, though if a specific exemplar is highly frequent and therefore well represented in memory, it of course has a high chance of being selected.
+3. With a probability of $p$, reduction is applied (see @sec-reduction).
+4. The (potentially reduced) vector is communicated to the hearer.
+
+**Hearer**
+
+1. The hearer "hears" the vector communicated by the speaker.
+2. The hearer interprets the vector representation of the speaker. They calculate the cosine distance (see Equation TODO) between the spoken vector and their entire exemplar memory, and select all exemplars lower or equal to threshold $t$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction.[^exceptions]
+3. The heard exemplar is saved in the hearer's memory and is associated with the understood construction.
+
+[^exceptions]: In the case of a tie, communication fails. In the case that no exemplars were selected, communication fails as well.
+
+![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a concept, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](language_game.svg){#fig-model_design_language_game}
 
 ## Results
 
