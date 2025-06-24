@@ -69,7 +69,7 @@ While we know from corpus studies that reduction patterns can indeed be found in
 
 To find the requirements of the reduction effect, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reduction effect. Our goal in this article is to investigate which set of requirements is needed for the agents in our computer model to exhibit reduction, exhibiting the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reduction effect, and try several assumptions in order to find the absolute minimum requirements needed for the reduction effect to occur.
 
-[ uitleggen dat modelgedrag niets zegt over de werkelijkheid per se maar wel interessant is desondanks ]
+While the real world is far messier and noisier than the idealised world represented in our simulations, simulation results can nevertheless "suggest that such underlying principles may operate in the real world as well" [stanford kenny p 122]. In our specific case, a simulation might show that typical reduction behaviour does not arise out of the preconditions that are presupposed in the literature, or that additional preconditions are required. Such outcomes can be theoretically interesting, since they make the various aspects of reduction theory more explicit, and be a stepping stone for further experimental or empirical research.
 
 ## Preconditions {#sec-preconditions}
 
