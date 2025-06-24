@@ -49,8 +49,8 @@
 
 
 % Nodes for the steps (hearer)
-\node[modelstep] (interpret_form) [right=1.5cm of choose_exemplar.east,anchor=west] {2. Interpret form};
-\node[modelstep] (hear_form) [above=of interpret_form.west, anchor=west] {1. Hear form};
+\node[modelstep] (interpret_form) [right=1.5cm of choose_exemplar.east,anchor=west] {2. Interpret exemplar};
+\node[modelstep] (hear_form) [above=of interpret_form.west, anchor=west] {1. Hear exemplar};
 \node[circle, draw] (neighbourhood) [below=1.5cm of interpret_form.west, anchor=west, minimum size=2cm];
 \draw[thick] ($(neighbourhood.center) + (-0.15,0)$) -- ($(neighbourhood.center) + (0.15,0)$); 
 \draw[thick] ($(neighbourhood.center) + (0,-0.15)$) -- ($(neighbourhood.center) + (0,0.15)$); 
@@ -65,7 +65,7 @@
 \node[exemplar_location, dashed] (x4) [yshift=-0.75cm, right=0.9cm of neighbourhood.center] {X};
 \node[draw, fill=orange!30] (outcome) [yshift=0.2cm, right=.5cm of x2.center] {3/4 = O};
 
-\node[modelstep] (save_form) [below=1.5cm of neighbourhood.west,anchor=west] {3. Save ``heard'' form};
+\node[modelstep] (save_form) [below=1.5cm of neighbourhood.west,anchor=west] {3. Save ``heard'' exemplar};
 
 \draw[step_arrow] ([xshift=+1.1mm]output_vector.east) .. controls +(right:40mm) and +(left:25mm) .. ([yshift=-2mm]hear_form.north west);
 \draw[step_arrow] ([yshift=+2mm]hear_form.south west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]interpret_form.north west);
