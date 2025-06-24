@@ -60,9 +60,9 @@
 \node[exemplar_location] (o2) [left=0.25cm of neighbourhood.center] {O};
 \node[exemplar_location] (o3) [below=0.35cm of neighbourhood.center] {O};
 \node[exemplar_location] (x1) [yshift=-0.05cm, right=0.25cm of neighbourhood.center] {X};
-\node[exemplar_location] (x2) [yshift=0.4cm, right=1.cm of neighbourhood.center] {X};
-\node[exemplar_location] (x3) [yshift=-0.2cm, right=1.05cm of neighbourhood.center] {X};
-\node[exemplar_location] (x4) [yshift=-0.75cm, right=0.9cm of neighbourhood.center] {X};
+\node[exemplar_location, dashed] (x2) [yshift=0.4cm, right=1.cm of neighbourhood.center] {X};
+\node[exemplar_location, dashed] (x3) [yshift=-0.2cm, right=1.05cm of neighbourhood.center] {X};
+\node[exemplar_location, dashed] (x4) [yshift=-0.75cm, right=0.9cm of neighbourhood.center] {X};
 \node[draw, fill=orange!30] (outcome) [yshift=0.2cm, right=.5cm of x2.center] {3/4 = O};
 
 \node[modelstep] (save_form) [below=1.5cm of neighbourhood.west,anchor=west] {3. Save ``heard'' form};
