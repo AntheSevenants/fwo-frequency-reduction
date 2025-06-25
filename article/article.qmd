@@ -217,6 +217,70 @@ Note that we deliberately left out any feedback mechanism from the language game
 
 ## Methodology
 
+Because we use computer simulations, we apply a different methodology from traditional, empirical research. In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how test that the preconditions outlined in @sec-preconditions are indeed the minimal set required for reduction as defined by @todo-bybee to occur.
+
+### Simulation behaviour metrics
+
+One of the cornerstone principles of our simulation is the complex-adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. To this end, we compute the following metrics at each step:
+
+1. **Communicative success:**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly.  
+  $$
+  \frac{\text{\# successful turns}}{\text{\# turns}}
+  $$
+2. **Communicative failure:**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker incorrectly.  
+  $$
+  \frac{\text{\# failed turns}}{\text{\# turns}}
+  $$
+3. **Reduction success:**  
+  Ratio expressing in how many speaking turns with reduction communication was successful.  
+  $$
+  \frac{\text{\# successful reduced turns}}{\text{\# reduced turns}}
+  $$
+4. **Mean agent L1:**  
+  Number expressing the average L1 norm of exemplars, across all agents.  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
+  $$
+5. **Mean construction L1:**  
+  Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
+  $$  
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
+  $$ with $L_t$ = # exemplars associated with construction $t$
+6. **Confusion matrix:**  
+  Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
+7. **Outcomes:**  
+  Tally of outcomes of a speaking turn, with *success*, *no exemplars in neighbourhood*, *wrong construction was most frequent*, *tie in most frequent* as possible outcomes.
+8. **Mean exemplar count:**  
+  Number expressing for each construction $t$ the average number of exemplars, across all agents.
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{ L_{t_i} }
+  $$ with $L_t$ = # exemplars associated with construction $t$
+9. **Success per construction:**  
+  Ratio expressing for each construction $t$ in how many speaking turns the hearer understood the speaker correctly.
+  $$
+  \frac{\text{\# successful turns}}{\text{\# turns for construction } t}
+  $$
+10. **Communicative success (macro average):**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to account for Zipfian skew.
+  $$
+  \frac{1}{V} \sum_{t=1}^{V}{\text{communicative success for construction }t }
+  $$
+11. **Good origin ratio:**  
+  Ratio expressing for each construction $t$ how many exemplars originate in successful speaking turns.  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \operatorname{good origin}(L_{t_i}) } \right] }
+  $$ with $L_t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
+0 & \text{if from failed speaking turn} \\
+1 & \text{if from successful speaking turn}
+\end{cases}$
+12. **Mean exemplar age:**  
+  Number expressing for each construction $t$ how old its exemplars are on average (in model steps).  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \operatorname{age}(L_{t_i}) } \right] }
+  $$ with $L_t$ = # exemplars associated with construction $t$ and $\operatorname{age}(exemplar)$ returning the age in steps for an exemplar.
+
 Uitleggen hoe we gaan werken. Met name: uitproberen en kijken naar bepaalde metrieken. Onze verwachtingen op voorhand oplijsten (welk gedrag moet het model vertonen?). Bijstellen indien nodig.
 
 Indien gedrag op punt: uitgaan van Ockam's razor. Dan één voor één de requirements weghalen om te controleren of ons model écht niet werkt zonder. Indien niet is alles in kannen en kruiken.
