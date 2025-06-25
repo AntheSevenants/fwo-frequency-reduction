@@ -95,7 +95,7 @@ Note that there is no built-in requirement which dictates that frequent forms sh
 
 Our simulation model design starts from the preconditions from @sec-preconditions. As such, we built a model architecture with the following properties:
 
-- a community of agents which is implied to share the same code
+- a community of $N$ agents which is implied to share the same code
 - agent memories which allow the storage of different forms belonging to the same concept
 - a shared vocabulary, organised through a Zipfian distribution
 - a fixed probability for agents to reduce a form before uttering it
@@ -104,14 +104,14 @@ Our simulation model design starts from the preconditions from @sec-precondition
 
 For our reduction simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Since this model pertains to oral communication, having vector representations comparable to those found in the Speech Recognition field is especially interesting given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [todo de smet]. Such reduction effects cannot be encoded in a typical written form, but they can be using vectors if we assume that the vectors encode phonetic information on all levels.
 
-For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $N \times m$, with $N$ being the number of constructions in the vocabulary of the agents and $m$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between 0 and 100 [todo aanpassen aan ondergrens?]. An example of the base vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples.
+For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times m$, with $V$ being the number of constructions in the vocabulary of the agents and $m$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between 0 and 100 [todo aanpassen aan ondergrens?]. An example of the base vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples.
 
 |  Construction  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $m$ |
 | -------------- | ----- | ----- | ----- | ----- | ----- |
 | Construction 1 | 35    | 75    | 85    | ...   | 15    |
 | Construction 2 | 87    | 72    | 47    | ...   | 67    |
 | ... | | | | |
-| Construction $N$ | 65    | 45    | 57    | ...   | 88    |
+| Construction $V$ | 65    | 45    | 57    | ...   | 88    |
 
 : Example base vector representations for the constructions in the simulation model. {#tbl-model_design_speech_vector_examples}
 
@@ -126,11 +126,11 @@ Each agent has a memory of $L$ exemplars. This memory can be thought of as a mat
 | Exemplar 1 | 31    | 42    | 100    | ...   | 15    | Construction 15 |
 | Exemplar 2 | 27    | 37    | 27    | ...   | 97    | Construction 87 |
 | ... | | | | |
-| Exemplar $L$ | 44    | 39    | 69    | ...   | 80    | Construction $N$ |
+| Exemplar $L$ | 44    | 39    | 69    | ...   | 80    | Construction $V$ |
 
 : Example agent memory consisting of vector representations belonging to different constructions. {#tbl-model_design_agent_memory_example}
 
-At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $N$ exemplars in total. We then further fill this memory following Zipf's law (see @sec-preconditions): one additional representation is added until the number of exemplars reaches $L$. Because sampling is Zipfian, popular constructions are more likely to be well represented in an agent's memory than rare constructions ["probability matching", Labov]. Note that the Zipfian distribution of exemplars in an agent's memory would be the natural outcome of communication anyway. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
+At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $V$ exemplars in total. We then further fill this memory following Zipf's law (see @sec-preconditions): one additional representation is added until the number of exemplars reaches $L$. Because sampling is Zipfian, popular constructions are more likely to be well represented in an agent's memory than rare constructions ["probability matching", Labov]. Note that the Zipfian distribution of exemplars in an agent's memory would be the natural outcome of communication anyway. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
 
 In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between different constructions to become lost.
 
@@ -144,7 +144,7 @@ Because an agent's memory is limited to size $L$, whenever a new form needs to b
 | ~~Exemplar 2~~ | 2789 | Construction 15 | 2 |
 | Exemplar 3 | 3009 | Construction 87 | 1 |
 | ... | | | | |
-| Exemplar $L$ | | | Construction $N$ |
+| Exemplar $L$ | | | Construction $V$ |
 
 : An example of how "forgetting" an exemplar works in the model. Even though Exemplar 3 is the oldest exemplar in the memory, because it is the last exemplar associated with Construction 87, Exemplar 2 is removed instead. {#tbl-model_design_forgetting_example}
 
@@ -198,7 +198,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 **Speaker**
 
-1. The speaker chooses a construction to utter from the $N$ constructions available. The probability of each construction is influenced by the Zipfian A-curve, discussed in @sec-preconditions, to mirror the frequency imbalance inherent to natural language.
+1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the Zipfian A-curve, discussed in @sec-preconditions, to mirror the frequency imbalance inherent to natural language.
 2. The speaker chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. There is no mechanism influencing the probability of a specific exemplar being chosen, though if a specific exemplar is highly frequent and therefore well represented in memory, it of course has a high chance of being selected.
 3. With a probability of $p$, reduction is applied (see @sec-reduction).
 4. The (potentially reduced) vector is communicated to the hearer.
