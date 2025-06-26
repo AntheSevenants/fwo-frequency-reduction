@@ -265,10 +265,10 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
 10. **Communicative success (macro average):**  
   Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to account for Zipfian skew.
   $$
-  \frac{1}{V} \sum_{t=1}^{V}{\text{communicative success for construction }t }
+  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
   $$
 11. **Good origin ratio:**  
-  Ratio expressing for each construction $t$ how many exemplars originate in successful speaking turns.  
+  Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
   $$
   \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \operatorname{good origin}(L_{t_i}) } \right] }
   $$ with $L_t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
