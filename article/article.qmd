@@ -104,9 +104,9 @@ Our simulation model design starts from the preconditions from @sec-precondition
 
 For our reduction simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Since this model pertains to oral communication, having vector representations comparable to those found in the Speech Recognition field is especially interesting given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [todo de smet]. Such reduction effects cannot be encoded in a typical written form, but they can be using vectors if we assume that the vectors encode phonetic information on all levels.
 
-For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times m$, with $V$ being the number of constructions in the vocabulary of the agents and $m$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between 0 and 100 [todo aanpassen aan ondergrens?]. An example of the base vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples.
+For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times M$, with $V$ being the number of constructions in the vocabulary of the agents and $M$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between 0 and 100 [todo aanpassen aan ondergrens?]. An example of the base vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples.
 
-|  Construction  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $m$ |
+|  Construction  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $M$ |
 | -------------- | ----- | ----- | ----- | ----- | ----- |
 | Construction 1 | 35    | 75    | 85    | ...   | 15    |
 | Construction 2 | 87    | 72    | 47    | ...   | 67    |
@@ -119,9 +119,9 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 ### Agent memory
 
-Each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times m$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
+Each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
 
-|  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $m$ | Associated construction |
+|  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $M$ | Associated construction |
 | ---------- | ----- | ----- | ----- | --- | ----- | ------ |
 | Exemplar 1 | 31    | 42    | 100    | ...   | 15    | Construction 15 |
 | Exemplar 2 | 27    | 37    | 27    | ...   | 97    | Construction 87 |
