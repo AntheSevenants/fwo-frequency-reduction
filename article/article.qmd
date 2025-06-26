@@ -319,3 +319,7 @@ One of the driving forces behind our parameter choices is computational tractabi
 ## Results
 
 ## Discussion
+
+possible extensions
+
+- turning frequency into probability -> like Gregory et al. -> extension possible for contextual clues
