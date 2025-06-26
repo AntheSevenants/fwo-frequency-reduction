@@ -49,7 +49,7 @@ execute:
 
 ## Introduction {#sec-introduction}
 
-Many processes in language change are characterised by frequency effects. Because of the way in which certain constructions are used more often than others, complex processes such as grammaticalisation can arise [todo]. Another example of a frequency effect is the reducing effect [bybee], which dictates that as constructions are used often, their phonetic representations become more sparse. Since the frequency of a construction is directly related to its reduction, this implies that high frequency constructions experience more severe reduction, while low frequency constructions experience reduction to a lesser extent.
+Many processes in language change are characterised by frequency effects. Because of the way in which certain constructions are used more often than others, complex processes such as grammaticalisation can arise [todo]. Another example of a frequency effect is the reducing effect [bybee], which dictates that as constructions are used often, their phonetic representations become more sparse. Since the frequency of a construction is directly related to its reduction, this implies that high frequency constructions experience more severe reduction, while low frequency constructions experience reduction to a lesser extent. [ todo ook iets over snelheid ]
 
 The reason for the reduction process is so-called "neuromotor automation", according to Bybee [todo]:
 
@@ -61,7 +61,7 @@ This process of neuromotor automation is assumed to be the result of two adjacen
 
 ### Empirical traces of reduction
 
-[empirical displays of reducing effect]
+The existence of the reducing effect has been demonstrated through several studies. One of the earliest examples is @fidelholtz-todo, who shows with a corpus study that frequency can be related to vowel reduction in several phonetic contexts. Another example is @todo-etc enzo.
 
 ### "Cause" of reduction
 
