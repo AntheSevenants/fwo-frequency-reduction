@@ -297,9 +297,24 @@ If any set of preconditions produces behaviour which fully falls within the expe
 
 In order to check whether a set of preconditions is also the minimal set, we will apply the principle of Occam's Razor [@todo-occam-razor]. This principle dictates that the simplest explanation for a phenomenon is presumptively the most likely one. Therefore, we will disable each precondition iteratively and check whether the simpler conditions can also produce the expected reduction behaviour. If a simpler set produces equivalent behaviour, we have found a more minimal set. If no simpler set produces equivalent behaviour, our initial set was already the minimal one.
 
-Uitleggen hoe we gaan werken. Met name: uitproberen en kijken naar bepaalde metrieken. Onze verwachtingen op voorhand oplijsten (welk gedrag moet het model vertonen?). Bijstellen indien nodig.
+### Parameters
 
-Indien gedrag op punt: uitgaan van Ockam's razor. Dan één voor één de requirements weghalen om te controleren of ons model écht niet werkt zonder. Indien niet is alles in kannen en kruiken.
+In this section, we will run through the different parameters the model has and what values we chose for them. Parameters control specific aspects of our model, like how many agents inhabit our virtual world or how likely reduction is. Paradoxically, choosing the right parameter values is relatively unimportant, until it is not. The consensus in simulation research is that the outcome of a simulation should not hinge on its parameter values [stanford kenny, beuls & pijpops (zie thesis)]. For example, it usually should not matter whether 25 or 250 agents partake in a simulation[^agent-count-exception]; the emergent effect will remain the same, though it could be slower or faster. At the same time, it goes without saying that having just two or three agents in a simulation hardly makes the model world representative of an actual language "community". In the same way, while it would be hard to justify having a language of only two constructions, the difference between 100 and 1000 constructions in a modelling context is much smaller. Therefore, most of our parameter choices are practical in nature.
+
+One of the driving forces behind our parameter choices is computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts, large vocabulary sizes and large memory sizes all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we made the decision to keep the parameters of the simulation modest. Review @tbl-parameters for an overview of our choices.
+
+[^agent-count-exception]: Of course, if a simulation is designed to be sensitive to agent count (i.e. because it is part of the research question), then the number of agents *does* matter.
+
+| Parameter | Explanation | Value |
+| --- | --- | --- |
+| $N$ | Number of agents | 25 |
+| $V$ | Number of constructions | 100 |
+| $M$ | Number of vector dimensions | 100 |
+| $L$ | Number of exemplars in memory | 1000 |
+| $R$ | Value subtracted from exemplar vector at reduction time. Also functions as threshold floor value. A vector dimension cannot reduce below this point. | 15 |
+| $t$ | Neighbourhood size. Only exemplars within this range count towards the interpretation of a vector. | 150 |
+| $p$ | Reduction probability at speech time | 0.5 |
+: An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
 ## Results
 
