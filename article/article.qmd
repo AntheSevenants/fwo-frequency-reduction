@@ -61,7 +61,7 @@ This process of neuromotor automation is assumed to be the result of two adjacen
 
 ### Empirical traces of reduction
 
-The existence of the reducing effect has been demonstrated through several studies. One of the earliest examples is @fidelholtz-todo, who shows with a corpus study that frequency can be related to vowel reduction in several phonetic contexts. Another example is @todo-etc enzo.
+The existence of the reducing effect has been demonstrated through several studies. One of the earliest examples is @fidelholtz-todo, who shows with a corpus study that frequency can be related to vowel reduction in several phonetic contexts in English. Another example is @pluymaekers_lexical_2005: they tested the reduction of affixes in Dutch and found that reduction was positively related to the frequency of the carrier word. Finally, @bybee_effect_1999 discuss how English *don't* is most likely to be reduced in constructions where *don't* is highly frequent (like *I don't know*). These three studies show that reduction can apply to morphology, the lexicon, and constructions as a whole.
 
 ### "Cause" of reduction
 
