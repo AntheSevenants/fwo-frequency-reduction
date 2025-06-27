@@ -57,11 +57,15 @@ The reason for the reduction process is so-called "neuromotor automation", accor
 
 This process of neuromotor automation is assumed to be the result of two adjacent processes: temporal reduction and substantive reduction [Mowrey & Pagliuca + Pagliuca & Mowrey]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one, while substantive reduction entails the reduction in magnitude of an articulatory gesture. The combined effect of these two processes is then known under the more general term "reduction".
 
+[ todo uitleggen hoe reductie zich uit ]
+
 [^gesture]: An articulatory gesture can be defined as a movement of an articulator with an observable effect [todo].
 
 ### Empirical traces of reduction
 
 The existence of the reducing effect has been demonstrated through several studies. One of the earliest examples is @fidelholtz-todo, who shows that frequency can be related to vowel reduction in several phonetic contexts in English. Another example is @pluymaekers_lexical_2005: they tested the reduction of affixes in Dutch and found that reduction was positively related to the frequency of the carrier word. Finally, @bybee_effect_1999 discuss how English *don't* is most likely to be reduced in constructions where *don't* is highly frequent (like *I don't know*). These three studies show that reduction can apply to morphology, the lexicon, and constructions as a whole.
+
+In addition, several other factors have been found to influence the rate of reduction. In her overview of reduction, @ernestus_acoustic_2014 mentions the phenomenon to be influenced by phonological context (e.g. assimilation to ease the overlap of articulatory gestures), speech rate (reducing the number of gestures to be able to speak faster) and predictability (reducing the number of gestures because they are predictable from the context). While we agree that these factors are also important, in this study, we focus on raw frequency only for the sake of simplicity: it is one of the most basic, inherent properties of natural language. Once we can assess the role of frequency in reduction, we can expand the model to include other factors (see @sec-discussion).
 
 ### "Cause" of reduction
 
@@ -318,7 +322,7 @@ One of the driving forces behind our parameter choices was computational tractab
 
 ## Results
 
-## Discussion
+## Discussion {#sec-discussion}
 
 possible extensions
 
