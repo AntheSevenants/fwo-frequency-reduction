@@ -53,11 +53,9 @@ Many processes in language change are characterised by frequency effects. Becaus
 
 > When sequences of neuromotor routines are repeated, their execution becomes more fluent [todo bybee]
 
-This process of neuromotor automation is assumed to be the result of two adjacent processes: temporal reduction and substantive reduction [Mowrey & Pagliuca + Pagliuca & Mowrey]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one, while substantive reduction entails the reduction in magnitude of an articulatory gesture. The combined effect of these two processes is then known under the more general term "reduction".
+This process of neuromotor automation is assumed to be the result of two adjacent processes: temporal reduction and substantive reduction [Mowrey & Pagliuca + Pagliuca & Mowrey]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one (i.e. assimilation or cluster simplification), while substantive reduction entails the reduction in magnitude of an articulatory gesture (i.e. vowel reduction to schwa). The combined effect of these two processes is then known under the more general term "reduction". We assume both these effects when we further use the term "reduction".
 
-[ todo uitleggen hoe reductie zich uit ]
-
-[^gesture]: An articulatory gesture can be defined as a movement of an articulator with an observable effect [todo].
+[^gesture]: An articulatory gesture can be defined as a movement of an articulator with an observable effect [todo zie mondo].
 
 ### Empirical traces of reduction
 
