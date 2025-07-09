@@ -250,8 +250,8 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
 5. **Mean construction L1:**  
   Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
   $$  
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
-  $$ with $L_t$ = # exemplars associated with construction $t$
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$
 6. **Confusion matrix:**  
   Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
 7. **Outcomes:**  
@@ -259,8 +259,8 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
 8. **Mean exemplar count:**  
   Number expressing for each construction $t$ the average number of exemplars, across all agents.
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{ L_{t_i} }
-  $$ with $L_t$ = # exemplars associated with construction $t$
+  \frac{1}{N} \sum_{i=1}^{N}{ L^t_i }
+  $$ with $L^t$ = # exemplars associated with construction $t$
 9. **Success per construction:**  
   Ratio expressing for each construction $t$ in how many speaking turns the hearer understood the speaker correctly.
   $$
@@ -274,8 +274,8 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
 11. **Good origin ratio:**  
   Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \operatorname{good origin}(L_{t_i}) } \right] }
-  $$ with $L_t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{good origin}(L^t_i) } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
 0 & \text{if from failed speaking turn} \\
 1 & \text{if from successful speaking turn}
 \end{cases}$
