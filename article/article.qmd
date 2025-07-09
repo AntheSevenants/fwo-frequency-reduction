@@ -119,6 +119,8 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 [^parameters]: We will later discuss the exact parameters chosen.
 
+Note that here, from a construction grammar standpoint, we model the *form* using vectors, while the actual *meaning* remains constant. "Meaning" here is purely semantic, and any possible social or pragmatic meaning [as defined in Leclercq & Morin TODO] is ignored in this model, as incorporating these dimensions might distort the mechanics of our model and complicate interpretation.
+
 ### Agent memory
 
 Each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
