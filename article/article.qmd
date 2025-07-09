@@ -267,7 +267,7 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
   \frac{\text{\# successful turns}}{\text{\# turns for construction } t}
   $$
 10. **Communicative success (macro average):**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to account for Zipfian skew.
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
   $$
   \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
   $$
