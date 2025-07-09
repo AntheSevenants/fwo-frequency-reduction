@@ -136,7 +136,7 @@ Each agent has a memory of $L$ exemplars. This memory can be thought of as a mat
 
 At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $V$ exemplars in total. We then further fill this memory following Zipf's law (see @sec-preconditions): one additional representation is added until the number of exemplars reaches $L$. Because sampling is Zipfian, popular constructions are more likely to be well represented in an agent's memory than rare constructions ["probability matching", Labov]. Note that the Zipfian distribution of exemplars in an agent's memory would be the natural outcome of communication anyway. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
 
-In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between different constructions to become lost.
+In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between the forms of different constructions to become lost.
 
 [ misschien todo prentje? ]
 
