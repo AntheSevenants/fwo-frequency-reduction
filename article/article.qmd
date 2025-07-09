@@ -282,8 +282,8 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
 12. **Mean exemplar age:**  
   Number expressing for each construction $t$ how old its exemplars are on average (in model steps).  
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L_{t_i}} \sum_{j=1}^{L_{t_i}}{ \operatorname{age}(L_{t_i}) } \right] }
-  $$ with $L_t$ = # exemplars associated with construction $t$ and $\operatorname{age}(exemplar)$ returning the age in steps for an exemplar.
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{age}(L^t_i) } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{age}(exemplar)$ returning the age in steps for an exemplar.
 
 ### Expected behaviour
 
