@@ -285,7 +285,7 @@ One of the cornerstone principles of our simulation is the complex-adaptive esse
   \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{age}(L^t_i) } \right] }
   $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{age}(exemplar)$ returning the age in steps for an exemplar.
 
-### Expected behaviour
+### Expected behaviour {#sec-expected-behaviour}
 
 We will consider a set of preconditions to produce the reducing effect if the following is true:
 
@@ -321,6 +321,63 @@ One of the driving forces behind our parameter choices was computational tractab
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
 ## Results
+
+In this section, we will go over the results produced by the model operationalised according to the requirements detailed in the previous sections. More specifically, we will check if the model behaviour adheres to the expected behaviour defined in @sec-expected-behaviour.
+
+### Base model
+
+First, we tested the simulation model with all preconditions we assume to be the minimal conditions for reduction (see @sec-preconditions). As a reminder, these are those minimal preconditions:
+
+1. Language users employ a shared code
+2. Language users sample concepts according to Zipf's law
+3. Language users remember multiple forms of the same construction
+4. Language users spontaneously reduce forms
+
+We will discuss the behaviour of the simulation by going over the "checklist" defined in @sec-expected-behaviour.
+
+1. The language system has reorganised itself to express the same constructions using more efficient representations.
+
+We can see in @fig-base-model-l1-general that the mean L1 (i.e. the mean energy in the acoustic representations of constructions) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected. 
+
+2. Frequent forms have reduced to a greater extent than non-frequent forms.
+
+@fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent forms to a great extent, and faster as well. We indeed see that frequent forms (at the left of the graph) have lower L1 values than less frequent forms. In addition, @fig-base-model-l1-pace-per-construction shows, for the top N constructions, that a gradient can indeed be seen (todo controleren!!! gevaarlijk).
+
+3. Communication between agents remains successful.
+
+For the final requirements, we refer to @fig-base-model-success. It shows both the micro-averaged and macro-averaged communicative success in the model. The micro-average refers to the total number of successes, and is influenced by Zipfian sampling. Because most of the speaking turns will concern the most frequent construction, the communicative success of that specific construction weighs significantly on the global, unadjusted success rate. The macro-average is an average across averages: each construction contributes equally towards the average, and therefore overrules Zipfian sampling. The macro-average gives a better of idea of communicative success in language system as a whole.
+
+We see in @fig-base-model-success that overall, communicative success in the model actually remains quite good. As we mentioned, it is expected that there is some trade-off between sparsity and communicative success, and the model results remain within this margin. However, the confusion matrix in @fig-base-model-matrix paints a different picture. Indeed, there seems to be mass confusion among the top TODO most frequent constructions. More specifically, all frequent constructions seem to become confused with the most frequent construction. Obviously, this is a major flaw in the communication system of the agents, and it also does not correspond with realistic linguistic behaviour: reduction effects in real life do not lead to mass confusion. 
+
+@fig-base-model-confusion-ratio shows the "good origin ratio" for the TODO most frequent constructions. The ratio expresses from 0 to 1 what share of exemplars, across agents, comes from successful interactions between agents. If an agent mistakes a heard form for a form that actually stands for another construction, the exemplar collection for the correct construction becomes diluted: another form is now also (wrongly) associated with that construction. If the exemplar collection for a specific construction contains a lot of mishearings, its good origin ratio goes down. Here specifically, we see that the most frequent form has a lower good origin ratio than the other constructions. This makes sense, given how often it is confused with other forms. The issue, however, is that we cannot know from these metrics exactly *how* the confusion arises and why the most frequent construction specifically becomes the target of the confusion. To find out the cause of confusion, we built another model, which we will discuss on the next section.
+
+### Cone model
+
+The main reason why we cannot reliably investigate the cause of confusion in the base model stems from the high dimensionality of the vectors. Because we work in a 100-dimensional space, there is no straightforward way to see how the vectors evolve over time. Unfortunately, dimensionality reduction techniques obscure a large share of the variation in the vectors, and are therefore unreliable to estimate the actual course of the acoustic representations.
+
+The solution seems simple: reducing the number of dimensions to just two, which allows you to plot the acoustic representations accurately and reliably. This is indeed the solution we opted for, but with a few adjustments. We chose to represent the acoustic space as a cone, because this brings the properties of a two-dimensional space closer to the behaviour of the multi-dimensional space: all representations have a straight path to the origin (there is no need to go "through" another representation), and the phonetic space becomes more sparse as one nears the origin. Other adjustments are mechanical adaptations to the conic shape: all exemplars now reduce by moving at a straight angle towards the origin, and all constructions start at an equal radius of TODO from the origin.
+
+@fig-cone-model-vectors shows in a straightforward way what happens to the vector space for the duration of the simulation. As the acoustic representations become sparser, the same constructions now have to compete for a smaller total acoustic space for their formal representations. As representations inch closer, their interpretations become disturbed by the presence of a more frequent neighbour. Since our reception system is sensitive to tallying, the vicinity of a more frequent neighbour causes mishearings, and as a result disrupts communicative success. We can see this process happen iteratively, until the most frequent form has overtaken the interpretation of every construction.
+
+The reason why we do not see this iterative process reflected in the base model is again the high dimensionality of the vectors. In the cone model, there are only two dimensions in which forms can inch closer together. In the 100-dimensional model, the most frequent form can be the closest neighbours of multiple forms at once. The mechanics behind the confusion, however, are the same. A possible solution for these mishearings is given in the next section.
+
+### Re-entrance model
+
+Now that we can see the mishearings happen in real time, the question arises how they can be avoided. A complicating factor is that we intentionally did not incorporate a feedback mechanism in our simulation: hearers cannot know that they are mistaking a form for another, so they cannot say "come again?". Vice versa, a speaker cannot know whether a reduced form will cause a mishearing on behalf of the hearer, as they do not have access to the acoustic representations of the latter. As such, our model design without any feedback mechanism seems to lead to a linguistic catch 22.
+
+Nevertheless, a solution within this design is possible, on the side of the speaker. If we let the speaker reduce an acoustic representation, we first let them reflect whether they would understand the uttered form correctly themselves. If they would, communication can continue as planned. If they would not, reduction is reversed, and the unreduced form is communicated. This mechanism is named "re-entrance" by @steels-todo and TODO. TODO bespreken!!!
+
+[ TODO prentje maken in Tikz en dat dan hier zetten! ]
+
+With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increasing sparsity, @fig-reentrance-model-l1-per-construction shows L1 to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix shows little to no confusion. Therefore, it seems the minimal number of preconditions for the reducing effect should be increased to five:
+
+1. Language users employ a shared code
+2. Language users sample concepts according to Zipf's law
+3. Language users remember multiple forms of the same construction
+4. Language users spontaneously reduce forms
+5. Language users should be able to understand reduced forms before uttering them
+
+In the Appendix, @sec-evaluation shows how disabling each precondition leads to model behaviour that does not pass our three minimum requirements. This leads us to believe that, within the scope of our implementation, these five preconditions are indeed the minimal set.
 
 ## Discussion {#sec-discussion}
 
