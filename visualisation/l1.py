@@ -163,3 +163,48 @@ def make_fail_reason_plot(model, include_success=False, ax=None):
     grouped_df.plot(kind="bar", stacked=True, ax=ax, title=title)
     
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
+
+def compute_half_time(model, step):
+    if model.datacollector_step_size != 1:
+        step = step // model.datacollector_step_size
+    
+    l1_values = model.datacollector.get_model_vars_dataframe()["mean_token_l1"]
+
+    token_l1_start = l1_values.iloc[0]
+    half_level = 0.5 * token_l1_start
+
+    half_level_times = np.full(model.num_tokens, np.nan)
+    max_step = model.current_step // model.datacollector_step_size
+
+    for i in range(model.num_tokens):
+        search_step = 0
+        while search_step < max_step:
+            if l1_values.iloc[search_step][i] <= half_level[i]:
+                half_level_times[i] = search_step * model.datacollector_step_size
+                break
+
+            search_step += 1
+
+    return half_level_times
+
+def half_time_bar(model, step, ax=None):
+    if ax is None:
+        ax = plt
+        no_ax = True
+    else:
+        no_ax = False
+    
+    half_level_times = compute_half_time(model, step)
+
+    ax.bar(model.tokens, half_level_times)
+    
+    if not no_ax:
+        ax.set_xticklabels([]) # disable x labels
+    else:
+        plt.xticks([])
+
+    title = f"Mean L1 half life across agents (t = {step})"
+    if not no_ax:
+        ax.set_title(title) 
+    else:
+        ax.title(title)
