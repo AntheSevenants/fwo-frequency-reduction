@@ -367,7 +367,7 @@ Now that we can see the mishearings happen in real time, the question arises how
 
 Nevertheless, a solution within this design is possible, on the side of the speaker. If we let the speaker reduce an acoustic representation, we first let them reflect whether they would understand the uttered form correctly themselves. If they would, communication can continue as planned. If they would not, reduction is reversed, and the unreduced form is communicated. This mechanism is named "re-entrance" by @steels-todo and TODO. TODO bespreken!!!
 
-[ TODO prentje maken in Tikz en dat dan hier zetten! ]
+![A schematic overview of the language game played by the speaker and hearer, with re-entrance. Before speaking, the speaker checks whether they would understand the uttered form themselves. If they do, reduction is kept, but if they do not, reduction is reversed. The new elements in the overview are indicated in teal.](language_game_reentrance.svg){#fig-model_design_language_game_reentrance}
 
 With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increasing sparsity, @fig-reentrance-model-l1-per-construction shows L1 to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix shows little to no confusion. Therefore, it seems the minimal number of preconditions for the reducing effect should be increased to five:
 
