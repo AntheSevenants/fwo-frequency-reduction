@@ -40,7 +40,7 @@ class ReductionAgent(mesa.Agent):
         
         # If jumbling vocabulary, build a personalised set
         if self.model.jumble_vocabulary:
-            self.personalised_vocabulary = generate_word_vectors(self.model.num_tokens, self.model.num_dimensions, self.no)
+            self.personalised_vocabulary = generate_word_vectors(self.model.num_tokens, self.model.num_dimensions, self.model.reduction_strength, self.no)
 
         self.memory = np.full((0, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(0, np.nan, dtype=np.int64)

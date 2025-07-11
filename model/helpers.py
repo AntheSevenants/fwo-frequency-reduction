@@ -55,11 +55,11 @@ def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
     
     return list(zip(sampled_indices, sampled_percentiles))
 
-def generate_word_vectors(vocabulary_size=1000, dimensions=300, seed=42):
+def generate_word_vectors(vocabulary_size=1000, dimensions=300, floor=0, seed=42):
     np.random.seed(seed)
 
-    # Generate random vectors with values ranging from 0 to 100
-    vectors = np.random.randint(0, 100, size=(vocabulary_size, dimensions))
+    # Generate random vectors with values ranging from floor to 100
+    vectors = np.random.randint(floor, 100, size=(vocabulary_size, dimensions))
     
     return np.asarray(vectors)
 
