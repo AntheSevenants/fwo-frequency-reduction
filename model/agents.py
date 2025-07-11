@@ -5,7 +5,7 @@ import numpy as np
 
 import model.reduction
 
-from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, counts_to_percentages
+from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, counts_to_percentages, generate_word_vectors
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
@@ -20,11 +20,11 @@ class ReductionAgent(mesa.Agent):
         # Pass the parameters to the parent class.
         super().__init__(model)
 
-        self.init_memory()
-
         self.speaking = False
         self.hearing = False
         self.no = None
+
+        self.init_memory()
 
         self.success_history = {}
 
@@ -37,6 +37,10 @@ class ReductionAgent(mesa.Agent):
 
         if model_memory_size > self.model.memory_size:
             raise ValueError(f"Initial agent memory size is {model_memory_size}, exceeding the memory limit of {self.model.memory_size}")
+        
+        # If jumbling vocabulary, build a personalised set
+        if self.model.jumble_vocabulary:
+            self.personalised_vocabulary = generate_word_vectors(self.model.num_tokens, self.model.num_dimensions, self.no)
 
         self.memory = np.full((0, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(0, np.nan, dtype=np.int64)
@@ -52,7 +56,7 @@ class ReductionAgent(mesa.Agent):
                 # Get the vector from memory and add noise
                 vector = self.model.get_original_vector(token_index)
             else:
-                vector = np.random.randint(0, 100, self.model.num_dimensions)
+                vector = self.model.get_original_vector(token_index, self.personalised_vocabulary)
 
             # Add each token twice
             for j in range(self.model.initial_token_count):
@@ -72,7 +76,11 @@ class ReductionAgent(mesa.Agent):
                 else:
                     random_index = self.model.true_random_index()
 
-                random_vector = self.model.get_original_vector(random_index)
+                if not self.model.jumble_vocabulary:
+                    random_vector = self.model.get_original_vector(random_index)
+                else:
+                    random_vector = self.model.get_original_vector(random_index, self.personalised_vocabulary)
+                
                 noisy_vector = add_noise(random_vector)
 
                 self.commit_to_memory(noisy_vector, random_index, good_origin=True)

@@ -199,8 +199,11 @@ class ReductionModel(mesa.Model):
     def true_random_index(self):
         return self.random.randrange(0, self.num_tokens, 1)
 
-    def get_original_vector(self, token_index, override=False):
-        return self.vectors[token_index, :]
+    def get_original_vector(self, token_index, override_matrix=None):
+        if override_matrix is not None:
+            return override_matrix[token_index, :]
+        else:
+            return self.vectors[token_index, :]
     
     def register_outcome(self, outcome, success=False):
         if not success:
