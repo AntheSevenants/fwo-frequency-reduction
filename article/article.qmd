@@ -403,7 +403,7 @@ In each of the following subsections, we will reprogram the final model to leave
 
 In this model, we disable the shared code among language users. We do this by generating a completely new set of acoustic vectors for each agent separately. You could say that this means that each speaker uses a completely different language.
 
-If we look at the results in @fig-no-shared-code-model-success, we see that there is no successful communication. Agents are unable to interpret what the other agents are saying, because they do not share the same code. This violates expected behaviour #3 (see @sec-expected-behaviour).
+If we look at the results in @fig-no-shared-code-model-success, we see that there is no successful communication. Agents are unable to interpret what the other agents are saying, because they do not use the same representations to refer to the same constructions. Since communication is unsuccessful, expected behaviour #3 is violated (see @sec-expected-behaviour).
 
 #### No Zipfian sampling
 
