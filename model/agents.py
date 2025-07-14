@@ -40,7 +40,7 @@ class ReductionAgent(mesa.Agent):
         
         # If jumbling vocabulary, build a personalised set
         if self.model.jumble_vocabulary:
-            self.personalised_vocabulary = generate_word_vectors(self.model.num_tokens, self.model.num_dimensions, self.no)
+            self.personalised_vocabulary = generate_word_vectors(self.model.num_tokens, self.model.num_dimensions, self.model.reduction_strength, self.no)
 
         self.memory = np.full((0, self.model.num_dimensions), np.nan)
         self.indices_in_memory = np.full(0, np.nan, dtype=np.int64)
@@ -74,7 +74,7 @@ class ReductionAgent(mesa.Agent):
                 if self.model.zipfian_sampling:
                     random_index = self.model.weighted_random_index()
                 else:
-                    random_index = self.model.true_random_index()
+                    random_index = self.model.linear_random_index()
 
                 if not self.model.jumble_vocabulary:
                     random_vector = self.model.get_original_vector(random_index)
@@ -160,7 +160,7 @@ Old concept index was {old_concept_index}.\n\
         if self.model.zipfian_sampling:
             event_index = self.model.weighted_random_index()
         else:
-            event_index = self.model.true_random_index()
+            event_index = self.model.linear_random_index()
         
         while True:
             hearer_agent = self.random.choice(self.model.agents)

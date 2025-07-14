@@ -83,7 +83,7 @@ class ReductionModel(mesa.Model):
 
         # Overwrite vectors with my own
         if not self.toroidal:
-            vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions)
+            vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, floor=reduction_strength)
         else:
             tokens = tokens[0:num_tokens]
             frequencies = frequencies[0:num_tokens]
@@ -195,6 +195,17 @@ class ReductionModel(mesa.Model):
     def weighted_random_index(self):
         r = self.random.uniform(0, self.total_frequency)
         return next(i for i, cumulative_frequency in enumerate(self.cumulative_frequencies) if r < cumulative_frequency)
+    
+    def linear_random_index(self):
+        # We make a fake linear frequency drop-off
+        max_frequency = self.num_tokens
+        frequencies = [ max_frequency - index for index in range(self.num_tokens) ]
+        total_frequency = np.sum(frequencies)
+        cumulative_frequencies = np.cumsum(frequencies)
+
+        # Apply the same logic as for the Zipfian drop-off
+        r = self.random.uniform(0, total_frequency)
+        return next(i for i, cumulative_frequency in enumerate(cumulative_frequencies) if r < cumulative_frequency)
 
     def true_random_index(self):
         return self.random.randrange(0, self.num_tokens, 1)
