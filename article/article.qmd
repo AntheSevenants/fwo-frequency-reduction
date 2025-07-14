@@ -324,7 +324,7 @@ One of the driving forces behind our parameter choices was computational tractab
 
 In this section, we will go over the results produced by the model operationalised according to the requirements detailed in the previous sections. More specifically, we will check if the model behaviour adheres to the expected behaviour defined in @sec-expected-behaviour.
 
-### Base model
+### Base model {#sec-base-model}
 
 First, we tested the simulation model with all preconditions we assume to be the minimal conditions for reduction (see @sec-preconditions). As a reminder, these are those minimal preconditions:
 
@@ -384,3 +384,48 @@ In the Appendix, @sec-evaluation shows how disabling each precondition leads to 
 possible extensions
 
 - turning frequency into probability -> like Gregory et al. -> extension possible for contextual clues
+
+## Appendix
+
+### Evaluation
+
+In this section, we will evaluate our set of minimal preconditions by separately disabling them. As a reminder, these are the five minimal conditions we determined experimentally:
+
+1. Language users employ a shared code
+2. Language users sample concepts according to Zipf's law
+3. Language users remember multiple forms of the same construction
+4. Language users spontaneously reduce forms
+5. Language users should be able to understand reduced forms before uttering them
+
+In each of the following subsections, we will reprogram the final model to leave out one precondition. If we see equivalent behaviour (i.e. the model behaviour still adheres to the minimal expected behaviour explained in @sec-expected-behaviour), we have found a new minimal set of preconditions. If we cannot attain the expected behaviour, we know we have found the minimal set.
+
+#### No shared code
+
+In this model, we disable the shared code among language users. We do this by generating a completely new set of acoustic vectors for each agent separately. You could say that this means that each speaker uses a completely different language.
+
+If we look at the results in @fig-no-shared-code-model-success, we see that there is no successful communication. Agents are unable to interpret what the other agents are saying, because they do not share the same code. This violates expected behaviour #3 (see @sec-expected-behaviour).
+
+#### No Zipfian sampling
+
+- komt erop neer dat alles gewoon veel rapper neergaat
+- alles plat
+- met het verschil: dat gebeurt bij Zipfian sampling eigenlijk ook, maar veel trager en later
+- het probleem is dat alle variatie een beetje wordt platgedrukt omdat er geen eindpunt is. nog eens over nadenken
+
+#### No remembering multiple forms
+
+In this model, we set the memory size to 100, the same as the number of forms. In practice, this means that each construction is only represented by a single acoustic representation.
+
+Looking at @fig-single-exemplar-model-success, we see that global communicative success is poor, while macro-averaged success is still adequate. Therefore, we can say that the most frequent forms perform poorly, while low frequency forms remain intelligible. This violates expected behaviour #3 (see @sec-expected-behaviour).
+
+The explanation for this difference in behaviour for the different frequency types is straightforward. Because highly frequent forms have many opportunities for reduction, their representations can evolve extremely quickly. The issue is that in this way, discrepancies in the representations between different agents can arise. Therefore, two agents could have vastly different vector representations for the same concept. You can see this in the equilibrium of the global communicative success as well: it hovers around the probability set for reduction, 0.5. If an agent dares to reduce too far, communication goes amiss. Note also that the self regulation mechanism no longer works reliably with just one exemplar per concept. Less frequent forms have fewer reduction opportunities, so the probability of divergence happening here is slimmer.
+
+We do not see the same behaviour if agents can have multiple representations for the same concept, as a larger exemplar memory "buffers" against diverging behaviour. If several representations are available, a single reduced exemplar does not cause a large sway in the overall representation of a concept, and the self regulation mechanism remains reliable as well.
+
+#### No spontaneous reduction
+
+In this model, we set the probability of reduction to 0. This has the obvious effect that language users will no longer attempt to build more sparse representations for their acoustic representations. In @fig-no-reduction-model-l1-general, we see that the average L1 is not decreasing. This violates expected behaviour #1 (see @sec-expected-behaviour).
+
+#### No self-regulation
+
+The model without self-regulation is equivalent to the base model. This model is discussed in @sec-base-model.
