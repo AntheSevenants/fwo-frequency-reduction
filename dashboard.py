@@ -37,7 +37,7 @@ ENUM_MAPPING = {
 
 matplotlib.use('Agg')
 
-GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "umap_mosaic", "memory_mosaic" ]
+GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot", "umap_mosaic", "memory_mosaic" ]
 
 models_in_memory = {}
 graphs_in_memory = {}
@@ -169,6 +169,12 @@ def generate_plot(graph_name, model):
                                            math.floor(model.current_step / 4) * 3,
                                            model.current_step],
                                     n=9, agent_filter=0)
+    elif graph_name == "l1_plot":
+        return visualisation.meta.make_layout_plot(model,
+                                    visualisation.l1.words_mean_l1_bar,
+                                    steps=[math.floor(model.current_step / 4) * 1,
+                                                 math.floor(model.current_step / 4) * 2,
+                                                 math.floor(model.current_step / 4) * 3, model.current_step])
     else:
         return "invalide"
 
