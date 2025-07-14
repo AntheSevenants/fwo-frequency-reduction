@@ -351,7 +351,7 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 @fig-base-model-confusion-ratio shows the "good origin ratio" for the TODO most frequent constructions. The ratio expresses from 0 to 1 what share of exemplars, across agents, comes from successful interactions between agents. If an agent mistakes a heard form for a form that actually stands for another construction, the exemplar collection for the correct construction becomes diluted: another form is now also (wrongly) associated with that construction. If the exemplar collection for a specific construction contains a lot of mishearings, its good origin ratio goes down. Here specifically, we see that the most frequent form has a lower good origin ratio than the other constructions. This makes sense, given how often it is confused with other forms. The issue, however, is that we cannot know from these metrics exactly *how* the confusion arises and why the most frequent construction specifically becomes the target of the confusion. To find out the cause of confusion, we built another model, which we will discuss on the next section.
 
-### Cone model
+### Cone model {#sec-cone-model}
 
 The main reason why we cannot reliably investigate the cause of confusion in the base model stems from the high dimensionality of the vectors. Because we work in a 100-dimensional space, there is no straightforward way to see how the vectors evolve over time. Unfortunately, dimensionality reduction techniques obscure a large share of the variation in the vectors, and are therefore unreliable to estimate the actual course of the acoustic representations.
 
@@ -406,6 +406,65 @@ In this model, we disable the shared code among language users. We do this by ge
 If we look at the results in @fig-no-shared-code-model-success, we see that there is no successful communication. Agents are unable to interpret what the other agents are saying, because they do not use the same representations to refer to the same constructions. Since communication is unsuccessful, expected behaviour #3 is violated (see @sec-expected-behaviour).
 
 #### No Zipfian sampling
+
+In this model, we sample constructions using a linear distribution instead of a Zipfian one. In practice, this means that the most frequent construction is no longer twice as frequent as the second most frequent construction, which is twice as frequent as the third most frequent construction, and so on. Instead, the most frequent construction is only one "unit" more frequent than the second most frequent construction, which is one "unit" more frequent than the third most frequent construction, etc. This difference is demonstrated in @fig-linear-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction. The frequency drop of the Zipfian distribution is much more steep than the one of the linear distribution.
+
+```{r}
+#| label: fig-linear-distribution
+#| fig-cap: "Overview of the two construction distributions tested in the model" 
+#| layout-ncol: 2
+#| layout-nrow: 1
+#| fig-subcap:
+#|   - "Linear distribution of constructions"
+#|   - "Zipfian distribution of constructions" 
+#| echo: FALSE
+
+library(ggplot2)
+
+# Zipfian
+
+MAX_FREQ = 10000
+x <- 1:100
+# Theoretical zipf
+y <- x^(-1) * MAX_FREQ
+
+# Create a data frame
+data <- data.frame(x, y)
+
+# Plot the linear distribution
+ggplot(data, aes(x = x, y = y)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Zipfean distribution") +
+  xlab("X values") +
+  ylab("Y values") +
+  theme_minimal()
+
+# Linear
+
+x <- 1:100
+y <- seq(10000, 100, -100)
+
+# Create a data frame
+data <- data.frame(x, y)
+
+# Plot the linear distribution
+ggplot(data, aes(x = x, y = y)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Linear distribution") +
+  xlab("X values") +
+  ylab("Y values") +
+  theme_minimal()
+```
+
+The question is to what extent this change from Zipfian to linear frequency has an influence on the course of the simulation, most notably on the extent of reduction among representations and their respective reduction speed. To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. You can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we see that the Zipfian simulation maintains a clear distinction between frequent and non-frequent forms. Highly frequent forms have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
+
+In @fig-no-half-life-per-construction, we show the "half life" period for each construction. We show how many steps in the simulation it took for every acoustic representation to reach half of its original energy. We see that very little acoustic representations reduce to half their energy in the Zipfian simulation, in contrast to the linear simulation, where many representations have indeed reduced to this point. This shows that, if frequency is assumed to be linear, the reduction effect works much faster in our simulation. In this regard, we can say that expected behaviour #2 (see @sec-expected-behaviour) is violated, since a model of reduction with assumed linear frequency does not produce any stark differences in reduction speed and extent between high and low frequency items.
+
+The linear results put the L1 distribution of our Zipfian simulation into perspective. It seems as if the Zipfian model organically organises our representations in the most efficient way. To explain this reorganisation process, we start from our cone model (@sec-sec-cone-model). At the very bottom of the cone, only one construction can exist. Naturally, the most frequent construction takes up this space, as it is the first to reach all the way there. Less frequent constructions can divide the space slightly above the bottom of the cone, at the expense of using slightly more energy. Since the cone is wider here, several forms can co-exist. When this space fills up, the area even further up the cone is next. This area is even wider, and allows for even more constructions, again at the expense of a higher energy usage.
+
+This layered behaviour can be identified in @fig-reentrance-model-model-l1-per-construction, as the acoustic representations seem to reorganise themselves in the shape of a staircase. The most frequent construction occupies the smallest possible representation: a vector filled with floor values ($M \times R = 100 \times 15 = 1500$). The next most frequent constructions are expressed through vectors with more acoustic information. They cannot also use the smallest possible representation, as that position has already been taken up. Therefore, they use the portion of the vector space that has the smallest total energy, yet does not generate confusion with other forms in the neighbourhood. Positions with more energy allow for more variation, which makes it so more "energetic" vector locations also feature more forms, as can be seen in the staircase. Once this phonetic space is also full, vectors will need to be expressed using even more energy, allowing for even more variation, and so on. TODO herschrijven
+
+Dit is allemaal heel efficiënt. Dat is leuk!
 
 - komt erop neer dat alles gewoon veel rapper neergaat
 - alles plat
