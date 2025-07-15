@@ -381,11 +381,40 @@ In the Appendix, @sec-evaluation shows how disabling each precondition leads to 
 
 ## Discussion {#sec-discussion}
 
-Another interesting effect concerns the reorganisation of acoustic energy in the different representations. It seems like the Zipfian frequency curve naturally leads reduction to reorganise the linguistic system in the most efficient way; the most frequent constructions take up the most basic acoustic representations with the least amount of energy, while less frequent constructions are expressed with more elaborate acoustic representations.
+In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @todo-bybee. We found that at least the following five preconditions were necessary to produce the reducing effect with all of its properties in a simulation:
+
+1. Language users employ a shared code
+2. Language users sample concepts according to Zipf's law
+3. Language users remember multiple forms of the same construction
+4. Language users spontaneously reduce forms
+5. Language users should be able to understand reduced forms before uttering them
+
+In this discussion section, we will go over what the necessity of these requirements means for reduction theory, and usage-based linguistics as a whole.
+
+### Implications for reduction theory
+
+In our simulation, we found that there is more to the reduction principle than just the link between usage and sparsity, as evidenced by the five preconditions. The Zipfian distribution of construction frequency together with the continuous drive to spontaneously reduce forms are the driving force behind the reduction effect proper. Other preconditions, like the existence of a large memory consisting of multiple forms and required self-understanding on behalf of speakers, act as safeguards to keep the virtual linguistic system from derailing. Finally, a shared code is required to allow for communication in the first place.
+
+Another interesting aspect of reduction concerns the way in which the acoustic representations are reorganised under the effect of reduction. In our simulation, the Zipfian frequency curve naturally makes reduction reorganise the linguistic system in the most efficient way possible: the most frequent constructions take up the most basic acoustic representations with the least amount of energy, while less frequent constructions are expressed with more elaborate acoustic representations.
 
 To explain this reorganisation process, we start from our cone model (@sec-sec-cone-model). At the very bottom of the cone, only one construction can exist, as two constructions in the same location would naturally cause confusion. The most frequent construction has the most opportunities to reduce due to its frequency, and is therefore the first construction to reach the minimal possible representation. This can be seen in the full model as well, as is clear in @fig-reentrance-model-model-l1-per-construction: the most frequent construction occupies the smallest possible representation: a vector filled with floor values ($M \times R = 100 \times 15 = 1500$). Less frequent constructions cannot also reduce to the smallest possible representation, so they have to stop short in their reduction path, at the expense of using slightly more energy. In the cone model, they can be found slightly above the bottom of the cone. Since the cone is wider here, several forms can co-exist without causing confusion. The same can be seen in @fig-reentrance-model-model-l1-per-construction: several constructions hover around the TODO L1 energy level, albeit with diverse internal energy distributions to allow for a distinction between different forms. Once this phonetic space is also full, constructions will need to be expressed through forms with even more energy, which allow for even more variation, and so on. This incremental process can be identified in @fig-reentrance-model-model-l1-per-construction, as the energy levels can be seen as evolving into a staircase-like pattern.
 
-It is clear that such an efficient reorganisation can only be possible with a Zipfian frequency distribution. The highly skewed frequency distribution leads to the most frequent form to use the most efficient vector position, with less frequent forms sharing a less efficient vector space. If frequency is assumed to be linear, the frequency differences between forms are not be stark enough to really favour one construction over another in its reduction path. Several constructions have to compete for the same locations in the vector space, with no one construction being able to reduce completely to the most efficient location. The outcome in this scenario is that the most frequent forms collectively reach a reduction "ceiling" at a higher energy level than would be the case with a Zipfian frequency distribution.
+It is clear that such an efficient reorganisation can only be possible with a Zipfian frequency distribution. The highly skewed frequency distribution leads to the most frequent form to use the most efficient vector position, with less frequent forms sharing a less efficient vector space. If frequency is assumed to be linear, the frequency differences between forms are not be stark enough to really favour one construction over another in its reduction path. Several constructions have to compete for the same locations in the vector space, with no one construction being able to reduce completely to the most efficient location. The outcome in this scenario is that the most frequent forms collectively reach a reduction "ceiling" at a higher energy level than would be the case with a Zipfian frequency distribution. TODO Shannon referentie
+
+### Implications for usage-based linguistics
+
+- in onze simulatie dienen exemplars als buffer tegen plotse veranderingen
+- voor hoogfrequente vormen bleken verschillende exemplars nuttig als buffer tegen al te sterke veranderingen
+- op deze manier bepalend voor verschuiving van prototype enzo
+
+### Implications for language evolution
+
+- vijfde designprincipe van Hockett -> bleek belangrijk om reductie rond te krijgen
+- toont dat basiseigenschappen van taal mogelijk blijven doorwerken in de evolutie van taal an sich
+
+### Mogelijke uitbreidingen
+
+- wellicht interessant om in verder onderzoek (à la Kirby 2000) de fundamentele eigenschappen van taal te manipuleren om repercussies voor reductie te controleren met echt menselijk gedrag
 
 possible extensions
 
