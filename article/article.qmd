@@ -417,8 +417,9 @@ In addition, the categorisation of exemplars is shown to not be as straightforwa
 
 ### Implications for language evolution
 
-- vijfde designprincipe van Hockett -> bleek belangrijk om reductie rond te krijgen
-- toont dat basiseigenschappen van taal mogelijk blijven doorwerken in de evolutie van taal an sich
+One of the staples of research into human communication are the thirteen design principles of human communication by @hockett-todo. One of these principles is 'interchangeability', i.e. the ability for speakers to utter themselves utterances that they have heard, as well as the ability for hearers to hear utterances that they have spoken themselves. In short, it is the property that affirms speakers can become hearers, and hearers can become speakers. This property is indispensible for our model of reduction, as it proved necessary for speakers to gauge how far they could reduce construction representations by testing a reduced utterance on themselves. This requirement highlights how defining principles of human communication perhaps also further define its evolution.
+
+Re-entrance itself has been positioned by @steels-re-entrance-todo to be essential especially for grammatical evolution. He showed that in a simulation of case marking, speakers need to be able to assess the ambiguity of their own argument structures beforehand. Based on their own evaluation, the potential necessity of case marking can be gauged. Our model does not concern grammar, but its core principle of ambiguity avoidance remains equivalent. Since our agents can only rely on vector locations to categorise an incoming representation, the ambiguity avoidance mechanism serves a similar purpose.
 
 ### Mogelijke uitbreidingen
 
