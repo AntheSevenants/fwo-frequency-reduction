@@ -322,6 +322,12 @@ One of the driving forces behind our parameter choices was computational tractab
 | $p$ | Reduction probability at speech time | 0.5 |
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
+### Implementation
+
+We implemented our model of the reduction effect in Python using the MESA library [@todo-mesa-ref]. All source code is available online.[^github-link]
+
+[^github-link]: todo hier link
+
 ## Results
 
 In this section, we will go over the results produced by the model operationalised according to the requirements detailed in the previous sections. More specifically, we will check if the model behaviour adheres to the expected behaviour defined in @sec-expected-behaviour.
