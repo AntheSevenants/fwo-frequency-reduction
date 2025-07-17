@@ -1,5 +1,5 @@
 ---
-title: "FWO frequency reduction article"
+title: "Speak less, say more. FWO frequency reduction article"
 author:
   - name: Anthe Sevenants
     email: anthe.sevenants@kuleuven.be
