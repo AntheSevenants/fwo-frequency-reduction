@@ -202,7 +202,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 **Speaker**
 
-1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the Zipfian A-curve, discussed in @sec-preconditions, to mirror the frequency imbalance inherent to natural language.
+1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the Zipfian A-curve, discussed in @sec-preconditions, to mirror the frequency imbalance inherent to natural language.[^zipfian-note]
 2. The speaker chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. There is no mechanism influencing the probability of a specific exemplar being chosen, though if a specific exemplar is highly frequent and therefore well represented in memory, it of course has a high chance of being selected.
 3. With a probability of $p$, reduction is applied (see @sec-reduction).
 4. The (potentially reduced) vector is communicated to the hearer.
@@ -214,6 +214,8 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 3. The heard exemplar is saved in the hearer's memory and is associated with the understood construction.
 
 [^exceptions]: In the case of a tie, communication fails. In the case that no exemplars were selected, communication fails as well.
+
+[^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through Zipfian sampling. For our model, the addition of an outside world with events would not have any added value, which is why we implemented agents about the world in this way.
 
 ![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a concept, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](language_game.svg){#fig-model_design_language_game}
 
