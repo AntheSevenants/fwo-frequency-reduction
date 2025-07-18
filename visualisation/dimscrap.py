@@ -108,6 +108,34 @@ def make_communication_plot(model, smooth=True, ax=None):
     
     return ax
 
+def make_communication_plot_combined(model, smooth=True, ax=None):
+    df = model.datacollector.get_model_vars_dataframe()
+
+    if ax is None:
+        ax = plt.gca()
+        
+    ax.set_ylim([0, 1])
+    
+    if smooth:
+        window_length = 500
+        polyorder = 1
+        
+        y_smooth_success = savgol_filter(df["communicative_success"], window_length, polyorder)
+        y_smooth_success_macro = savgol_filter(df["communicative_success_macro"], window_length, polyorder)
+        
+        ax.plot(y_smooth_success, color="blue", linestyle="dashed")
+        ax.plot(y_smooth_success_macro, color="blue", linestyle="dotted")
+    else:
+        ax.plot(df["communicative_success"], color="blue", linestyle="dashed", label="Micro average")
+        ax.plot(df["communicative_success_macro"], color="blue", linestyle="dotted", label="Macro average")
+
+    title = f"Global communicative success"
+    ax.set_title(title)
+    plt.legend()
+    ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
+    
+    return ax
+
 def make_repairs_plot(model, smooth=True, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
 
