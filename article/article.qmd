@@ -546,19 +546,27 @@ ggplot(data, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
-The question is to what extent this change from Zipfian to linear frequency has an influence on the course of the simulation, most notably on the extent of reduction among representations and their respective reduction speed. To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. You can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we see that the Zipfian simulation maintains a clear distinction between frequent and non-frequent forms. Highly frequent forms have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
+The question is to what extent this change from Zipfian to linear frequency has an influence on the course of the simulation, most notably on the extent of reduction among representations and their respective reduction speed. To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. You can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we saw in @fig-base-model-l1-per-construction (repeated below) that the Zipfian simulation maintains a clear distinction between frequent and non-frequent forms. Highly frequent forms have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
 
-In @fig-no-zipfian-model-half-life-per-construction, we again show the "half life" period for each construction. We see that very few acoustic representations reduce to half their energy in the Zipfian simulation, in contrast to the linear simulation, where many representations have indeed reduced at least halfway. This shows that, if frequency is assumed to be linear, reduction goes faster and applies to more forms than when frequency is assumed to be Zipfian. 
-
-Since the required differences in speed and extent for high and low frequency forms do not appear in the linear model, we can say that expected behaviour #2 (see @sec-expected-behaviour) is violated.
+In @fig-no-zipfian-model-half-life-per-construction, we again show the "half life" period for each construction. We see that very few acoustic representations reduce to half their energy in the Zipfian simulation, in contrast to the linear simulation, where many representations have indeed reduced at least halfway. This shows that, if frequency is assumed to be linear, reduction goes faster and applies to more forms than when frequency is assumed to be Zipfian.
 
 In this regard, we can say that expected behaviour #2 (see @sec-expected-behaviour) is violated, since a model of reduction with assumed linear frequency does not produce any stark differences in reduction speed and extent between high and low frequency items.
 
+::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
+
+![Zipfian TODO](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
+
+![Linear TODO](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+
+
+TODO
+:::
+
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![TODO](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Zipfian TODO](figures/fig-base-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
 
-![TODO](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Linear TODO](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
 TODO
 :::
