@@ -37,7 +37,8 @@ ENUM_MAPPING = {
 
 matplotlib.use('Agg')
 
-GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot", "umap_mosaic", "memory_mosaic" ]
+REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot", "umap_mosaic", "memory_mosaic" ]
+TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabulary_plot_3d" ]
 
 models_in_memory = {}
 graphs_in_memory = {}
@@ -57,20 +58,10 @@ def index():
     parameter_mapping = None
     constants_mapping = None
 
-    
+    toroidal = False
 
     reserved_keywords = [ "run", "filter" ]
     no_selection = len(list(set(selected_parameters) - set(reserved_keywords))) == 0
-
-    if selected_filter == "no":
-        selected_filter = None
-    elif selected_filter in GRAPHS:
-        graphs = [ selected_filter ]
-    else:
-        selected_filter = None
-    
-    if selected_filter is None:
-        graphs = GRAPHS.copy()
 
     if selected_run is not None:
         run_infos = get_run_infos(selected_run)
@@ -114,10 +105,28 @@ def index():
             if selected_model.shape[0] != 1:
                 raise ValueError("Selected parameters do not single out a single model")
 
+            print(selected_model.iloc[0]["toroidal"])
+            toroidal = selected_model.iloc[0]["toroidal"]
+
             selected_run_id = str(selected_model.iloc[0]["run_id"])
             check_load_model(selected_run, selected_run_id)
 
             print("Model loaded")
+
+    if toroidal:
+        GRAPHS = TOROIDAL_GRAPHS + REGULAR_GRAPHS
+    else:
+        GRAPHS = REGULAR_GRAPHS.copy()
+
+    if selected_filter == "no":
+        selected_filter = None
+    elif selected_filter in GRAPHS:
+        graphs = [ selected_filter ]
+    else:
+        selected_filter = None
+
+    if selected_filter is None:
+        graphs = GRAPHS.copy()
 
     return render_template('index.html',
                            runs=runs,
@@ -178,6 +187,14 @@ def generate_plot(graph_name, model):
                                     steps=[math.floor(model.current_step / 4) * 1,
                                                  math.floor(model.current_step / 4) * 2,
                                                  math.floor(model.current_step / 4) * 3, model.current_step])
+    elif graph_name == "angle_vocabulary_plot_2d_moisaic":
+        return visualisation.meta.make_layout_plot(model,
+                                    visualisation.angle.make_angle_vocabulary_plot_2d,
+                                    agent_filter=0, steps=[math.floor(model.current_step / 4) * 1,
+                                                 math.floor(model.current_step / 4) * 2,
+                                                 math.floor(model.current_step / 4) * 3, model.current_step])
+    elif graph_name == "angle_vocabulary_plot_3d":
+        return visualisation.angle.make_angle_vocabulary_plot_3d(model, math.floor(model.current_step / 4) * 3, agent_filter=0)
     else:
         return "invalide"
 
