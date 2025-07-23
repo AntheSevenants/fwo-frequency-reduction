@@ -350,8 +350,6 @@ With this new precondition added to our basic assumptions, the model now behaves
 4. Language users spontaneously reduce forms
 5. Language users should be able to understand reduced forms before uttering them
 
-In the Appendix, @sec-evaluation shows how disabling each precondition leads to model behaviour that does not pass our three minimum requirements. This leads us to believe that, within the scope of our implementation, these five preconditions are indeed the minimal set.
-
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
 ![TODO](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
@@ -369,88 +367,7 @@ In the Appendix, @sec-evaluation shows how disabling each precondition leads to 
 TODO
 :::
 
-## Discussion {#sec-discussion}
-
-In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. We found that at least the following five preconditions were necessary to produce the reducing effect with all of its properties in a simulation:
-
-1. Language users employ a shared code
-2. Language users sample concepts according to Zipf's law
-3. Language users remember multiple forms of the same construction
-4. Language users spontaneously reduce forms
-5. Language users should be able to understand reduced forms before uttering them
-
-In this discussion section, we will go over what the necessity of these requirements means for reduction theory, and usage-based linguistics as a whole.
-
-### Implications for reduction theory
-
-In our simulation, we found that there is more to the reduction principle than just the link between usage and sparsity, as evidenced by the five preconditions. The Zipfian distribution of construction frequency together with the continuous drive to spontaneously reduce forms are the driving force behind the reduction effect proper. Other preconditions, like the existence of a large memory consisting of multiple forms and required self-understanding on behalf of speakers, act as safeguards and keep the virtual linguistic system from derailing. Finally, a shared code is required to allow for communication in the first place.
-
-Another interesting aspect of reduction concerns the way in which the acoustic representations are reorganised under the effect of reduction. In our simulation, the Zipfian frequency curve naturally makes reduction reorganise the linguistic system in the most efficient way possible: the most frequent constructions take up the most basic acoustic representations with the least amount of energy, while less frequent constructions are expressed with more elaborate acoustic representations.
-
-To explain this reorganisation process, we start from our cone model (@sec-cone-model). At the very bottom of the cone, only one construction can exist, as two constructions in the same location would naturally cause confusion. The most frequent construction has the most opportunities to reduce due to its frequency, and is therefore the first construction to reach the minimal possible representation. This can be seen in the full model as well, as is clear in @fig-reentrance-model-l1-per-construction: the most frequent construction occupies the smallest possible representation: a vector filled with floor values ($M \times R = 100 \times 15 = 1500$). Less frequent constructions cannot also reduce to the smallest possible representation, so they have to stop short in their reduction path, at the expense of using slightly more energy. In the cone model, they can be found slightly above the bottom of the cone. Since the cone is wider here, several forms can co-exist without causing confusion. The same can be seen in @fig-reentrance-model-l1-per-construction: several constructions hover around the TODO L1 energy level, albeit with diverse internal energy distributions to allow for a distinction between different forms. Once this phonetic space is also full, constructions will need to be expressed through forms with even more energy, which allow for even more variation, and so on. This incremental process can be identified in @fig-reentrance-model-l1-per-construction, as the energy levels can be seen as evolving into a staircase-like pattern.
-
-It is clear that such an efficient reorganisation can only be possible with a Zipfian frequency distribution. The highly skewed frequency distribution leads to the most frequent form to use the most efficient vector position, with less frequent forms sharing a less efficient vector space. If frequency is assumed to be linear, the frequency differences between forms are not stark enough to really favour one construction over another in its reduction path. Several constructions have to compete for the same locations in the vector space, with no one construction being able to reduce completely to the most efficient location. The outcome in this scenario is that the most frequent forms collectively reach a reduction "ceiling" at a higher energy level than would be the case with a Zipfian frequency distribution.
-
-Finally, one detail of our implementation that has not been mentioned yet, but that seems important for the reduction effect theoretically, is that of acoustic-perceptual resolution and its consequences for the avoidance of a fractal organisation of acoustic representations. Perception in our model is based on spatial vicinity. All exemplars within a specified range contribute towards the understanding of a particular form, and this range is fixed. This has the consequence that there is no use in constructions reducing to infinitely smaller forms, as an agent's perceptual range remains the same. Should our model be updated to allow for reduction in increasingly smaller steps, representations could theoretically keep reducing ad infinitum while keeping their current distinctions ("fractal"). They would just appear at increasingly smaller scales, at least as long as agents are perceptually sensitive to these small differences.[^realism] We did not include the avoidance of this fractal property as a precondition for reduction, as we considered it moreso a detail of our implementation. Still, we think this detail is theoretically interesting and could be further investigated.
-
-[^realism]: Humans are known not to be sensitive to minute differences in acoustic frequency. In fact, an entire rescaling of the human hearing range has been devised for speech recognition purposes ["Mel scale", @pedersen_mel_1965] in order to account for the insensitivity of the human ear to certain frequency distinctions, especially in the upper frequency range.
-
-### Implications for usage-based linguistics
-
-As of now, most discourse about exemplars in usage-based linguistics has centred around the categorisation and structure of exemplars, their link with prototypes and their cognitive realisation. In our simulation, we see that exemplars can also act  as buffers in situations where representations undergo sudden, considerable changes. Especially for high frequency constructions, the buffer effect works well, as these constructions are assumed to have a large number of exemplars in memory simply due to their sheer frequency of occurrence. Concurrently, this buffering process is especially effective for high frequency constructions in particular, as they have the most opportunity to undergo considerable changes in the first place.
-
-In addition, the categorisation of exemplars is shown to not be as straightforward in our simulation as is assumed theoretically. While the idea is that proximity to other exemplars should suffice for correctly categorising or understanding representations, frequency effects can disrupt this process and can cause cascading confusion. Of course, our simulation does not feature any sort of context nor feedback mechanism, which could help mitigate this categorisation problem.
-
-### Implications for language evolution
-
-One of the staples of research into human communication are the thirteen design principles of human communication by @hockett_origin_1960. One of these principles is 'interchangeability', i.e. the ability for speakers to utter themselves utterances that they have heard, as well as the ability for hearers to hear utterances that they have spoken themselves. In short, it is the property that affirms speakers can become hearers, and hearers can become speakers. This property is indispensible for our model of reduction, as it proved necessary for speakers to gauge how far they could reduce construction representations by testing a reduced utterance on themselves. This requirement highlights how defining principles of human communication perhaps also further define its evolution.
-
-Re-entrance itself has been positioned by @steels_language_2003 to be essential especially for grammatical evolution. He showed that in a simulation of case marking, speakers need to be able to assess the ambiguity of their own argument structures beforehand. Based on their own evaluation, the potential necessity of case marking can be gauged. Our model does not concern grammar, but its core principle of ambiguity avoidance remains equivalent. Since our agents can only rely on vector locations to categorise an incoming representation, the ambiguity avoidance mechanism serves a similar purpose.
-
-### Further research
-
-There are several ways in which our model could be extended. The most obvious extension would be the inclusion of context. Indeed, while it was the very goal of our simulation to distill only the most fundamental aspects of the reduction effect, in real life situations, context contributes to how far a specific construction's representation can be reduced. If a construction is predictable from either its linguistic or its (real-life) situational context, there is a lesser need to express it fully. In this regard, it would be appropriate to turn our reduction model into a model of *probability* rather than one of frequency. TODO lezen Gregory et al.
-
-Furthermore, our model currently does not account for the co-existence of reduced and unreduced forms. While our exemplar model allows for a wide range of variation, agents will forget unreduced forms once they fill up their exemplar memories. Other possible extensions include allowing constructions to disappear or varying the 'reducibility' of certain constructions to account for the fact that not *all* high frequency words seem eligible or reduction.
-
-Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study (i.e. like @kirby_cumulative_2008). In this way, it can be investigated if and how the simulation experiment might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
-
-## Appendix {#sec-appendix-metrics}
-
-In order to keep track of the simulation course, we computed the following metrics at each step:
-
-1. **Communicative success:**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly.  
-  $$
-  \frac{\text{\# successful turns}}{\text{\# turns}}
-  $$
-4. **Mean agent L1:**  
-  Number expressing the average L1 norm of exemplars, across all agents.  
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
-  $$
-5. **Mean construction L1:**  
-  Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
-  $$  
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$
-6. **Confusion matrix:**  
-  Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
-10. **Communicative success (macro average):**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
-  $$
-  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
-  $$
-11. **Good origin ratio:**  
-  Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{good origin}(L^t_i) } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
-0 & \text{if from failed speaking turn} \\
-1 & \text{if from successful speaking turn}
-\end{cases}$
-
-### Evaluation {#sec-evaluation}
+### Evaluation
 
 In this section, we will evaluate our set of minimal preconditions by separately disabling them. As a reminder, these are the five minimal conditions we determined experimentally:
 
@@ -574,4 +491,87 @@ In this model, we set the probability of reduction to 0. This has the obvious ef
 
 #### No self-regulation
 
-The model without self-regulation is equivalent to the base model. This model is discussed in @sec-base-model.
+The model without self-regulation is equivalent to the base model. This model is discussed in @sec-base-model. 
+
+Each time we disabled a precondition, it led to model behaviour that did not pass our three minimum requirements. This leads us to believe that, within the scope of our implementation, our five preconditions are indeed the minimal set.
+
+## Discussion {#sec-discussion}
+
+In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. We found that at least the following five preconditions were necessary to produce the reducing effect with all of its properties in a simulation:
+
+1. Language users employ a shared code
+2. Language users sample concepts according to Zipf's law
+3. Language users remember multiple forms of the same construction
+4. Language users spontaneously reduce forms
+5. Language users should be able to understand reduced forms before uttering them
+
+In this discussion section, we will go over what the necessity of these requirements means for reduction theory, and usage-based linguistics as a whole.
+
+### Implications for reduction theory
+
+In our simulation, we found that there is more to the reduction principle than just the link between usage and sparsity, as evidenced by the five preconditions. The Zipfian distribution of construction frequency together with the continuous drive to spontaneously reduce forms are the driving force behind the reduction effect proper. Other preconditions, like the existence of a large memory consisting of multiple forms and required self-understanding on behalf of speakers, act as safeguards and keep the virtual linguistic system from derailing. Finally, a shared code is required to allow for communication in the first place.
+
+Another interesting aspect of reduction concerns the way in which the acoustic representations are reorganised under the effect of reduction. In our simulation, the Zipfian frequency curve naturally makes reduction reorganise the linguistic system in the most efficient way possible: the most frequent constructions take up the most basic acoustic representations with the least amount of energy, while less frequent constructions are expressed with more elaborate acoustic representations.
+
+To explain this reorganisation process, we start from our cone model (@sec-cone-model). At the very bottom of the cone, only one construction can exist, as two constructions in the same location would naturally cause confusion. The most frequent construction has the most opportunities to reduce due to its frequency, and is therefore the first construction to reach the minimal possible representation. This can be seen in the full model as well, as is clear in @fig-reentrance-model-l1-per-construction: the most frequent construction occupies the smallest possible representation: a vector filled with floor values ($M \times R = 100 \times 15 = 1500$). Less frequent constructions cannot also reduce to the smallest possible representation, so they have to stop short in their reduction path, at the expense of using slightly more energy. In the cone model, they can be found slightly above the bottom of the cone. Since the cone is wider here, several forms can co-exist without causing confusion. The same can be seen in @fig-reentrance-model-l1-per-construction: several constructions hover around the TODO L1 energy level, albeit with diverse internal energy distributions to allow for a distinction between different forms. Once this phonetic space is also full, constructions will need to be expressed through forms with even more energy, which allow for even more variation, and so on. This incremental process can be identified in @fig-reentrance-model-l1-per-construction, as the energy levels can be seen as evolving into a staircase-like pattern.
+
+It is clear that such an efficient reorganisation can only be possible with a Zipfian frequency distribution. The highly skewed frequency distribution leads to the most frequent form to use the most efficient vector position, with less frequent forms sharing a less efficient vector space. If frequency is assumed to be linear, the frequency differences between forms are not stark enough to really favour one construction over another in its reduction path. Several constructions have to compete for the same locations in the vector space, with no one construction being able to reduce completely to the most efficient location. The outcome in this scenario is that the most frequent forms collectively reach a reduction "ceiling" at a higher energy level than would be the case with a Zipfian frequency distribution.
+
+Finally, one detail of our implementation that has not been mentioned yet, but that seems important for the reduction effect theoretically, is that of acoustic-perceptual resolution and its consequences for the avoidance of a fractal organisation of acoustic representations. Perception in our model is based on spatial vicinity. All exemplars within a specified range contribute towards the understanding of a particular form, and this range is fixed. This has the consequence that there is no use in constructions reducing to infinitely smaller forms, as an agent's perceptual range remains the same. Should our model be updated to allow for reduction in increasingly smaller steps, representations could theoretically keep reducing ad infinitum while keeping their current distinctions ("fractal"). They would just appear at increasingly smaller scales, at least as long as agents are perceptually sensitive to these small differences.[^realism] We did not include the avoidance of this fractal property as a precondition for reduction, as we considered it moreso a detail of our implementation. Still, we think this detail is theoretically interesting and could be further investigated.
+
+[^realism]: Humans are known not to be sensitive to minute differences in acoustic frequency. In fact, an entire rescaling of the human hearing range has been devised for speech recognition purposes ["Mel scale", @pedersen_mel_1965] in order to account for the insensitivity of the human ear to certain frequency distinctions, especially in the upper frequency range.
+
+### Implications for usage-based linguistics
+
+As of now, most discourse about exemplars in usage-based linguistics has centred around the categorisation and structure of exemplars, their link with prototypes and their cognitive realisation. In our simulation, we see that exemplars can also act  as buffers in situations where representations undergo sudden, considerable changes. Especially for high frequency constructions, the buffer effect works well, as these constructions are assumed to have a large number of exemplars in memory simply due to their sheer frequency of occurrence. Concurrently, this buffering process is especially effective for high frequency constructions in particular, as they have the most opportunity to undergo considerable changes in the first place.
+
+In addition, the categorisation of exemplars is shown to not be as straightforward in our simulation as is assumed theoretically. While the idea is that proximity to other exemplars should suffice for correctly categorising or understanding representations, frequency effects can disrupt this process and can cause cascading confusion. Of course, our simulation does not feature any sort of context nor feedback mechanism, which could help mitigate this categorisation problem.
+
+### Implications for language evolution
+
+One of the staples of research into human communication are the thirteen design principles of human communication by @hockett_origin_1960. One of these principles is 'interchangeability', i.e. the ability for speakers to utter themselves utterances that they have heard, as well as the ability for hearers to hear utterances that they have spoken themselves. In short, it is the property that affirms speakers can become hearers, and hearers can become speakers. This property is indispensible for our model of reduction, as it proved necessary for speakers to gauge how far they could reduce construction representations by testing a reduced utterance on themselves. This requirement highlights how defining principles of human communication perhaps also further define its evolution.
+
+Re-entrance itself has been positioned by @steels_language_2003 to be essential especially for grammatical evolution. He showed that in a simulation of case marking, speakers need to be able to assess the ambiguity of their own argument structures beforehand. Based on their own evaluation, the potential necessity of case marking can be gauged. Our model does not concern grammar, but its core principle of ambiguity avoidance remains equivalent. Since our agents can only rely on vector locations to categorise an incoming representation, the ambiguity avoidance mechanism serves a similar purpose.
+
+### Further research
+
+There are several ways in which our model could be extended. The most obvious extension would be the inclusion of context. Indeed, while it was the very goal of our simulation to distill only the most fundamental aspects of the reduction effect, in real life situations, context contributes to how far a specific construction's representation can be reduced. If a construction is predictable from either its linguistic or its (real-life) situational context, there is a lesser need to express it fully. In this regard, it would be appropriate to turn our reduction model into a model of *probability* rather than one of frequency. TODO lezen Gregory et al.
+
+Furthermore, our model currently does not account for the co-existence of reduced and unreduced forms. While our exemplar model allows for a wide range of variation, agents will forget unreduced forms once they fill up their exemplar memories. Other possible extensions include allowing constructions to disappear or varying the 'reducibility' of certain constructions to account for the fact that not *all* high frequency words seem eligible or reduction.
+
+Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study (i.e. like @kirby_cumulative_2008). In this way, it can be investigated if and how the simulation experiment might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
+
+## Appendix {#sec-appendix-metrics}
+
+In order to keep track of the simulation course, we computed the following metrics at each step:
+
+1. **Communicative success:**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly.  
+  $$
+  \frac{\text{\# successful turns}}{\text{\# turns}}
+  $$
+4. **Mean agent L1:**  
+  Number expressing the average L1 norm of exemplars, across all agents.  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
+  $$
+5. **Mean construction L1:**  
+  Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
+  $$  
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$
+6. **Confusion matrix:**  
+  Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
+10. **Communicative success (macro average):**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
+  $$
+  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
+  $$
+11. **Good origin ratio:**  
+  Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{good origin}(L^t_i) } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
+0 & \text{if from failed speaking turn} \\
+1 & \text{if from successful speaking turn}
+\end{cases}$
