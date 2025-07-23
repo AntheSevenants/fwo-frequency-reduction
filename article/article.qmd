@@ -556,10 +556,10 @@ In order to keep track of the simulation course, we computed the following metri
   \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
   $$
 5. **Mean construction L1:**  
-  Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
+  Number expressing for each construction $c$ the average L1 norm of its exemplars, across all agents.
   $$  
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
+  $$ with $L^c$ = # exemplars associated with construction $c$
 6. **Confusion matrix:**  
   Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
 10. **Communicative success (macro average):**  
@@ -568,10 +568,10 @@ In order to keep track of the simulation course, we computed the following metri
   \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
   $$
 11. **Good origin ratio:**  
-  Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
+  Ratio expressing for each construction $c$ how many exemplars come from successful speaking turns.  
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{good origin}(L^t_i) } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \operatorname{good origin}(L^c_i) } \right] }
+  $$ with $L^c$ = # exemplars associated with construction $c$ and $\operatorname{good origin}(exemplar) = \begin{cases}
 0 & \text{if from failed speaking turn} \\
 1 & \text{if from successful speaking turn}
 \end{cases}$
