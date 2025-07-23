@@ -173,12 +173,11 @@ def _model_run_func(
     List[Dict[str, Any]]
         Return model_data, agent_data from the reporters
     """
-    run_id, iteration, date_time, kwargs = run
+    run_id, iteration, run_folder, kwargs = run
     model = model_cls(**kwargs)
     while model.running and model.steps <= max_steps:
         model.step()
 
-    run_folder = f"models/{date_time}/"
     os.makedirs(run_folder, exist_ok=True)
 
     model_filename = f"{run_folder}{run_id}"
