@@ -83,7 +83,7 @@ class ReductionModel(mesa.Model):
 
         # Overwrite vectors with my own
         if not self.toroidal:
-            vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, floor=reduction_strength)
+            vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, floor=reduction_strength, seed=seed)
         else:
             tokens = tokens[0:num_tokens]
             frequencies = frequencies[0:num_tokens]
