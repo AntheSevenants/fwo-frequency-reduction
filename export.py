@@ -15,7 +15,8 @@ import visualisation.angle
 
 FIGURES_FOLDER = "figures/"
 MODELS_FOLDER = "models/"
-GRAPH_NAMES = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio" ]
+REGULAR_GRAPH_NAMES = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
+TOROIDAL_GRAPH_NAMES = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
 base_model = {
     "memory_size": 1000,
@@ -39,7 +40,7 @@ parser = argparse.ArgumentParser(
     description='export - make graphs for the reduction model')
 parser.add_argument('selected_run', type=str, help='name of the run')
 parser.add_argument('profile', type=str,
-                    help='all | base-model | reentrance-model | no-shared-code-model | no-zipfian-model | single-exemplar-model | no-reduction-model')
+                    help='all | base-model | reentrance-model | no-shared-code-model | no-zipfian-model | single-exemplar-model | no-reduction-model | (cone-model)')
 args = parser.parse_args()
 
 # Load the selected run
@@ -52,28 +53,46 @@ if not os.path.exists(model_infos_path):
 # Now, let's single out the model(s) that adhere to the profile
 run_infos = pd.read_csv(model_infos_path)
 
-if not args.profile in ALL_PROFILE_NAMES and args.profile != "all":
+if not args.profile in ALL_PROFILE_NAMES and args.profile != "all" and args.profile != "cone-model":
     raise ValueError("Unknown profile")
 
 profiles_to_process = [ args.profile ]
 if args.profile == "all":
     profiles_to_process = ALL_PROFILE_NAMES
 
+if args.profile == "cone-model":
+    profiles_to_process = [ "cone-model" ]
+
 for profile_name in profiles_to_process:
     print(f"Processing profile {profile_name}")
-    profile = PROFILES[profile_name]
 
-    # Create a mask to select the right model
-    mask = pd.Series(True, index=run_infos.index)
-    for column, value in profile.items():
-        mask &= (run_infos[column].astype(str) == str(value))
+    if profile_name != "cone-model":
+        profile = PROFILES[profile_name]
 
-    # Filter the data frame
-    selected_model = run_infos[mask]
-    if selected_model.shape[0] != 1:
-        raise ValueError("Selected parameters do not single out a single model")
+        # Create a mask to select the right model
+        mask = pd.Series(True, index=run_infos.index)
+        for column, value in profile.items():
+            mask &= (run_infos[column].astype(str) == str(value))
+
+        # Filter the data frame
+        selected_model = run_infos[mask]
+        if selected_model.shape[0] != 1:
+            raise ValueError("Selected parameters do not single out a single model")
+    else:
+        selected_model = run_infos
 
     selected_run_id = str(selected_model.iloc[0]["run_id"])
+    
+    toroidal = False
+    if "toroidal" in selected_model.iloc[0]:
+        toroidal = selected_model.iloc[0]["toroidal"]
+
+    if toroidal:
+        GRAPH_NAMES = TOROIDAL_GRAPH_NAMES + REGULAR_GRAPH_NAMES
+        n = 10
+    else:
+        GRAPH_NAMES = REGULAR_GRAPH_NAMES
+        n = 35
 
     model_path = os.path.join(selected_run_dir, selected_run_id)
     # Now, load the selected simulation
@@ -99,12 +118,25 @@ for profile_name in profiles_to_process:
         elif graph_name == "matrix":
             figure = visualisation.meta.make_layout_plot(model,
                                                       visualisation.meta.make_confusion_plot,
-                                                      n=35, steps=[math.floor(model.current_step / 4) * 1,
+                                                      n=n, steps=[math.floor(model.current_step / 4) * 1,
                                                                    math.floor(
                                                           model.current_step / 4) * 2,
                                                           math.floor(model.current_step / 4) * 3, model.current_step])
         elif graph_name == "confusion-ratio":
             figure = visualisation.l1.token_good_origin_first_n(model, ax=ax)
+        elif graph_name in [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end" ]:
+            if graph_name == "angle-vocabulary-plot-2d-begin":
+                step = 0
+            elif graph_name == "angle-vocabulary-plot-2d-end":
+                step = 700
+
+            figure = visualisation.angle.make_angle_vocabulary_plot_2d(model, step, agent_filter=0)
+        elif graph_name == "angle-vocabulary-plot-3d-begin":
+            step = 0
+
+            figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0)
+        elif graph_name == "half-life-per-construction":
+            figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax)
 
         graphs[graph_name] = figure
 
