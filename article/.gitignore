@@ -1,4 +1,8 @@
 *_files
 *.html
+*.docx
+*.pdf
+
+figures/
 
 tikz-tex
