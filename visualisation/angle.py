@@ -124,7 +124,7 @@ def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_co
     ax.legend(handles=scatter.legend_elements()[0], labels=labels)
 
     title = f"Plot of exemplars (t = {step}"
-    if agent_filter is not none:
+    if agent_filter is not None:
         title += f", agent {agent_filter})"
     else:
         title =+ ")"
@@ -187,7 +187,13 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     # ✅ 6. Draw vertical line through center of cone (Z-axis)
     ax.plot([0, 0], [0, 0], [0, max_radius], color='green', linewidth=2, label='Cone axis')
 
-    ax.set_title('Full 3D Cone with Mapped Vectors')
+    title = f"3D plot of exemplars (t = {step}"
+    if agent_filter is not None:
+        title += f", agent {agent_filter})"
+    else:
+        title =+ ")"
+
+    ax.set_title(title)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
@@ -195,7 +201,7 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     ax.set_xlim(-max_radius, max_radius)
     ax.set_ylim(-max_radius, max_radius)
     ax.set_zlim(0, max_radius)
-    ax.legend()
+    #ax.legend()
     plt.tight_layout()
     plt.show()
 

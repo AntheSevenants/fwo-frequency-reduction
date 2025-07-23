@@ -53,13 +53,10 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
     matrix_3d = np.stack(df[attribute].to_numpy())
 
     if ax is None:
-        ax = plt
+        ax = plt.gca()
 
-        if ratio:
-            plt.ylim([0, 1])
-    else:
-        if ratio:
-            ax.set_ylim([0, 1])
+    if ratio:
+        ax.set_ylim([0, 1])
 
 
     chosen_word_indices = range(0, n)
@@ -85,17 +82,19 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
     if title is not None:
         ax.set_title(title)
 
+    return ax
+
 def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)")
+    return property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)")
 
 def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
+    return property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
 
 def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True)
+    return property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True)
 
 def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True)
+    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True)
 
 def words_mean_exemplar_count_bar(model, ax=None):
     if ax is None:
@@ -107,6 +106,8 @@ def words_mean_exemplar_count_bar(model, ax=None):
     ax.bar(model.tokens, frequency_counts)   
 
     ax.set_title("Mean exemplar count per token (across agents)") 
+
+    return ax
 
 def words_mean_l1_bar(model, step, ax=None):
     if ax is None:
@@ -132,6 +133,8 @@ def words_mean_l1_bar(model, step, ax=None):
         ax.set_title(title) 
     else:
         ax.title(title)
+
+    return ax
 
 def make_fail_reason_plot(model, include_success=False, ax=None):
     # Get the fail reason data from the data collector
@@ -163,6 +166,8 @@ def make_fail_reason_plot(model, include_success=False, ax=None):
     grouped_df.plot(kind="bar", stacked=True, ax=ax, title=title)
     
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
+
+    return ax
 
 def compute_half_time(model, step):
     if model.datacollector_step_size != 1:
@@ -208,3 +213,5 @@ def half_time_bar(model, step, ax=None):
         ax.set_title(title) 
     else:
         ax.title(title)
+
+    return ax
