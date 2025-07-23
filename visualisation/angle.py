@@ -123,7 +123,13 @@ def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_co
 
     ax.legend(handles=scatter.legend_elements()[0], labels=labels)
 
-    ax.set_title(f"Plot of exemplars (t = {step})")
+    title = f"Plot of exemplars (t = {step}"
+    if agent_filter is not none:
+        title += f", agent {agent_filter})"
+    else:
+        title =+ ")"
+
+    ax.set_title(title)
 
     return ax
 
@@ -193,7 +199,7 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     plt.tight_layout()
     plt.show()
 
-    return ax
+    return fig
 
 def make_angle_vocabulary_plot_3d_interactive(model, step, n=10, agent_filter=None, agent_comparison_filter=None):
     max_radius = model.value_ceil
