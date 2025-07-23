@@ -206,7 +206,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 **Hearer**
 
 1. The hearer "hears" the vector communicated by the speaker.
-2. The hearer interprets the vector representation of the speaker. They calculate the cosine distance (see Equation TODO) between the spoken vector and their entire exemplar memory, and select all exemplars lower or equal to threshold $t$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction.[^exceptions]
+2. The hearer interprets the vector representation of the speaker. They calculate the cosine distance (see Equation TODO) between the spoken vector and their entire exemplar memory, and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction.[^exceptions]
 3. The heard exemplar is saved in the hearer's memory and is associated with the understood construction.
 
 [^exceptions]: In the case of a tie, communication fails. In the case that no exemplars were selected, communication fails as well.
@@ -256,7 +256,7 @@ One of the driving forces behind our parameter choices was computational tractab
 | $M$ | Number of vector dimensions | 100 |
 | $L$ | Number of exemplars in memory | 1000 |
 | $R$ | Value subtracted from exemplar vector at reduction time. Also functions as threshold floor value. A vector dimension cannot reduce below this point. | 15 |
-| $t$ | Neighbourhood size. Only exemplars within this range count towards the interpretation of a vector. | 150 |
+| $n$ | Neighbourhood size. Only exemplars within this range count towards the interpretation of a vector. | 150 |
 | $p$ | Reduction probability at speech time | 0.5 |
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
