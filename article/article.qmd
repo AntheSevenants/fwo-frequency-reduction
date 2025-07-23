@@ -575,3 +575,8 @@ In order to keep track of the simulation course, we computed the following metri
 0 & \text{if from failed speaking turn} \\
 1 & \text{if from successful speaking turn}
 \end{cases}$
+12. **Half life time:**  
+  Number expressing for each construction $c$ the timestep at which half of its original energy was reached.  
+  $$
+  \operatorname{min}(t) : E^c[t] \leq \frac{E^c[0]}{2}
+  $$ with $t$ = time step in the model and $E^c$ list of L1 values per time step in the model for construction $c$
