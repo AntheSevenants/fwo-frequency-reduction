@@ -223,65 +223,7 @@ Because we use computer simulations, we apply a different methodology from tradi
 
 ### Simulation behaviour metrics
 
-One of the cornerstone principles of our simulation is the complex-adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. To this end, we compute the following metrics at each step:
-
-1. **Communicative success:**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly.  
-  $$
-  \frac{\text{\# successful turns}}{\text{\# turns}}
-  $$
-2. **Communicative failure:**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker incorrectly.  
-  $$
-  \frac{\text{\# failed turns}}{\text{\# turns}}
-  $$
-3. **Reduction success:**  
-  Ratio expressing in how many speaking turns with reduction communication was successful.  
-  $$
-  \frac{\text{\# successful reduced turns}}{\text{\# reduced turns}}
-  $$
-4. **Mean agent L1:**  
-  Number expressing the average L1 norm of exemplars, across all agents.  
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
-  $$
-5. **Mean construction L1:**  
-  Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
-  $$  
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$
-6. **Confusion matrix:**  
-  Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
-7. **Outcomes:**  
-  Tally of outcomes of a speaking turn, with *success*, *no exemplars in neighbourhood*, *wrong construction was most frequent*, *tie in most frequent* as possible outcomes.
-8. **Mean exemplar count:**  
-  Number expressing for each construction $t$ the average number of exemplars, across all agents.
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{ L^t_i }
-  $$ with $L^t$ = # exemplars associated with construction $t$
-9. **Success per construction:**  
-  Ratio expressing for each construction $t$ in how many speaking turns the hearer understood the speaker correctly.
-  $$
-  \frac{\text{\# successful turns}}{\text{\# turns for construction } t}
-  $$
-10. **Communicative success (macro average):**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
-  $$
-  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
-  $$
-11. **Good origin ratio:**  
-  Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{good origin}(L^t_i) } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
-0 & \text{if from failed speaking turn} \\
-1 & \text{if from successful speaking turn}
-\end{cases}$
-12. **Mean exemplar age:**  
-  Number expressing for each construction $t$ how old its exemplars are on average (in model steps).  
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{age}(L^t_i) } \right] }
-  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{age}(exemplar)$ returning the age in steps for an exemplar.
+One of the cornerstone principles of our simulation is the complex-adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. We tracked measures such as communicative success, mean construction energy and confusion among forms. To see an overview of our metrics and their computations, see @sec-appendix-metrics.
 
 ### Expected behaviour {#sec-expected-behaviour}
 
@@ -473,7 +415,40 @@ Furthermore, our model currently does not account for the co-existence of reduce
 
 Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study (i.e. like @kirby_cumulative_2008). In this way, it can be investigated if and how the simulation experiment might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
 
-## Appendix
+## Appendix {#sec-appendix-metrics}
+
+In order to keep track of the simulation course, we computed the following metrics at each step:
+
+1. **Communicative success:**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly.  
+  $$
+  \frac{\text{\# successful turns}}{\text{\# turns}}
+  $$
+4. **Mean agent L1:**  
+  Number expressing the average L1 norm of exemplars, across all agents.  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
+  $$
+5. **Mean construction L1:**  
+  Number expressing for each construction $t$ the average L1 norm of its exemplars, across all agents.
+  $$  
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$
+6. **Confusion matrix:**  
+  Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
+10. **Communicative success (macro average):**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
+  $$
+  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
+  $$
+11. **Good origin ratio:**  
+  Ratio expressing for each construction $t$ how many exemplars come from successful speaking turns.  
+  $$
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^t_i} \sum_{j=1}^{L^t_i}{ \operatorname{good origin}(L^t_i) } \right] }
+  $$ with $L^t$ = # exemplars associated with construction $t$ and $\operatorname{good origin}(exemplar) = \begin{cases}
+0 & \text{if from failed speaking turn} \\
+1 & \text{if from successful speaking turn}
+\end{cases}$
 
 ### Evaluation {#sec-evaluation}
 
