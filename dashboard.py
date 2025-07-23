@@ -75,6 +75,9 @@ def index():
     if selected_run is not None:
         run_infos = get_run_infos(selected_run)
 
+        if run_infos.shape[0] == 1:
+            no_selection = False
+
         parameter_mapping = {}
         constants_mapping = {}
     
