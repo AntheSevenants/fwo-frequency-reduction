@@ -105,8 +105,8 @@ def index():
             if selected_model.shape[0] != 1:
                 raise ValueError("Selected parameters do not single out a single model")
 
-            print(selected_model.iloc[0]["toroidal"])
-            toroidal = selected_model.iloc[0]["toroidal"]
+            if "toroidal" in selected_model.iloc[0]:
+                toroidal = selected_model.iloc[0]["toroidal"]
 
             selected_run_id = str(selected_model.iloc[0]["run_id"])
             check_load_model(selected_run, selected_run_id)
@@ -194,7 +194,7 @@ def generate_plot(graph_name, model):
                                                  math.floor(model.current_step / 4) * 2,
                                                  math.floor(model.current_step / 4) * 3, model.current_step])
     elif graph_name == "angle_vocabulary_plot_3d":
-        return visualisation.angle.make_angle_vocabulary_plot_3d(model, math.floor(model.current_step / 4) * 3, agent_filter=0)
+        return visualisation.angle.make_angle_vocabulary_plot_3d(model, 0, agent_filter=0)
     else:
         return "invalide"
 
