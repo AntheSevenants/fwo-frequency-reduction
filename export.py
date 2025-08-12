@@ -106,16 +106,20 @@ for profile_name in profiles_to_process:
 
         if graph_name == "l1-general":
             figure = visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False)
-        elif graph_name == "l1-per-construction":
+        elif graph_name == "l1-per-construction-mosaic":
             figure = visualisation.meta.make_layout_plot(model,
                                                                    visualisation.l1.words_mean_l1_bar,
                                                                    steps=[math.floor(model.current_step / 4) * 1,
                                                                           math.floor(
                                                                               model.current_step / 4) * 2,
                                                                           math.floor(model.current_step / 4) * 3, model.current_step])
+        elif graph_name == "l1-per-construction":
+            figure = visualisation.l1.words_mean_l1_bar(model, model.current_step, ax=ax)
         elif  graph_name == "success":
             figure = visualisation.dimscrap.make_communication_plot_combined(model, smooth=False, ax=ax)
         elif graph_name == "matrix":
+            figure = visualisation.meta.make_confusion_plot(model, model.current_step, ax=ax)
+        elif graph_name == "matrix-mosaic":
             figure = visualisation.meta.make_layout_plot(model,
                                                       visualisation.meta.make_confusion_plot,
                                                       n=n, steps=[math.floor(model.current_step / 4) * 1,
