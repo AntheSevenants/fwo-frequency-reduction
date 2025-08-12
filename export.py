@@ -32,7 +32,7 @@ PROFILES = {
     "no-shared-code-model": {**base_model, "self_check": True, "jumble_vocabulary": True},
     "no-zipfian-model": {**base_model, "self_check": True, "zipfian_sampling": False},
     "single-exemplar-model": {**base_model, "self_check": True, "memory_size": 100},
-    "no-reduction-model": {**base_model, "self_check": True, "memory_size": 100}
+    "no-reduction-model": {**base_model, "self_check": True, "disable_reduction": True}
 }
 ALL_PROFILE_NAMES = list(PROFILES.keys())
 
