@@ -3,15 +3,18 @@ import pickle
 import os
 import math
 import time
+import json
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 import visualisation
 import visualisation.l1
 import visualisation.meta
 import visualisation.dimscrap
 import visualisation.angle
+import visualisation.shims
 
 FIGURES_FOLDER = "figures/"
 MODELS_FOLDER = "models/"
@@ -56,6 +59,9 @@ run_infos = pd.read_csv(model_infos_path)
 if not args.profile in ALL_PROFILE_NAMES and args.profile != "all" and args.profile != "cone-model":
     raise ValueError("Unknown profile")
 
+# Flag which indicates we have to aggregate over multiple models
+do_aggregate = False
+
 profiles_to_process = [ args.profile ]
 if args.profile == "all":
     profiles_to_process = ALL_PROFILE_NAMES
@@ -77,7 +83,11 @@ for profile_name in profiles_to_process:
         # Filter the data frame
         selected_model = run_infos[mask]
         if selected_model.shape[0] != 1:
-            raise ValueError("Selected parameters do not single out a single model")
+            if selected_model.iloc[0]["iterations"] == selected_model.shape[0]:
+                print("Multiple iterations detected")
+                do_aggregate = True
+            else:
+                raise ValueError("Selected parameters do not single out a single model")
     else:
         selected_model = run_infos
 
@@ -94,10 +104,26 @@ for profile_name in profiles_to_process:
         GRAPH_NAMES = REGULAR_GRAPH_NAMES
         n = 35
 
-    model_path = os.path.join(selected_run_dir, selected_run_id)
+    model_path = os.path.join(selected_run_dir, f"{selected_run_id}.json")
     # Now, load the selected simulation
-    with open(model_path, "rb") as model_file:
-        model = pickle.load(model_file)
+    with open(model_path, "rt") as model_file:
+        df = json.loads(model_file.read())
+
+        df = pd.DataFrame(df)
+
+        for column in df.columns:
+            print(column)
+            if type(df[column].iloc[0]) == list:
+                df[column] = df[column].apply(lambda x: np.array(x))
+
+    token_infos_path = os.path.join(selected_run_dir, "token_infos.csv")
+    if not os.path.exists(token_infos_path):
+        raise FileNotFoundError("Token infos CSV does nost exist")
+
+    token_infos = pd.read_csv(token_infos_path)
+    
+    # Fake model to satisfy my shoddy programming
+    model = visualisation.shims.Model(df, run_infos.iloc[0], token_infos)
 
     graphs = {}
 
