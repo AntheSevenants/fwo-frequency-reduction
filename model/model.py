@@ -16,7 +16,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -48,6 +48,9 @@ class ReductionModel(mesa.Model):
 
         # Marginal inhibition threshold
         self.self_check = self_check
+
+        # Whether to save entire vocabularies to disk (ideally not)
+        self.light_serialisation = light_serialisation
 
         # Neighbourhood step up size
         self.neighbourhood_step_size = neighbourhood_step_size
@@ -133,24 +136,33 @@ class ReductionModel(mesa.Model):
             
             self.grid.place_agent(a, (i, j))
 
+        model_reporters = {
+            "communicative_success": compute_communicative_success,
+            "communicative_failure": compute_communicative_failure,
+            "reduction_success": compute_reduction_success,
+            "mean_agent_l1": compute_mean_agent_l1,
+            "mean_token_l1": compute_mean_token_l1,
+            "confusion_matrix": compute_confusion_matrix,
+            "fail_reason": compute_fail_reason,
+            "outcomes": compute_outcomes,
+            "mean_exemplar_count": compute_mean_exemplar_count,
+            "success_per_token": compute_communicative_success_per_token,
+            "communicative_success_macro": compute_communicative_success_macro_average,
+            "token_good_origin": compute_token_good_origin,
+            "mean_exemplar_age": compute_mean_exemplar_age,
+        }
+
+        # Include full vocabulary if needed (I hope not)
+        if not self.light_serialisation:
+            model_reporters = { **model_reporters,
+                "average_vocabulary": compute_average_vocabulary_flexible,
+                "full_vocabulary": compute_full_vocabulary,
+                "full_indices": compute_concept_stack,
+                "full_vocabulary_owernship": compute_full_vocabulary_ownership_stack
+            }
+
         self.datacollector = mesa.DataCollector(
-            model_reporters={"communicative_success": compute_communicative_success,
-                             "communicative_failure": compute_communicative_failure,
-                             "reduction_success": compute_reduction_success,
-                             "mean_agent_l1": compute_mean_agent_l1,
-                             "mean_token_l1": compute_mean_token_l1,
-                             "confusion_matrix": compute_confusion_matrix,
-                             "fail_reason": compute_fail_reason,
-                             "outcomes": compute_outcomes,
-                             "mean_exemplar_count": compute_mean_exemplar_count,
-                             "average_vocabulary": compute_average_vocabulary_flexible,
-                             "success_per_token": compute_communicative_success_per_token,
-                             "communicative_success_macro": compute_communicative_success_macro_average,
-                             "token_good_origin": compute_token_good_origin,
-                             "mean_exemplar_age": compute_mean_exemplar_age,
-                             "full_vocabulary": compute_full_vocabulary,
-                             "full_indices": compute_concept_stack,
-                             "full_vocabulary_owernship": compute_full_vocabulary_ownership_stack }
+            model_reporters=model_reporters
         )
 
         self.datacollector.collect(self)
