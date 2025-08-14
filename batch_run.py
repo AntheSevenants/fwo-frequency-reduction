@@ -85,7 +85,7 @@ if __name__ == '__main__':
         ReductionModel,
         run_folder,
         parameters=params,
-        iterations=1,
+        iterations=100,
         max_steps=NUM_STEPS,
         number_processes=None,
         data_collection_period=100,
