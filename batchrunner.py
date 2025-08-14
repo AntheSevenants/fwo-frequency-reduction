@@ -31,7 +31,7 @@ put the code inside an ``if __name__ == '__main__':`` code black as shown below:
 import os
 import itertools
 import multiprocessing
-import pickle
+import json
 import gc
 from collections.abc import Iterable, Mapping
 from functools import partial
@@ -150,6 +150,14 @@ def _make_model_kwargs(
     kwargs_list = [dict(kwargs) for kwargs in all_kwargs]
     return kwargs_list
 
+def serialise_data_collector(model):
+    output_dict = {}
+    df = model.datacollector.get_model_vars_dataframe()
+    for column in df.columns:
+        # Convert each column to list, also for INNER values !!
+        output_dict[column] = df[column].apply(lambda x: x.tolist() if hasattr(x, 'tolist') else x).tolist()
+
+    return output_dict
 
 def _model_run_func(
     model_cls: type[Model],
@@ -185,9 +193,12 @@ def _model_run_func(
 
     os.makedirs(run_folder, exist_ok=True)
 
-    model_filename = f"{run_folder}{run_id}"
-    with open(model_filename, "ab") as model_file:
-        pickle.dump(model, model_file)
+    model_filename = f"{run_folder}{run_id}.json"
+    with open(model_filename, "wt") as model_file:
+        output_data = serialise_data_collector(model)
+        
+        model_file.write(json.dumps(output_data))
+        #pickle.dump(model, model_file)
 
     data = [ { "run_id": run_id, "max_steps": max_steps, "iterations": iterations, **kwargs } ]
 

@@ -82,6 +82,17 @@ if __name__ == '__main__':
     run_folder = f"models/{args.profile}-{date_time}/"
     os.makedirs(run_folder, exist_ok=True)
 
+    # Save frequency, token and percentile information
+    tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{params['num_tokens']}.tsv", theoretical=True)
+
+    tokens_df = pd.DataFrame({
+        "tokens": tokens,
+        "frequencies": frequencies,
+        "percentiles": percentiles,
+        "ranks": ranks
+    })
+    tokens_df.to_csv(f"{run_folder}token_infos.csv", index=False)
+
     results = batch_run(
         ReductionModel,
         run_folder,
