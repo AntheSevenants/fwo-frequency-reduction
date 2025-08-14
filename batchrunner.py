@@ -32,6 +32,7 @@ import os
 import itertools
 import multiprocessing
 import pickle
+import gc
 from collections.abc import Iterable, Mapping
 from functools import partial
 from multiprocessing import Pool
@@ -97,7 +98,7 @@ def batch_run(
                 results.extend(data)
                 pbar.update()
         else:
-            with Pool(number_processes) as p:
+            with Pool(number_processes, maxtasksperchild=1) as p:
                 for data in p.imap_unordered(process_func, runs_list):
                     results.extend(data)
                     pbar.update()
@@ -185,6 +186,9 @@ def _model_run_func(
         pickle.dump(model, model_file)
 
     data = [ { "run_id": run_id, "max_steps": max_steps, **kwargs } ]
+
+    del model
+    gc.collect()
 
     return data
 
