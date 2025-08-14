@@ -84,6 +84,7 @@ def batch_run(
     process_func = partial(
         _model_run_func,
         model_cls,
+        iterations=iterations,
         max_steps=max_steps,
         data_collection_period=data_collection_period,
     )
@@ -154,6 +155,7 @@ def _model_run_func(
     model_cls: type[Model],
     run: tuple[int, int, dict[str, Any]],
     max_steps: int,
+    iterations: int,
     data_collection_period: int,
 ) -> list[dict[str, Any]]:
     """Run a single model run and collect model and agent data.
@@ -166,6 +168,8 @@ def _model_run_func(
         The run id, iteration number, and kwargs for this run
     max_steps : int
         Maximum number of model steps after which the model halts, by default 1000
+    iterations : int
+        How many times a parameter combination is run
     data_collection_period : int
         Number of steps after which data gets collected
 
@@ -185,7 +189,7 @@ def _model_run_func(
     with open(model_filename, "ab") as model_file:
         pickle.dump(model, model_file)
 
-    data = [ { "run_id": run_id, "max_steps": max_steps, **kwargs } ]
+    data = [ { "run_id": run_id, "max_steps": max_steps, "iterations": iterations, **kwargs } ]
 
     del model
     gc.collect()
