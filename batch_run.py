@@ -20,6 +20,7 @@ parser = argparse.ArgumentParser(
     description='batch_run - volt go brr (and crash sometimes)')
 parser.add_argument('profile', type=str,
                     help='regular | cone')
+parser.add_argument('iterations', type=int, default=1, help='number of iterations, default = 1')
 args = parser.parse_args()
 
 params_template = {
@@ -85,7 +86,7 @@ if __name__ == '__main__':
         ReductionModel,
         run_folder,
         parameters=params,
-        iterations=100,
+        iterations=args.iterations,
         max_steps=NUM_STEPS,
         number_processes=None,
         data_collection_period=100,
