@@ -91,7 +91,7 @@ for profile_name in profiles_to_process:
     else:
         selected_model = run_infos
 
-    selected_run_id = str(selected_model.iloc[0]["run_id"])
+    selected_run_ids = selected_model["run_id"].to_list()
     
     toroidal = False
     if "toroidal" in selected_model.iloc[0]:
@@ -104,26 +104,32 @@ for profile_name in profiles_to_process:
         GRAPH_NAMES = REGULAR_GRAPH_NAMES
         n = 35
 
-    model_path = os.path.join(selected_run_dir, f"{selected_run_id}.json")
-    # Now, load the selected simulation
-    with open(model_path, "rt") as model_file:
-        df = json.loads(model_file.read())
+    # These are the model data frames
+    dfs = []
 
-        df = pd.DataFrame(df)
+    for selected_run_id in selected_run_ids:
+        model_path = os.path.join(selected_run_dir, f"{selected_run_id}.json")
+        # Now, load the selected simulation
+        with open(model_path, "rt") as model_file:
+            df = json.loads(model_file.read())
 
-        for column in df.columns:
-            print(column)
-            if type(df[column].iloc[0]) == list:
-                df[column] = df[column].apply(lambda x: np.array(x))
+            df = pd.DataFrame(df)
 
+            for column in df.columns:
+                if type(df[column].iloc[0]) == list:
+                    df[column] = df[column].apply(lambda x: np.array(x))
+                
+            # Add to list of data frames
+            dfs.append(df)
+
+    # This info is the same across model runs and parameter combinations
     token_infos_path = os.path.join(selected_run_dir, "token_infos.csv")
     if not os.path.exists(token_infos_path):
-        raise FileNotFoundError("Token infos CSV does nost exist")
-
+        raise FileNotFoundError("Token infos CSV does not exist")
     token_infos = pd.read_csv(token_infos_path)
     
     # Fake model to satisfy my shoddy programming
-    model = visualisation.shims.Model(df, run_infos.iloc[0], token_infos)
+    model = visualisation.shims.Model(dfs, run_infos.iloc[0], token_infos)
 
     graphs = {}
 
