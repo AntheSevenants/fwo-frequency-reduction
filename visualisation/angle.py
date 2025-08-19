@@ -198,7 +198,8 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
         else:
             title =+ ")"
 
-    ax.set_title(title)
+        ax.set_title(title)
+        
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
