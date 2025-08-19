@@ -150,7 +150,7 @@ for profile_name in profiles_to_process:
         elif  graph_name == "success":
             figure = visualisation.dimscrap.make_communication_plot_combined(model, smooth=False, ax=ax, disable_title=True)
         elif graph_name == "matrix":
-            figure = visualisation.meta.make_confusion_plot(model, model.current_step, ax=ax, disable_title=True)
+            figure = visualisation.meta.make_confusion_plot(model, model.current_step, n=n, ax=ax, disable_title=True)
         elif graph_name == "matrix-mosaic":
             figure = visualisation.meta.make_layout_plot(model, visualisation.meta.make_confusion_plot, n=n,
                                                          steps=[math.floor(model.current_step / 4) * 1,
