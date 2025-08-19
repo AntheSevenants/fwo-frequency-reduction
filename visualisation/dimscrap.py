@@ -108,7 +108,7 @@ def make_communication_plot(model, smooth=True, ax=None):
     
     return ax
 
-def make_communication_plot_combined(model, smooth=True, ax=None):
+def make_communication_plot_combined(model, smooth=True, ax=None, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
 
     if ax is None:
@@ -129,10 +129,15 @@ def make_communication_plot_combined(model, smooth=True, ax=None):
         ax.plot(df["communicative_success"], color="blue", linestyle="dashed", label="Micro average")
         ax.plot(df["communicative_success_macro"], color="blue", linestyle="dotted", label="Macro average")
 
-    title = f"Global communicative success"
-    ax.set_title(title)
+    if not disable_title:
+        title = f"Global communicative success"
+        ax.set_title(title)
+
     plt.legend()
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
+
+    fig = ax.get_figure()
+    fig.tight_layout()
     
     return ax
 

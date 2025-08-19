@@ -100,7 +100,7 @@ def get_vocabulary_info(model, step, n=10, agent_filter=None, agent_comparison_f
 
     return vocabulary, random_vector, indices, colours, labels, indices_comparison, border
 
-def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_comparison_filter=None, ax=None):
+def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_comparison_filter=None, ax=None, disable_title=False):
     if ax is None:
         fig, ax = plt.subplots(figsize=(5,5))
 
@@ -123,17 +123,21 @@ def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_co
 
     ax.legend(handles=scatter.legend_elements()[0], labels=labels)
 
-    title = f"Plot of exemplars (t = {step}"
-    if agent_filter is not None:
-        title += f", agent {agent_filter})"
-    else:
-        title =+ ")"
+    if not disable_title:
+        title = f"Plot of exemplars (t = {step}"
+        if agent_filter is not None:
+            title += f", agent {agent_filter})"
+        else:
+            title =+ ")"
+        
+        ax.set_title(title)
 
-    ax.set_title(title)
+    fig = ax.get_figure()
+    fig.tight_layout()
 
     return ax
 
-def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_comparison_filter=None, ax=None):
+def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_comparison_filter=None, ax=None, disable_title=False):
     if ax is None:
         fig, ax = plt.subplots(figsize=(5,5))
     ax = fig.add_subplot(111, projection='3d')
@@ -187,11 +191,12 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     # ✅ 6. Draw vertical line through center of cone (Z-axis)
     ax.plot([0, 0], [0, 0], [0, max_radius], color='green', linewidth=2, label='Cone axis')
 
-    title = f"3D plot of exemplars (t = {step}"
-    if agent_filter is not None:
-        title += f", agent {agent_filter})"
-    else:
-        title =+ ")"
+    if not disable_title:
+        title = f"3D plot of exemplars (t = {step}"
+        if agent_filter is not None:
+            title += f", agent {agent_filter})"
+        else:
+            title =+ ")"
 
     ax.set_title(title)
     ax.set_xlabel('X')

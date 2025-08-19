@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 from visualisation.meta import formatter
 
-def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=False):
+def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=False, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
 
     if ax is None:
@@ -18,7 +18,8 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
         if ratio:
             ax.set_ylim([0, 1])
 
-
+    fig = ax.get_figure()
+    fig.tight_layout()
     
     if smooth:
         window_length = 100
@@ -30,25 +31,25 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
     else:
         ax.plot(df[attribute], color="green")
 
-    if title is not None:
+    if title is not None and not disable_title:
         ax.set_title(title)
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
-    
+
     return ax
 
-def make_mean_l1_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)")
+def make_mean_l1_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)", disable_title=disable_title)
 
-def make_communicative_success_macro_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True)
+def make_communicative_success_macro_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True, disable_title=disable_title)
 
-def make_mean_exemplar_age_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "mean_exemplar_age", ax=ax, smooth=smooth, title="Mean exemplar age (macro avg across agents)")
+def make_mean_exemplar_age_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "mean_exemplar_age", ax=ax, smooth=smooth, title="Mean exemplar age (macro avg across agents)", disable_title=disable_title)
 
-def make_reduction_success_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "reduction_success", ax=ax, smooth=smooth, title="Global reduction success ratio", ratio=True)
+def make_reduction_success_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "reduction_success", ax=ax, smooth=smooth, title="Global reduction success ratio", ratio=True, disable_title=disable_title)
 
-def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False):
+def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
     matrix_3d = np.stack(df[attribute].to_numpy())
 
@@ -79,24 +80,27 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
 
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
 
-    if title is not None:
+    if title is not None and not disable_title:
         ax.set_title(title)
+
+    fig = ax.get_figure()
+    fig.tight_layout()
 
     return ax
 
-def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)")
+def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)", disable_title=disable_title)
 
-def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
+def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)", disable_title=disable_title)
 
-def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True)
+def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True, disable_title=disable_title)
 
-def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True)
+def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True, disable_title=disable_title)
 
-def words_mean_exemplar_count_bar(model, ax=None):
+def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
     if ax is None:
         ax = plt
     else:
@@ -105,11 +109,15 @@ def words_mean_exemplar_count_bar(model, ax=None):
     frequency_counts = model.datacollector.get_model_vars_dataframe()["mean_exemplar_count"].iloc[-1]
     ax.bar(model.tokens, frequency_counts)   
 
-    ax.set_title("Mean exemplar count per token (across agents)") 
+    if not disable_title:
+        ax.set_title("Mean exemplar count per token (across agents)")
+
+    fig = ax.get_figure()
+    fig.tight_layout()
 
     return ax
 
-def words_mean_l1_bar(model, step, ax=None):
+def words_mean_l1_bar(model, step, ax=None, disable_title=False):
     if ax is None:
         ax = plt
         no_ax = True
@@ -129,10 +137,15 @@ def words_mean_l1_bar(model, step, ax=None):
 
     step = step * model.datacollector_step_size
     title = f"Mean L1 per token across agents (t = {step})"
-    if not no_ax:
-        ax.set_title(title) 
-    else:
-        ax.title(title)
+    
+    if not disable_title:
+        if not no_ax:
+            ax.set_title(title) 
+        else:
+            ax.title(title)
+
+    fig = ax.get_figure()
+    fig.tight_layout()
 
     return ax
 
@@ -192,7 +205,7 @@ def compute_half_time(model, step):
 
     return half_level_times
 
-def half_time_bar(model, step, ax=None):
+def half_time_bar(model, step, ax=None, disable_title=False):
     if ax is None:
         ax = plt
         no_ax = True
@@ -209,9 +222,13 @@ def half_time_bar(model, step, ax=None):
         plt.xticks([])
 
     title = f"Mean L1 half life across agents (t = {step})"
-    if not no_ax:
-        ax.set_title(title) 
-    else:
-        ax.title(title)
+    if not disable_title:
+        if not no_ax:
+            ax.set_title(title) 
+        else:
+            ax.title(title)
+
+    fig = ax.get_figure()
+    fig.tight_layout()
 
     return ax
