@@ -72,7 +72,8 @@ elif args.profile == "cone":
         "self_check": False,
         "datacollector_step_size": 50,
         "toroidal": True,
-        "seed": random.randint(0, 99999999)
+        "seed": random.randint(0, 99999999),
+        "light_serialisation": False
     }
 
 if __name__ == '__main__':
