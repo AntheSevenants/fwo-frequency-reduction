@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+from pathlib import Path
+
 import visualisation
 import visualisation.l1
 import visualisation.meta
@@ -44,6 +46,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('selected_run', type=str, help='name of the run')
 parser.add_argument('profile', type=str,
                     help='all | base-model | reentrance-model | no-shared-code-model | no-zipfian-model | single-exemplar-model | no-reduction-model | (cone-model)')
+parser.add_argument('--overwrite_tokens_path', nargs='?', type=str, default=False, help='path to a tokens file to overwrite the existing tokens')
 args = parser.parse_args()
 
 # Load the selected run
@@ -127,6 +130,28 @@ for profile_name in profiles_to_process:
     if not os.path.exists(token_infos_path):
         raise FileNotFoundError("Token infos CSV does not exist")
     token_infos = pd.read_csv(token_infos_path)
+
+    if args.overwrite_tokens_path:
+        if not os.path.exists(args.overwrite_tokens_path):
+            raise FileNotFoundError("Overwrite tokens path does not exist")
+
+        extension = Path(args.overwrite_tokens_path).suffix
+        if extension == ".csv":
+            overwrite_tokens = pd.read_csv(args.overwrite_tokens_path)
+        elif extension == ".tsv":
+            overwrite_tokens = pd.read_table(args.overwrite_tokens_path)
+        else:
+            raise ValueError("File type not recognised for overwrite tokens file")
+
+        for column_name in [ "token", "rank" ]:
+            if not column_name in overwrite_tokens.columns:
+                raise ValueError(f"No '{column_name}' column in overwrite tokens file")
+
+        token_infos = token_infos.drop('tokens', axis=1)
+        token_infos = pd.merge(token_infos, overwrite_tokens, left_on="ranks", right_on="rank")
+
+        if not "tokens" in token_infos:
+            token_infos = token_infos.rename(columns={"token": "tokens"})
     
     # Fake model to satisfy my shoddy programming
     model = visualisation.shims.Model(dfs, run_infos.iloc[0], token_infos)
