@@ -79,6 +79,8 @@ def make_confusion_plot(model, step, n=35, ax=None, disable_title=False):
     if not disable_title:
         step = step * model.datacollector_step_size
         ax.set_title(f"Confusion matrix (t={step})", y=0.92, color="white")
+    else:
+        ax.set_title("")
 
     fig = ax.get_figure()
     fig.tight_layout()
