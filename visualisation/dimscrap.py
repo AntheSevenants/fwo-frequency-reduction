@@ -126,8 +126,8 @@ def make_communication_plot_combined(model, smooth=True, ax=None, disable_title=
         ax.plot(y_smooth_success, color="blue", linestyle="dashed")
         ax.plot(y_smooth_success_macro, color="blue", linestyle="dotted")
     else:
-        ax.plot(df["communicative_success"], color="blue", linestyle="dashed", label="Micro average")
-        ax.plot(df["communicative_success_macro"], color="blue", linestyle="dotted", label="Macro average")
+        ax.plot(df["communicative_success"], color="blue", linestyle="dashed", label="Micro-average")
+        ax.plot(df["communicative_success_macro"], color="blue", linestyle="dotted", label="Macro-average")
 
     if not disable_title:
         title = f"Global communicative success"
