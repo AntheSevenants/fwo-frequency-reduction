@@ -299,19 +299,19 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 ::: {#fig-base-model-group layout-ncol=2}
 
-![TODO](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
+![Mean L1 evolution in the base model (across constructions, across agents)](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
 
-![TODO](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
+![Mean L1 value in the base model (per construction, across agents, t = 50,000)](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
 
-![TODO](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
+![Mean L1 half life in the base model (per construction, across agents, t = 50,000)](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
 
-![TODO](figures/fig-base-model-success.png){#fig-base-model-success}
+![Global communicative success in the base model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-base-model-success.png){#fig-base-model-success}
 
-![TODO](figures/fig-base-model-matrix.png){#fig-base-model-matrix}
+![Confusion matrix showing the mistakes that agents make in the base model. The x axis shows the intended constructions, the y axis shows the understood construction (across agents).](figures/fig-base-model-matrix.png){#fig-base-model-matrix}
 
-![TODO](figures/fig-base-model-confusion-ratio.png){#fig-base-model-confusion-ratio}
+![Correct interpretation ratio evolution in the base model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly.](figures/fig-base-model-confusion-ratio.png){#fig-base-model-confusion-ratio}
 
-TODO
+An overview of the different simulation behaviour metrics and their evolutions for the base model.
 :::
 
 ### Cone model {#sec-cone-model}
@@ -325,13 +325,13 @@ The solution seems simple: reducing the number of dimensions to just two, which 
 The reason why we do not see this iterative process reflected in the base model is again the high dimensionality of the vectors. In the cone model, there are only two dimensions in which forms can inch closer together. In the 100-dimensional model, the most frequent form can be the closest neighbours of multiple forms at once. The mechanics behind the confusion, however, are the same. A possible solution for these mishearings is given in the next section.
 
 ::: {#fig-cone-model-group layout-ncol=3}
-![TODO](figures/fig-cone-model-angle-vocabulary-plot-3d-begin.png){#fig-cone-model-angle-vocabulary-plot-3d-begin}
+![A 3D representation of the exemplar locations of a random agent in the cone model. Note that the vector space becomes more narrow near the top of the cone.](figures/fig-cone-model-angle-vocabulary-plot-3d-begin.png){#fig-cone-model-angle-vocabulary-plot-3d-begin}
 
-![TODO](figures/fig-cone-model-angle-vocabulary-plot-2d-begin.png){#fig-cone-model-angle-vocabulary-plot-2d-begin}
+![A flattened representation of the exemplar locations of a random agent in the cone model (t = 0).](figures/fig-cone-model-angle-vocabulary-plot-2d-begin.png){#fig-cone-model-angle-vocabulary-plot-2d-begin}
 
-![TODO](figures/fig-cone-model-angle-vocabulary-plot-2d-end.png){#fig-cone-model-angle-vocabulary-plot-2d-end}
+![A flattened representation of the exemplar locations of a random agent in the cone model (t = 700).](figures/fig-cone-model-angle-vocabulary-plot-2d-end.png){#fig-cone-model-angle-vocabulary-plot-2d-end}
 
-TODO
+An overview of the exemplar vector locations and their evolutions for the cone model.
 :::
 
 ### Re-entrance model
@@ -352,19 +352,19 @@ With this new precondition added to our basic assumptions, the model now behaves
 
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
-![TODO](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
+![Mean L1 evolution in the re-entrance model (across constructions, across agents)](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
 
-![TODO](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
+![Mean L1 value in the re-entrance model (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
 
-![TODO](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
+![Mean L1 half life in the re-entrance model (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
 
-![TODO](figures/fig-reentrance-model-success.png){#fig-reentrance-model-success}
+![Global communicative success in the re-entrance model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-reentrance-model-success.png){#fig-reentrance-model-success}
 
-![TODO](figures/fig-reentrance-model-matrix.png){#fig-reentrance-model-matrix}
+![Confusion matrix showing the mistakes that agents make in the re-entrance model. The x axis shows the intended constructions, the y axis shows the understood construction (across agents).](figures/fig-reentrance-model-matrix.png){#fig-reentrance-model-matrix}
 
-![TODO](figures/fig-reentrance-model-confusion-ratio.png){#fig-reentrance-model-confusion-ratio}
+![Correct interpretation ratio evolution in the re-entrance model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly.](figures/fig-reentrance-model-confusion-ratio.png){#fig-reentrance-model-confusion-ratio}
 
-TODO
+An overview of the different simulation behaviour metrics and their evolutions for the re-entrance model.
 :::
 
 ### Evaluation
@@ -385,7 +385,7 @@ In this model, we disable the shared code among language users. We do this by ge
 
 If we look at the results in @fig-no-shared-code-model-success, we see that there is no successful communication. Agents are unable to interpret what the other agents are saying, because they do not use the same representations to refer to the same constructions. Since communication is unsuccessful, expected behaviour #3 is violated (see @sec-expected-behaviour).
 
-![TODO](figures/fig-no-shared-code-model-success.png){#fig-no-shared-code-model-success}
+![Global communicative success in the no shared code model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-no-shared-code-model-success.png){#fig-no-shared-code-model-success}
 
 #### No Zipfian sampling
 
@@ -397,8 +397,8 @@ In this model, we sample constructions using a linear distribution instead of a 
 #| layout-ncol: 2
 #| layout-nrow: 1
 #| fig-subcap:
-#|   - "Linear distribution of constructions"
-#|   - "Zipfian distribution of constructions" 
+#|   - "Theoretical Zipfian distribution of constructions" 
+#|   - "Theoretical Linear distribution of constructions"
 #| echo: FALSE
 
 library(ggplot2)
@@ -417,8 +417,8 @@ data <- data.frame(x, y)
 ggplot(data, aes(x = x, y = y)) +
   geom_bar(stat = "identity") +
   ggtitle("Zipfean distribution") +
-  xlab("X values") +
-  ylab("Y values") +
+  xlab("Rank") +
+  ylab("Frequency") +
   theme_minimal()
 
 # Linear
@@ -433,8 +433,8 @@ data <- data.frame(x, y)
 ggplot(data, aes(x = x, y = y)) +
   geom_bar(stat = "identity") +
   ggtitle("Linear distribution") +
-  xlab("X values") +
-  ylab("Y values") +
+  xlab("Rank") +
+  ylab("Frequency") +
   theme_minimal()
 ```
 
@@ -446,21 +446,21 @@ In this regard, we can say that expected behaviour #2 (see @sec-expected-behavio
 
 ::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
 
-![Zipfian TODO](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
+![Mean L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
 
-![Linear TODO](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Mean L1 value in the re-entrance model with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
 
-TODO
+A comparison of the mean L1 values per construction in two models with Zipfean and linear sampling respectively.
 :::
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![Zipfian TODO](figures/fig-base-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
+![Mean L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-base-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
 
-![Linear TODO](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Mean L1 half life in the with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
-TODO
+A comparison of the mean half life per construction in two models with Zipfean and linear sampling respectively.
 :::
 
 #### No remembering multiple forms
@@ -476,18 +476,18 @@ We do not see the same behaviour if agents can have multiple representations for
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![TODO](figures/fig-single-exemplar-model-success.png){#fig-single-exemplar-model-success}
+![Global communicative success in the model where agents do not remember multiple forms (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-single-exemplar-model-success.png){#fig-single-exemplar-model-success}
 
-![TODO](figures/fig-single-exemplar-model-matrix.png){#fig-single-exemplar-model-matrix}
+![Confusion matrix showing the mistakes that agents make in the model where agents do not remember multiple forms. The x axis shows the intended constructions, the y axis shows the understood construction (across agents).](figures/fig-single-exemplar-model-matrix.png){#fig-single-exemplar-model-matrix}
 
-TODO
+An overview of communicative success in the model where agents do not remember multiple forms.
 :::
 
 #### No spontaneous reduction
 
 In this model, we set the probability of reduction to 0. This has the obvious effect that language users will no longer attempt to build more sparse representations for their acoustic representations. In @fig-no-reduction-model-l1-general, we see that the average L1 is not decreasing. This violates expected behaviour #1 (see @sec-expected-behaviour).
 
-![TODO](figures/fig-no-reduction-model-l1-general.png){#fig-no-reduction-model-l1-general}
+![Mean L1 evolution in the model without spontaneous reduction (across constructions, across agents)](figures/fig-no-reduction-model-l1-general.png){#fig-no-reduction-model-l1-general}
 
 #### No self-regulation
 
