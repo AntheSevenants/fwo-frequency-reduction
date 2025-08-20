@@ -53,9 +53,12 @@ class Model:
 
         self.datacollector_step_size = run_infos["datacollector_step_size"]
         self.current_step = run_infos["max_steps"]
-        self.value_ceil = run_infos["value_ceil"]
         self.neighbourhood_size = run_infos["neighbourhood_size"]
 
-        if not run_infos["light_serialisation"]:
-            self.full_vocabulary = dfs[0]["full_vocabulary"]
-            #self.exemplar_indices = dfs[0]["exemplar_indices"]
+        if "value_ceil" in run_infos:
+            self.value_ceil = run_infos["value_ceil"]
+
+        if "light_serialilsation" in run_infos:
+            if not run_infos["light_serialisation"]:
+                self.full_vocabulary = dfs[0]["full_vocabulary"]
+                #self.exemplar_indices = dfs[0]["exemplar_indices"]
