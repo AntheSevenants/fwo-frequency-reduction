@@ -446,7 +446,7 @@ In this regard, we can say that expected behaviour #2 (see @sec-expected-behavio
 
 ::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
 
-![Mean L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
+![Mean L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
 
 ![Mean L1 value in the re-entrance model with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
@@ -456,7 +456,7 @@ A comparison of the mean L1 values per construction in two models with Zipfean a
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![Mean L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-base-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
+![Mean L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
 
 ![Mean L1 half life in the with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
