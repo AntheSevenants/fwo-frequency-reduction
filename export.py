@@ -48,6 +48,7 @@ parser.add_argument('profile', type=str,
                     help='all | base-model | reentrance-model | no-shared-code-model | no-zipfian-model | single-exemplar-model | no-reduction-model | (cone-model)')
 parser.add_argument('--overwrite_tokens_path', nargs='?', type=str, default=False, help='path to a tokens file to overwrite the existing tokens')
 parser.add_argument("--no_titles", action="store_true", help="removes titles from the graphs")
+parser.add_argument("--neutral_tokens", action="store_true", help="make tokens neutral (C1, C2, C3 ...)")
 args = parser.parse_args()
 
 # Load the selected run
@@ -132,7 +133,7 @@ for profile_name in profiles_to_process:
         raise FileNotFoundError("Token infos CSV does not exist")
     token_infos = pd.read_csv(token_infos_path)
 
-    if args.overwrite_tokens_path:
+    if args.overwrite_tokens_path and not args.neutral_tokens:
         if not os.path.exists(args.overwrite_tokens_path):
             raise FileNotFoundError("Overwrite tokens path does not exist")
 
@@ -153,6 +154,9 @@ for profile_name in profiles_to_process:
 
         if not "tokens" in token_infos:
             token_infos = token_infos.rename(columns={"token": "tokens"})
+
+    if args.neutral_tokens:
+        token_infos["tokens"] = [str(i+1) for i in token_infos.index]
     
     # Fake model to satisfy my shoddy programming
     model = visualisation.shims.Model(dfs, run_infos.iloc[0], token_infos)
