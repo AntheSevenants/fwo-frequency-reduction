@@ -134,7 +134,7 @@ def words_mean_l1_bar(model, step, ax=None, disable_title=False):
     token_l1 = model.datacollector.get_model_vars_dataframe()["mean_token_l1"].iloc[step]
     ax.bar(model.tokens, token_l1)
 
-    x_tokens = [ str(i) if i % 10 == 0 or i == 1 else "" for i in range(1, len(model.tokens)) ]
+    x_tokens = [ str(i) if i % 10 == 0 or i in [1, model.num_tokens] else "" for i in range(1, model.num_tokens + 1) ]
     if not no_ax:
         ax.set_xticklabels(x_tokens, rotation=90)
     else:
@@ -220,10 +220,20 @@ def half_time_bar(model, step, ax=None, disable_title=False):
         no_ax = False
     
     half_level_times = compute_half_time(model, step)
+    # Now, we truncate all trailing nans
+    # Find the index of the last non-NaN value
+    last_non_nan_idx = np.where(~np.isnan(half_level_times))[0]
+    if len(last_non_nan_idx) > 0:
+        last_non_nan_idx = last_non_nan_idx[-1]
+        half_level_times = half_level_times[:last_non_nan_idx + 1]
+    else:
+        half_level_times = half_level_times  # if all are NaN, return as is
 
-    ax.bar(model.tokens, half_level_times)
+    half_level_count = len(half_level_times)
 
-    x_tokens = [ str(i) if i % 10 == 0 or i == 1 else "" for i in range(1, len(model.tokens)) ]
+    ax.bar(model.tokens[0:half_level_count], half_level_times)
+
+    x_tokens = [ str(i) if i % 10 == 0 or i in [1, half_level_count] else "" for i in range(1, half_level_count + 1) ]
     if not no_ax:
         ax.set_xticklabels(x_tokens, rotation=90)
     else:
