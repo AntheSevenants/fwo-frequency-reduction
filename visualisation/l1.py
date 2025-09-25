@@ -20,7 +20,8 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
             ax.set_ylim([0, 1])
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
     
     if smooth:
         window_length = 100
@@ -85,7 +86,8 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
         ax.set_title(title)
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
@@ -114,7 +116,8 @@ def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
         ax.set_title("Mean exemplar count per token (across agents)")
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
@@ -143,11 +146,13 @@ def words_mean_l1_bar(model, step, ax=None, disable_title=False):
     if not disable_title:
         if not no_ax:
             ax.set_title(title) 
+            ax.set_ylim([0, 7000])
         else:
             ax.title(title)
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
@@ -232,6 +237,7 @@ def half_time_bar(model, step, ax=None, disable_title=False):
             ax.title(title)
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
