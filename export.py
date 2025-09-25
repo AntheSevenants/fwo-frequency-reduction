@@ -47,6 +47,7 @@ parser.add_argument('selected_run', type=str, help='name of the run')
 parser.add_argument('profile', type=str,
                     help='all | base-model | reentrance-model | no-shared-code-model | no-zipfian-model | single-exemplar-model | no-reduction-model | (cone-model)')
 parser.add_argument('--overwrite_tokens_path', nargs='?', type=str, default=False, help='path to a tokens file to overwrite the existing tokens')
+parser.add_argument("--no_titles", action="store_true", help="removes titles from the graphs")
 args = parser.parse_args()
 
 # Load the selected run
@@ -162,42 +163,42 @@ for profile_name in profiles_to_process:
         fig, ax = plt.subplots()
 
         if graph_name == "l1-general":
-            figure = visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False, disable_title=True)
+            figure = visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False, disable_title=args.no_titles)
         elif graph_name == "l1-per-construction-mosaic":
             figure = visualisation.meta.make_layout_plot(model, visualisation.l1.words_mean_l1_bar,
                                                         steps=[math.floor(model.current_step / 4) * 1,
                                                             math.floor(model.current_step / 4) * 2,
                                                             math.floor(model.current_step / 4) * 3,
                                                             model.current_step],
-                                                        disable_title=True)
+                                                        disable_title=args.no_titles)
         elif graph_name == "l1-per-construction":
-            figure = visualisation.l1.words_mean_l1_bar(model, model.current_step, ax=ax, disable_title=True)
+            figure = visualisation.l1.words_mean_l1_bar(model, model.current_step, ax=ax, disable_title=args.no_titles)
         elif  graph_name == "success":
-            figure = visualisation.dimscrap.make_communication_plot_combined(model, smooth=False, ax=ax, disable_title=True)
+            figure = visualisation.dimscrap.make_communication_plot_combined(model, smooth=False, ax=ax, disable_title=args.no_titles)
         elif graph_name == "matrix":
-            figure = visualisation.meta.make_confusion_plot(model, model.current_step, n=n, ax=ax, disable_title=True)
+            figure = visualisation.meta.make_confusion_plot(model, model.current_step, n=n, ax=ax, disable_title=args.no_titles)
         elif graph_name == "matrix-mosaic":
             figure = visualisation.meta.make_layout_plot(model, visualisation.meta.make_confusion_plot, n=n,
                                                          steps=[math.floor(model.current_step / 4) * 1,
                                                             math.floor(model.current_step / 4) * 2,
                                                             math.floor(model.current_step / 4) * 3,
                                                             model.current_step],
-                                                        disable_title=True)
+                                                        disable_title=args.no_titles)
         elif graph_name == "confusion-ratio":
-            figure = visualisation.l1.token_good_origin_first_n(model, ax=ax, disable_title=True)
+            figure = visualisation.l1.token_good_origin_first_n(model, ax=ax, disable_title=args.no_titles)
         elif graph_name in [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end" ]:
             if graph_name == "angle-vocabulary-plot-2d-begin":
                 step = 0
             elif graph_name == "angle-vocabulary-plot-2d-end":
                 step = 700
 
-            figure = visualisation.angle.make_angle_vocabulary_plot_2d(model, step, agent_filter=0, disable_title=True)
+            figure = visualisation.angle.make_angle_vocabulary_plot_2d(model, step, agent_filter=0, disable_title=args.no_titles)
         elif graph_name == "angle-vocabulary-plot-3d-begin":
             step = 0
 
-            figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0, disable_title=True)
+            figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0, disable_title=args.no_titles)
         elif graph_name == "half-life-per-construction":
-            figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax, disable_title=True)
+            figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax, disable_title=args.no_titles)
 
         graphs[graph_name] = figure
 
