@@ -2,6 +2,7 @@ import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 from scipy.signal import savgol_filter
 from visualisation.meta import formatter
@@ -98,7 +99,7 @@ def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None, di
     return property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True, disable_title=disable_title)
 
 def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
-    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True, disable_title=disable_title)
+    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio of authentic exemplars per token (across agents)", ratio=True, disable_title=disable_title)
 
 def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
     if ax is None:
@@ -129,11 +130,12 @@ def words_mean_l1_bar(model, step, ax=None, disable_title=False):
 
     token_l1 = model.datacollector.get_model_vars_dataframe()["mean_token_l1"].iloc[step]
     ax.bar(model.tokens, token_l1)
-    
+
+    x_tokens = [ str(i) if i % 10 == 0 or i == 1 else "" for i in range(1, len(model.tokens)) ]
     if not no_ax:
-        ax.set_xticklabels([]) # disable x labels
+        ax.set_xticklabels(x_tokens, rotation=90)
     else:
-        plt.xticks([])
+        plt.xticks(x_tokens, rotation=90)
 
     step = step * model.datacollector_step_size
     title = f"Mean L1 per token across agents (t = {step})"
@@ -215,12 +217,13 @@ def half_time_bar(model, step, ax=None, disable_title=False):
     half_level_times = compute_half_time(model, step)
 
     ax.bar(model.tokens, half_level_times)
-    
-    if not no_ax:
-        ax.set_xticklabels([]) # disable x labels
-    else:
-        plt.xticks([])
 
+    x_tokens = [ str(i) if i % 10 == 0 or i == 1 else "" for i in range(1, len(model.tokens)) ]
+    if not no_ax:
+        ax.set_xticklabels(x_tokens, rotation=90)
+    else:
+        plt.xticks(x_tokens, rotation=90)
+        
     title = f"Mean L1 half life across agents (t = {step})"
     if not disable_title:
         if not no_ax:
