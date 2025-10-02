@@ -90,7 +90,7 @@ Note that there is no built-in requirement which dictates that frequent forms sh
 Our simulation model design starts from the preconditions from @sec-preconditions. As such, we built a model architecture with the following properties:
 
 - a community of $N$ agents which is implied to share the same code
-- agent memories which allow the storage of different forms belonging to the same concept
+- agent memories that allow the storage of different forms belonging to the same concept
 - a shared vocabulary, organised through a Zipfian distribution
 - a fixed probability for agents to reduce a form before uttering it
 
