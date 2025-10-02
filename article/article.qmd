@@ -217,7 +217,7 @@ Because we use computer simulations, we apply a different methodology from tradi
 
 ### Simulation behaviour metrics
 
-One of the cornerstone principles of our simulation is the complex-adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. We tracked measures such as communicative success, mean construction energy and confusion among forms. To see an overview of our metrics and their computations, see @sec-appendix-metrics.
+One of the cornerstone principles of our simulation is the complex adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. We tracked measures such as communicative success, mean construction energy and confusion among forms. To see an overview of our metrics and their computations, see @sec-appendix-metrics.
 
 ### Expected behaviour {#sec-expected-behaviour}
 
