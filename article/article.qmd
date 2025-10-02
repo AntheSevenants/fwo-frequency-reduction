@@ -69,7 +69,7 @@ Empirically, it is impossible to change reality in the past in order to trace an
 
 While the real world is far messier and noisier than the idealised world represented in our simulations, simulation results can nevertheless "suggest that such underlying principles may operate in the real world as well" [@stanford_revisiting_2013, 122]. In our specific case, a simulation might show that typical reduction behaviour does not arise out of the preconditions that are presupposed in the literature, or that additional preconditions are required. Such outcomes can be theoretically interesting, since they make the various aspects of reduction theory more explicit, and since they can function as a stepping stone for further experimental or empirical research.
 
-## Preconditions {#sec-preconditions}
+## Assumed preconditions {#sec-preconditions}
 
 In this section, we go over some preconditions which we assume are necessary to model reduction in a theoretically accurate away. For this, we base ourselves on empirical research in the usage-based linguistics paradigm [as recommended by @loreto_theoretical_2010]. Usage-based linguistics views language as a complex adaptive system, i.e. a system shaped through repeated use by language users [@ellis_what_2012]. This makes it a natural fit for our agent-based simulations, which operate on the same principle.
 
