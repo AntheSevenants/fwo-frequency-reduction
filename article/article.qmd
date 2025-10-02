@@ -99,8 +99,6 @@ A third precondition for reduction is rooted in frequency. We know from corpus r
 
 A final precondition for reduction is that language users should have a tendency to reduce words. This tendency arises naturally out of the so-called "Principle of Least Effort" [@zipf_human_1949], which dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. This requires speakers to make an estimation of how much they can compress their utterance not to impede comprehension. This balance between energy conservation and utterance comprehension is a key dynamic behind reduction.
 
-Note that there is no built-in requirement which dictates that frequent forms should reduce faster and to a larger extent than less frequent forms. Rather, this is the emergent behaviour that needs to occur naturally out of the interplay of the different requirements.
-
 ## Model design
 
 In this section, we will first discuss the core architecture of the simulation. This is the part of the simulation that will remain invariant across parameter permutations. Our core architecture is based on empirical research in the usage-based linguistics paradigm [as recommended by @loreto_theoretical_2010, 69]. Usage-based linguistics views language as a complex adaptive system, i.e. a system shaped through repeated use by language users [@beckner_language_2009]. This makes it a natural fit for our agent-based simulations, which operate on the same principle. After we have introduced all core mechanisms in our simulation, we will discuss the variable parts of our model and the initial implementation we chose. 
@@ -237,6 +235,8 @@ As for (1), the minimal, motivated assumption can be inferred easily from corpus
 As for (2), we suppose the most minimal option and initially assume there not to be an explicit relation between frequency and willingness of reduction. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
 As for (3), we also started minimal and assumed that no ambiguity avoidance mechanism was required. TODO (We have no ecological evidence for this assumption. Op één of andere manier uitleggen. Deens kan pas later komen)
+
+Note that there is no built-in assumption which dictates that frequent forms should reduce faster and to a larger extent than less frequent forms. Rather, this is the emergent behaviour that needs to occur naturally out of the interplay of the different assumptions.
 
 ## Methodology
 
