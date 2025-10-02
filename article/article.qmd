@@ -126,7 +126,9 @@ Note that here, from a construction grammar standpoint, we model the *form* usin
 
 ### Agent memory
 
-Each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
+The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from "exemplar theory", @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ... An added benefit is that the typical realisation of a specific construction will naturally evolve as its exemplars shift, i.e. because of reduction.
+
+In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
 
 |  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $M$ | Associated construction |
 | ---------- | ----- | ----- | ----- | --- | ----- | ------ |
@@ -137,7 +139,7 @@ Each agent has a memory of $L$ exemplars. This memory can be thought of as a mat
 
 : Example agent memory consisting of vector representations belonging to different constructions. {#tbl-model_design_agent_memory_example}
 
-At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $V$ exemplars in total. We then further fill this memory following Zipf's law (see @sec-preconditions): one additional representation is added until the number of exemplars reaches $L$. Because sampling is Zipfian, popular constructions are more likely to be well represented in an agent's memory than rare constructions ["probability matching", @labov_principles_1994]. Note that the Zipfian distribution of exemplars in an agent's memory would be the natural outcome of communication anyway. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
+At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $V$ exemplars in total. We then further fill this memory following the chosen frequency distribution (see @sec-underspecification-filling): one additional representation is added until the number of exemplars reaches $L$. Note that the output distribution of exemplars in an agent's memory would be the natural outcome of communication anyway, as concepts are chosen using the same distribution. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
 
 In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between the forms of different constructions to become lost.
 
@@ -222,7 +224,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 Note that we deliberately left out any feedback mechanism from the language game. We assume that our agents can only communicate through language. Our intention was to make reduction work without the hearer agent knowing whether what they understood was indeed the construction intended by the speaker. If we implemented a way to communicate "perfect" feedback from speaker to hearer, there would be no point for our agents to communicate through language. In this way, the task our agents face also becomes harder. They need to evolve the language system into a more sparse representation without any feedback of how effective that representation actually is.
 
-### Moving away from the unknowns
+### Moving away from the unknowns {#sec-underspecification-filling}
 
 We saw in @sec-underspecification that several aspects of reduction theory are unknown or underspecified. Through our computer simulations, we will attempt to move away from these unknowns and build a minimal set of assumptions that leads to the reducing effect with all its properties. Our strategy throughout is to start with minimal but motivated assumptions. If these prove to be insufficient, we will make the specification more complex. As a reminder, these are the three unknowns defined in @sec-underspecification:
 
