@@ -71,7 +71,7 @@ While the real world is far messier and noisier than the idealised world represe
 
 ## Preconditions {#sec-preconditions}
 
-We mentioned in the previous section that our goal for this study is to find the minimal requirements which produce the reducing effect as defined by @bybee_usage_2006 (see @sec-introduction). In this section, we go over some preconditions which we assume are necessary to model reduction in a linguistically accurate away. For this, we base ourselves on empirical research in the usage-based linguistics paradigm [as recommended by @loreto_theoretical_2010]. Usage-based linguistics views language as a complex-adaptive system, i.e. a system shaped through repeated use by different language users [@ellis_what_2012]. This makes it a natural fit for our simulation experiments, which operate on the same principle.
+In this section, we go over some preconditions which we assume are necessary to model reduction in a theoretically accurate away. For this, we base ourselves on empirical research in the usage-based linguistics paradigm [as recommended by @loreto_theoretical_2010]. Usage-based linguistics views language as a complex adaptive system, i.e. a system shaped through repeated use by language users [@ellis_what_2012]. This makes it a natural fit for our agent-based simulations, which operate on the same principle.
 
 A first precondition for reduction is a basic principle of communication itself: shared code. Language users must refer to the same concepts using roughly the same constructions, lest they cannot communicate. The presence of a shared code does not inhibit the reorganisation of the linguistic system to be more sparse (i.e. reduction), but it is a prerequisite for a reorganisation nonetheless.
 
