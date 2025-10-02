@@ -61,11 +61,29 @@ The existence of the reducing effect has been demonstrated through several studi
 
 In addition, several other factors have been found to influence the rate of reduction. In her overview of reduction, @ernestus_acoustic_2014 mentions the phenomenon to be influenced by phonological context (e.g. assimilation to ease the overlap of articulatory gestures), speech rate (reducing the number of gestures to be able to speak faster) and predictability (reducing the number of gestures because they are predictable from the context). While we agree that these factors are also important, in this study, we focus on raw frequency only for the sake of simplicity: it is one of the most basic, inherent properties of natural language. Once we can assess the role of frequency in reduction, we can expand the model to include other factors (see @sec-discussion).
 
-### Cause of reduction
+### Unknowns in the cause of reduction
 
-While we know from corpus studies that reduction patterns can indeed be found in speech data, and are therefore likely to exist, what we cannot glean from corpora is the causality that led to these patterns. As a corpus only shows the resulting *effect* of language use on a large scale, we cannot see the decisions on the level of the individual that caused there to be a reduction effect in the first place. We do not know, should reality have looked different, whether the reduction effect would still exist, as we do not know the factors that make the reduction effect occur. In other words, while we see the reducing effect in corpus data, we do not really know what *causes* it.
+While we know from corpus studies that reduction patterns can indeed be found in speech data, and are therefore likely to exist, what we cannot glean from corpora is the causality that led to these patterns. As a corpus only shows the resulting *effect* of language use on a large scale, we cannot see the decisions on the level of the individual that caused there to be a reduction effect in the first place. We do not know, should reality have looked different, whether the reduction effect would still exist, as we do not know the factors that make the reduction effect occur. In other words, while we see the reducing effect in corpus data, we do not really know what *causes* it. In this section, we will discuss three unknowns (TODO?) in reduction theory, the specifics of which have remained opaque in corpus studies.
 
-Empirically, it is impossible to change reality in the past in order to trace any cascading effects in the long term. To find the requirements of the reduction effect in spite of this, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reducing effect. Our goal in this article is to investigate which set of requirements is needed for the language in our computer model to exhibit the reducing effect, displaying the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reduction effect, and try several assumptions in order to find the minimal requirements needed for the reduction effect to occur.
+The first unknown pertains to the frequency difference between the different constructions that undergo reduction. We know from Bybee's theory that high-frequency constructions reduce differently from low-frequency constructions [@bybee_phonology_2003, 11]. This implies that a frequency difference between constructions is necessary, but it is unspecified how that frequency difference needs to be realised. This leads to our first research question:
+
+1. What frequency distribution do constructions in language have to follow for the reducing effect to arise as expected?[^expected]
+
+The second unknown revolves around an explicit link between frequency and reduction willingness on behalf of the speaker. @bybee_phonology_2003 [11] states:
+
+> If sound changes are the result of phonetic processes that apply in real time as words are used, then those words that are used more often have more opportunity to be affected by phonetic processes.
+
+The expectation by Bybee is that frequency in itself should be enough for reduction to arise organically. This implies there is no need for an explicit link that causes speakers to reduce more in high-frequency constructions than in low-frequency constructions. As this premise has not been tested, it is more an assumption rather than a finding. Therefore, our second research question is as follows:
+
+2. Does there need to be an explicit link between frequency and reduction willingness on behalf of the speaker for the reducing effect to arise as expected?[^expected]
+
+Finally, existing theory on reduction also does not interact with the prospect of possible ambiguity. Reduction is, in essence, the act of expressing the same content in a narrower acoustic representation. Gradually, however, that also means that these representations will start looking alike more. It is currently unclear whether that implies some ambiguity avoidance mechanism is required to make sure that communicative confusion is avoided. Our final research question, then, is as follows:
+
+3. Does there need to be an ambiguity avoidance mechanism for the reducing effect to arise as expected?[^expected]
+
+[^expected]: For the reducing effect to arise "as expected", we mean that it should display the same properties as those we find in corpus data. Please see @sec-sec-evaluation for an explicit definition of expected reduction behaviour.
+
+Empirically, it is impossible to change reality in the past in order to trace any cascading effects in the long term in corpus data. To find the requirements of the reduction effect in spite of this, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reducing effect. Our goal in this article is to investigate which set of requirements is needed for the language in our computer model to exhibit the reducing effect, displaying the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reducing effect, and try several assumptions in order to find the minimal requirements needed for the reducing effect to occur.
 
 While the real world is far messier and noisier than the idealised world represented in our simulations, simulation results can nevertheless "suggest that such underlying principles may operate in the real world as well" [@stanford_revisiting_2013, 122]. In our specific case, a simulation might show that typical reduction behaviour does not arise out of the preconditions that are presupposed in the literature, or that additional preconditions are required. Such outcomes can be theoretically interesting, since they make the various aspects of reduction theory more explicit, and since they can function as a stepping stone for further experimental or empirical research.
 
@@ -229,7 +247,7 @@ We will consider a set of preconditions to produce the reducing effect if the fo
 
 If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour equivalent to the behaviour found in corpus studies. The preconditions of that simulation are then said not to be conducive to the reducing effect.
 
-### Evaluation
+### Evaluation {#sec-evaluation}
 
 If any set of preconditions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that set is conducive to the reducing effect. The next question is whether this set is the *minimal* set required to produce the reducing effect.
 
