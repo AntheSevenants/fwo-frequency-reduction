@@ -61,7 +61,7 @@ The existence of the reducing effect has been demonstrated through several studi
 
 In addition, several other factors have been found to influence the rate of reduction. In her overview of reduction, @ernestus_acoustic_2014 mentions the phenomenon to be influenced by phonological context (e.g. assimilation to ease the overlap of articulatory gestures), speech rate (reducing the number of gestures to be able to speak faster) and predictability (reducing the number of gestures because they are predictable from the context). While we agree that these factors are also important, in this study, we focus on raw frequency only for the sake of simplicity: it is one of the most basic, inherent properties of natural language. Once we can assess the role of frequency in reduction, we can expand the model to include other factors (see @sec-discussion).
 
-### "Cause" of reduction
+### Cause of reduction
 
 While we know from corpus studies that reduction patterns can indeed be found in speech data, and are therefore likely to exist, what we cannot glean from corpora is the causality that led to these patterns. As a corpus only shows the resulting *effect* of language use on a large scale, we cannot see the decisions on the level of the individual that caused there to be a reduction effect in the first place. We do not know, should reality have looked different, whether the reduction effect would still exist, as we do not know the factors that make the reduction effect occur. In other words, while we see the reducing effect in corpus data, we do not really know what *causes* it.
 
