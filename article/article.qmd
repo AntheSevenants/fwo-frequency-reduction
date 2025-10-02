@@ -103,14 +103,7 @@ Note that there is no built-in requirement which dictates that frequent forms sh
 
 ## Model design
 
-### Design overview
-
-Our simulation model design starts from the preconditions from @sec-preconditions. As such, we built a model architecture with the following properties:
-
-- a community of $N$ agents which is implied to share the same code
-- agent memories that allow the storage of different forms belonging to the same concept
-- a shared vocabulary, organised through a Zipfian distribution
-- a fixed probability for agents to reduce a form before uttering it
+In this section, we will first discuss the core architecture of the simulation. This is the part of the simulation that will remain invariant across parameter permutations. Our core architecture is based on empirical research in the usage-based linguistics paradigm [as recommended by @loreto_theoretical_2010, 69]. Usage-based linguistics views language as a complex adaptive system, i.e. a system shaped through repeated use by language users [@beckner_language_2009]. This makes it a natural fit for our agent-based simulations, which operate on the same principle. After we have introduced all core mechanisms in our simulation, we will discuss the variable parts of our model and the initial implementation we chose. 
 
 ### Formalisation of speech
 
