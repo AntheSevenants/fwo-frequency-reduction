@@ -237,7 +237,7 @@ One of the cornerstone principles of our simulation is the complex adaptive esse
 
 ### Expected behaviour {#sec-expected-behaviour}
 
-We will consider a set of preconditions to produce the reducing effect if the following is true:
+We will consider a set of preconditions to be conducive to the reducing effect if the following is true:
 
 1. The language system has reorganised itself to express the same constructions using more efficient representations.
 1. Frequent forms have reduced to a greater extent than non-frequent forms.
