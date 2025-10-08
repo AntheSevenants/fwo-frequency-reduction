@@ -110,7 +110,7 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 [^parameters]: We will later discuss the exact parameters chosen.
 
-Note that here, from a construction grammar standpoint, we model the *form* using vectors, while the actual *meaning* remains constant. "Meaning" here is purely semantic, and any possible social or pragmatic meaning [as defined in @leclercq_meaning_2025] is ignored in this model, as incorporating these dimensions might distort the mechanics of our model and complicate interpretation.
+Note that, for the sake of simplicity, the meaning of the constructions in our simulations is not explicitly modelled. Instead, we implicitly assume that all meanings remain constant across different exemplars of the same constructions.
 
 ### Agent memory {#sec-agent-memory}
 
