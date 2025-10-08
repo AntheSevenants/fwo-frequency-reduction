@@ -2,11 +2,12 @@ import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 from scipy.signal import savgol_filter
 from visualisation.meta import formatter
 
-def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=False):
+def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=False, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
 
     if ax is None:
@@ -18,7 +19,9 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
         if ratio:
             ax.set_ylim([0, 1])
 
-
+    fig = ax.get_figure()
+    if disable_title:
+        fig.tight_layout()
     
     if smooth:
         window_length = 100
@@ -30,25 +33,25 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
     else:
         ax.plot(df[attribute], color="green")
 
-    if title is not None:
+    if title is not None and not disable_title:
         ax.set_title(title)
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
-    
+
     return ax
 
-def make_mean_l1_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)")
+def make_mean_l1_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)", disable_title=disable_title)
 
-def make_communicative_success_macro_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True)
+def make_communicative_success_macro_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True, disable_title=disable_title)
 
-def make_mean_exemplar_age_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "mean_exemplar_age", ax=ax, smooth=smooth, title="Mean exemplar age (macro avg across agents)")
+def make_mean_exemplar_age_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "mean_exemplar_age", ax=ax, smooth=smooth, title="Mean exemplar age (macro avg across agents)", disable_title=disable_title)
 
-def make_reduction_success_plot(model, smooth=True, ax=None):
-    return make_general_plot(model, "reduction_success", ax=ax, smooth=smooth, title="Global reduction success ratio", ratio=True)
+def make_reduction_success_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "reduction_success", ax=ax, smooth=smooth, title="Global reduction success ratio", ratio=True, disable_title=disable_title)
 
-def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False):
+def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
     matrix_3d = np.stack(df[attribute].to_numpy())
 
@@ -79,24 +82,28 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
 
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
 
-    if title is not None:
+    if title is not None and not disable_title:
         ax.set_title(title)
+
+    fig = ax.get_figure()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
-def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)")
+def words_l1_plot_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "mean_token_l1", n, jitter_strength, ax, "Mean L1 per token (across agents)", disable_title=disable_title)
 
-def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)")
+def words_mean_exemplar_count_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "mean_exemplar_count", n, jitter_strength, ax, "Mean exemplar count per token (across agents)", disable_title=disable_title)
 
-def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True)
+def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "success_per_token", n, jitter_strength, ax, "Mean communicative success per token (across agents)", ratio=True, disable_title=disable_title)
 
-def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None):
-    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio exemplars from non-confused interactions per token (across agents)", ratio=True)
+def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio of authentic exemplars per token (across agents)", ratio=True, disable_title=disable_title)
 
-def words_mean_exemplar_count_bar(model, ax=None):
+def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
     if ax is None:
         ax = plt
     else:
@@ -105,11 +112,16 @@ def words_mean_exemplar_count_bar(model, ax=None):
     frequency_counts = model.datacollector.get_model_vars_dataframe()["mean_exemplar_count"].iloc[-1]
     ax.bar(model.tokens, frequency_counts)   
 
-    ax.set_title("Mean exemplar count per token (across agents)") 
+    if not disable_title:
+        ax.set_title("Mean exemplar count per token (across agents)")
+
+    fig = ax.get_figure()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
-def words_mean_l1_bar(model, step, ax=None):
+def words_mean_l1_bar(model, step, ax=None, disable_title=False):
     if ax is None:
         ax = plt
         no_ax = True
@@ -121,18 +133,26 @@ def words_mean_l1_bar(model, step, ax=None):
 
     token_l1 = model.datacollector.get_model_vars_dataframe()["mean_token_l1"].iloc[step]
     ax.bar(model.tokens, token_l1)
-    
+
+    x_tokens = [ str(i) if i % 10 == 0 or i in [1, model.num_tokens] else "" for i in range(1, model.num_tokens + 1) ]
     if not no_ax:
-        ax.set_xticklabels([]) # disable x labels
+        ax.set_xticklabels(x_tokens, rotation=90)
     else:
-        plt.xticks([])
+        plt.xticks(x_tokens, rotation=90)
 
     step = step * model.datacollector_step_size
     title = f"Mean L1 per token across agents (t = {step})"
-    if not no_ax:
-        ax.set_title(title) 
-    else:
-        ax.title(title)
+    
+    if not disable_title:
+        if not no_ax:
+            ax.set_title(title) 
+            ax.set_ylim([0, 7000])
+        else:
+            ax.title(title)
+
+    fig = ax.get_figure()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
@@ -192,7 +212,7 @@ def compute_half_time(model, step):
 
     return half_level_times
 
-def half_time_bar(model, step, ax=None):
+def half_time_bar(model, step, ax=None, disable_title=False):
     if ax is None:
         ax = plt
         no_ax = True
@@ -200,18 +220,34 @@ def half_time_bar(model, step, ax=None):
         no_ax = False
     
     half_level_times = compute_half_time(model, step)
-
-    ax.bar(model.tokens, half_level_times)
-    
-    if not no_ax:
-        ax.set_xticklabels([]) # disable x labels
+    # Now, we truncate all trailing nans
+    # Find the index of the last non-NaN value
+    last_non_nan_idx = np.where(~np.isnan(half_level_times))[0]
+    if len(last_non_nan_idx) > 0:
+        last_non_nan_idx = last_non_nan_idx[-1]
+        half_level_times = half_level_times[:last_non_nan_idx + 1]
     else:
-        plt.xticks([])
+        half_level_times = half_level_times  # if all are NaN, return as is
 
+    half_level_count = len(half_level_times)
+
+    ax.bar(model.tokens[0:half_level_count], half_level_times)
+
+    x_tokens = [ str(i) if i % 10 == 0 or i in [1, half_level_count] else "" for i in range(1, half_level_count + 1) ]
+    if not no_ax:
+        ax.set_xticklabels(x_tokens, rotation=90)
+    else:
+        plt.xticks(x_tokens, rotation=90)
+        
     title = f"Mean L1 half life across agents (t = {step})"
-    if not no_ax:
-        ax.set_title(title) 
-    else:
-        ax.title(title)
+    if not disable_title:
+        if not no_ax:
+            ax.set_title(title) 
+        else:
+            ax.title(title)
+
+    fig = ax.get_figure()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
