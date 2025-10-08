@@ -194,7 +194,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 **Speaker**
 
-1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the Zipfian A-curve, discussed in @sec-preconditions, to mirror the frequency imbalance inherent to natural language.[^zipfian-note]
+1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note]
 2. The speaker chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. There is no mechanism influencing the probability of a specific exemplar being chosen. Of course, if a specific neighbourhood area is more dense, there is a higher probability of the chosen exemplar coming from that area.
 3. With a probability of $p$, reduction is applied (see @sec-reduction).
 4. The (potentially reduced) vector is communicated to the hearer.
@@ -205,7 +205,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 2. The hearer interprets the vector representation of the speaker. They calculate the cosine distance (see Equation TODO) between the spoken vector and their entire exemplar memory, and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction. In the case of a tie, communication fails and no exemplars are saved. In the case that no exemplars were selected, communication fails as well. 
 3. The heard exemplar is saved in the hearer's memory and is associated with the understood construction. The speaker does not adapt their own memory to keep the model design as simple as possible [todo literatuur ding lezen].
 
-[^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through Zipfian sampling. For our model, the addition of an outside world with events would not have any added value, which is why we implemented agents about the world in this way.
+[^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through the assumed frequency distribution. For our model, the addition of an outside world with events would not have any added value, which is why we implemented agents about the world in this way.
 
 ![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a construction, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](language_game.svg){#fig-model_design_language_game}
 
