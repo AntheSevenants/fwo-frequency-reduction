@@ -116,7 +116,7 @@ Note that, for the sake of simplicity, the meaning of the constructions in our s
 
 The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from "exemplar theory", @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ... The same realisation can be stored in the exemplar memory multiple times as the result of more frequent exposure. Therefore, the typical realisation of a specific construction can naturally evolve as new realisations are added, i.e. reduced realisations.
 
-In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. In our case, is it imperative that $L > V$, else there cannot be multiple exemplars of the same construction. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
+In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which construction. In our case, is it imperative that $L > V$, else there cannot be multiple exemplars of the same construction. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
 
 |  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $M$ | Associated construction |
 | ---------- | ----- | ----- | ----- | --- | ----- | ------ |
@@ -127,7 +127,7 @@ In our model, each agent has a memory of $L$ exemplars. This memory can be thoug
 
 : Example agent memory consisting of vector representations belonging to different constructions. {#tbl-model_design_agent_memory_example}
 
-At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $V$ exemplars in total. We then further fill this memory following the chosen frequency distribution (see @sec-underspecification-filling): one additional representation is added until the number of exemplars reaches $L$. Note that the output distribution of exemplars in an agent's memory would be the natural outcome of communication anyway, as concepts are chosen using the same distribution. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
+At the model initialisation stage, we seed each agent's exemplar memory with one vector representation for each construction, i.e. $V$ exemplars in total. We then further fill this memory following the chosen frequency distribution (see @sec-underspecification-filling): one additional representation is added until the number of exemplars reaches $L$. Note that the output distribution of exemplars in an agent's memory would be the natural outcome of communication anyway, as constructions are chosen using the same distribution. However, by pre-filling the memory, we keep the number of forms in memory constant throughout the simulation, which should guarantee consistent model behaviour.
 
 In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between the forms of different constructions to become lost.
 
@@ -208,7 +208,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 [^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through Zipfian sampling. For our model, the addition of an outside world with events would not have any added value, which is why we implemented agents about the world in this way.
 
-![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a concept, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](language_game.svg){#fig-model_design_language_game}
+![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a construction, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](language_game.svg){#fig-model_design_language_game}
 
 Note that we deliberately left out any feedback mechanism from the language game. We assume that our agents can only communicate through language. Our intention was to make reduction work without the hearer agent knowing whether what they understood was indeed the construction intended by the speaker. If we implemented a way to communicate "perfect" feedback from speaker to hearer, there would be no point for our agents to communicate through language. In this way, the task our agents face also becomes harder. They need to evolve the language system into a more sparse representation without any feedback of how effective that representation actually is.
 
@@ -286,7 +286,7 @@ In this section, we will go over the results produced by the model operationalis
 First, we tested the simulation model with all preconditions we assume to be the minimal conditions for reduction (see @sec-preconditions). As a reminder, these are those minimal preconditions:
 
 1. Language users employ a shared code
-2. Language users sample concepts according to Zipf's law
+2. Language users sample constructions according to Zipf's law
 3. Language users remember multiple forms of the same construction
 4. Language users spontaneously reduce forms
 
@@ -356,7 +356,7 @@ Nevertheless, a solution within this design is possible on behalf of the speaker
 With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increasing sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion. Therefore, it seems the minimal number of preconditions for the reducing effect should be increased to five:
 
 1. Language users employ a shared code
-2. Language users sample concepts according to Zipf's law
+2. Language users sample constructions according to Zipf's law
 3. Language users remember multiple forms of the same construction
 4. Language users spontaneously reduce forms
 5. Language users should be able to understand reduced forms before uttering them
@@ -383,7 +383,7 @@ An overview of the different simulation behaviour metrics and their evolutions f
 In this section, we will evaluate our set of minimal preconditions by separately disabling them. As a reminder, these are the five minimal conditions we determined experimentally:
 
 1. Language users employ a shared code
-2. Language users sample concepts according to Zipf's law
+2. Language users sample constructions according to Zipf's law
 3. Language users remember multiple forms of the same construction
 4. Language users spontaneously reduce forms
 5. Language users should be able to understand reduced forms before uttering them
@@ -480,9 +480,9 @@ In this model, we set the memory size to 100, the same as the number of forms. I
 
 Looking at @fig-single-exemplar-model-success, we see that global communicative success is poor, while macro-averaged success is still adequate. Therefore, we can say that the most frequent forms perform poorly, while low frequency forms remain intelligible. This violates expected behaviour #3 (see @sec-expected-behaviour).
 
-The explanation for this difference in behaviour for the different frequency types is straightforward. Because highly frequent forms have many opportunities for reduction, their representations can evolve extremely quickly. The issue is that in this way, discrepancies in the representations between different agents can arise. Therefore, two agents could have vastly different vector representations for the same concept. You can see this in the equilibrium of the global communicative success as well: it hovers around the probability set for reduction, 0.5. If an agent dares to reduce too far, communication goes amiss. Note also that the self regulation mechanism no longer works reliably with just one exemplar per concept. In contrast, less frequent forms have fewer reduction opportunities, so the probability of divergence happening here is slimmer.
+The explanation for this difference in behaviour for the different frequency types is straightforward. Because highly frequent forms have many opportunities for reduction, their representations can evolve extremely quickly. The issue is that in this way, discrepancies in the representations between different agents can arise. Therefore, two agents could have vastly different vector representations for the same construction. You can see this in the equilibrium of the global communicative success as well: it hovers around the probability set for reduction, 0.5. If an agent dares to reduce too far, communication goes amiss. Note also that the self regulation mechanism no longer works reliably with just one exemplar per construction. In contrast, less frequent forms have fewer reduction opportunities, so the probability of divergence happening here is slimmer.
 
-We do not see the same behaviour if agents can have multiple representations for the same concept, as a larger exemplar memory "buffers" against diverging behaviour. If several representations are available, a single reduced exemplar does not cause a large sway in the overall representation of a concept, and the self regulation mechanism remains reliable as well.
+We do not see the same behaviour if agents can have multiple representations for the same construction, as a larger exemplar memory "buffers" against diverging behaviour. If several representations are available, a single reduced exemplar does not cause a large sway in the overall representation of a construction, and the self regulation mechanism remains reliable as well.
 
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
@@ -511,7 +511,7 @@ Each time we disabled a precondition, it led to model behaviour that did not pas
 In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. We found that at least the following five preconditions were necessary to produce the reducing effect with all of its properties in a simulation:
 
 1. Language users employ a shared code
-2. Language users sample concepts according to Zipf's law
+2. Language users sample constructions according to Zipf's law
 3. Language users remember multiple forms of the same construction
 4. Language users spontaneously reduce forms
 5. Language users should be able to understand reduced forms before uttering them
