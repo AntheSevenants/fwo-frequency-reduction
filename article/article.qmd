@@ -95,7 +95,7 @@ In this section, we will first discuss the core architecture of the simulation. 
 
 For our reduction simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Since this model pertains to oral communication, having vector representations comparable to those found in the Speech Recognition field is especially interesting given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [@de_smet_entrenchment_2016]. Such reduction effects cannot be encoded in a typical written form, but they can be using vectors if we assume that the vectors encode phonetic information on all levels.
 
-For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times M$, with $V$ being the number of constructions[^ctx] in the vocabulary of the agents and $M$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between R and 100. An example of the base vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples.
+For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times M$, with $V$ being the number of constructions[^ctx] in the vocabulary of the agents and $M$ being the number of dimensions.[^parameters] The values of the vectors are randomly generated natural numbers between R and 100. An example of the vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples. Note that the representations in agents' memories will have additional noise added to these vectors (see @sec-agent-memory).
 
 [^ctx]: We made the decision to model constructions rather than individual words or sounds as constructions can be thought of as the most general units within usage-based linguistics that are eligible for undergoing reduction. 
 
@@ -112,7 +112,7 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 Note that here, from a construction grammar standpoint, we model the *form* using vectors, while the actual *meaning* remains constant. "Meaning" here is purely semantic, and any possible social or pragmatic meaning [as defined in @leclercq_meaning_2025] is ignored in this model, as incorporating these dimensions might distort the mechanics of our model and complicate interpretation.
 
-### Agent memory
+### Agent memory {#sec-agent-memory}
 
 The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from "exemplar theory", @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ... The same realisation can be stored in the exemplar memory multiple times as the result of more frequent exposure. Therefore, the typical realisation of a specific construction can naturally evolve as new realisations are added, i.e. reduced realisations.
 
