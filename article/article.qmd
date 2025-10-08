@@ -112,7 +112,7 @@ Note that here, from a construction grammar standpoint, we model the *form* usin
 
 ### Agent memory
 
-The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from "exemplar theory", @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ... An added benefit is that the typical realisation of a specific construction will naturally evolve as its exemplars shift, i.e. because of reduction.
+The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from "exemplar theory", @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ... The same realisation can be stored in the exemplar memory multiple times as the result of more frequent exposure. Therefore, the typical realisation of a specific construction can naturally evolve as its exemplars shift, i.e. because of reduction.
 
 In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times M$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which concept. An example of an agent's memory and an example population with different vector associations can be found in @tbl-model_design_agent_memory_example.
 
