@@ -202,10 +202,8 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 **Hearer**
 
 1. The hearer "hears" the vector communicated by the speaker.
-2. The hearer interprets the vector representation of the speaker. They calculate the cosine distance (see Equation TODO) between the spoken vector and their entire exemplar memory, and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction.[^exceptions]
+2. The hearer interprets the vector representation of the speaker. They calculate the cosine distance (see Equation TODO) between the spoken vector and their entire exemplar memory, and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction. In the case of a tie, communication fails and no exemplars are saved. In the case that no exemplars were selected, communication fails as well. 
 3. The heard exemplar is saved in the hearer's memory and is associated with the understood construction.
-
-[^exceptions]: In the case of a tie, communication fails. In the case that no exemplars were selected, communication fails as well.
 
 [^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through Zipfian sampling. For our model, the addition of an outside world with events would not have any added value, which is why we implemented agents about the world in this way.
 
