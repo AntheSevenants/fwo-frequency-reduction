@@ -233,7 +233,7 @@ Because we use computer simulations, we apply a different methodology from tradi
 
 ### Simulation behaviour metrics
 
-One of the cornerstone principles of our simulation is the complex adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. We tracked measures such as communicative success, mean construction energy and confusion among forms. To see an overview of our metrics and their computations, see @sec-appendix-metrics.
+One of the cornerstone principles of our simulation is the complex adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. We tracked measures such as communicative success, average construction energy and confusion among forms. To see an overview of our metrics and their computations, see @sec-appendix-metrics.
 
 ### Expected behaviour {#sec-expected-behaviour}
 
@@ -294,7 +294,7 @@ We will discuss the behaviour of the simulation by going over the "checklist" de
 2. More frequent forms have reduced to a greater extent than less frequent forms.
 3. Communication between agents remains successful.
 
-As for (1), we can see in @fig-base-model-l1-general that the mean L1 (i.e. the mean energy in the acoustic representations of constructions) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
+As for (1), we can see in @fig-base-model-l1-general that the average L1 (i.e. the average energy in the acoustic representations of constructions) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
 
 With respect to (2), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent forms to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent forms,(at the left of the graph) have lower L1 values than less frequent forms (at the right of the graph). We do see a strange hill-like energy structure at the left of the graph, which we will explain in (3).
 
@@ -308,11 +308,11 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 ::: {#fig-base-model-group layout-ncol=2}
 
-![Mean L1 evolution in the base model (across constructions, across agents)](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
+![Average L1 evolution in the base model (across constructions, across agents)](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
 
-![Mean L1 value in the base model (per construction, across agents, t = 50,000)](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
+![Average L1 value in the base model (per construction, across agents, t = 50,000)](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
 
-![Mean L1 half life in the base model (per construction, across agents, t = 50,000)](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
+![Average L1 half life in the base model (per construction, across agents, t = 50,000)](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
 
 ![Global communicative success in the base model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-base-model-success.png){#fig-base-model-success}
 
@@ -361,11 +361,11 @@ With this new precondition added to our basic assumptions, the model now behaves
 
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
-![Mean L1 evolution in the re-entrance model (across constructions, across agents)](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
+![Average L1 evolution in the re-entrance model (across constructions, across agents)](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
 
-![Mean L1 value in the re-entrance model (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
+![Average L1 value in the re-entrance model (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
 
-![Mean L1 half life in the re-entrance model (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
+![Average L1 half life in the re-entrance model (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
 
 ![Global communicative success in the re-entrance model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-reentrance-model-success.png){#fig-reentrance-model-success}
 
@@ -455,9 +455,9 @@ In this regard, we can say that expected behaviour #2 (see @sec-expected-behavio
 
 ::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
 
-![Mean L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
+![Average L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
 
-![Mean L1 value in the re-entrance model with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Average L1 value in the re-entrance model with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
 
 A comparison of the mean L1 values per construction in two models with Zipfean and linear sampling respectively.
@@ -465,11 +465,11 @@ A comparison of the mean L1 values per construction in two models with Zipfean a
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![Mean L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
+![Average L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, t = 50,000)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
 
-![Mean L1 half life in the with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Average L1 half life in the with linear sampling (per construction, across agents, t = 50,000)](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
-A comparison of the mean half life per construction in two models with Zipfean and linear sampling respectively.
+A comparison of the average half life per construction in two models with Zipfean and linear sampling respectively.
 :::
 
 #### No remembering multiple forms
@@ -496,7 +496,7 @@ An overview of communicative success in the model where agents do not remember m
 
 In this model, we set the probability of reduction to 0. This has the obvious effect that language users will no longer attempt to build more sparse representations for their acoustic representations. In @fig-no-reduction-model-l1-general, we see that the average L1 is not decreasing. This violates expected behaviour #1 (see @sec-expected-behaviour).
 
-![Mean L1 evolution in the model without spontaneous reduction (across constructions, across agents)](figures/fig-no-reduction-model-l1-general.png){#fig-no-reduction-model-l1-general}
+![Average L1 evolution in the model without spontaneous reduction (across constructions, across agents)](figures/fig-no-reduction-model-l1-general.png){#fig-no-reduction-model-l1-general}
 
 #### No self-regulation
 
@@ -559,12 +559,12 @@ In order to keep track of the simulation course, we computed the following metri
   $$
   \frac{\text{\# successful turns}}{\text{\# turns}}
   $$
-4. **Mean agent L1:**  
+4. **Average agent L1:**  
   Number expressing the average L1 norm of exemplars, across all agents.  
   $$
   \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right]}
   $$
-5. **Mean construction L1:**  
+5. **Average construction L1:**  
   Number expressing for each construction $c$ the average L1 norm of its exemplars, across all agents.
   $$  
   \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \left[ \frac{\sum_{k=1}^{M}{ \text{agent}_i.\text{memory}_{jk}}}{M} \right] } \right] }
