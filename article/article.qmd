@@ -548,7 +548,7 @@ There are several ways in which our model could be extended. The most obvious ex
 
 Furthermore, our model currently does not account for the co-existence of reduced and unreduced forms. While our exemplar model allows for a wide range of variation, agents will forget unreduced forms once they fill up their exemplar memories. Other possible extensions include allowing constructions to disappear or varying the 'reducibility' of certain constructions to account for the fact that not *all* high frequency words seem eligible or reduction.
 
-Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study (i.e. like @kirby_cumulative_2008). In this way, it can be investigated if and how the simulation experiment might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
+Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study (i.e. like @kirby_cumulative_2008). In this way, it can be investigated if and how the simulation study might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
 
 ## Appendix {#sec-appendix-metrics}
 
