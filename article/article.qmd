@@ -343,7 +343,7 @@ The reason why we do not see this iterative process reflected in the base model 
 An overview of the exemplar vector locations and their evolutions for the cone model.
 :::
 
-### Re-entrance model
+### Re-entrance model {#sec-reentrance-model}
 
 Now that we can see the mishearings happen in real time, the question arises how they can be avoided. A complicating factor is that we intentionally did not incorporate a feedback mechanism in our simulation: hearers cannot know that they are mistaking a construction for another, so they cannot say "come again?". Vice versa, a speaker cannot know whether a reduced form will cause a mishearing on behalf of the hearer, as they do not have access to the acoustic representations of the latter. As such, our model design without any feedback mechanism seems to lead to a linguistic catch 22.
 
@@ -378,27 +378,15 @@ An overview of the different simulation behaviour metrics and their evolutions f
 
 ### Evaluation
 
-In this section, we will evaluate our set of minimal preconditions by separately disabling them. As a reminder, these are the five minimal conditions we determined experimentally:
+We explained in @sec-evaluation that the key point of simulation research is the search for the minimal set of conditions that produces a specific effect. This is our current minimal set which is conducive to the reducing effect: 
 
-1. Language users employ a shared code
-2. Language users sample constructions according to Zipf's law
-3. Language users remember multiple forms of the same construction
-4. Language users spontaneously reduce forms
-5. Language users should be able to understand reduced forms before uttering them
+1. Zipfian frequency difference between constructions
+2. No association between frequency and reduction willingness on behalf of the speaker
+3. Re-entrance as an ambiguity avoidance mechanism
 
-In each of the following subsections, we will reprogram the final model to leave out one precondition. If we see equivalent behaviour (i.e. the model behaviour still adheres to the minimal expected behaviour explained in @sec-expected-behaviour), we have found a new minimal set of preconditions. If we cannot attain the expected behaviour, we know we have found the minimal set.
+We know that (3) is essential for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. We cannot disable (2), as the association between frequency and reduction willingness was never implemented, and it also never proved necessary in the (successful) re-entrance model (@sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
 
-#### No shared code
-
-In this model, we disable the shared code among language users. We do this by generating a completely new set of acoustic vectors for each agent separately. You could say that this means that each speaker uses a completely different language.
-
-If we look at the results in @fig-no-shared-code-model-success, we see that there is no successful communication. Agents are unable to interpret what the other agents are saying, because they do not use the same representations to refer to the same constructions. Since communication is unsuccessful, expected behaviour #3 is violated (see @sec-expected-behaviour).
-
-![Global communicative success in the no shared code model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-no-shared-code-model-success.png){#fig-no-shared-code-model-success}
-
-#### No Zipfian sampling
-
-In this model, we sample constructions using a linear distribution instead of a Zipfian one. In practice, this means that the most frequent construction is no longer twice as frequent as the second most frequent construction, which is twice as frequent as the third most frequent construction, and so on. Instead, the most frequent construction is only one "unit" more frequent than the second most frequent construction, which is one "unit" more frequent than the third most frequent construction, etc. This difference is demonstrated in @fig-linear-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction. The frequency drop of the Zipfian distribution is much more steep than the one of the linear distribution.
+To investigate this, we built a model in which we sample constructions using a linear distribution instead of a Zipfian one. In practice, this means that the most frequent construction is no longer twice as frequent as the second most frequent construction, three times as frequent as the third most frequent construction, and so on. Instead, the most frequent construction is only one "unit" more frequent than the second most frequent construction, which is one "unit" more frequent than the third most frequent construction, etc. This difference is demonstrated in @fig-linear-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction. The frequency drop of the Zipfian distribution is much more steep than the one of the linear distribution.
 
 ```{r}
 #| label: fig-linear-distribution
@@ -447,11 +435,15 @@ ggplot(data, aes(x = x, y = y)) +
   theme_minimal()
 ```
 
-The question is to what extent this change from Zipfian to linear frequency has an influence on the course of the simulation, most notably on the extent of reduction among representations and their respective reduction speed. To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. You can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we saw in @fig-base-model-l1-per-construction (repeated below) that the Zipfian simulation maintains a clear distinction between high frequent and less frequent constructions. Highly frequent constructions have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
+The question is to what extent this change from Zipfian to linear frequency has an influence on the course of the simulation, most notably on the extent of reduction among representations and their respective reduction speed. To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. One can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we saw in @fig-base-model-l1-per-construction (repeated below) that the Zipfian simulation maintains a clear distinction between high frequent and less frequent constructions. Highly frequent constructions have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
 
 In @fig-no-zipfian-model-half-life-per-construction, we again show the "half life" period for each construction. We see that very few acoustic representations reduce to half their energy in the Zipfian simulation, in contrast to the linear simulation, where many representations have indeed reduced at least halfway. This shows that, if frequency is assumed to be linear, reduction goes faster and applies to more constructions than when frequency is assumed to be Zipfian.
 
-In this regard, we can say that expected behaviour #2 (see @sec-expected-behaviour) is violated, since a model of reduction with assumed linear frequency does not produce any stark differences in reduction speed and extent between high and low frequency items.
+In this regard, we can say that expected behaviour #2 (see @sec-expected-behaviour) is violated, since linear frequency does not lead to any stark differences in reduction speed and extent between high and low frequency items. Therefore, we have not successfully modelled the reducing effect. As such, we now know that in our simulation, only the following specification successfully leads to the reducing effect:
+
+1. Zipfian frequency difference between constructions
+2. No association between frequency and reduction willingness on behalf of the speaker
+3. Re-entrance as an ambiguity avoidance mechanism
 
 ::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
 
@@ -472,47 +464,13 @@ A comparison of the mean L1 values per construction in two models with Zipfean a
 A comparison of the average half life per construction in two models with Zipfean and linear sampling respectively.
 :::
 
-#### No remembering multiple forms
-
-In this model, we set the memory size to 100, the same as the number of forms. In practice, this means that each construction is only represented by a single acoustic representation.
-
-Looking at @fig-single-exemplar-model-success, we see that global communicative success is poor, while macro-averaged success is still adequate. Therefore, we can say that the most frequent forms perform poorly, while low frequency forms remain intelligible. This violates expected behaviour #3 (see @sec-expected-behaviour).
-
-The explanation for this difference in behaviour for the different frequency types is straightforward. Because highly frequent forms have many opportunities for reduction, their representations can evolve extremely quickly. The issue is that in this way, discrepancies in the representations between different agents can arise. Therefore, two agents could have vastly different vector representations for the same construction. You can see this in the equilibrium of the global communicative success as well: it hovers around the probability set for reduction, 0.5. If an agent dares to reduce too far, communication goes amiss. Note also that the self regulation mechanism no longer works reliably with just one exemplar per construction. In contrast, less frequent forms have fewer reduction opportunities, so the probability of divergence happening here is slimmer.
-
-We do not see the same behaviour if agents can have multiple representations for the same construction, as a larger exemplar memory "buffers" against diverging behaviour. If several representations are available, a single reduced exemplar does not cause a large sway in the overall representation of a construction, and the self regulation mechanism remains reliable as well.
-
-
-::: {#fig-no-zipfian-model-group layout-ncol=2}
-
-![Global communicative success in the model where agents do not remember multiple forms (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-single-exemplar-model-success.png){#fig-single-exemplar-model-success}
-
-![Confusion matrix showing the mistakes that agents make in the model where agents do not remember multiple forms. The x axis shows the intended constructions, the y axis shows the understood construction (across agents).](figures/fig-single-exemplar-model-matrix.png){#fig-single-exemplar-model-matrix}
-
-An overview of communicative success in the model where agents do not remember multiple forms.
-:::
-
-#### No spontaneous reduction
-
-In this model, we set the probability of reduction to 0. This has the obvious effect that language users will no longer attempt to build more sparse representations for their acoustic representations. In @fig-no-reduction-model-l1-general, we see that the average L1 is not decreasing. This violates expected behaviour #1 (see @sec-expected-behaviour).
-
-![Average L1 evolution in the model without spontaneous reduction (across constructions, across agents)](figures/fig-no-reduction-model-l1-general.png){#fig-no-reduction-model-l1-general}
-
-#### No self-regulation
-
-The model without self-regulation is equivalent to the base model. This model is discussed in @sec-base-model. 
-
-Each time we disabled a precondition, it led to model behaviour that did not pass our three minimum requirements. This leads us to believe that, within the scope of our implementation, our five preconditions are indeed the minimal set.
-
 ## Discussion {#sec-discussion}
 
-In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. We found that at least the following five preconditions were necessary to produce the reducing effect with all of its properties in a simulation:
+In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. We found that at least the following set of specifications was required to lead to the reducing effect:
 
-1. Language users employ a shared code
-2. Language users sample constructions according to Zipf's law
-3. Language users remember multiple forms of the same construction
-4. Language users spontaneously reduce forms
-5. Language users should be able to understand reduced forms before uttering them
+1. Zipfian frequency difference between constructions
+2. No association between frequency and reduction willingness on behalf of the speaker
+3. Re-entrance as an ambiguity avoidance mechanism
 
 In this discussion section, we will go over what the necessity of these requirements means for reduction theory, and usage-based linguistics as a whole.
 
