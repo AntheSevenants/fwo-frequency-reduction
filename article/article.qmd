@@ -257,7 +257,7 @@ In this section, we will run through the different parameters the model has and 
 
 One of the driving forces behind our parameter choices was computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts, large vocabulary sizes and large memory sizes all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we made the decision to keep the parameters of the simulation modest. Review @tbl-parameters for an overview of our choices.
 
-[^agent-count-exception]: Of course, if a simulation is designed to be sensitive to agent count (i.e. because it is part of the research question), then the number of agents *does* matter.
+[^agent-count-exception]: Of course, if a simulation is designed to be sensitive to agent count (i.e. because it is part of the research question), then the number of agents *should* matter.
 
 | Parameter | Explanation | Value |
 | --- | --- | --- |
