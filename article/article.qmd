@@ -136,7 +136,7 @@ In this model initialisation stage, vector representations are not copied to an 
 
 Because an agent's memory is limited to size $L$, whenever a new exemplar needs to be stored, an older exemplar needs to be removed or "forgotten". We apply the logic that the oldest exemplar that is not the last exemplar left of a construction is deleted. In this way, we avoid situations where the only exemplar left of a construction is removed, which would cause issues with mutual comprehension later in the simulation. Of course, forgetting a specific construction is normal in real life, but we avoid this situation in the simulation in order to keep the simulation mechanics as straightforward as possible. An example of the forgetting mechanic is given in @tbl-model_design_forgetting_example.
 
-|  Exemplar  | Age in model steps | Associated construction | Exemplars left for construction |
+|  Exemplar  | Age in model iterations | Associated construction | Exemplars left for construction |
 | ---- | -----        | -----                   | ----- |
 | Exemplar 1 | 1575 | Construction 15 | 2 |
 | ~~Exemplar 2~~ | 2789 | Construction 15 | 2 |
@@ -290,7 +290,7 @@ As for (1), we can see in @fig-base-model-l1-general that the average L1 (see Ap
 
 With respect to (2), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph). We do see a strange hill-like energy structure at the left of the graph, which we will explain in (3).
 
-In @fig-base-model-half-life-per-construction, the "half life" period for each construction is given. We show how many steps in the simulation it took for every acoustic representation to reach half of its original energy. We see that for more frequent constructions (at the left of the graph), this half time tends to be reached faster than for less frequent constructions (at the right of the graph). Most constructions do not even show up in the graph, since they have not reached half their original energy yet.
+In @fig-base-model-half-life-per-construction, the "half life" period for each construction is given. We show how many iterations in the simulation it took for every acoustic representation to reach half of its original energy. We see that for more frequent constructions (at the left of the graph), this half time tends to be reached faster than for less frequent constructions (at the right of the graph). Most constructions do not even show up in the graph, since they have not reached half their original energy yet.
 
 Regarding (3), we refer to @fig-base-model-success. It shows both the micro-averaged and macro-averaged communicative success in the model. The micro-average refers to the total number of successes, and is influenced by Zipfian sampling. Because most of the speaking turns will concern the most frequent construction, the communicative success of that specific construction weighs significantly on the global, unadjusted success rate. The macro-average is an average across averages: each construction contributes equally towards the average, and therefore overrules Zipfian sampling. The macro-average gives a better of idea of communicative success in the language system as a whole.
 
@@ -300,17 +300,17 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 ::: {#fig-base-model-group layout-ncol=2}
 
-![Average L1 evolution in the base model (across constructions, across agents)](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
+![Average L1 evolution in the base model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
 
-![Average L1 value in the base model (per construction, across agents, 50,000 iterations)](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
+![Average L1 value in the base model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
 
-![Average L1 half life in the base model (per construction, across agents, 50,000 iterations)](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
+![Average L1 half life in the base model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
 
-![Global communicative success in the base model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-base-model-success.png){#fig-base-model-success}
+![Global communicative success in the base model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-success.png){#fig-base-model-success}
 
-![Confusion matrix showing the mistakes that agents make in the base model. The y axis shows the intended constructions, the x axis shows the understood construction (across agents).](figures/fig-base-model-matrix.png){#fig-base-model-matrix}
+![Confusion matrix showing the mistakes that agents make in the base model. The y axis shows the intended constructions, the x axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-base-model-matrix.png){#fig-base-model-matrix}
 
-![Correct interpretation ratio evolution in the base model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly.](figures/fig-base-model-confusion-ratio.png){#fig-base-model-confusion-ratio}
+![Correct interpretation ratio evolution in the base model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly. The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-confusion-ratio.png){#fig-base-model-confusion-ratio}
 
 An overview of the different simulation behaviour metrics and their evolutions for the base model.
 :::
@@ -353,17 +353,17 @@ With this new precondition added to our basic assumptions, the model now behaves
 
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
-![Average L1 evolution in the re-entrance model (across constructions, across agents)](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
+![Average L1 evolution in the re-entrance model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
 
-![Average L1 value in the re-entrance model (per construction, across agents, 50,000 iterations)](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
+![Average L1 value in the re-entrance model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
 
-![Average L1 half life in the re-entrance model (per construction, across agents, 50,000 iterations)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
+![Average L1 half life in the re-entrance model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
 
-![Global communicative success in the re-entrance model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average.](figures/fig-reentrance-model-success.png){#fig-reentrance-model-success}
+![Global communicative success in the re-entrance model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-success.png){#fig-reentrance-model-success}
 
-![Confusion matrix showing the mistakes that agents make in the re-entrance model. The x axis shows the intended constructions, the y axis shows the understood construction (across agents).](figures/fig-reentrance-model-matrix.png){#fig-reentrance-model-matrix}
+![Confusion matrix showing the mistakes that agents make in the re-entrance model. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-reentrance-model-matrix.png){#fig-reentrance-model-matrix}
 
-![Correct interpretation ratio evolution in the re-entrance model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly.](figures/fig-reentrance-model-confusion-ratio.png){#fig-reentrance-model-confusion-ratio}
+![Correct interpretation ratio evolution in the re-entrance model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly. The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-confusion-ratio.png){#fig-reentrance-model-confusion-ratio}
 
 An overview of the different simulation behaviour metrics and their evolutions for the re-entrance model.
 :::
@@ -439,9 +439,9 @@ In this regard, we can say that expected behaviour #2 (see @sec-expected-behavio
 
 ::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
 
-![Average L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, 50,000 iterations)](figures/fig-reentrance-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
+![Average L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
 
-![Average L1 value in the re-entrance model with linear sampling (per construction, across agents, 50,000 iterations)](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Average L1 value in the re-entrance model with linear sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
 
 A comparison of the mean L1 values per construction in two models with Zipfean and linear sampling respectively.
@@ -449,9 +449,9 @@ A comparison of the mean L1 values per construction in two models with Zipfean a
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![Average L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, 50,000 iterations)](figures/fig-reentrance-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
+![Average L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
 
-![Average L1 half life in the with linear sampling (per construction, across agents, 50,000 iterations)](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Average L1 half life in the with linear sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
 A comparison of the average half life per construction in two models with Zipfean and linear sampling respectively.
 :::
