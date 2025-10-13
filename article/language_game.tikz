@@ -65,7 +65,7 @@
 \node[exemplar_location, dashed] (x4) [yshift=-0.75cm, right=0.9cm of neighbourhood.center] {X};
 \node[draw, fill=orange!30] (outcome) [yshift=0.2cm, right=.5cm of x2.center] {3/4 = O};
 
-\node[modelstep] (save_form) [below=1.5cm of neighbourhood.west,anchor=west] {3. Save ``heard'' exemplar};
+\node[modelstep] (save_form) [below=1.5cm of neighbourhood.west,anchor=west] {3. Save ``heard'' exemplar as\\\ \ \ \ exemplar of construction O};
 
 \draw[step_arrow] ([xshift=+1.1mm]output_vector.east) .. controls +(right:40mm) and +(left:25mm) .. ([yshift=-2mm]hear_form.north west);
 \draw[step_arrow] ([yshift=+2mm]hear_form.south west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]interpret_form.north west);
