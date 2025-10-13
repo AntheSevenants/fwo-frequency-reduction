@@ -93,7 +93,7 @@ In this section, we will first discuss the core architecture of the simulation. 
 
 [^github-link]: todo hier link
 
-### Formalisation of speech
+### Formalisation of speech {#sec-speech-formalisation}
 
 For our reduction simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Since this model pertains to oral communication, having vector representations comparable to those found in the Speech Recognition field is especially interesting given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [@de_smet_entrenchment_2016]. Such reduction effects cannot be encoded in a typical written form, but they can be using vectors if we assume that the vectors encode phonetic information on all levels; the vector dimensions can be thought of as representing different acoustic frequency ranges, with the vector values representing the energy in those ranges.
 
@@ -286,7 +286,7 @@ We will discuss the behaviour of the simulation by going over the "checklist" de
 2. More frequent constructions have reduced to a greater extent than less frequent constructions.
 3. Communication between agents remains successful.
 
-As for (1), we can see in @fig-base-model-l1-general that the average L1 (i.e. the average energy in the acoustic representations of constructions) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
+As for (1), we can see in @fig-base-model-l1-general that the average L1 (see Appendix), i.e. the average energy in the acoustic representations of constructions (see @sec-speech-formalisation) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
 
 With respect to (2), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph). We do see a strange hill-like energy structure at the left of the graph, which we will explain in (3).
 
