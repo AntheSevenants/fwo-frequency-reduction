@@ -233,10 +233,6 @@ Note that there is no built-in assumption which dictates that frequent construct
 
 Because we use computer simulations, we apply a different methodology from traditional, empirical research. In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test that the preconditions outlined in @sec-preconditions are indeed the minimal set required for reduction as defined by @bybee_usage_2006 to occur.
 
-### Simulation behaviour metrics
-
-One of the cornerstone principles of our simulation is the complex adaptive essence of natural language. As the language system is used, it is incrementally shaped by interactions. Therefore, it is imperative that we can minutely track exactly how the language system changes in each time step of the simulation. We tracked measures such as communicative success, average construction energy and confusion among constructions. To see an overview of our metrics and their computations, see @sec-appendix-metrics.
-
 ### Expected behaviour {#sec-expected-behaviour}
 
 We will consider a set of preconditions to be conducive to the reducing effect if the following is true:
@@ -286,7 +282,9 @@ We will discuss the behaviour of the simulation by going over the "checklist" de
 2. More frequent constructions have reduced to a greater extent than less frequent constructions.
 3. Communication between agents remains successful.
 
-As for (1), we can see in @fig-base-model-l1-general that the average L1 (see Appendix), i.e. the average energy in the acoustic representations of constructions (see @sec-speech-formalisation) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
+The formulas at the basis of all visualisations can be found in the Appendix.
+
+As for (1), we can see in @fig-base-model-l1-general that the average L1, i.e. the average energy in the acoustic representations of constructions (see @sec-speech-formalisation) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
 
 With respect to (2), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph). We do see a strange hill-like energy structure at the left of the graph, which we will explain in (3).
 
