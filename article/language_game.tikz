@@ -21,8 +21,8 @@
 ]
 
 % Nodes for the steps (speaker)
-\node[modelstep] (choose_concept) [anchor=west] {1. Choose concept};
-\node[modelstep] (choose_exemplar) [below=of choose_concept.west,anchor=west] {2. Choose exemplar for concept};
+\node[modelstep] (choose_concept) [anchor=west] {1. Choose construction};
+\node[modelstep] (choose_exemplar) [below=of choose_concept.west,anchor=west] {2. Choose exemplar for construction};
 \draw[step_arrow] (choose_concept.west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]choose_exemplar.north west);
 \node[exemplar] (exemplar_yes) [below=0.75cm of choose_exemplar.west,anchor=west] {yes};
 \node[exemplar, solid] (exemplar_yeah) [right=0.25cm of exemplar_yes] {yeah};
