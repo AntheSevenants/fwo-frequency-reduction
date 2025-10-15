@@ -114,7 +114,7 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 [^parameters]: We will later discuss the exact parameters chosen.
 
-Note that, for the sake of simplicity, the meaning of the constructions in our simulations is not explicitly modelled. Instead, we implicitly assume that all meanings remain constant across different exemplars of the same constructions.
+Note also that, for the sake of simplicity, the meaning of the constructions in our simulations is not explicitly modelled. Instead, we implicitly assume that all meanings remain constant across different exemplars of the same constructions.
 
 ### Agent memory {#sec-agent-memory}
 
