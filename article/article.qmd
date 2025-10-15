@@ -81,7 +81,7 @@ Finally, existing theory on reduction also does not interact with the prospect o
 
 3. Does there need to be an ambiguity avoidance mechanism for the reducing effect to arise as expected?[^expected]
 
-[^expected]: For the reducing effect to arise "as expected", we mean that it should display the same properties as those we find in corpus data. Please see @sec-sec-evaluation for an explicit definition of expected reduction behaviour.
+[^expected]: For the reducing effect to arise "as expected", we mean that it should display the same properties as those we find in corpus data. Please see @sec-evaluation for an explicit definition of expected reduction behaviour.
 
 Empirically, it is impossible to change reality in the past in order to trace any cascading effects in the long term in corpus data. To find the requirements of the reduction effect in spite of this, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reducing effect. Our goal in this article is to investigate which set of requirements is needed for the language in our computer model to exhibit the reducing effect, displaying the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reducing effect, and try several assumptions in order to find the minimal requirements needed for the reducing effect to occur.
 
