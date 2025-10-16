@@ -49,6 +49,43 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
         figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0, disable_title=disable_title)
     elif graph_name == "half-life-per-construction":
         figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax, disable_title=disable_title)
+    elif graph_name == "mosaic_1":
+        figure = visualisation.meta.combine_plots(model,
+            lambda model, ax: visualisation.dimscrap.make_communication_plot_combined(model, ax=ax, smooth=False),
+            visualisation.l1.communicative_success_first_n,
+            lambda model, ax: visualisation.l1.make_communicative_success_macro_plot(model, ax=ax, smooth=False),
+            lambda model, ax: visualisation.l1.token_good_origin_first_n(model, ax=ax),
+            lambda model, ax: visualisation.l1.make_mean_exemplar_age_plot(model, ax=ax, smooth=False),
+            lambda model, ax: visualisation.l1.make_reduction_success_plot(model, ax=ax, smooth=False),
+            )
+    elif graph_name == "mosaic_2":
+        figure = visualisation.meta.combine_plots(model,
+            lambda model, ax: visualisation.l1.make_fail_reason_plot(model, ax=ax, include_success=True),
+            visualisation.l1.words_l1_plot_first_n,
+            lambda model, ax: visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False),
+            lambda model, ax: visualisation.dimscrap.make_communication_plot(model, ax=ax, smooth=False),
+            visualisation.l1.words_mean_exemplar_count_first_n,
+            visualisation.l1.words_mean_exemplar_count_bar)
+    elif graph_name == "confusion_mosaic":
+        figure = visualisation.meta.make_layout_plot(model,
+                                    visualisation.meta.make_confusion_plot,
+                                    n=35, steps=[math.floor(model.current_step / 4) * 1,
+                                                 math.floor(model.current_step / 4) * 2,
+                                                 math.floor(model.current_step / 4) * 3, model.current_step])
+    elif graph_name == "l1_plot":
+        figure = visualisation.meta.make_layout_plot(model,
+                                    visualisation.l1.words_mean_l1_bar,
+                                    steps=[math.floor(model.current_step / 4) * 1,
+                                                 math.floor(model.current_step / 4) * 2,
+                                                 math.floor(model.current_step / 4) * 3, model.current_step],
+                                    ylim=ylim)
+    elif graph_name == "umap_mosaic":
+        figure = visualisation.meta.make_layout_plot(model,
+                                    visualisation.meta.make_umap_plot,
+                                    steps=[math.floor(model.current_step / 4) * 1,
+                                           math.floor(model.current_step / 4) * 2,
+                                           math.floor(model.current_step / 4) * 3,
+                                           model.current_step])
     else:
         raise ValueError(f"Unrecognised graph: {graph_name}")
     
