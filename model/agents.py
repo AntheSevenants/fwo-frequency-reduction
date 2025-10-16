@@ -383,6 +383,9 @@ Old concept index was {old_concept_index}.\n\
                 spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15, width_ratio=0.5)
             elif self.model.reduction_method == ReductionMethod.ANGLE:
                 spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength)
+            elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_DIM:
+                threshold = self.model.reduction_strength  # the threshold value can be adjusted
+                spoken_token_vector = model.reduction.soft_thresholding_dimension(self.model, spoken_token_vector, self.model.reduction_strength, threshold)
 
             # print("Reduction applied: Token vector sparsified.")
         else:
@@ -402,10 +405,11 @@ Old concept index was {old_concept_index}.\n\
             
                 reception_result = self.reception_logic(unique, counts, event_index)
                 if reception_result:
-                    understood_themselves, self_understood_concept_index, should_repair = self.reception_logic(unique, counts, event_index)
+                    understood_themselves, self_understood_concept_index, should_repair = reception_result
 
-                    percentages = counts_to_percentages(counts)
-                    confident_judgement = percentages[0] >= self.model.speaker_confidence_threshold
+                    if self_understood_concept_index is not None:
+                        percentages = counts_to_percentages(counts)
+                        confident_judgement = percentages[0] >= self.model.speaker_confidence_threshold
                     break
                 else:
                     # print("- Growing")

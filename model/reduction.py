@@ -34,3 +34,12 @@ def angle_reduction(vector, distance, negative=False):
     vector[1] = max(0, vector[1] - distance * np.sin(angle))
 
     return vector
+
+def soft_thresholding_dimension(model, spoken_token_vector, reduction_strength, threshold):
+    # Choose a random dimension to reduce
+    random_index = model.random.randint(0, model.num_dimensions - 1)
+
+    # Remove from that dimension
+    spoken_token_vector[random_index] = np.maximum(spoken_token_vector[random_index] - reduction_strength, threshold)
+
+    return spoken_token_vector

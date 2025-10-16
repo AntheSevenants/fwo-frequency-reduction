@@ -16,7 +16,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -30,6 +30,7 @@ class ReductionModel(mesa.Model):
         self.seed = seed
         self.current_step = 0
         self.datacollector_step_size = datacollector_step_size
+        self.early_stop = early_stop
 
         self.neighbourhood_size = neighbourhood_size
         self.neighbourhood_type = neighbourhood_type
@@ -104,6 +105,10 @@ class ReductionModel(mesa.Model):
         self.num_tokens = num_tokens
         self.num_dimensions = num_dimensions
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
+
+        self.neighbourhood_size = neighbourhood_size
+        if dynamic_neighbourhood_size:
+            self.neighbourhood_size = self.num_dimensions * 1.5
 
         print(f"Lower dimension limit is {self.lower_dimension_limit}")
         
@@ -187,6 +192,12 @@ class ReductionModel(mesa.Model):
 
         if self.current_step % self.datacollector_step_size == 0:
             self.datacollector.collect(self)
+
+            if self.early_stop:
+                mean_token_l1 = compute_mean_token_l1(self)
+                if mean_token_l1[0] == self.reduction_strength * self.num_dimensions:
+                    self.running = False
+
         self.current_step += 1
 
     def step_unitary(self):
