@@ -161,7 +161,10 @@ for profile_name in profiles_to_process:
         token_infos["tokens"] = [str(i+1) for i in token_infos.index]
     
     # Fake model to satisfy my shoddy programming
-    min_steps = selected_model["steps"].min() # Minimum run time
+    if "steps" in selected_model:
+        min_steps = selected_model["steps"].min() # Minimum run time
+    else:
+        min_steps = selected_model["max_steps"].min()
     model = visualisation.shims.Model(dfs, run_infos.iloc[0], token_infos, min_steps)
 
     graphs = {}
