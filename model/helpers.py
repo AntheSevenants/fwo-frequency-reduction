@@ -483,6 +483,29 @@ def get_neighbours_nearest(matrix, target_row, n=2, weighted=False):
 
     return neighbour_indices, weights
 
+def get_neighbours_levenshtein(matrix, target_row, distance_threshold, weighted=False):
+    distances = np.sum(np.abs(matrix - target_row), axis=1)
+
+    # Find the indices of rows within the distance threshold
+    neighbour_indices = np.where(distances <= distance_threshold)[0]
+    
+    # Extract distances of the neighbours
+    neighbour_distances = distances[neighbour_indices]
+
+    if weighted:
+        if len(neighbour_distances) > 0:
+            unnormalized_weights = np.exp(-neighbour_distances)
+            weights = unnormalized_weights / np.sum(unnormalized_weights)
+        else:
+            weights = np.array([])
+    else:
+        weights = None
+
+    # Exclude the target row itself from the neighbours
+    #neighbour_indices = neighbour_indices[neighbour_indices != target_row_index]
+
+    return neighbour_indices, weights
+
 def counts_to_percentages(arr):
     total_sum = np.sum(arr)
     percentages = arr / total_sum

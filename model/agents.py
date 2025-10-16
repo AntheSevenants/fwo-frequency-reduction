@@ -5,7 +5,7 @@ import numpy as np
 
 import model.reduction
 
-from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, counts_to_percentages, generate_word_vectors
+from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, get_neighbours_levenshtein, counts_to_percentages, generate_word_vectors
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
@@ -178,6 +178,8 @@ Old concept index was {old_concept_index}.\n\
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.LEVENSHTEIN:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours_levenshtein(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.ONE_SHOT:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
             # Get only the closest exemplar
