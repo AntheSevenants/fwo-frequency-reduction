@@ -55,13 +55,16 @@ def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
     
     return list(zip(sampled_indices, sampled_percentiles))
 
-def generate_word_vectors(vocabulary_size=1000, dimensions=300, floor=0, seed=42):
+def generate_word_vectors(vocabulary_size=1000, dimensions=300, floor=0, ceil=100, seed=42):
     np.random.seed(seed)
 
     # Generate random vectors with values ranging from floor to 100
-    vectors = np.random.randint(floor, 100, size=(vocabulary_size, dimensions))
+    vectors = np.random.randint(floor, ceil, size=(vocabulary_size, dimensions))
     
     return np.asarray(vectors)
+
+def generate_radical_vectors(vocabulary_size=1000, dimensions=300, ceil=100):
+    return np.full((vocabulary_size, dimensions), ceil)
 
 def generate_quarter_circle_vectors(radius=100, num_points=50):
     # Angles from 0 to pi/2 (quarter circle)
