@@ -60,7 +60,10 @@ class ReductionAgent(mesa.Agent):
 
             # Add each token twice
             for j in range(self.model.initial_token_count):
-                noisy_vector = add_noise(vector, ceiling=self.model.value_ceil)
+                if not self.model.disable_noise:
+                    noisy_vector = add_noise(vector, ceiling=self.model.value_ceil)
+                else:
+                    noisy_vector = vector
 
                 # Save the vector to memory
                 self.commit_to_memory(noisy_vector, token_index, good_origin=True)
@@ -81,7 +84,10 @@ class ReductionAgent(mesa.Agent):
                 else:
                     random_vector = self.model.get_original_vector(random_index, self.personalised_vocabulary)
                 
-                noisy_vector = add_noise(random_vector)
+                if not self.model.disable_noise:
+                    noisy_vector = add_noise(random_vector)
+                else:
+                    noisy_vector = random_vector
 
                 self.commit_to_memory(noisy_vector, random_index, good_origin=True)
 
