@@ -4,10 +4,11 @@ import math
 import numpy as np
 
 from model.agents import ReductionAgent
-from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors
+from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
+from model.types.vector import VectorTypes
 from model.types.feedback import FeedbackTypes
 from model.types.who_saves import WhoSaves
 from model.types.repair import Repair
@@ -16,7 +17,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, radical=False, disable_noise=False, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
         super().__init__(seed=seed)
 
         self.num_agents = num_agents
@@ -31,7 +32,7 @@ class ReductionModel(mesa.Model):
         self.current_step = 0
         self.datacollector_step_size = datacollector_step_size
         self.early_stop = early_stop
-        self.radical = radical
+        self.vectors_type = vectors_type
 
         self.neighbourhood_size = neighbourhood_size
         self.neighbourhood_type = neighbourhood_type
@@ -91,11 +92,14 @@ class ReductionModel(mesa.Model):
 
         # Overwrite vectors with my own
         if not self.toroidal:
-            # Radical mode or not?
-            if not self.radical:
+            if self.vectors_type == VectorTypes.ORIGINAL:
                 vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, floor=reduction_strength, seed=seed, ceil=self.value_ceil)
-            else:
+            elif self.vectors_type == VectorTypes.RADICAL:
                 vectors = generate_radical_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, ceil=self.value_ceil)
+            elif self.vectors_type == VectorTypes.DIRK_P2:
+                vectors = generate_dirk_p2_vectors(max_vocabulary_size=len(tokens), dimensions=num_dimensions, floor=value_ceil - (2 * neighbourhood_size), ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size, seed=seed)
+                num_tokens = vectors.shape[0]
+                print(f"Num tokens = {num_tokens}")
         else:
             tokens = tokens[0:num_tokens]
             frequencies = frequencies[0:num_tokens]
@@ -106,10 +110,10 @@ class ReductionModel(mesa.Model):
             np.random.shuffle(vectors)
 
         self.vectors = vectors
-        self.tokens = tokens
-        self.frequencies = frequencies
-        self.percentiles = percentiles
-        self.ranks = ranks
+        self.tokens = tokens[0:num_tokens]
+        self.frequencies = frequencies[0:num_tokens]
+        self.percentiles = percentiles[0:num_tokens]
+        self.ranks = ranks[0:num_tokens]
         self.num_tokens = num_tokens
         self.num_dimensions = num_dimensions
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
@@ -120,7 +124,7 @@ class ReductionModel(mesa.Model):
 
         print(f"Lower dimension limit is {self.lower_dimension_limit}")
         
-        self.cumulative_frequencies = np.cumsum(frequencies)
+        self.cumulative_frequencies = np.cumsum(self.frequencies)
         self.total_frequency = self.cumulative_frequencies[-1]
 
         #

@@ -4,6 +4,7 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform
 from sklearn.metrics import silhouette_score
 from collections import defaultdict
+from model.types.neighbourhood import NeighbourhoodTypes
 
 EPSILON = 0.000001
 N_CUTOFF = 10000
@@ -65,6 +66,53 @@ def generate_word_vectors(vocabulary_size=1000, dimensions=300, floor=0, ceil=10
 
 def generate_radical_vectors(vocabulary_size=1000, dimensions=300, ceil=100):
     return np.full((vocabulary_size, dimensions), ceil)
+
+def generate_dirk_p2_vectors(max_vocabulary_size=1000, dimensions=300, floor=0, ceil=100, neighbourhood_type=NeighbourhoodTypes.SPATIAL, threshold=5, seed=42, MAX_ATTEMPTS=100):
+    np.random.seed(seed)
+
+    # Start with zero representations
+    vectors = None
+
+    while True:
+        success = False # Were we successful at generating a new vector?
+        attempts = 0
+
+        # Try MAX_ATTEMPTS times to generate a vector that is decently far away
+        while attempts < MAX_ATTEMPTS:
+            # Generate vector between floor and ceil value, of correct number of dimensions
+            new_vector = np.random.randint(floor, ceil + 1, dimensions)
+
+            # If first vector, we do not have to do any neighbourhood calculations, will always be OK!
+            if vectors is not None:
+                if neighbourhood_type == NeighbourhoodTypes.SPATIAL:
+                    neighbours, weights = get_neighbours(vectors, new_vector, threshold)
+                elif neighbourhood_type == NeighbourhoodTypes.LEVENSHTEIN:
+                    neighbours, weights = get_neighbours_levenshtein(vectors, new_vector, threshold)
+                else:
+                    raise ValueError("Unexpected neighbourhood type")
+            else:
+                neighbours = []
+
+            # If no representation is too close, this is a good vector!
+            if len(neighbours) == 0:
+                success = True
+                if vectors is None:
+                    vectors = np.array([ new_vector ])
+                else:
+                    vectors = np.vstack([vectors, new_vector])
+
+                # If we reached the max number of constructions, set success to false to stop the loop
+                if vectors.shape[0] == max_vocabulary_size:
+                    success = False
+
+                break
+
+            attempts += 1
+
+        if not success:
+            break
+
+    return vectors
 
 def generate_quarter_circle_vectors(radius=100, num_points=50):
     # Angles from 0 to pi/2 (quarter circle)
