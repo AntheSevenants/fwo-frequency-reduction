@@ -9,7 +9,7 @@ import visualisation.dimscrap
 import visualisation.angle
 import visualisation.shims
 
-def create_graph(graph_name, model, n, disable_title):
+def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
     fig, ax = plt.subplots()
 
     if graph_name == "l1-general":
@@ -49,5 +49,7 @@ def create_graph(graph_name, model, n, disable_title):
         figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0, disable_title=disable_title)
     elif graph_name == "half-life-per-construction":
         figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax, disable_title=disable_title)
+    else:
+        raise ValueError(f"Unrecognised graph: {graph_name}")
     
     return figure
