@@ -121,7 +121,7 @@ def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
 
     return ax
 
-def words_mean_l1_bar(model, step, ax=None, disable_title=False):
+def words_mean_l1_bar(model, step, ax=None, ylim=7000, disable_title=False):
     if ax is None:
         ax = plt
         no_ax = True
@@ -146,7 +146,7 @@ def words_mean_l1_bar(model, step, ax=None, disable_title=False):
     if not disable_title:
         if not no_ax:
             ax.set_title(title) 
-            ax.set_ylim([0, 7000])
+            ax.set_ylim([0, ylim])
         else:
             ax.title(title)
 
