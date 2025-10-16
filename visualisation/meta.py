@@ -83,7 +83,8 @@ def make_confusion_plot(model, step, n=35, ax=None, disable_title=False):
         ax.set_title("")
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 

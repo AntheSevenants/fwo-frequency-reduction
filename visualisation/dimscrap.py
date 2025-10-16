@@ -137,7 +137,8 @@ def make_communication_plot_combined(model, smooth=True, ax=None, disable_title=
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
     
     return ax
 

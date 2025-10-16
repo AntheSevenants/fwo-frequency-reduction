@@ -9,14 +9,16 @@ class Datacollector:
             return self._df
 
 class Model:
-    def __init__(self, dfs, run_infos, token_infos):
+    def __init__(self, dfs, run_infos, token_infos, min_steps):
         # All my code is written for a single simulation run
         # Hooray. I now have 100 simulation runs to aggregate
         # Time for some magic.
         df_aggregated = dfs[0].copy()
 
+        min_steps_computed = int(min_steps) // int(run_infos["datacollector_step_size"]) + 2
+
         for column in df_aggregated.columns:
-            #print(column)
+            print(column)
 
             if column in ["fail_reason", "outcomes"]:
                 continue
@@ -28,7 +30,13 @@ class Model:
             aggregated_data = []
 
             for df in dfs:
-                aggregated_data.append(df[column].to_list())
+                # Truncate to minimum value if needed
+                column_data = df[column].to_list()
+                # print(len(column_data))
+                column_data = column_data[:min_steps_computed]
+                # print(len(column_data))
+
+                aggregated_data.append(column_data)
 
             aggregated_column = np.array(aggregated_data)
 
@@ -40,8 +48,10 @@ class Model:
             #print("Coerced shape:", aggregated_column.shape)
 
             # Assign back to the column
-            df_aggregated[column] = pd.Series([arr for arr in aggregated_column])            
-        
+            df_aggregated[column] = pd.Series([arr for arr in aggregated_column], index=range(min_steps_computed))
+
+        df_aggregated = df_aggregated.iloc[:min_steps_computed]
+
         self.datacollector = Datacollector(df_aggregated)
 
         self.tokens = token_infos["tokens"].to_list()
@@ -52,7 +62,7 @@ class Model:
         self.num_tokens = len(self.tokens)
 
         self.datacollector_step_size = run_infos["datacollector_step_size"]
-        self.current_step = run_infos["max_steps"]
+        self.current_step = min_steps
         self.neighbourhood_size = run_infos["neighbourhood_size"]
 
         if "value_ceil" in run_infos:
