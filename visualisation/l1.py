@@ -51,6 +51,9 @@ def make_mean_exemplar_age_plot(model, smooth=True, ax=None, disable_title=False
 def make_reduction_success_plot(model, smooth=True, ax=None, disable_title=False):
     return make_general_plot(model, "reduction_success", ax=ax, smooth=smooth, title="Global reduction success ratio", ratio=True, disable_title=disable_title)
 
+def make_reentrance_ratio_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "reentrance_ratio", ax=ax, smooth=smooth, title="Re-entrance reversal ratio", ratio=True, disable_title=disable_title)
+
 def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
     matrix_3d = np.stack(df[attribute].to_numpy())

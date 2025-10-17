@@ -381,6 +381,8 @@ Old concept index was {old_concept_index}.\n\
         # Save the current vector
         unreduced_vector = spoken_token_vector.copy()
         if do_reduction:
+            self.model.total_reductions += 1
+
             threshold = self.model.reduction_strength 
             if self.model.reduction_method == ReductionMethod.DIMENSION_SCRAP:
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
@@ -428,6 +430,9 @@ Old concept index was {old_concept_index}.\n\
 
             # If the speaker wouldn't have understood themselves, turn back the reduction
             # Or if the speaker is not confident!
+            if not understood_themselves:
+                self.model.reversed_reductions += 1
+
             if not understood_themselves or not confident_judgement:
                 spoken_token_vector = unreduced_vector
 

@@ -303,6 +303,12 @@ def compute_mean_reduction_per_token(model):
 def compute_repairs(model):
     return model.total_repairs
 
+def compute_reentrance_ratio(model):
+    if model.total_reductions == 0:
+        return 0
+    else:
+        return model.reversed_reductions / model.total_reductions
+
 def compute_mean_exemplar_age(model):
     agentwise_memory = np.zeros(model.num_agents)
 
