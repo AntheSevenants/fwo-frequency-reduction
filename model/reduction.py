@@ -1,6 +1,6 @@
 import numpy as np
 
-def reduction_mask(model, vector, reduction_strength, width_ratio=0.05, threshold=1):
+def reduction_mask(model, vector, reduction_strength, width_ratio=0.5, threshold=1):
     # Compute the center of the reduction mask by selecting a random dimension
     center_index = model.random.randint(0, model.num_dimensions - 1)
     # Compute the reduction mask's length by taking a percentage of the vector length
@@ -23,6 +23,48 @@ def reduction_mask(model, vector, reduction_strength, width_ratio=0.05, threshol
     reduced_vector = np.maximum(vector - reduction_mask, threshold)
 
     return reduced_vector
+
+def taper(vec, total_reduce, width=3, rng=None):
+    """
+    Reduce a total value from a 1D vector with a taper around a random center.
+
+    Parameters
+    ----------
+    vec : np.ndarray
+        Input 1D vector.
+    total_reduce : float
+        Total amount to remove (distributed over nearby indices).
+    width : float
+        Controls the spread of the taper (higher = wider, flatter taper).
+    rng : np.random.Generator or int, optional
+        Random number generator or seed for reproducibility.
+
+    Returns
+    -------
+    np.ndarray
+        New vector after reduction.
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+    elif isinstance(rng, int):
+        rng = np.random.default_rng(rng)
+    
+    n = len(vec)
+    center = rng.integers(0, n)
+    
+    # Create Gaussian-like taper centered at `center`
+    x = np.arange(n)
+    weights = np.exp(-0.5 * ((x - center) / width) ** 2)
+    weights /= weights.sum()  # normalize
+    
+    # Scale weights to the total reduction
+    reduction = total_reduce * weights
+    
+    # Ensure we don't go below zero
+    new_vec = np.maximum(vec - reduction, 0)
+    
+    return new_vec
+
 
 def angle_reduction(vector, distance, negative=False):
     angle = np.arctan2(vector[1], vector[0])

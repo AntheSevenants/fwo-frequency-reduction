@@ -381,6 +381,7 @@ Old concept index was {old_concept_index}.\n\
         # Save the current vector
         unreduced_vector = spoken_token_vector.copy()
         if do_reduction:
+            threshold = self.model.reduction_strength 
             if self.model.reduction_method == ReductionMethod.DIMENSION_SCRAP:
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
@@ -388,7 +389,9 @@ Old concept index was {old_concept_index}.\n\
                 threshold = self.model.reduction_strength  # the threshold value can be adjusted
                 spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, 15)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
-                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15, width_ratio=0.5)
+                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, reduction_strength, width_ratio=0.5, threshold=threshold)
+            elif self.model.reduction_method == ReductionMethod.TAPER:
+                spoken_token_vector = model.reduction.taper(spoken_token_vector, reduction_strength, self.model.num_dimensions)
             elif self.model.reduction_method == ReductionMethod.ANGLE:
                 spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength)
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_DIM:

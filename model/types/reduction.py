@@ -10,3 +10,4 @@ class ReductionMethod:
     SOFT_THRESHOLDING_DIM = 4
     GAUSSIAN_MASK = 2
     ANGLE = 3
+    TAPER = 5
