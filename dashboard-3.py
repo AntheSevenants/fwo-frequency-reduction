@@ -145,7 +145,7 @@ def index():
                            get_enum_name=get_enum_name)
 
 @app.route('/graph/<string:selected_run>/<string:parameter_selection_id>/<string:graph_name>')
-def generate_graph(graph_name, selected_run, parameter_selection_id):
+def send_graph(graph_name, selected_run, parameter_selection_id):
     # Where our figures are stored for this parameter combination
     temp_models_figures_dir = make_temp_models_figures_dir(selected_run, parameter_selection_id)
     

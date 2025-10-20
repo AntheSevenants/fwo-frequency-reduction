@@ -18,7 +18,7 @@
     <input id="input_note" spellcheck="false">
     <div class="container d-flex align-items-center {{ 'justify-content-center' if selected_filter is not none }}" style="min-height: 100vh;">
     {% for graph_name in graphs %}
-        <img src='{{ url_for("generate_graph", graph_name=graph_name, selected_run=selected_run, parameter_selection_id=parameter_selection_id) }}?v=99999'>
+        <img src='{{ url_for("send_graph", graph_name=graph_name, selected_run=selected_run, parameter_selection_id=parameter_selection_id) }}?v=99999'>
     {% endfor %}
     </div>
     {% endif %}
