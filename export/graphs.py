@@ -9,6 +9,10 @@ import visualisation.dimscrap
 import visualisation.angle
 import visualisation.shims
 
+REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot" ]
+NON_LIGHT_SERIALISATION_GRAPHS = [ "umap_mosaic", "memory_mosaic" ]
+TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabulary_plot_3d" ]
+
 def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
     fig, ax = plt.subplots()
 
@@ -53,7 +57,7 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
         figure = visualisation.meta.combine_plots(model,
             lambda model, ax: visualisation.dimscrap.make_communication_plot_combined(model, ax=ax, smooth=False),
             visualisation.l1.communicative_success_first_n,
-            lambda model, ax: visualisation.l1.make_communicative_success_macro_plot(model, ax=ax, smooth=False),
+            lambda model, ax: visualisation.l1.make_reentrance_ratio_plot(model, ax=ax, smooth=False),
             lambda model, ax: visualisation.l1.token_good_origin_first_n(model, ax=ax),
             lambda model, ax: visualisation.l1.make_mean_exemplar_age_plot(model, ax=ax, smooth=False),
             lambda model, ax: visualisation.l1.make_reduction_success_plot(model, ax=ax, smooth=False),
@@ -90,3 +94,9 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
         raise ValueError(f"Unrecognised graph: {graph_name}")
     
     return figure
+
+def get_analysis_graph_names(toroidal=False):
+    if not toroidal:
+        return REGULAR_GRAPHS
+    else:
+        return REGULAR_GRAPHS + TOROIDAL_GRAPHS
