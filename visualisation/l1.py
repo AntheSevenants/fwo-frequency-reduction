@@ -113,7 +113,7 @@ def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
         pass
 
     frequency_counts = model.datacollector.get_model_vars_dataframe()["mean_exemplar_count"].iloc[-1]
-    ax.bar(model.tokens, frequency_counts)   
+    ax.bar(model.tokens[:len(frequency_counts)], frequency_counts)   
 
     if not disable_title:
         ax.set_title("Mean exemplar count per token (across agents)")
@@ -135,7 +135,7 @@ def words_mean_l1_bar(model, step, ax=None, ylim=7000, disable_title=False):
         step = step // model.datacollector_step_size
 
     token_l1 = model.datacollector.get_model_vars_dataframe()["mean_token_l1"].iloc[step]
-    ax.bar(model.tokens, token_l1)
+    ax.bar(model.tokens[:len(token_l1)], token_l1)
 
     x_tokens = [ str(i) if i % 10 == 0 or i in [1, model.num_tokens] else "" for i in range(1, model.num_tokens + 1) ]
     if not no_ax:

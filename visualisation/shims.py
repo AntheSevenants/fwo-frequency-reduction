@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 import pandas as pd
 
@@ -9,13 +11,18 @@ class Datacollector:
             return self._df
 
 class Model:
-    def __init__(self, dfs, run_infos, token_infos, min_steps):
+    def __init__(self, dfs, run_infos, token_infos, min_steps=None):
         # All my code is written for a single simulation run
         # Hooray. I now have 100 simulation runs to aggregate
         # Time for some magic.
         df_aggregated = dfs[0].copy()
 
-        min_steps_computed = int(min_steps) // int(run_infos["datacollector_step_size"]) + 2
+        if min_steps is not None:
+            min_steps_computed = int(min_steps) // int(run_infos["datacollector_step_size"]) + 2
+        else:
+            min_steps_computed = int(run_infos["max_steps"]) // int(run_infos["datacollector_step_size"]) + 2
+            # print(run_infos["max_steps"])
+            # print(min_steps_computed)
 
         for column in df_aggregated.columns:
             print(column)
@@ -32,9 +39,9 @@ class Model:
             for df in dfs:
                 # Truncate to minimum value if needed
                 column_data = df[column].to_list()
-                # print(len(column_data))
+                # print("Before reshape", len(column_data))
                 column_data = column_data[:min_steps_computed]
-                # print(len(column_data))
+                # print("After reshape", len(column_data))
 
                 aggregated_data.append(column_data)
 
@@ -62,8 +69,9 @@ class Model:
         self.num_tokens = len(self.tokens)
 
         self.datacollector_step_size = run_infos["datacollector_step_size"]
-        self.current_step = min_steps
+        self.current_step = min_steps if min_steps is not None else run_infos["max_steps"]
         self.neighbourhood_size = run_infos["neighbourhood_size"]
+        self.num_dimensions = run_infos["num_dimensions"]
 
         if "value_ceil" in run_infos:
             self.value_ceil = run_infos["value_ceil"]
