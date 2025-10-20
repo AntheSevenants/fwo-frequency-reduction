@@ -131,7 +131,13 @@ def index():
             # Generate the directory where we will put the figures
             temp_models_figures_dir = make_temp_models_figures_dir(selected_run=selected_run, parameter_selection_id=parameter_selection_id)
             
-            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, graphs)
+            # Get tokens information
+            # Token info is just the information on the tokens and their ranks
+            # I don't think we even still use it all that much, I should try to remove it some time
+            token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
+
+            # All graphs in a dict representation
+            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, token_infos, graphs)
 
             # Save the files to disk!
             export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)

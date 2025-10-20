@@ -18,11 +18,8 @@ ANALYSIS_TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabula
 EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
 EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
-def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, graphs):
+def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, token_infos, graphs):
     datacollector_dataframes = export.models.get_datacollector_dataframes(runs_dir, selected_run=selected_run, selected_model_ids=selected_model_ids)
-
-    # Get tokens information (TODO explain this better)
-    token_infos = export.runs.get_token_infos(runs_dir, selected_run=selected_run)
 
     # TODO implement min_steps
     # Build an aggregate model from all the different datacollector dataframes
