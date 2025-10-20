@@ -2,6 +2,8 @@ import math
 
 import matplotlib.pyplot as plt
 
+import export.runs
+
 import visualisation
 import visualisation.l1
 import visualisation.meta
@@ -12,6 +14,31 @@ import visualisation.shims
 ANALYSIS_REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot" ]
 ANALYSIS_NON_LIGHT_SERIALISATION_GRAPHS = [ "umap_mosaic", "memory_mosaic" ]
 ANALYSIS_TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabulary_plot_3d" ]
+
+EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
+EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
+
+def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, graphs):
+    datacollector_dataframes = export.models.get_datacollector_dataframes(runs_dir, selected_run=selected_run, selected_model_ids=selected_model_ids)
+
+    # Get tokens information (TODO explain this better)
+    token_infos = export.runs.get_token_infos(runs_dir, selected_run=selected_run)
+
+    # TODO implement min_steps
+    # Build an aggregate model from all the different datacollector dataframes
+    # Then we can build one beautiful big graph
+    model = visualisation.shims.Model(datacollector_dataframes, selected_models.iloc[0], token_infos, min_steps=None)
+
+    # Now, we can build the desired graphs and save them
+    graphs_output = {}
+
+    # TODO change 'n'
+    for graph_name in graphs:
+        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=35, ylim=model.value_ceil * model.num_dimensions, disable_title=False)
+
+        graphs_output[graph_name] = figure
+
+    return graphs_output
 
 def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
     fig, ax = plt.subplots()
