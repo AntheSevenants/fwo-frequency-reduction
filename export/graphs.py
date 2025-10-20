@@ -9,9 +9,9 @@ import visualisation.dimscrap
 import visualisation.angle
 import visualisation.shims
 
-REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot" ]
-NON_LIGHT_SERIALISATION_GRAPHS = [ "umap_mosaic", "memory_mosaic" ]
-TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabulary_plot_3d" ]
+ANALYSIS_REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot" ]
+ANALYSIS_NON_LIGHT_SERIALISATION_GRAPHS = [ "umap_mosaic", "memory_mosaic" ]
+ANALYSIS_TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabulary_plot_3d" ]
 
 def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
     fig, ax = plt.subplots()
@@ -97,6 +97,6 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
 
 def get_analysis_graph_names(toroidal=False):
     if not toroidal:
-        return REGULAR_GRAPHS
+        return ANALYSIS_REGULAR_GRAPHS
     else:
-        return REGULAR_GRAPHS + TOROIDAL_GRAPHS
+        return ANALYSIS_REGULAR_GRAPHS + ANALYSIS_TOROIDAL_GRAPHS
