@@ -383,12 +383,11 @@ Old concept index was {old_concept_index}.\n\
         if do_reduction:
             self.model.total_reductions += 1
 
-            threshold = self.model.reduction_strength 
+            threshold = self.model.value_floor 
             if self.model.reduction_method == ReductionMethod.DIMENSION_SCRAP:
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
                 # Apply L1-based soft thresholding to encourage further sparsity
-                threshold = self.model.reduction_strength  # the threshold value can be adjusted
                 spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, 15)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
                 spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, reduction_strength, width_ratio=0.5, threshold=threshold)
@@ -397,7 +396,6 @@ Old concept index was {old_concept_index}.\n\
             elif self.model.reduction_method == ReductionMethod.ANGLE:
                 spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength)
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_DIM:
-                threshold = self.model.reduction_strength  # the threshold value can be adjusted
                 spoken_token_vector = model.reduction.soft_thresholding_dimension(self.model, spoken_token_vector, self.model.reduction_strength, threshold)
 
             # print("Reduction applied: Token vector sparsified.")
