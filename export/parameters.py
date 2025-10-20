@@ -28,7 +28,7 @@ def find_eligible_models(run_infos, selected_parameters):
     for column, value in selected_parameters.items():
         if column in RESERVED_KEYWORDS:
             continue
-        mask &= (run_infos[column].astype(str) == value)
+        mask &= (run_infos[column].astype(str) == str(value))
     
     # Filter the data frame
     selected_models = run_infos[mask]

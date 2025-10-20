@@ -2,7 +2,7 @@ import math
 
 import matplotlib.pyplot as plt
 
-import export.runs
+import export.models
 
 import visualisation
 import visualisation.l1
@@ -18,7 +18,7 @@ ANALYSIS_TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabula
 EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
 EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
-def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, token_infos, graphs):
+def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, token_infos, graphs, disable_title=False):
     datacollector_dataframes = export.models.get_datacollector_dataframes(runs_dir, selected_run=selected_run, selected_model_ids=selected_model_ids)
 
     # TODO implement min_steps
@@ -31,7 +31,7 @@ def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir,
 
     # TODO change 'n'
     for graph_name in graphs:
-        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=35, ylim=model.value_ceil * model.num_dimensions, disable_title=False)
+        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=35, ylim=model.value_ceil * model.num_dimensions, disable_title=disable_title)
 
         graphs_output[graph_name] = figure
 
@@ -124,3 +124,12 @@ def get_analysis_graph_names(toroidal=False):
         return ANALYSIS_REGULAR_GRAPHS
     else:
         return ANALYSIS_REGULAR_GRAPHS + ANALYSIS_TOROIDAL_GRAPHS
+
+def get_export_graph_names(toroidal=False):
+    if not toroidal:
+        return EXPORT_REGULAR_GRAPHS
+    else:
+        return EXPORT_REGULAR_GRAPHS + EXPORT_TOROIDAL_GRAPHS
+
+def get_n(toroidal=False):
+    return 35 if not toroidal else 10
