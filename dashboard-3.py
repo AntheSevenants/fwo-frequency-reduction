@@ -117,34 +117,18 @@ def index():
         
         # Get the IDs from the selected models
         selected_model_ids = selected_models["run_id"].to_list()
-        datacollector_dataframes = export.models.get_datacollector_dataframes(RUNS_DIR, selected_run=selected_run, selected_model_ids=selected_model_ids)
-
-        # Get tokens information (TODO explain this better)
-        token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
-
-        # TODO implement min_steps
-        # Build an aggregate model from all the different datacollector dataframes
-        # Then we can build one beautiful big graph
-        model = visualisation.shims.Model(datacollector_dataframes, selected_models.iloc[0], token_infos, min_steps=None)
-
-        # Now, we can build the desired graphs and save them
-        graphs_output = {}
-
-        # TODO change 'n'
-        for graph_name in graphs:
-            print(graph_name)
-            figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=35, ylim=model.value_ceil * model.num_dimensions, disable_title=False)
-
-            graphs_output[graph_name] = figure
-
         # Remember the ID for this specific parameter selection
         parameter_selection_id = get_parameter_selection_id(selected_model_ids=selected_model_ids)
 
-        # Create the directory where we will put the figures
-        temp_models_figures_dir = make_temp_models_figures_dir(selected_run=selected_run, parameter_selection_id=parameter_selection_id)
+        # Get cached graphs
+        cached_graphs = get_cached_graphs(selected_run, parameter_selection_id, graphs)
+        non_cached_graph_count = len(list(set(graphs) - set(cached_graphs)))
 
-        # Save the files to disk!
-        export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)
+        if non_cached_graph_count == 0:
+            pass
+        # If we still need some graphs, just build all of them again
+        else:
+            generate_graphs(selected_run, selected_model_ids, selected_models, graphs)
 
     return render_template('index.html',
                            runs=runs,
@@ -210,5 +194,53 @@ def make_temp_models_figures_dir(selected_run, parameter_selection_id):
 def get_parameter_selection_id(selected_model_ids):
     # I think this will work because we're always working with unique numbers
     return sum(selected_model_ids)
+
+def generate_graphs(selected_run, selected_model_ids, selected_models, graphs):
+    datacollector_dataframes = export.models.get_datacollector_dataframes(RUNS_DIR, selected_run=selected_run, selected_model_ids=selected_model_ids)
+
+    # Get tokens information (TODO explain this better)
+    token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
+
+    parameter_selection_id = get_parameter_selection_id(selected_model_ids)
+
+    # TODO implement min_steps
+    # Build an aggregate model from all the different datacollector dataframes
+    # Then we can build one beautiful big graph
+    model = visualisation.shims.Model(datacollector_dataframes, selected_models.iloc[0], token_infos, min_steps=None)
+
+    # Now, we can build the desired graphs and save them
+    graphs_output = {}
+
+    # TODO change 'n'
+    for graph_name in graphs:
+        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=35, ylim=model.value_ceil * model.num_dimensions, disable_title=False)
+
+        graphs_output[graph_name] = figure
+
+    # Create the directory where we will put the figures
+    temp_models_figures_dir = make_temp_models_figures_dir(selected_run=selected_run, parameter_selection_id=parameter_selection_id)
+
+    # Save the files to disk!
+    export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)
+
+def is_graph_in_cache(selected_run, parameter_selection_id, graph_name):
+    temp_models_figures_dir = make_temp_models_figures_dir(selected_run, parameter_selection_id)
+    graph_filename = export.files.get_figure_filename(PROFILE_NAME, graph_name)
+    
+    # Where graph would typically be saved
+    graph_path = os.path.join(temp_models_figures_dir, graph_filename)
+
+    # If it exists, it sits in cache
+    return os.path.exists(graph_path)
+
+def get_cached_graphs(selected_run, parameter_selection_id, graphs):
+    # Check if the graphs we need already exist
+    cached_graphs = []
+
+    for graph_name in graphs:
+        if is_graph_in_cache(selected_run, parameter_selection_id, graph_name):
+            cached_graphs.append(graph_name)
+
+    return cached_graphs
 
 app.run(debug=True, port=8080, host="0.0.0.0")
