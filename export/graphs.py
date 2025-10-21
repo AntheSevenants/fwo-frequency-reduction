@@ -18,7 +18,8 @@ ANALYSIS_TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabula
 EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
 EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
-def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, token_infos, graphs, disable_title=False):
+# TODO implement toroidal support better
+def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, token_infos, graphs, toroidal=False, disable_title=False):
     datacollector_dataframes = export.models.get_datacollector_dataframes(runs_dir, selected_run=selected_run, selected_model_ids=selected_model_ids)
 
     # TODO implement min_steps
@@ -29,9 +30,10 @@ def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir,
     # Now, we can build the desired graphs and save them
     graphs_output = {}
 
-    # TODO change 'n'
+    n = export.graphs.get_n(toroidal)
+
     for graph_name in graphs:
-        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=35, ylim=model.value_ceil * model.num_dimensions, disable_title=disable_title)
+        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=n, ylim=model.value_ceil * model.num_dimensions, disable_title=disable_title)
 
         graphs_output[graph_name] = figure
 
