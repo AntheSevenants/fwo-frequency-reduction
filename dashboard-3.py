@@ -136,6 +136,9 @@ def index():
             # I don't think we even still use it all that much, I should try to remove it some time
             token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
 
+            # TODO make configurable !!!
+            token_infos["tokens"] = [str(i+1) for i in token_infos.index]
+
             # All graphs in a dict representation
             graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, token_infos, graphs)
 
