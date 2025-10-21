@@ -100,3 +100,12 @@ def multiply_decay(vector, alpha=0.9):
 
 def coarse_quantisation(vector, step=5):
     return np.round(vector / step).astype(int) * step
+
+def bye_max(vector, reduction_strength, threshold):
+    max_index = np.argmax(vector)
+    new_value = vector[max_index] - reduction_strength
+
+    if new_value > threshold:
+        vector[max_index] = new_value
+    
+    return vector

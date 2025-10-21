@@ -12,3 +12,4 @@ class ReductionMethod:
     ANGLE = 3
     TAPER = 5
     NON_LINEAR = 6
+    BYE_MAX = 7

@@ -401,6 +401,8 @@ Old concept index was {old_concept_index}.\n\
                 alpha = self.model.alpha
                 step = reduction_strength
                 spoken_token_vector = model.reduction.non_linear(spoken_token_vector, alpha, step)
+            elif self.model.reduction_method == ReductionMethod.BYE_MAX:
+                spoken_token_vector = model.reduction.bye_max(spoken_token_vector, reduction_strength, threshold)
 
             # print("Reduction applied: Token vector sparsified.")
         else:

@@ -99,7 +99,11 @@ class ReductionModel(mesa.Model):
             elif self.vectors_type == VectorTypes.RADICAL:
                 vectors = generate_radical_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, ceil=self.value_ceil)
             elif self.vectors_type == VectorTypes.DIRK_P2:
-                vectors = generate_dirk_p2_vectors(max_vocabulary_size=len(tokens), dimensions=num_dimensions, floor=value_ceil - (2 * neighbourhood_size), ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size * 1.5, seed=seed)
+                quantisation_step = 0
+                # if self.reduction_method == ReductionMethod.NON_LINEAR:
+                #     quantisation_step = self.reduction_strength
+
+                vectors = generate_dirk_p2_vectors(max_vocabulary_size=len(tokens), dimensions=num_dimensions, floor=value_ceil - (2 * neighbourhood_size), ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size * 1.5, check_quantisation=quantisation_step, seed=seed)
                 num_tokens = vectors.shape[0]
                 print(f"Num tokens = {num_tokens}")
         else:
