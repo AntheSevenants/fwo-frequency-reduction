@@ -31,6 +31,7 @@ import visualisation
 
 RUNS_DIR = "models/"
 FIGURES_OUTPUT_DIR = "/tmp/reduction-dashboard/"
+FIGURES_OUTPUT_LIVE_DIR = "figures/temp/"
 PROFILE_NAME = "dashboard"
 ENUM_MAPPING = {
     "repair": model.types.repair.Repair,
@@ -60,6 +61,9 @@ def index():
     selected_run = request.args.get('run')
     # you can filter for specific graphs
     selected_filter = request.args.get('filter')
+
+    # live = are we looking at graphs from the jupyter notebook?
+    live = False
     
     # Combination of parameters selected
     selected_parameters = dict(request.args)
@@ -145,6 +149,12 @@ def index():
             # Save the files to disk!
             export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)
 
+    if args.live:
+        selected_run = "live"
+        parameter_selection_id = "live"
+        live = True
+        no_selection = False
+
     return render_template('index.html',
                            runs=runs,
                            selected_run=selected_run,
@@ -153,6 +163,7 @@ def index():
                            selected_filter=selected_filter,
                            parameter_mapping=parameter_mapping,
                            constants_mapping=constants_mapping,
+                           live=live, # na na na na na
                            no_selection=no_selection,
                            graphs=graphs,
                            all_graphs=graphs,
@@ -161,13 +172,19 @@ def index():
 
 @app.route('/graph/<string:selected_run>/<string:parameter_selection_id>/<string:graph_name>')
 def send_graph(graph_name, selected_run, parameter_selection_id):
-    # Where our figures are stored for this parameter combination
-    temp_models_figures_dir = make_temp_models_figures_dir(selected_run, parameter_selection_id)
+    # Live graphs live in the same folder always, so we do not need to compute where to find them
+    if selected_run == "live" and parameter_selection_id == "live":
+        temp_models_figures_dir = FIGURES_OUTPUT_LIVE_DIR
+        profile = "jupyter"
+    else:
+        # Where our figures are stored for this parameter combination
+        temp_models_figures_dir = make_temp_models_figures_dir(selected_run, parameter_selection_id)
+        profile = PROFILE_NAME
     
     # Figure filename
-    figure_filename = export.files.get_figure_filename(PROFILE_NAME, graph_name)
-
+    figure_filename = export.files.get_figure_filename(profile, graph_name)
     graph_path = os.path.join(temp_models_figures_dir, figure_filename)
+
     return send_file(graph_path, mimetype='image/png')
 
 # From Le Chat
@@ -229,5 +246,11 @@ def get_cached_graphs(selected_run, parameter_selection_id, graphs):
             cached_graphs.append(graph_name)
 
     return cached_graphs
+
+parser = argparse.ArgumentParser(
+    description='dashboard-3 - kowalski, analysis')
+parser.add_argument("--live", action="store_true", help="look at graphs from the notebook")
+parser.add_argument("--neutral_tokens", action="store_true", help="make tokens neutral (C1, C2, C3 ...)")
+args = parser.parse_args()
 
 app.run(debug=True, port=8080, host="0.0.0.0")

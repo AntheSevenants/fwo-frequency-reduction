@@ -37,21 +37,23 @@
                 <hr>
             </div>
             <div class="card mb-3">
-                <div class="card-header text-white">
-                    <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run selection
-                </div>
-                <div class="card-body">
-                    <div class="form-floating">
-                        <select name="run" class="form-select mb-2 interactive"
-                            aria-label="Dropdown external variable selection" id="select_external">
-                            <option disabled {{ "selected" if selected_run is none }}>Choose run</option>
-                            {% for run in runs %}
-                            <option value="{{ run }}" {{ "selected" if selected_run==run }}>{{ run }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="select_external">Available runs:</label>
+                {% if not live %}
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run selection
                     </div>
-                </div>
+                    <div class="card-body">
+                        <div class="form-floating">
+                            <select name="run" class="form-select mb-2 interactive"
+                                aria-label="Dropdown external variable selection" id="select_external">
+                                <option disabled {{ "selected" if selected_run is none }}>Choose run</option>
+                                {% for run in runs %}
+                                <option value="{{ run }}" {{ "selected" if selected_run==run }}>{{ run }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="select_external">Available runs:</label>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
             {% if selected_run is not none %}
             <div class="card mb-3">
@@ -71,53 +73,55 @@
                     </div>
                 </div>
             </div>
-            <div class="card mb-3">
-                <div class="card-header text-white">
-                    <div class="wrapper"><i class="bi bi-sliders"></i></div> Parameter selection
-                </div>
-                <div class="card-body">
-                    {% for parameter in parameter_mapping if parameter_mapping[parameter] | length > 1  %}
-                    <div class="form-floating">
-                        <select class="form-select mb-2 interactive" name="{{ parameter }}"
-                            aria-label="Dropdown external variable selection">
-                            {% for value in parameter_mapping[parameter] %}
-                            {% set friendly_name = value %}
-                            {% set selected_index = 0 %}
-                            {% if parameter in selected_parameters %}
-                                {% set selected_index = parameter_mapping[parameter].index(selected_parameters[parameter]) %}
-                            {% endif %}
-                            {% if parameter in enum_mapping %}
-                                {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
-                            {% endif %}
-                            <option value="{{ value }}" {{ "selected" if loop.index0 == selected_index }}>{{ friendly_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="select_external">{{ parameter }}:</label>
+            {% if not live %}
+                <div class="card mb-3">
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-sliders"></i></div> Parameter selection
                     </div>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="card mb-3">
-                <div class="card-header text-white">
-                    <div class="wrapper"><i class="bi bi-123"></i></div> Constants
-                </div>
-                <div class="card-body">
-                    {% for parameter in constants_mapping %}
-                    <div class="form-floating">
-                        <select class="form-select mb-2" disabled
-                            aria-label="Dropdown external variable selection">
-                            {% set value = constants_mapping[parameter] %}
-                            {% set friendly_name = constants_mapping[parameter] %}
-                            {% if parameter in enum_mapping %}
-                                {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
-                            {% endif %}
-                            <option value="{{ value }}">{{ friendly_name }}</option>
-                        </select>
-                        <label for="select_external">{{ parameter }}:</label>
+                    <div class="card-body">
+                        {% for parameter in parameter_mapping if parameter_mapping[parameter] | length > 1  %}
+                        <div class="form-floating">
+                            <select class="form-select mb-2 interactive" name="{{ parameter }}"
+                                aria-label="Dropdown external variable selection">
+                                {% for value in parameter_mapping[parameter] %}
+                                {% set friendly_name = value %}
+                                {% set selected_index = 0 %}
+                                {% if parameter in selected_parameters %}
+                                    {% set selected_index = parameter_mapping[parameter].index(selected_parameters[parameter]) %}
+                                {% endif %}
+                                {% if parameter in enum_mapping %}
+                                    {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
+                                {% endif %}
+                                <option value="{{ value }}" {{ "selected" if loop.index0 == selected_index }}>{{ friendly_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="select_external">{{ parameter }}:</label>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
-            </div>
+                <div class="card mb-3">
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-123"></i></div> Constants
+                    </div>
+                    <div class="card-body">
+                        {% for parameter in constants_mapping %}
+                        <div class="form-floating">
+                            <select class="form-select mb-2" disabled
+                                aria-label="Dropdown external variable selection">
+                                {% set value = constants_mapping[parameter] %}
+                                {% set friendly_name = constants_mapping[parameter] %}
+                                {% if parameter in enum_mapping %}
+                                    {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
+                                {% endif %}
+                                <option value="{{ value }}">{{ friendly_name }}</option>
+                            </select>
+                            <label for="select_external">{{ parameter }}:</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             {% endif %}
         </form>
         <div class="flex-grow-1 scrollable" style="position: relative;">
