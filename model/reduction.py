@@ -85,3 +85,18 @@ def soft_thresholding_dimension(model, spoken_token_vector, reduction_strength, 
     spoken_token_vector[random_index] = np.maximum(spoken_token_vector[random_index] - reduction_strength, threshold)
 
     return spoken_token_vector
+
+def non_linear(vector, alpha=0.9, step=5):
+    vector = multiply_decay(vector, alpha)
+    vector = coarse_quantisation(vector, step)
+
+    return vector
+
+def multiply_decay(vector, alpha=0.9):
+    # Multiply to introduce non-linearity
+    vector = vector * alpha
+    # Round and return
+    return np.round(vector, 0)
+
+def coarse_quantisation(vector, step=5):
+    return np.round(vector / step).astype(int) * step

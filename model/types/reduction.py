@@ -11,3 +11,4 @@ class ReductionMethod:
     GAUSSIAN_MASK = 2
     ANGLE = 3
     TAPER = 5
+    NON_LINEAR = 6
