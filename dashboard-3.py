@@ -39,7 +39,7 @@ ENUM_MAPPING = {
     "reduction_mode": model.types.reduction.ReductionModes,
     "reducution_method": model.types.reduction.ReductionMethod,
     "feedback_type": model.types.feedback.FeedbackTypes,
-    "vector": model.types.vector.VectorTypes,
+    "vectors_type": model.types.vector.VectorTypes,
     "reduction_method": model.types.reduction.ReductionMethod,
 }
 
