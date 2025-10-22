@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from model.agents import ReductionAgent
-from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors, compute_reentrance_ratio
+from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors, compute_reentrance_ratio, compute_ratio, compute_micro_mean_token_l1
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
@@ -19,6 +19,8 @@ class ReductionModel(mesa.Model):
 
     def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
         super().__init__(seed=seed)
+
+        print("Seed is", seed)
 
         self.num_agents = num_agents
         self.reduction_prior = reduction_prior
@@ -103,7 +105,7 @@ class ReductionModel(mesa.Model):
                 # if self.reduction_method == ReductionMethod.NON_LINEAR:
                 #     quantisation_step = self.reduction_strength
 
-                vectors = generate_dirk_p2_vectors(max_vocabulary_size=len(tokens), dimensions=num_dimensions, floor=value_ceil - (2 * neighbourhood_size), ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size * 1.5, check_quantisation=quantisation_step, seed=seed)
+                vectors = generate_dirk_p2_vectors(max_vocabulary_size=len(tokens), dimensions=num_dimensions, floor=value_ceil - 30, ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size, check_quantisation=quantisation_step, seed=seed)
                 num_tokens = vectors.shape[0]
                 print(f"Num tokens = {num_tokens}")
         else:
@@ -165,11 +167,14 @@ class ReductionModel(mesa.Model):
             "reduction_success": compute_reduction_success,
             "mean_agent_l1": compute_mean_agent_l1,
             "mean_token_l1": compute_mean_token_l1,
+            "micro_mean_agent_l1": compute_micro_mean_token_l1,
             "confusion_matrix": compute_confusion_matrix,
             "fail_reason": compute_fail_reason,
             "outcomes": compute_outcomes,
             "mean_exemplar_count": compute_mean_exemplar_count,
             "success_per_token": compute_communicative_success_per_token,
+            "reduction_per_token": lambda model: compute_ratio(model, "reduction_per_token", "non_reduction_per_token"),
+            "reentrance_per_token": lambda model: compute_ratio(model, "reentrance_activation_per_token", "reentrance_non_activation_per_token"),
             "communicative_success_macro": compute_communicative_success_macro_average,
             "token_good_origin": compute_token_good_origin,
             "mean_exemplar_age": compute_mean_exemplar_age,
@@ -198,6 +203,13 @@ class ReductionModel(mesa.Model):
             self.failed_turns = 0
             self.success_per_token = np.zeros(self.num_tokens)
             self.failure_per_token = np.zeros(self.num_tokens)
+
+            self.reduction_per_token = np.zeros(self.num_tokens)
+            self.non_reduction_per_token = np.zeros(self.num_tokens)
+
+            self.reentrance_activation_per_token = np.zeros(self.num_tokens)
+            self.reentrance_non_activation_per_token = np.zeros(self.num_tokens)
+
             self.total_turns = 0
             self.fail_reason = { "no_tokens": 0, "wrong_winner": 0, "shared_top": 0, "not_confident": 0 }
             self.outcomes = { "no_tokens": 0, "wrong_winner": 0, "shared_top": 0, "not_confident": 0, "success": 0 }
@@ -216,9 +228,10 @@ class ReductionModel(mesa.Model):
             self.datacollector.collect(self)
 
             if self.early_stop:
-                mean_token_l1 = compute_mean_token_l1(self)
-                if mean_token_l1[0] == self.reduction_strength * self.num_dimensions:
-                    self.running = False
+                pass # TODO fix maybe at a later date
+                #  = compute_micro_mean_token_l1(self)
+                # if mean_token_l1[0] == self.reduction_strength * self.num_dimensions:
+                #     self.running = False
 
         self.current_step += 1
 

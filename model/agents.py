@@ -388,7 +388,10 @@ Old concept index was {old_concept_index}.\n\
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
                 # Apply L1-based soft thresholding to encourage further sparsity
-                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, 15)
+                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, self.model.value_floor)
+            elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_2:
+                # Apply L1-based soft thresholding to encourage further sparsity
+                spoken_token_vector = model.reduction.soft_thresholding_2(spoken_token_vector, reduction_strength, self.model.value_floor)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
                 spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, reduction_strength, width_ratio=0.5, threshold=threshold)
             elif self.model.reduction_method == ReductionMethod.TAPER:
@@ -408,6 +411,14 @@ Old concept index was {old_concept_index}.\n\
         else:
             pass
             # print("No reduction applied.")
+
+        if (spoken_token_vector == unreduced_vector).all():
+            do_reduction = False
+
+        if do_reduction:
+            self.model.reduction_per_token[event_index] += 1
+        else:
+            self.model.non_reduction_per_token[event_index] += 1
 
         if self.model.toroidal:
             toroidal_size = self.model.value_ceil
@@ -436,6 +447,9 @@ Old concept index was {old_concept_index}.\n\
             # Or if the speaker is not confident!
             if not understood_themselves:
                 self.model.reversed_reductions += 1
+                self.model.reentrance_activation_per_token += 1
+            else:
+                self.model.reentrance_non_activation_per_token += 1
 
             if not understood_themselves or not confident_judgement:
                 spoken_token_vector = unreduced_vector

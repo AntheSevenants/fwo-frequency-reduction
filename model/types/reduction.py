@@ -13,3 +13,4 @@ class ReductionMethod:
     TAPER = 5
     NON_LINEAR = 6
     BYE_MAX = 7
+    SOFT_THRESHOLDING_2 = 8

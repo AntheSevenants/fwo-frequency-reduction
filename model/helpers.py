@@ -5,6 +5,7 @@ from scipy.spatial.distance import pdist, squareform
 from sklearn.metrics import silhouette_score
 from collections import defaultdict
 from model.types.neighbourhood import NeighbourhoodTypes
+from model.reduction import coarse_quantisation
 
 EPSILON = 0.000001
 N_CUTOFF = 10000
@@ -67,7 +68,7 @@ def generate_word_vectors(vocabulary_size=1000, dimensions=300, floor=0, ceil=10
 def generate_radical_vectors(vocabulary_size=1000, dimensions=300, ceil=100):
     return np.full((vocabulary_size, dimensions), ceil)
 
-def generate_dirk_p2_vectors(max_vocabulary_size=1000, dimensions=300, floor=0, ceil=100, neighbourhood_type=NeighbourhoodTypes.SPATIAL, threshold=5, seed=42, MAX_ATTEMPTS=100):
+def generate_dirk_p2_vectors(max_vocabulary_size=1000, dimensions=300, floor=0, ceil=100, neighbourhood_type=NeighbourhoodTypes.SPATIAL, threshold=5, seed=42, MAX_ATTEMPTS=100, check_quantisation=0):
     np.random.seed(seed)
 
     # Start with zero representations
@@ -82,12 +83,17 @@ def generate_dirk_p2_vectors(max_vocabulary_size=1000, dimensions=300, floor=0, 
             # Generate vector between floor and ceil value, of correct number of dimensions
             new_vector = np.random.randint(floor, ceil + 1, dimensions)
 
+            if check_quantisation > 0:
+                check_vector = coarse_quantisation(new_vector, check_quantisation)
+            else:
+                check_vector = new_vector
+
             # If first vector, we do not have to do any neighbourhood calculations, will always be OK!
             if vectors is not None:
                 if neighbourhood_type == NeighbourhoodTypes.SPATIAL:
-                    neighbours, weights = get_neighbours(vectors, new_vector, threshold)
+                    neighbours, weights = get_neighbours(vectors, check_vector, threshold)
                 elif neighbourhood_type == NeighbourhoodTypes.LEVENSHTEIN:
-                    neighbours, weights = get_neighbours_levenshtein(vectors, new_vector, threshold)
+                    neighbours, weights = get_neighbours_levenshtein(vectors, check_vector, threshold)
                 else:
                     raise ValueError("Unexpected neighbourhood type")
             else:
@@ -196,6 +202,10 @@ def compute_mean_token_l1(model):
     # return tokenwise_memory
     #agent_token_averages.append(token_averages)
 
+def compute_micro_mean_token_l1(model):
+    agentwise_memory = compute_mean_token_l1(model)
+    return agentwise_memory.mean(axis=0)
+
 def compute_mean_exemplar_count(model):
     agentwise_count = np.zeros((model.num_agents, model.num_tokens))
 
@@ -226,6 +236,10 @@ def compute_reduction_success(model):
 def compute_communicative_success_per_token(model):
     with np.errstate(invalid="ignore"):
         return model.success_per_token / (model.success_per_token + model.failure_per_token)
+    
+def compute_ratio(model, succes_var, fail_var):
+    with np.errstate(invalid="ignore"):
+        return getattr(model, succes_var) / (getattr(model, succes_var) + getattr(model, fail_var))
     
 def compute_communicative_success_macro_average(model):
     with np.errstate(invalid="ignore"):
@@ -539,6 +553,7 @@ def get_neighbours_nearest(matrix, target_row, n=2, weighted=False):
 
 def get_neighbours_levenshtein(matrix, target_row, distance_threshold, weighted=False):
     distances = np.sum(np.abs(matrix - target_row), axis=1)
+    distances = np.divide(distances, target_row.shape[0])
 
     # Find the indices of rows within the distance threshold
     neighbour_indices = np.where(distances <= distance_threshold)[0]
