@@ -33,6 +33,7 @@ import itertools
 import multiprocessing
 import json
 import gc
+import random
 from collections.abc import Iterable, Mapping
 from functools import partial
 from multiprocessing import Pool
@@ -78,6 +79,9 @@ def batch_run(
     run_id = 0
     for iteration in range(iterations):
         for kwargs in _make_model_kwargs(parameters):
+            if "seed" not in kwargs:
+                kwargs["seed"] = random.randint(0, 99999999)
+
             runs_list.append((run_id, iteration, date_time, kwargs))
             run_id += 1
 
@@ -200,7 +204,7 @@ def _model_run_func(
         model_file.write(json.dumps(output_data))
         #pickle.dump(model, model_file)
 
-    data = [ { "run_id": run_id, "max_steps": max_steps, "iterations": iterations, **kwargs } ]
+    data = [ { "run_id": run_id, "max_steps": max_steps, "steps": model.steps, "iterations": iterations, **kwargs } ]
 
     del model
     gc.collect()
