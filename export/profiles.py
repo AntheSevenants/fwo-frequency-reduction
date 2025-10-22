@@ -1,11 +1,13 @@
 import model.types.reduction
+import model.types.feedback
 
 base_model = {
     "memory_size": 1000,
     "zipfian_sampling": True,
     "self_check": False,
     "num_dimensions": 10,
-    "reduction_method": model.types.reduction.ReductionMethod.TAPER
+    "feedback": model.types.feedback.FeedbackTypes.FEEDBACK,
+    "reduction_method": model.types.reduction.ReductionMethod.SOFT_THRESHOLDING
 }
 
 PROFILES = {
