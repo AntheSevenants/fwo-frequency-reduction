@@ -6,6 +6,7 @@ from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
 from model.types.repair import Repair
 from model.types.who_saves import WhoSaves
+from model.types.vector import VectorTypes
 
 from batchrunner import batch_run
 
@@ -24,34 +25,41 @@ parser.add_argument('iterations', type=int, default=1, help='number of iteration
 args = parser.parse_args()
 
 params_template = {
-    "num_agents": 25,
+    "num_agents": 5,
     "reduction_prior": 0.5,
     "initial_token_count": 1,
     "prefill_memory": True,
     "neighbourhood_step_size": 0,
-    "reduction_strength": 15,
+    "reduction_strength": 1,
     "production_model": ProductionModels.SINGLE_EXEMPLAR,
-    "neighbourhood_type": NeighbourhoodTypes.SPATIAL,
+    "neighbourhood_type": NeighbourhoodTypes.LEVENSHTEIN,
     "reduction_mode": ReductionModes.ALWAYS,
-    "feedback_type": FeedbackTypes.NO_FEEDBACK,
+    "feedback_type": [ FeedbackTypes.NO_FEEDBACK, FeedbackTypes.FEEDBACK ],
     "repair": Repair.NO_REPAIR,
     "confidence_threshold": 0,
+    "value_floor": 5,
     "who_saves": [ WhoSaves.HEARER ],
-    "max_turns": 1
+    "max_turns": 1,
+    "vectors_type": [ VectorTypes.DIRK_P2 ]
 }
 
 if args.profile == "regular":
-    NUM_STEPS = 50000
+    NUM_STEPS = 200000
 
     params = { **params_template,
         "num_tokens": 100,
-        "memory_size": [ 100, 1000 ],
-        "num_dimensions": 100,
-        "neighbourhood_size": [ 150 ],
-        "reduction_method": ReductionMethod.SOFT_THRESHOLDING,
-        "jumble_vocabulary": [ False, True ],
+        "value_ceil": 100,
+        "memory_size": 1000,
+        "reduction_strength": [ 5 ],
+        "num_dimensions": [ 10 ],
+        "early_stop": False,
+        "dynamic_neighbourhood_size": False,
+        "neighbourhood_size": [ 5 ],
+        "alpha": 0.95,
+        "reduction_method": [ ReductionMethod.SOFT_THRESHOLDING ],
+        "jumble_vocabulary": False,
         "zipfian_sampling": [ True, False ],
-        "disable_reduction": [ False, True ],
+        "disable_reduction": False,
         "self_check": [ False, True ],
         "datacollector_step_size": 1000
     }
@@ -62,6 +70,7 @@ elif args.profile == "cone":
         **params_template,
         "num_tokens": 10,
         "value_ceil": 250,
+        "reduction_strength": 15,
         "memory_size": 100,
         "num_dimensions": 2,
         "neighbourhood_size": 25,
