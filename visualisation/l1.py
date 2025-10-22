@@ -42,6 +42,9 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
 def make_mean_l1_plot(model, smooth=True, ax=None, disable_title=False):
     return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)", disable_title=disable_title)
 
+def make_micro_mean_l1_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "micro_mean_agent_l1", ax=ax, smooth=smooth, title="Micro mean L1 (across tokens, across agents)", disable_title=disable_title)
+
 def make_communicative_success_macro_plot(model, smooth=True, ax=None, disable_title=False):
     return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True, disable_title=disable_title)
 
@@ -105,6 +108,12 @@ def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None, di
 
 def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
     return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio of authentic exemplars per token (across agents)", ratio=True, disable_title=disable_title)
+
+def reduction_per_token_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "reduction_per_token", n, jitter_strength, ax, "Ratio of reduction per token (across agents)", ratio=True, disable_title=disable_title)
+
+def reentrance_per_token_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "reentrance_per_token", n, jitter_strength, ax, "Ratio of re-entrance per token (across agents)", ratio=True, disable_title=disable_title)
 
 def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
     if ax is None:
