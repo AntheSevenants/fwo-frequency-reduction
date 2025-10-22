@@ -8,7 +8,7 @@ def build_mapping(run_infos):
     constants_mapping = {}
 
     for column in run_infos:
-        if column == "run_id":
+        if column in [ "run_id", "seed" ]:
             continue
         
         unique_values = run_infos[column].unique()
