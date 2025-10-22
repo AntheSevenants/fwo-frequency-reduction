@@ -11,9 +11,9 @@ import visualisation.dimscrap
 import visualisation.angle
 import visualisation.shims
 
-ANALYSIS_REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "confusion_mosaic", "l1_plot" ]
+ANALYSIS_REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "mosaic_3", "confusion_mosaic", "l1_plot" ]
 ANALYSIS_NON_LIGHT_SERIALISATION_GRAPHS = [ "umap_mosaic", "memory_mosaic" ]
-ANALYSIS_TOROIDAL_GRAPHS = [ "angle_vocabulary_plot_2d_moisaic", "angle_vocabulary_plot_3d" ]
+ANALYSIS_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
 EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
 EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
@@ -93,9 +93,17 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
             lambda model, ax: visualisation.l1.make_fail_reason_plot(model, ax=ax, include_success=True),
             visualisation.l1.words_l1_plot_first_n,
             lambda model, ax: visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False),
-            lambda model, ax: visualisation.dimscrap.make_communication_plot(model, ax=ax, smooth=False),
+            lambda model, ax: visualisation.l1.make_micro_mean_l1_plot(model, ax=ax, smooth=False),
             visualisation.l1.words_mean_exemplar_count_first_n,
             visualisation.l1.words_mean_exemplar_count_bar)
+    elif graph_name == "mosaic_3":
+        figure = visualisation.meta.combine_plots(model,
+            lambda model, ax: visualisation.l1.reduction_per_token_first_n(model, n=10, ax=ax),
+            lambda model, ax: visualisation.l1.reentrance_per_token_first_n(model, n=10, ax=ax),
+            lambda model, ax: ax,
+            lambda model, ax: ax,
+            lambda model, ax: ax,
+            lambda model, ax: ax)
     elif graph_name == "confusion_mosaic":
         figure = visualisation.meta.make_layout_plot(model,
                                     visualisation.meta.make_confusion_plot,
