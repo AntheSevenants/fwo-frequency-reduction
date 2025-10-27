@@ -54,18 +54,22 @@ app.secret_key = 'secret_key_for_sessions'
 
 graph_lock = threading.Lock()
 
+@app.route('/live/')
+def live():
+    return show_interface(live=True)
 
 @app.route('/')
 def index():
+    return show_interface()
+
+# live = are we looking at graphs from the jupyter notebook?
+def show_interface(live=False):
     # run = a complête batch run with multiple parameter combinatinos
     runs = export.runs.get_runs(RUNS_DIR)
     # selected run = one of those batch runs
     selected_run = request.args.get('run')
     # you can filter for specific graphs
     selected_filter = request.args.get('filter')
-
-    # live = are we looking at graphs from the jupyter notebook?
-    live = False
     
     # Combination of parameters selected
     selected_parameters = dict(request.args)
@@ -151,7 +155,7 @@ def index():
             # Save the files to disk!
             export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)
 
-    if args.live:
+    if live:
         selected_run = "live"
         parameter_selection_id = "live"
         live = True
@@ -251,7 +255,6 @@ def get_cached_graphs(selected_run, parameter_selection_id, graphs):
 
 parser = argparse.ArgumentParser(
     description='dashboard-3 - kowalski, analysis')
-parser.add_argument("--live", action="store_true", help="look at graphs from the notebook")
 parser.add_argument("--neutral_tokens", action="store_true", help="make tokens neutral (C1, C2, C3 ...)")
 args = parser.parse_args()
 

@@ -36,8 +36,9 @@
             <div>
                 <hr>
             </div>
+            <div class="flex-column mb-auto">
+            {% if not live %}
             <div class="card mb-3">
-                {% if not live %}
                     <div class="card-header text-white">
                         <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run selection
                     </div>
@@ -53,8 +54,8 @@
                             <label for="select_external">Available runs:</label>
                         </div>
                     </div>
-                {% endif %}
             </div>
+            {% endif %}
             {% if selected_run is not none %}
             <div class="card mb-3">
                 <div class="card-header text-white">
@@ -123,6 +124,19 @@
                 </div>
                 {% endif %}
             {% endif %}
+            </div>
+            <div class="text-white">
+                <hr>
+                {% if not live %}
+                <a type="button" class="btn btn-secondary w-100" href="/live/">
+                    <i class="bi bi-journal"></i> Switch to notebook graphs
+                </a>
+                {% else %}
+                <a type="button" class="btn btn-secondary w-100" href="/">
+                    <i class="bi bi-view-stacked"></i> Switch to batch run graphs
+                </a>
+                {% endif %}
+            </div>
         </form>
         <div class="flex-grow-1 scrollable" style="position: relative;">
             {% block content %}
