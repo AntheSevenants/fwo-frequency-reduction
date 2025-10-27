@@ -10,6 +10,7 @@ from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.vector import VectorTypes
 from model.types.feedback import FeedbackTypes
+from model.types.sampling import SamplingTypes
 from model.types.who_saves import WhoSaves
 from model.types.repair import Repair
 from model.helpers import load_vectors, load_info, generate_word_vectors, generate_quarter_circle_vectors
@@ -17,7 +18,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, zipfian_sampling=True, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
         super().__init__(seed=seed)
 
         print("Seed is", seed)
@@ -67,7 +68,7 @@ class ReductionModel(mesa.Model):
         self.jumble_vocabulary = jumble_vocabulary
 
         # Whether to sample concepts according to the Zipfian distribution
-        self.zipfian_sampling = zipfian_sampling
+        self.sampling_type = sampling_type
 
         # Maximum number of turns
         self.max_turns = max_turns

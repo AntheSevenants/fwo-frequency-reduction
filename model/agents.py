@@ -10,6 +10,7 @@ from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
+from model.types.sampling import SamplingTypes
 from model.types.repair import Repair
 from model.types.who_saves import WhoSaves
 
@@ -74,10 +75,7 @@ class ReductionAgent(mesa.Agent):
         # To prevent certain model anomalies, we prefill the memory
         if self.model.prefill_memory:
             while self.num_exemplars_in_memory < self.model.memory_size:
-                if self.model.zipfian_sampling:
-                    random_index = self.model.weighted_random_index()
-                else:
-                    random_index = self.model.linear_random_index()
+                random_index = self.get_random_index()
 
                 if not self.model.jumble_vocabulary:
                     random_vector = self.model.get_original_vector(random_index)
@@ -90,6 +88,16 @@ class ReductionAgent(mesa.Agent):
                     noisy_vector = random_vector
 
                 self.commit_to_memory(noisy_vector, random_index, good_origin=True)
+
+    def get_random_index(self):
+        if self.model.sampling_type == SamplingTypes.ZIPFIAN:
+            random_index = self.model.weighted_random_index()
+        elif self.model.sampling_type == SamplingTypes.LINEAR:
+            random_index = self.model.linear_random_index()
+        elif self.model.sampling_type == SamplingTypes.FLAT:
+            random_index = self.model.true_random_index()
+
+        return random_index
 
     def update_last_used(self, index, grow=False):
         if not grow:
@@ -163,10 +171,7 @@ Old concept index was {old_concept_index}.\n\
             self.num_exemplars_in_memory += 1
 
     def interact_do(self):
-        if self.model.zipfian_sampling:
-            event_index = self.model.weighted_random_index()
-        else:
-            event_index = self.model.linear_random_index()
+        event_index = self.get_random_index()
         
         while True:
             hearer_agent = self.random.choice(self.model.agents)
@@ -344,6 +349,7 @@ Old concept index was {old_concept_index}.\n\
         # So I programmed two modes: a success-dependent one and a "dumb" one which just always reduces under a certain threshold
 
         reduction_strength = self.model.reduction_strength
+        alpha = self.model.alpha
 
         if self.model.reduction_mode == ReductionModes.ALWAYS:
             reduction_prob = self.model.reduction_prior
@@ -401,11 +407,12 @@ Old concept index was {old_concept_index}.\n\
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_DIM:
                 spoken_token_vector = model.reduction.soft_thresholding_dimension(self.model, spoken_token_vector, self.model.reduction_strength, threshold)
             elif self.model.reduction_method == ReductionMethod.NON_LINEAR:
-                alpha = self.model.alpha
                 step = reduction_strength
                 spoken_token_vector = model.reduction.non_linear(spoken_token_vector, alpha, step)
             elif self.model.reduction_method == ReductionMethod.BYE_MAX:
                 spoken_token_vector = model.reduction.bye_max(spoken_token_vector, reduction_strength, threshold)
+            elif self.model.reduction_method == ReductionMethod.ALPHA_ONLY:
+                spoken_token_vector = model.reduction.decay_only(spoken_token_vector, alpha, threshold)
 
             # print("Reduction applied: Token vector sparsified.")
         else:

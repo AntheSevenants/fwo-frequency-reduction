@@ -12,5 +12,6 @@ class ReductionMethod:
     ANGLE = 3
     TAPER = 5
     NON_LINEAR = 6
+    ALPHA_ONLY = 9
     BYE_MAX = 7
     SOFT_THRESHOLDING_2 = 8
