@@ -19,6 +19,7 @@ import model.types.production
 import model.types.reduction
 import model.types.repair
 import model.types.vector
+import model.types.sampling
 
 import export
 import export.runs
@@ -42,6 +43,7 @@ ENUM_MAPPING = {
     "feedback_type": model.types.feedback.FeedbackTypes,
     "vectors_type": model.types.vector.VectorTypes,
     "reduction_method": model.types.reduction.ReductionMethod,
+    "sampling_type": model.types.sampling.SamplingTypes,
 }
 
 models_in_memory = {}
