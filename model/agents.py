@@ -74,20 +74,32 @@ class ReductionAgent(mesa.Agent):
 
         # To prevent certain model anomalies, we prefill the memory
         if self.model.prefill_memory:
-            while self.num_exemplars_in_memory < self.model.memory_size:
-                random_index = self.get_random_index()
+            if not self.model.fixed_memory:
+                while self.num_exemplars_in_memory < self.model.memory_size:
+                    random_index = self.get_random_index()
 
-                if not self.model.jumble_vocabulary:
-                    random_vector = self.model.get_original_vector(random_index)
-                else:
-                    random_vector = self.model.get_original_vector(random_index, self.personalised_vocabulary)
-                
-                if not self.model.disable_noise:
-                    noisy_vector = add_noise(random_vector)
-                else:
-                    noisy_vector = random_vector
+                    if not self.model.jumble_vocabulary:
+                        random_vector = self.model.get_original_vector(random_index)
+                    else:
+                        random_vector = self.model.get_original_vector(random_index, self.personalised_vocabulary)
 
-                self.commit_to_memory(noisy_vector, random_index, good_origin=True)
+                    if not self.model.disable_noise:
+                        noisy_vector = add_noise(random_vector)
+                    else:
+                        noisy_vector = random_vector
+
+                    self.commit_to_memory(noisy_vector, random_index, good_origin=True)
+            else:
+                for i in range(self.model.num_tokens):
+                    for j in range(self.model.fixed_memory_vector[i] - self.model.initial_token_count):                       
+                        random_vector = self.model.get_original_vector(i)
+                        if not self.model.disable_noise:
+                            noisy_vector = add_noise(random_vector)
+                        else:
+                            noisy_vector = random_vector
+
+                        self.commit_to_memory(noisy_vector, i, good_origin=True)
+
 
     def get_random_index(self):
         if self.model.sampling_type == SamplingTypes.ZIPFIAN:
@@ -119,11 +131,18 @@ class ReductionAgent(mesa.Agent):
         if self.num_exemplars_in_memory == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
             eligible_indices = []
+
             # Exception if we don't want to have multiple exemplars
             override_frequency_floor = self.model.num_tokens == self.model.memory_size
-            for token_index, frequency_count in enumerate(self.frequency_count):
-                if frequency_count > 1 or (override_frequency_floor and token_index == concept_index):
-                    eligible_indices += self.indices_per_token[token_index]
+
+            # If fixed memory, only the token's own exemplars can be overwritten
+            if self.model.fixed_memory:
+                eligible_indices += self.indices_per_token[concept_index]
+            # Else, look in the global memory
+            else:
+                for token_index, frequency_count in enumerate(self.frequency_count):
+                    if frequency_count > 1 or (override_frequency_floor and token_index == concept_index):
+                        eligible_indices += self.indices_per_token[token_index]
 
             if not eligible_indices:
                 # This should rarely happen if you always ensure every token retains at least one exemplar.
@@ -142,7 +161,7 @@ class ReductionAgent(mesa.Agent):
 
             # Add extra test to be absolutely certain that no token lacks exemplars
             for token_index, exemplar_indices in enumerate(self.indices_per_token):
-                if len(exemplar_indices) == 0 and not override_frequency_floor:
+                if len(exemplar_indices) == 0 and not override_frequency_floor and concept_index != remove_index:
                     raise ValueError(f"Token {token_index} has zero associated exemplars. This should never happen!\n\
 Old concept index was {old_concept_index}.\n\
 {token_index} has {self.frequency_count[token_index]} registered associated exemplar(s)")

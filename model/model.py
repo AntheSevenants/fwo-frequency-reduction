@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from model.agents import ReductionAgent
-from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors, compute_reentrance_ratio, compute_ratio, compute_micro_mean_token_l1
+from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors, compute_reentrance_ratio, compute_ratio, compute_micro_mean_token_l1, zipf_exemplars_per_construction, linear_exemplars_per_construction
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
@@ -18,7 +18,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, directed_reduction=False, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, fixed_memory=False, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, directed_reduction=False, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
         super().__init__(seed=seed)
 
         print("Seed is", seed)
@@ -32,6 +32,7 @@ class ReductionModel(mesa.Model):
         self.success_memory_size = success_memory_size
         self.initial_token_count = initial_token_count
         self.prefill_memory = prefill_memory
+        self.fixed_memory = fixed_memory
         self.seed = seed
         self.current_step = 0
         self.datacollector_step_size = datacollector_step_size
@@ -107,7 +108,7 @@ class ReductionModel(mesa.Model):
                 # if self.reduction_method == ReductionMethod.NON_LINEAR:
                 #     quantisation_step = self.reduction_strength
 
-                vectors = generate_dirk_p2_vectors(max_vocabulary_size=len(tokens), dimensions=num_dimensions, floor=value_ceil - 30, ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size, check_quantisation=quantisation_step, seed=seed)
+                vectors = generate_dirk_p2_vectors(max_vocabulary_size=num_tokens, dimensions=num_dimensions, floor=value_ceil - 30, ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size, check_quantisation=quantisation_step, seed=seed)
                 num_tokens = vectors.shape[0]
                 print(f"Num tokens = {num_tokens}")
         else:
@@ -127,6 +128,13 @@ class ReductionModel(mesa.Model):
         self.num_tokens = num_tokens
         self.num_dimensions = num_dimensions
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
+
+        if self.sampling_type == SamplingTypes.ZIPFIAN:
+            self.fixed_memory_vector = zipf_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1)
+        elif self.sampling_type == SamplingTypes.LINEAR:
+            self.fixed_memory_vector = linear_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1)
+        elif self.sampling_type == SamplingTypes.FLAT:
+            self.fixed_memory_vector = [ round(self.memory_size / self.num_tokens) ] * self.num_tokens
 
         # For single-dimension reduction solutions
         # We choose for each construction on what dimension they will reduce

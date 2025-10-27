@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from math import floor
 
 from scipy.spatial.distance import pdist, squareform
 from sklearn.metrics import silhouette_score
@@ -579,3 +580,194 @@ def counts_to_percentages(arr):
     total_sum = np.sum(arr)
     percentages = arr / total_sum
     return percentages
+
+def zipf_exemplars_per_construction(total_memory: int,
+                 n_constructions: int,
+                 s: float = 0.9,
+                 min_per_construction: int = 0):
+    """
+    Allocate `total_memory` exemplar slots across `n_constructions` following a Zipfian
+    distribution with exponent `s` (p_k ∝ 1 / rank^s). Returns a list of integer
+    allocations (length n_constructions) that sum to total_memory.
+
+    Arguments:
+    - total_memory: total exemplar slots (e.g. 1000)
+    - n_constructions: number of constructions (e.g. 50)
+    - s: Zipf exponent (default 1.0). s=0 -> uniform.
+    - min_per_construction: minimum slots reserved per construction (default 0).
+      If >0 we preallocate min_per_construction to each, subtract from total_memory,
+      then allocate the remainder by Zipf weights.
+    - ranks: optional list of ranks (length n_constructions). If None, ranks = [1..n_constructions].
+
+    Raises:
+    - ValueError if inputs are inconsistent (e.g. not enough total_memory to satisfy min_per_construction).
+    """
+    if total_memory < 0 or n_constructions <= 0:
+        raise ValueError("total_memory must be >=0 and n_constructions > 0")
+    
+    ranks = list(range(1, n_constructions + 1))
+
+    # preallocate minimums
+    if min_per_construction < 0:
+        raise ValueError("min_per_construction must be >= 0")
+    reserved = min_per_construction * n_constructions
+    if reserved > total_memory:
+        raise ValueError("Not enough total_memory to satisfy min_per_construction for every construction")
+
+    remaining_memory = total_memory - reserved
+
+    # compute weights (Zipf)
+    if s == 0.0:
+        weights = [1.0 for _ in ranks]
+    else:
+        weights = [1.0 / (float(r) ** s) for r in ranks]
+
+    total_weight = sum(weights)
+    if total_weight == 0:
+        # fallback to uniform
+        weights = [1.0 for _ in weights]
+        total_weight = sum(weights)
+
+    # ideal fractional allocation of remaining_memory according to weights
+    ideal = [remaining_memory * (w / total_weight) for w in weights]
+
+    # floor each ideal to get base allocation
+    base = [int(floor(x)) for x in ideal]
+    allocated = sum(base)
+    remainder_slots = int(round(remaining_memory - allocated))  # should be small non-negative integer
+
+    # compute fractional remainders and distribute remainder_slots by largest fractional parts
+    fractional = [(i, ideal[i] - base[i]) for i in range(n_constructions)]
+    # sort by fractional part descending (ties break by lower rank index implicitly)
+    fractional.sort(key=lambda x: x[1], reverse=True)
+
+    extra = [0] * n_constructions
+    for j in range(remainder_slots):
+        idx = fractional[j][0]
+        extra[idx] += 1
+
+    # final allocation = reserved min_per + base + extra
+    final = [min_per_construction + base[i] + extra[i] for i in range(n_constructions)]
+
+    # Safety: adjust small rounding errors so sum(final) == total_memory
+    diff = total_memory - sum(final)
+    if diff > 0:
+        # give the remaining diff to highest-weight ranks (rank 1 first)
+        ranked_indices = sorted(range(n_constructions), key=lambda i: weights[i], reverse=True)
+        for k in range(diff):
+            final[ranked_indices[k % n_constructions]] += 1
+    elif diff < 0:
+        # remove from lowest-weight ranks first (but never below min_per_construction)
+        to_remove = -diff
+        ranked_indices = sorted(range(n_constructions), key=lambda i: weights[i])  # low to high
+        k = 0
+        while to_remove > 0 and k < len(ranked_indices):
+            i = ranked_indices[k]
+            removable = final[i] - min_per_construction
+            if removable > 0:
+                take = min(removable, to_remove)
+                final[i] -= take
+                to_remove -= take
+            else:
+                k += 1
+        if to_remove > 0:
+            # this should not happen, but fail-safe: raise
+            raise RuntimeError("Could not adjust allocation to meet total_memory constraint")
+
+    return final
+
+def linear_exemplars_per_construction(total_memory: int,
+                                 n_constructions: int,
+                                 min_per_construction: int = 0):
+    """
+    Allocate `total_memory` exemplar slots across `n_constructions` following a
+    linear (rank-based) distribution with no intercept: weight(rank k) ∝ (N - k).
+    - rank k runs from 1..N
+    - rank 1 gets weight N-1, rank N gets weight 0
+
+    Returns a list of integer allocations (length n_constructions) that sum to total_memory.
+
+    Arguments:
+    - total_memory: total exemplar slots (e.g. 1000)
+    - n_constructions: number of constructions (e.g. 50)
+    - min_per_construction: minimum slots reserved per construction (default 0).
+      If >0 we preallocate that first and distribute the remainder according to linear weights.
+    - ranks: optional list of ranks (length n_constructions). If None, ranks = [1..n_constructions].
+
+    Notes:
+    - If all linear weights are zero (e.g. n_constructions == 1), allocation falls back to uniform.
+    - Because the last ranks have zero fractional weight, they may only get exemplars if `min_per_construction` > 0
+      or via the rounding/fallback distribution.
+    """
+    if total_memory < 0 or n_constructions <= 0:
+        raise ValueError("total_memory must be >=0 and n_constructions > 0")
+    
+    ranks = list(range(1, n_constructions + 1))
+    
+    if len(ranks) != n_constructions:
+        raise ValueError("ranks must have length n_constructions")
+
+    # preallocate minimums
+    if min_per_construction < 0:
+        raise ValueError("min_per_construction must be >= 0")
+    reserved = min_per_construction * n_constructions
+    if reserved > total_memory:
+        raise ValueError("Not enough total_memory to satisfy min_per_construction for every construction")
+
+    remaining_memory = total_memory - reserved
+
+    # linear weights with no intercept: w_k = (N - k)
+    N = n_constructions
+    weights = [max(0.0, float(N - r)) for r in ranks]  # rank 1 -> N-1, rank N -> 0
+
+    total_weight = sum(weights)
+    if total_weight == 0:
+        # fallback to uniform if all weights are zero (e.g. N==1)
+        weights = [1.0 for _ in weights]
+        total_weight = sum(weights)
+
+    # ideal fractional allocation of remaining_memory according to weights
+    ideal = [remaining_memory * (w / total_weight) for w in weights]
+
+    # floor each ideal to get base allocation
+    base = [int(floor(x)) for x in ideal]
+    allocated = sum(base)
+    remainder_slots = int(round(remaining_memory - allocated))  # small non-negative integer
+
+    # compute fractional remainders and distribute remainder_slots by largest fractional parts
+    fractional = [(i, ideal[i] - base[i]) for i in range(n_constructions)]
+    fractional.sort(key=lambda x: x[1], reverse=True)
+
+    extra = [0] * n_constructions
+    for j in range(remainder_slots):
+        idx = fractional[j][0]
+        extra[idx] += 1
+
+    # final allocation = reserved min_per + base + extra
+    final = [min_per_construction + base[i] + extra[i] for i in range(n_constructions)]
+
+    # Safety: adjust rounding errors so sum(final) == total_memory
+    diff = total_memory - sum(final)
+    if diff > 0:
+        # give remaining diff to highest-weight ranks (rank 1 first)
+        ranked_indices = sorted(range(n_constructions), key=lambda i: weights[i], reverse=True)
+        for k in range(diff):
+            final[ranked_indices[k % n_constructions]] += 1
+    elif diff < 0:
+        # remove from lowest-weight ranks first (but never below min_per_construction)
+        to_remove = -diff
+        ranked_indices = sorted(range(n_constructions), key=lambda i: weights[i])  # low to high
+        k = 0
+        while to_remove > 0 and k < len(ranked_indices):
+            i = ranked_indices[k]
+            removable = final[i] - min_per_construction
+            if removable > 0:
+                take = min(removable, to_remove)
+                final[i] -= take
+                to_remove -= take
+            else:
+                k += 1
+        if to_remove > 0:
+            raise RuntimeError("Could not adjust allocation to meet total_memory constraint")
+
+    return final
