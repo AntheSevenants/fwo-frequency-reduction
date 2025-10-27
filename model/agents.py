@@ -405,7 +405,7 @@ Old concept index was {old_concept_index}.\n\
             elif self.model.reduction_method == ReductionMethod.ANGLE:
                 spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength)
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_DIM:
-                spoken_token_vector = model.reduction.soft_thresholding_dimension(self.model, spoken_token_vector, self.model.reduction_strength, threshold)
+                spoken_token_vector = model.reduction.soft_thresholding_dimension(self.model, spoken_token_vector, self.model.reduction_strength, threshold, event_index=event_index)
             elif self.model.reduction_method == ReductionMethod.NON_LINEAR:
                 step = reduction_strength
                 spoken_token_vector = model.reduction.non_linear(spoken_token_vector, alpha, step)

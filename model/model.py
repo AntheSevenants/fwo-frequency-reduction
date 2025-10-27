@@ -18,7 +18,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, directed_reduction=False, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
         super().__init__(seed=seed)
 
         print("Seed is", seed)
@@ -43,6 +43,7 @@ class ReductionModel(mesa.Model):
         self.production_model = production_model
         self.reduction_mode = reduction_mode
         self.reduction_method = reduction_method
+        self.directed_reduction = directed_reduction
         self.reduction_strength = reduction_strength
         self.alpha = alpha
         self.feedback_type = feedback_type
@@ -126,6 +127,12 @@ class ReductionModel(mesa.Model):
         self.num_tokens = num_tokens
         self.num_dimensions = num_dimensions
         self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
+
+        # For single-dimension reduction solutions
+        # We choose for each construction on what dimension they will reduce
+        np.random.seed(seed)
+        # size: number of tokens, values = number of dimensions (one dim for each ctx)
+        self.dimension_vector = np.random.randint(0, self.num_dimensions, size=self.num_tokens)
 
         self.neighbourhood_size = neighbourhood_size
         if dynamic_neighbourhood_size:

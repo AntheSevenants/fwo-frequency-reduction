@@ -91,10 +91,13 @@ def angle_reduction(vector, distance, negative=False):
 
 
 def soft_thresholding_dimension(
-    model, spoken_token_vector, reduction_strength, threshold
+    model, spoken_token_vector, reduction_strength, threshold, event_index=None
 ):
-    # Choose a random dimension to reduce
-    random_index = model.random.randint(0, model.num_dimensions - 1)
+    if not model.directed_reduction:
+        # Choose a random dimension to reduce
+        random_index = model.random.randint(0, model.num_dimensions - 1)
+    else:
+        random_index = model.dimension_vector[event_index]
 
     # Remove from that dimension
     spoken_token_vector[random_index] = np.maximum(
@@ -110,13 +113,17 @@ def non_linear(vector, alpha=0.9, step=5):
 
     return vector
 
-
 def multiply_decay(vector, alpha=0.9):
     # Multiply to introduce non-linearity
     vector = vector * alpha
     # Round and return
     return np.round(vector, 0)
 
+def decay_only(vector, alpha=0.9, threshold=5):
+    decayed_vector = multiply_decay(vector, alpha)
+    reduced_vector = np.maximum(decayed_vector, threshold)
+
+    return reduced_vector
 
 def coarse_quantisation(vector, step=5):
     return np.round(vector / step).astype(int) * step
@@ -124,9 +131,16 @@ def coarse_quantisation(vector, step=5):
 
 def bye_max(vector, reduction_strength, threshold):
     max_index = np.argmax(vector)
-    new_value = vector[max_index] - reduction_strength
+    # print(vector)
+    # print(max_index)
+    # print(vector[max_index])
+    # print(vector[max_index] - reduction_strength)
+    new_value = max(vector[max_index] - reduction_strength, threshold)
+    # print(new_value)
 
-    if new_value > threshold:
-        vector[max_index] = new_value
+    vector[max_index] = new_value
+
+    # if new_value > threshold:
+    #     vector[max_index] = new_value
 
     return vector
