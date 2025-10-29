@@ -137,10 +137,14 @@ class ReductionModel(mesa.Model):
             self.fixed_memory_vector = [ round(self.memory_size / self.num_tokens) ] * self.num_tokens
 
         # For single-dimension reduction solutions
-        # We choose for each construction on what dimension they will reduce
-        np.random.seed(seed)
-        # size: number of tokens, values = number of dimensions (one dim for each ctx)
-        self.dimension_vector = np.random.randint(0, self.num_dimensions, size=self.num_tokens)
+        # We choose for each construction on what dimension they will reduce (iteratively)
+        # so which dimension first and then which one and then which one
+        self.dimension_vector = np.zeros((self.num_tokens, self.num_dimensions))
+        for ctx in range(self.num_tokens):
+            reduction_order = list(range(0, self.num_dimensions))
+            self.random.shuffle(reduction_order)
+
+            self.dimension_vector[ctx,] = reduction_order    
 
         self.neighbourhood_size = neighbourhood_size
         if dynamic_neighbourhood_size:

@@ -91,13 +91,25 @@ def angle_reduction(vector, distance, negative=False):
 
 
 def soft_thresholding_dimension(
-    model, spoken_token_vector, reduction_strength, threshold, event_index=None
+    random, spoken_token_vector, reduction_strength, threshold, dimension_vector=None
 ):
-    if not model.directed_reduction:
+    num_dimensions = spoken_token_vector.shape[0]
+
+    if dimension_vector is None:
         # Choose a random dimension to reduce
-        random_index = model.random.randint(0, model.num_dimensions - 1)
+        random_index = random.randint(0, num_dimensions - 1)
     else:
-        random_index = model.dimension_vector[event_index]
+        # Iteratively check whether what dimensions have already been reduced to the maximum
+        for dimension in dimension_vector:
+            dimension = int(dimension)
+            if spoken_token_vector[dimension] == threshold:
+                continue
+            else:
+                random_index = dimension
+                break
+        # Finished reducing? Return the original vector
+        else:
+            return spoken_token_vector
 
     # Remove from that dimension
     spoken_token_vector[random_index] = np.maximum(
