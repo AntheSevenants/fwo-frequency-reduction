@@ -18,7 +18,7 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, fixed_memory=False, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, directed_reduction=False, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
+    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, fixed_memory=False, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, directed_reduction=False, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, linear_sampling_intercept=None, linear_sampling_slope=None, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
         super().__init__(seed=seed)
 
         print("Seed is", seed)
@@ -71,6 +71,9 @@ class ReductionModel(mesa.Model):
 
         # Whether to sample concepts according to the Zipfian distribution
         self.sampling_type = sampling_type
+        # Linear sampling slope and intercept initialisation
+        self.linear_sampling_intercept = 1 if linear_sampling_intercept is None else linear_sampling_intercept
+        self.linear_sampling_slope = 1 if linear_sampling_slope is None else linear_sampling_slope
 
         # Maximum number of turns
         self.max_turns = max_turns
@@ -132,7 +135,7 @@ class ReductionModel(mesa.Model):
         if self.sampling_type == SamplingTypes.ZIPFIAN:
             self.fixed_memory_vector = zipf_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1)
         elif self.sampling_type == SamplingTypes.LINEAR:
-            self.fixed_memory_vector = linear_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1)
+            self.fixed_memory_vector = linear_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1, intercept=self.linear_sampling_intercept, slope=self.linear_sampling_slope)
         elif self.sampling_type == SamplingTypes.FLAT:
             self.fixed_memory_vector = [ round(self.memory_size / self.num_tokens) ] * self.num_tokens
 
@@ -275,9 +278,10 @@ class ReductionModel(mesa.Model):
         return next(i for i, cumulative_frequency in enumerate(self.cumulative_frequencies) if r < cumulative_frequency)
     
     def linear_random_index(self):
-        # We make a fake linear frequency drop-off
-        max_frequency = self.num_tokens
-        frequencies = [ max_frequency - index for index in range(self.num_tokens) ]
+        # We make a linear frequency drop-off
+        frequencies = [ self.linear_sampling_intercept + index * self.linear_sampling_slope for index in range(self.num_tokens) ]
+        frequencies = list(reversed(frequencies))
+
         total_frequency = np.sum(frequencies)
         cumulative_frequencies = np.cumsum(frequencies)
 
