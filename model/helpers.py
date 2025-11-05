@@ -1,15 +1,17 @@
 import pandas as pd
 import numpy as np
-from math import floor
+from math import floor, ceil, exp
 
 from scipy.spatial.distance import pdist, squareform
 from sklearn.metrics import silhouette_score
 from collections import defaultdict
 from model.types.neighbourhood import NeighbourhoodTypes
+from model.types.sampling import SamplingTypes
 from model.reduction import coarse_quantisation
 
 EPSILON = 0.000001
 N_CUTOFF = 10000
+MAX_FREQUENCY = 310000
 
 def load_vectors(file_path):
     # Load and skip first row
@@ -40,16 +42,14 @@ def load_info(file_path, theoretical=False):
 def generate_vectors():
     pass
 
-def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
-    # Generate Zipfian probabilities for the "larger" dataset that we will sample from
-    ranks = np.arange(1, n_large + 1)
-    probabilities = 1 / np.power(ranks, zipf_param)
+def generate_sample(ranks, n_sample, probabilities):
+    probabilities = probabilities.astype(np.float64)
     probabilities /= probabilities.sum() # Normalise to sum to 1
-    
+
     # Compute cumulative distribution function
     cumulative_percentiles = np.cumsum(probabilities)
-    
-    # Sample n_sample items, ensuring Zipfian sampling
+
+    # Sample n_sample items, ensuring distribution
     sampled_indices = np.random.choice(ranks, size=n_sample, replace=False, p=probabilities)
     sampled_indices.sort()  # Keep order for clarity
     
@@ -57,6 +57,62 @@ def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
     sampled_percentiles = [cumulative_percentiles[idx - 1] for idx in sampled_indices]
     
     return list(zip(sampled_indices, sampled_percentiles))
+
+def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
+    # Generate Zipfian probabilities for the "larger" dataset that we will sample from
+    ranks = np.arange(1, n_large + 1)
+    probabilities = 1 / np.power(ranks, zipf_param)
+
+    return generate_sample(ranks, n_sample, probabilities)
+
+def generate_exponential_sample(n_large=130000, n_sample=100, exp_param=0.001):
+    # Generate exponentially decreasing probabilities
+    ranks = np.arange(1, n_large + 1)
+    probabilities = np.exp(-exp_param * ranks)
+
+    return generate_sample(ranks, n_sample, probabilities)
+
+def generate_linear_sample(n_large=130000, n_sample=100, intercept=10, slope=10):
+    # Generate linear probabilities for the "larger" dataset that we will sample from
+    ranks = np.arange(1, n_large + 1)
+    probabilities = slope * ranks + intercept
+
+    # Reverse
+    probabilities = probabilities[::-1]
+
+    return generate_sample(ranks, n_sample, probabilities)
+
+def generate_zipfian_frequencies(n_large=130000, n_sample=100, zipf_param=1.1):
+    sampled = generate_zipfian_sample(n_large, n_sample, zipf_param)
+    ranks = [ rank for rank, probability in sampled ]
+
+    frequencies = []
+    for rank in ranks:
+        frequency = ceil(rank ** (-zipf_param) * MAX_FREQUENCY)
+        frequencies.append(frequency)
+
+    return frequencies
+
+def generate_linear_frequencies(intercept, slope, n_sample=100):
+    ranks = np.arange(1, n_sample + 1)
+
+    frequencies = []
+    for rank in ranks:
+        frequency = ceil(intercept + (n_sample - rank) * slope)
+        frequencies.append(frequency)
+
+    return frequencies
+
+def generate_exponential_frequencies(n_large=130000, n_sample=100, exp_param=0.1):
+    sampled = generate_exponential_sample(n_large=n_large, exp_param=exp_param, n_sample=n_sample)
+    ranks = [ rank for rank, probability in sampled ]
+
+    frequencies = []
+    for rank in ranks:
+        frequency = ceil(exp(-exp_param * (rank - 1)) * MAX_FREQUENCY)
+        frequencies.append(frequency)
+
+    return frequencies
 
 def generate_word_vectors(vocabulary_size=1000, dimensions=300, floor=0, ceil=100, seed=42):
     np.random.seed(seed)
@@ -750,5 +806,84 @@ def linear_exemplars_per_construction(
                 k += 1
         if to_remove > 0:
             raise RuntimeError("Could not adjust allocation to meet total_memory constraint")
+
+    return final
+
+from math import exp, floor
+
+def exp_exemplars_per_construction(total_memory: int,
+                                   n_constructions: int,
+                                   lam: float = 0.2,
+                                   min_per_construction: int = 0):
+    """
+    Allocate `total_memory` exemplar slots across `n_constructions` following an
+    exponential distribution (p_k ∝ exp(-λ * rank)). Returns a list of integer
+    allocations (length n_constructions) that sum to total_memory.
+
+    Arguments:
+    - total_memory: total exemplar slots (e.g. 1000)
+    - n_constructions: number of constructions (e.g. 50)
+    - lam: exponential decay rate λ (default 0.2).
+      Higher λ -> faster decay (more skewed toward the first few constructions).
+      λ=0 -> uniform distribution.
+    - min_per_construction: minimum slots reserved per construction (default 0).
+      If >0, these are preallocated to each, and the remainder follows the distribution.
+
+    Raises:
+    - ValueError if inputs are inconsistent.
+    """
+    if total_memory < 0 or n_constructions <= 0:
+        raise ValueError("total_memory must be >=0 and n_constructions > 0")
+
+    ranks = list(range(1, n_constructions + 1))
+
+    # preallocate minimums
+    if min_per_construction < 0:
+        raise ValueError("min_per_construction must be >= 0")
+    reserved = min_per_construction * n_constructions
+    if reserved > total_memory:
+        raise ValueError("Not enough total_memory to satisfy min_per_construction for every construction")
+
+    remaining_memory = total_memory - reserved
+
+    # compute exponential weights
+    if lam == 0.0:
+        weights = [1.0 for _ in ranks]  # uniform
+    else:
+        weights = [exp(-lam * (r - 1)) for r in ranks]
+
+    total_weight = sum(weights)
+    if total_weight == 0:
+        weights = [1.0 for _ in ranks]
+        total_weight = sum(weights)
+
+    # ideal fractional allocation
+    ideal = [remaining_memory * (w / total_weight) for w in weights]
+
+    # integer allocation via flooring and distributing remainders
+    base = [int(floor(x)) for x in ideal]
+    allocated = sum(base)
+    remainder_slots = int(round(remaining_memory - allocated))
+
+    fractional = [(i, ideal[i] - base[i]) for i in range(n_constructions)]
+    fractional.sort(key=lambda x: x[1], reverse=True)
+
+    extra = [0] * n_constructions
+    for j in range(remainder_slots):
+        idx = fractional[j][0]
+        extra[idx] += 1
+
+    final = [min_per_construction + base[i] + extra[i] for i in range(n_constructions)]
+
+    # Correct rounding differences if any
+    diff = total_memory - sum(final)
+    if diff != 0:
+        ranked_indices = sorted(range(n_constructions), key=lambda i: weights[i], reverse=(diff > 0))
+        step = 1 if diff > 0 else -1
+        for k in range(abs(diff)):
+            i = ranked_indices[k % n_constructions]
+            if step < 0 and final[i] <= min_per_construction:
+                continue
+            final[i] += step
 
     return final

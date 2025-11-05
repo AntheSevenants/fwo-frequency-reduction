@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 from model.agents import ReductionAgent
-from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors, compute_reentrance_ratio, compute_ratio, compute_micro_mean_token_l1, zipf_exemplars_per_construction, linear_exemplars_per_construction
+from model.helpers import compute_communicative_success, compute_communicative_failure, compute_mean_non_zero_ratio, compute_tokens_chosen, distances_to_probabilities_softmax, distances_to_probabilities_linear, compute_confusion_matrix, compute_average_vocabulary, compute_average_communicative_success_probability, compute_mean_communicative_success_per_token, compute_mean_reduction_per_token, compute_repairs, compute_mean_agent_l1, compute_mean_token_l1, compute_fail_reason, compute_mean_exemplar_count, compute_average_vocabulary_flexible, compute_communicative_success_per_token, compute_communicative_success_macro_average, compute_token_good_origin, compute_mean_exemplar_age, compute_full_vocabulary, compute_concept_stack, compute_full_vocabulary_ownership_stack, compute_outcomes, compute_reduction_success, generate_radical_vectors, generate_dirk_p2_vectors, compute_reentrance_ratio, compute_ratio, compute_micro_mean_token_l1, zipf_exemplars_per_construction, linear_exemplars_per_construction, exp_exemplars_per_construction, generate_zipfian_frequencies, generate_linear_frequencies, generate_exponential_frequencies
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
@@ -18,7 +18,49 @@ from model.helpers import load_vectors, load_info, generate_word_vectors, genera
 class ReductionModel(mesa.Model):
     """A model of Joan Bybee's *reducing effect*"""
 
-    def __init__(self, num_agents=50, num_dimensions=50, num_tokens=100, reduction_prior = 0.5, memory_size=1000, fixed_memory=False, toroidal=False, value_ceil=100, value_floor=15, success_memory_size=20, initial_token_count=2, prefill_memory=True, disable_reduction=False, neighbourhood_type=NeighbourhoodTypes.SPATIAL, neighbourhood_size=0.5, production_model=ProductionModels.SINGLE_EXEMPLAR, reduction_mode=ReductionModes.ALWAYS, reduction_method=ReductionMethod.SOFT_THRESHOLDING, directed_reduction=False, reduction_strength=15, feedback_type=FeedbackTypes.FEEDBACK, repair=Repair.NO_REPAIR, confidence_threshold=0, speaker_confidence_threshold=0, self_check=False, neighbourhood_step_size=0, max_turns=1, jumble_vocabulary=False, sampling_type=SamplingTypes.ZIPFIAN, linear_sampling_intercept=None, linear_sampling_slope=None, who_saves=None, exemplar_hearing_equals_use=False, datacollector_step_size=100, light_serialisation=True, dynamic_neighbourhood_size=False, early_stop=False, alpha=0.9, vectors_type=VectorTypes.ORIGINAL, disable_noise=False, seed=None):
+    def __init__(self,
+                 num_agents=50,
+                 num_dimensions=50,
+                 num_tokens=100,
+                 reduction_prior = 0.5,
+                 memory_size=1000,
+                 fixed_memory=False,
+                 toroidal=False,
+                 value_ceil=100,
+                 value_floor=15,
+                 success_memory_size=20,
+                 initial_token_count=2,
+                 prefill_memory=True,
+                 disable_reduction=False,
+                 neighbourhood_type=NeighbourhoodTypes.SPATIAL,
+                 neighbourhood_size=0.5,
+                 production_model=ProductionModels.SINGLE_EXEMPLAR,
+                 reduction_mode=ReductionModes.ALWAYS,
+                 reduction_method=ReductionMethod.SOFT_THRESHOLDING,
+                 directed_reduction=False,
+                 reduction_strength=15,
+                 feedback_type=FeedbackTypes.FEEDBACK,
+                 repair=Repair.NO_REPAIR,
+                 confidence_threshold=0,
+                 speaker_confidence_threshold=0, 
+                 self_check=False,
+                 neighbourhood_step_size=0,
+                 max_turns=1,
+                 jumble_vocabulary=False,
+                 sampling_type=SamplingTypes.ZIPFIAN,
+                 linear_sampling_intercept=None,
+                 linear_sampling_slope=None,
+                 exponential_sampling_lambda=0,
+                 who_saves=None,
+                 exemplar_hearing_equals_use=False,
+                 datacollector_step_size=100,
+                 light_serialisation=True,
+                 dynamic_neighbourhood_size=False,
+                 early_stop=False,
+                 alpha=0.9,
+                 vectors_type=VectorTypes.ORIGINAL,
+                 disable_noise=False,
+                 seed=None):
         super().__init__(seed=seed)
 
         print("Seed is", seed)
@@ -74,6 +116,8 @@ class ReductionModel(mesa.Model):
         # Linear sampling slope and intercept initialisation
         self.linear_sampling_intercept = 1 if linear_sampling_intercept is None else linear_sampling_intercept
         self.linear_sampling_slope = 1 if linear_sampling_slope is None else linear_sampling_slope
+        # Exponential sampling lambda
+        self.exponential_sampling_lambda = exponential_sampling_lambda
 
         # Maximum number of turns
         self.max_turns = max_turns
@@ -97,47 +141,95 @@ class ReductionModel(mesa.Model):
         # The grid is just for visualisation purposes, it doesn't do anything
         self.grid = mesa.space.SingleGrid(10, 10, True)
 
-        num_tokens_override = 100
-        tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{num_tokens_override}.tsv", theoretical=True)
+        # We have to generate the vectors first, because sometimes the number of vectors
+        # that can be generated is limited.
+        self.num_dimensions = num_dimensions
+        # Neighbourhoud size (important for Dirk P2 vectors)
+        self.neighbourhood_size = neighbourhood_size
+        if dynamic_neighbourhood_size:
+            self.neighbourhood_size = self.num_dimensions * 1.5
 
-        # Overwrite vectors with my own
-        if not self.toroidal:
+        # Toroidal model
+        if self.toroidal:
+            vectors, angles = generate_quarter_circle_vectors(
+                self.value_ceil - 20,
+                num_points=num_tokens + 1)
+            # Randomise the vector locations!
+            np.random.shuffle(vectors)
+        # Regular model
+        else:
             if self.vectors_type == VectorTypes.ORIGINAL:
-                vectors = generate_word_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, floor=reduction_strength, seed=seed, ceil=self.value_ceil)
+                vectors = generate_word_vectors(
+                    vocabulary_size=num_tokens,
+                    dimensions=self.num_dimensions,
+                    floor=reduction_strength,
+                    seed=seed,
+                    ceil=self.value_ceil)
             elif self.vectors_type == VectorTypes.RADICAL:
-                vectors = generate_radical_vectors(vocabulary_size=len(tokens), dimensions=num_dimensions, ceil=self.value_ceil)
+                vectors = generate_radical_vectors(
+                    vocabulary_size=num_tokens,
+                    dimensions=self.num_dimensions,
+                    ceil=self.value_ceil)
             elif self.vectors_type == VectorTypes.DIRK_P2:
                 quantisation_step = 0
                 # if self.reduction_method == ReductionMethod.NON_LINEAR:
                 #     quantisation_step = self.reduction_strength
 
-                vectors = generate_dirk_p2_vectors(max_vocabulary_size=num_tokens, dimensions=num_dimensions, floor=value_ceil - 30, ceil=value_ceil, neighbourhood_type=neighbourhood_type, threshold=neighbourhood_size, check_quantisation=quantisation_step, seed=seed)
+                vectors = generate_dirk_p2_vectors(
+                    max_vocabulary_size=num_tokens,
+                    dimensions=num_dimensions,
+                    floor=self.value_ceil - 30,
+                    ceil=self.value_ceil,
+                    neighbourhood_type=self.neighbourhood_type,
+                    threshold=self.neighbourhood_size,
+                    check_quantisation=quantisation_step,
+                    seed=self.seed)
                 num_tokens = vectors.shape[0]
                 print(f"Num tokens = {num_tokens}")
-        else:
-            tokens = tokens[0:num_tokens]
-            frequencies = frequencies[0:num_tokens]
-            percentiles = percentiles[0:num_tokens]
-            ranks = ranks[0:num_tokens]
-
-            vectors, angles = generate_quarter_circle_vectors(self.value_ceil - 20, num_points=num_tokens + 1)
-            np.random.shuffle(vectors)
-
         self.vectors = vectors
-        self.tokens = tokens[0:num_tokens]
-        self.frequencies = frequencies[0:num_tokens]
-        self.percentiles = percentiles[0:num_tokens]
-        self.ranks = ranks[0:num_tokens]
-        self.num_tokens = num_tokens
-        self.num_dimensions = num_dimensions
-        self.lower_dimension_limit = math.floor(self.num_dimensions / 10)
 
+        # Now we can safely generate the tokens
+        self.num_tokens = num_tokens
+        self.tokens = [ str(token) for token in range(0, self.num_tokens) ]
+        self.ranks = [ rank for rank in range(1, self.num_tokens + 1) ]
+        # Frequency vector (different scale)
         if self.sampling_type == SamplingTypes.ZIPFIAN:
-            self.fixed_memory_vector = zipf_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1)
+            self.frequencies = generate_zipfian_frequencies(n_sample=self.num_tokens)
         elif self.sampling_type == SamplingTypes.LINEAR:
-            self.fixed_memory_vector = linear_exemplars_per_construction(self.memory_size, self.num_tokens, min_per_construction=1, intercept=self.linear_sampling_intercept, slope=self.linear_sampling_slope)
+            self.frequencies = generate_linear_frequencies(
+                self.linear_sampling_intercept,
+                self.linear_sampling_slope)
+        elif self.sampling_type == SamplingTypes.FLAT:
+            self.frequencies = [ 1 ] * self.num_tokens
+        elif self.sampling_type == SamplingTypes.EXPONENTIAL:
+            self.frequencies = generate_exponential_frequencies(
+                n_sample=self.num_tokens,
+                exp_param=self.exponential_sampling_lambda
+            )
+        
+        # Compute fixed memory vector
+        if self.sampling_type == SamplingTypes.ZIPFIAN:
+            self.fixed_memory_vector = zipf_exemplars_per_construction(
+                self.memory_size,
+                self.num_tokens,
+                min_per_construction=self.initial_token_count)
+        elif self.sampling_type == SamplingTypes.LINEAR:
+            self.fixed_memory_vector = linear_exemplars_per_construction(
+                self.memory_size,
+                self.num_tokens,
+                min_per_construction=self.initial_token_count,
+                intercept=linear_sampling_intercept,
+                slope=linear_sampling_slope)
         elif self.sampling_type == SamplingTypes.FLAT:
             self.fixed_memory_vector = [ round(self.memory_size / self.num_tokens) ] * self.num_tokens
+        elif self.sampling_type == SamplingTypes.EXPONENTIAL:
+            self.fixed_memory_vector = exp_exemplars_per_construction(
+                self.memory_size,
+                self.num_tokens,
+                self.exponential_sampling_lambda,
+                min_per_construction=self.initial_token_count)
+        
+        self.lower_dimension_limit = math.floor(self.num_dimensions / 10) 
 
         # For single-dimension reduction solutions
         # We choose for each construction on what dimension they will reduce (iteratively)
@@ -148,10 +240,6 @@ class ReductionModel(mesa.Model):
             self.random.shuffle(reduction_order)
 
             self.dimension_vector[ctx,] = reduction_order    
-
-        self.neighbourhood_size = neighbourhood_size
-        if dynamic_neighbourhood_size:
-            self.neighbourhood_size = self.num_dimensions * 1.5
 
         print(f"Lower dimension limit is {self.lower_dimension_limit}")
         
@@ -165,7 +253,7 @@ class ReductionModel(mesa.Model):
         self.reset(force=True)
         self.turns = []
 
-        self.tokens_chosen = { token: 0 for token in self.tokens }
+        self.tokens_chosen = [ 0 for token in self.tokens ]
 
         self.running = True
 
@@ -202,6 +290,7 @@ class ReductionModel(mesa.Model):
             "token_good_origin": compute_token_good_origin,
             "mean_exemplar_age": compute_mean_exemplar_age,
             "reentrance_ratio": compute_reentrance_ratio,
+            "tokens_chosen": lambda model: model.tokens_chosen
         }
 
         # Include full vocabulary if needed (I hope not)
@@ -273,24 +362,13 @@ class ReductionModel(mesa.Model):
 
         speaker_agent.interact(hearer_agent, event_index)
 
-    def weighted_random_index(self):
+    def get_random_index(self):
         r = self.random.uniform(0, self.total_frequency)
-        return next(i for i, cumulative_frequency in enumerate(self.cumulative_frequencies) if r < cumulative_frequency)
-    
-    def linear_random_index(self):
-        # We make a linear frequency drop-off (and reverse it)
-        frequencies = [ self.linear_sampling_intercept + index * self.linear_sampling_slope for index in range(self.num_tokens) ]
-        frequencies = list(reversed(frequencies))
+        index_chosen = next(i for i, cumulative_frequency in enumerate(self.cumulative_frequencies) if r < cumulative_frequency)
 
-        total_frequency = np.sum(frequencies)
-        cumulative_frequencies = np.cumsum(frequencies)
+        self.tokens_chosen[index_chosen] += 1
 
-        # Apply the same logic as for the Zipfian drop-off
-        r = self.random.uniform(0, total_frequency)
-        return next(i for i, cumulative_frequency in enumerate(cumulative_frequencies) if r < cumulative_frequency)
-
-    def true_random_index(self):
-        return self.random.randrange(0, self.num_tokens, 1)
+        return index_chosen
 
     def get_original_vector(self, token_index, override_matrix=None):
         if override_matrix is not None:

@@ -102,12 +102,8 @@ class ReductionAgent(mesa.Agent):
 
 
     def get_random_index(self):
-        if self.model.sampling_type == SamplingTypes.ZIPFIAN:
-            random_index = self.model.weighted_random_index()
-        elif self.model.sampling_type == SamplingTypes.LINEAR:
-            random_index = self.model.linear_random_index()
-        elif self.model.sampling_type == SamplingTypes.FLAT:
-            random_index = self.model.true_random_index()
+        # The model knows what type of sampling is active
+        random_index = self.model.get_random_index()
 
         return random_index
 
