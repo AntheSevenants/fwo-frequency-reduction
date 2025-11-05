@@ -278,7 +278,7 @@ class ReductionModel(mesa.Model):
         return next(i for i, cumulative_frequency in enumerate(self.cumulative_frequencies) if r < cumulative_frequency)
     
     def linear_random_index(self):
-        # We make a linear frequency drop-off
+        # We make a linear frequency drop-off (and reverse it)
         frequencies = [ self.linear_sampling_intercept + index * self.linear_sampling_slope for index in range(self.num_tokens) ]
         frequencies = list(reversed(frequencies))
 
