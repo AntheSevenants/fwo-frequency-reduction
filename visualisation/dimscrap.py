@@ -187,13 +187,12 @@ def make_words_distribution_plot(model, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
     
     tokens_chosen = df["tokens_chosen"].iloc[-1]
-    tokens = tokens_chosen.keys()
-    frequencies = tokens_chosen.values()
+    ranks = range(1, len(tokens_chosen) + 1)
 
     if ax is None:
         ax = plt
     
     ax.tick_params(axis='x', labelrotation=90, labelsize=8)
-    ax.bar(tokens, frequencies)
+    ax.bar(ranks, tokens_chosen)
     
     return ax
