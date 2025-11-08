@@ -27,6 +27,7 @@ import export.files
 import export.graphs
 import export.parameters
 import export.models
+import export.aggregate.graphs
 
 import visualisation
 
@@ -70,6 +71,8 @@ def show_interface(live=False):
     selected_run = request.args.get('run')
     # you can filter for specific graphs
     selected_filter = request.args.get('filter')
+    # aggregate parameter
+    aggregate = request.args.get('aggregate')
     
     # Combination of parameters selected
     selected_parameters = dict(request.args)
@@ -88,8 +91,12 @@ def show_interface(live=False):
     # We filter to check whether the user has made an actual parameter selection
     no_selection = len(list(set(selected_parameters) - set(export.parameters.RESERVED_KEYWORDS))) == 0
 
-    # What graphs to show changes depending on whether the model is toroidal or not
-    GRAPHS = export.graphs.get_analysis_graph_names(toroidal=toroidal)
+    # Regular analysis graphs
+    if aggregate is None:
+        # What graphs to show changes depending on whether the model is toroidal or not
+        GRAPHS = export.graphs.get_analysis_graph_names(toroidal=toroidal)
+    else:
+        GRAPHS = export.aggregate.graphs.get_aggregate_graph_names()
 
     # Filter logic (what graph should we show?)
     if selected_filter == "no":
@@ -112,6 +119,10 @@ def show_interface(live=False):
         # So we can choose!
         parameter_mapping, constants_mapping = export.parameters.build_mapping(run_infos=run_infos)
 
+        # Remove the aggregate parameter so it doesn't get included in the model selection parameters
+        if aggregate is not None:
+            selected_parameters = export.parameters.remove_aggregate_parameter_from_selected(aggregate, selected_parameters)
+
         # If no model was selected, create a parameter selection ourselves
         if no_selection:
             for parameter in parameter_mapping:
@@ -130,30 +141,8 @@ def show_interface(live=False):
         # Remember the ID for this specific parameter selection
         parameter_selection_id = get_parameter_selection_id(selected_model_ids=selected_model_ids)
 
-        # Get cached graphs
-        cached_graphs = get_cached_graphs(selected_run, parameter_selection_id, graphs)
-        non_cached_graph_count = len(list(set(graphs) - set(cached_graphs)))
-
-        if non_cached_graph_count == 0:
-            pass
-        # If we still need some graphs, just build all of them again
-        else:
-            # Generate the directory where we will put the figures
-            temp_models_figures_dir = make_temp_models_figures_dir(selected_run=selected_run, parameter_selection_id=parameter_selection_id)
-            
-            # Get tokens information
-            # Token info is just the information on the tokens and their ranks
-            # I don't think we even still use it all that much, I should try to remove it some time
-            token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
-
-            # TODO make configurable !!!
-            token_infos["tokens"] = [str(i+1) for i in token_infos.index]
-
-            # All graphs in a dict representation
-            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, token_infos, graphs)
-
-            # Save the files to disk!
-            export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)
+        # Render the graphs
+        prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_parameter=aggregate)
 
     if live:
         selected_run = "live"
@@ -165,6 +154,7 @@ def show_interface(live=False):
                            runs=runs,
                            selected_run=selected_run,
                            parameter_selection_id=parameter_selection_id,
+                           aggregate_parameter=aggregate,
                            selected_parameters=selected_parameters,
                            selected_filter=selected_filter,
                            parameter_mapping=parameter_mapping,
@@ -175,6 +165,41 @@ def show_interface(live=False):
                            all_graphs=graphs,
                            enum_mapping=ENUM_MAPPING,
                            get_enum_name=get_enum_name)
+
+def prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_parameter=None):
+    # Get the IDs from the selected models
+    selected_model_ids = selected_models["run_id"].to_list()
+    parameter_selection_id = get_parameter_selection_id(selected_model_ids=selected_model_ids)
+
+    # Get cached graphs
+    cached_graphs = get_cached_graphs(selected_run, parameter_selection_id, graphs)
+    non_cached_graph_count = len(list(set(graphs) - set(cached_graphs)))
+
+    if non_cached_graph_count == 0:
+        pass
+    # If we still need some graphs, just build all of them again
+    else:
+        # Generate the directory where we will put the figures
+        temp_models_figures_dir = make_temp_models_figures_dir(selected_run=selected_run, parameter_selection_id=parameter_selection_id)
+            
+        # Get tokens information
+        # Token info is just the information on the tokens and their ranks
+        # I don't think we even still use it all that much, I should try to remove it some time
+        token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
+
+        # TODO make configurable !!!
+        token_infos["tokens"] = [str(i+1) for i in token_infos.index]
+
+        # All graphs in a dict representation
+        # Create profile graphs
+        if aggregate_parameter is None:
+            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, token_infos, graphs)
+        # Else, create aggregate graphs
+        else:
+            graphs_output = export.aggregate.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, aggregate_parameter, RUNS_DIR, graphs)
+
+        # Save the files to disk!
+        export.files.export_files(graphs_output, PROFILE_NAME, temp_models_figures_dir)
 
 @app.route('/graph/<string:selected_run>/<string:parameter_selection_id>/<string:graph_name>')
 def send_graph(graph_name, selected_run, parameter_selection_id):
