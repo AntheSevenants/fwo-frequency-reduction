@@ -100,7 +100,7 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
         figure = visualisation.meta.combine_plots(model,
             lambda model, ax: visualisation.l1.reduction_per_token_first_n(model, n=10, ax=ax),
             lambda model, ax: visualisation.l1.reentrance_per_token_first_n(model, n=10, ax=ax),
-            lambda model, ax: ax,
+            lambda model, ax: visualisation.dimscrap.make_words_distribution_plot(model, ax),
             lambda model, ax: ax,
             lambda model, ax: ax,
             lambda model, ax: ax)

@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Parameters used by the application. These are not parameters
-RESERVED_KEYWORDS = [ "run", "filter" ]
+RESERVED_KEYWORDS = [ "run", "filter", "aggregate" ]
 
 def build_mapping(run_infos):
     parameter_mapping = {}
@@ -19,6 +19,12 @@ def build_mapping(run_infos):
             parameter_mapping[column] = [ str(value) for value in unique_values.tolist() ]
 
     return parameter_mapping, constants_mapping
+
+def remove_aggregate_parameter_from_selected(aggregate_parameter, parameter_mapping):
+    if aggregate_parameter in parameter_mapping:
+        del parameter_mapping[aggregate_parameter]
+
+    return parameter_mapping
 
 def find_eligible_models(run_infos, selected_parameters):
     # Create a mask to select the right model
