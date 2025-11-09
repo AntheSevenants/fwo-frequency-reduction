@@ -23,8 +23,9 @@ def get_datacollector_dataframes(runs_dir, selected_run, selected_model_ids):
 
             # Turn every column into a numpy array
             for column in df.columns:
-                if type(df[column].iloc[0]) == list:
-                    df[column] = df[column].apply(lambda x: np.array(x))
+                first = df[column].iat[0]
+                if isinstance(first, list):
+                    df[column] = [np.array(x) for x in df[column].values]
 
             # Add to list of datacollector dataframes
             datacollector_dataframes.append(df)
