@@ -1,0 +1,42 @@
+\documentclass[tikz,border=3.14mm]{standalone}
+\usepackage{tikzpeople}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usetikzlibrary{shapes.misc, positioning, decorations.pathreplacing}
+
+\begin{document}
+
+\begin{tikzpicture}[
+    box/.style={draw, minimum width=1cm, minimum height=1cm, font=\Large},
+    redbox/.style={box, fill=red!30},
+    greenbox/.style={box, fill=green!30},
+    bluebox/.style={box, fill=blue!30},
+    yellowbox/.style={box, fill=yellow!30},
+    brace/.style={decorate, decoration={brace, amplitude=5pt}},
+    arrow/.style={->, ultra thick}
+]
+
+\node[redbox] (A) {1};
+\node[redbox, right=0cm of A] (B) {1};
+\node[redbox, right=0cm of B] (C) {1};
+\node[redbox, right=0cm of C] (D) {1};
+\node[redbox, right=0cm of D] (E) {1};
+\node[redbox, right=0cm of E] (F) {1};
+\node[redbox, right=0cm of F] (G) {1};
+\node[redbox, right=0cm of G] (H) {1};
+\node[greenbox, right=0cm of H] (I) {2};
+\node[greenbox, right=0cm of I] (J) {2};
+
+\node[greenbox, below=1cm of A.northeast, anchor=east] (A2) {2};
+\node[greenbox, right=0cm of A2] (B2) {2};
+\node[greenbox, right=0cm of B2] (C2) {2};
+\node[bluebox, right=0cm of C2] (D2) {3};
+\node[bluebox, right=0cm of D2] (E2) {3};
+\node[bluebox, right=0cm of E2] (F2) {3};
+\node[bluebox, right=0cm of F2] (G2) {3};
+\node[yellowbox, right=0cm of G2] (H2) {4};
+\node[yellowbox, right=0cm of H2] (I2) {4};
+\node[yellowbox, right=0cm of I2] (J2) {4};
+
+\end{tikzpicture}
+\end{document}

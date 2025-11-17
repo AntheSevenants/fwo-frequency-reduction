@@ -118,13 +118,16 @@ Note also that, for the sake of simplicity, the meaning of the constructions in 
 
 The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from "exemplar theory", @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup* ... The same realisation can be stored in the exemplar memory multiple times as the result of more frequent exposure. Therefore, the typical realisation of a specific construction can naturally evolve as new realisations are added, i.e. reduced realisations.
 
-In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times D$, with a separate mapping of size $L$ which keeps track of which exemplar belongs to which construction. In our case, is it imperative that $L > V$, else there cannot be multiple exemplars of the same construction. An example of an agent's memory with different vector associations can be found in @tbl-model_design_agent_memory_example.
+In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times D$. The $L$ available slots in memory are pre-assigned to specific constructions according to the selected frequency distribution, with a lower limit of TODO. @fig-memory_distribution shows an example distribution with a memory of size 20 and four constructions, organised according to a Zipfian distribution. It is clear how the number of exemplars in memory taper off as the constructions become less frequent. Note that this does not mean that all exemplars belonging to a single construction are all the same: more and less reduced vectors can co-exist together. An example of an agent's memory with different vector associations can be found in @tbl-model_design_agent_memory_example.
+
+![An example of the distribution of four constructions in an agent memory of size 20, organised according to a Zipfian distribution. The first construction appears eight times, the second construction five times, the third construction four times and the fourth construction three times.](tikz/memory_distribution.svg){#fig-memory_distribution}
 
 |  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $D$ | Associated construction |
 | ---------- | ----- | ----- | ----- | --- | ----- | ------ |
-| Exemplar 1 | 31    | 42    | 100    | ...   | 15    | Construction 15 |
-| Exemplar 2 | 27    | 37    | 27    | ...   | 97    | Construction 87 |
-| Exemplar 3 | 24    | 35    | 29    | ...   | 96    | Construction 87 |
+| Exemplar 1 | 31    | 42    | 100    | ...   | 15    | Construction 1 |
+| ... | | | | |
+| Exemplar 16 | 27    | 37    | 27    | ...   | 97    | Construction 2 |
+| Exemplar 17 | 24    | 35    | 29    | ...   | 96    | Construction 2 |
 | ... | | | | |
 | Exemplar $L$ | 44    | 39    | 69    | ...   | 80    | Construction $V$ |
 
