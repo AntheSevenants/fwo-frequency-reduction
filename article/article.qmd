@@ -146,6 +146,14 @@ Because an agent's memory is limited to size $L$, whenever a new exemplar needs 
 
 : An example of how "forgetting" an exemplar of a specific construction works in the model. Exemplar 1 is the oldest exemplar for this construction, so it will be removed and make place for a new exemplar. {#tbl-model_design_forgetting_example}
 
+::: {.callout-note}
+#### Why no global memory?
+
+Usage-based theories of language generally take a very broad view on memory. Usually, memory is conceptualised as a large space that is shared by all sounds, constructions at once [i.e. todo referenties]. Our decision to pre-assign memory slots according to the chosen frequency distribution seems a step backwards in this regard, especially given the idea by @kretzschmar_language_2015 [32] that Zipfian curves simply arise naturally when we take any subcategorisation of language. Therefore, we should just be able to implement a global memory for each agent, and see the chosen frequency distribution arise naturally in the agents' memories.
+
+In principle, it is true that such a bottom-up approach is possible. However, given the restrictions in a limited computer model, we opted to take a shortcut to guarantee the cognitive plausibility of our model. While we have no doubts that in the context of real human memory, certain frequency distributions need not be presupposed, our memory of 1000 exemplars is just too small to guarantee the stability of lower-frequency (todo?) constructions. If we were to use a global memory, new variants of high frequency constructions would push out exemplars of low frequency constructions too easily, leading to unreliable representations of those constructions. Because it is unfortunately computationally intractable to equip agents with memories tallying hundreds of thousands of exemplars, we opted to simply assume the presupposed effect and model the frequency distribution directly in memory.
+:::
+
 ### Reduction {#sec-reduction}
 
 At speech time (see @sec-language-game), the speaker agent has the opportunity to reduce the exemplar vector representation that they retrieved from memory. Our implementation of reduction is extremely simple: a set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
