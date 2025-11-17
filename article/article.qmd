@@ -135,17 +135,16 @@ In our model, each agent has a memory of $L$ exemplars. This memory can be thoug
 
 At the model initialisation stage, we fill each of the pre-assigned memory slots with vector representations from @tbl-model_design_speech_vector_examples. In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between the exemplars of different constructions to become lost. Noise is added to each exemplar individually. If an agent starts with five exemplars of specific constructions in their memory, all five will be slightly different.
 
-Because an agent's memory is limited to size $L$, whenever a new exemplar needs to be stored, an older exemplar needs to be removed or "forgotten". We apply the logic that the oldest exemplar that is not the last exemplar left of a construction is deleted. In this way, we avoid situations where the only exemplar left of a construction is removed, which would cause issues with mutual comprehension later in the simulation. Of course, forgetting a specific construction is normal in real life, but we avoid this situation in the simulation in order to keep the simulation mechanics as straightforward as possible. An example of the forgetting mechanic is given in @tbl-model_design_forgetting_example.
+Because an agent's memory is limited to size $L$, whenever a new exemplar needs to be stored, an older exemplar needs to be removed or "forgotten". We apply the logic that the oldest exemplar of a construction is replaced. An example of the forgetting mechanic for a given construction is given in @tbl-model_design_forgetting_example.
 
-|  Exemplar  | Age in model iterations | Associated construction | Exemplars left for construction |
-| ---- | -----        | -----                   | ----- |
-| Exemplar 1 | 1575 | Construction 15 | 2 |
-| ~~Exemplar 2~~ | 2789 | Construction 15 | 2 |
-| Exemplar 3 | 3009 | Construction 87 | 1 |
-| ... | | | | |
-| Exemplar $L$ | | | Construction $V$ |
+|  Exemplar  | Age in model iterations | 
+| ---- | ----- |
+| ~~Exemplar 1~~ | 5920 |
+| Exemplar 2 | 4780 |
+| Exemplar 3 | 3009 |
+| Exemplar 4 | 1231 |
 
-: An example of how "forgetting" an exemplar works in the model. Even though Exemplar 3 is the oldest exemplar in the memory, because it is the last exemplar associated with Construction 87, Exemplar 2 is removed instead. {#tbl-model_design_forgetting_example}
+: An example of how "forgetting" an exemplar of a specific construction works in the model. Exemplar 1 is the oldest exemplar for this construction, so it will be removed and make place for a new exemplar. {#tbl-model_design_forgetting_example}
 
 ### Reduction {#sec-reduction}
 
