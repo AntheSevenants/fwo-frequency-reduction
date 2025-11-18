@@ -3,14 +3,28 @@ import matplotlib.pyplot as plt
 import export.aggregate.tools
 
 
-def communicative_success(parameter_mapping, ax):
-    # print(parameter_mapping)
-
+def ratio_bar(parameter_mapping, ax, title):
     return bar(
         parameter_mapping,
         ax,
         ylim=[0, 1],
-        title="Communicative success across selected parameter",
+        title=title,
+    )
+
+def communicative_success(parameter_mapping, ax):
+    return ratio_bar(
+        parameter_mapping, ax, "Communicative success across selected parameter"
+    )
+
+
+def communicative_success_macro(parameter_mapping, ax):
+    return ratio_bar(
+        parameter_mapping, ax, "Macro communicative success across selected parameter"
+    )
+
+def mean_l1(parameter_mapping, ax):
+    return bar(
+        parameter_mapping, ax, "Mean L1 across selected parameter"
     )
 
 
