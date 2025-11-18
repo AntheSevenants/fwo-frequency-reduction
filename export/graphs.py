@@ -19,13 +19,13 @@ EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-per-construction", "success", "matri
 EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
 # TODO implement toroidal support better
-def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, token_infos, graphs, toroidal=False, disable_title=False):
+def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, graphs, toroidal=False, disable_title=False):
     datacollector_dataframes = export.models.get_datacollector_dataframes(runs_dir, selected_run=selected_run, selected_model_ids=selected_model_ids)
 
     # TODO implement min_steps
     # Build an aggregate model from all the different datacollector dataframes
     # Then we can build one beautiful big graph
-    model = visualisation.shims.Model(datacollector_dataframes, selected_models.iloc[0], token_infos, min_steps=None)
+    model = visualisation.shims.Model(datacollector_dataframes, selected_models.iloc[0], min_steps=None)
 
     # Now, we can build the desired graphs and save them
     graphs_output = {}
@@ -101,7 +101,7 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
             lambda model, ax: visualisation.l1.reduction_per_token_first_n(model, n=10, ax=ax),
             lambda model, ax: visualisation.l1.reentrance_per_token_first_n(model, n=10, ax=ax),
             lambda model, ax: visualisation.dimscrap.make_words_distribution_plot(model, ax),
-            lambda model, ax: ax,
+            lambda model, ax: visualisation.l1.half_time_bar(model, model.current_step, ax=ax),
             lambda model, ax: ax,
             lambda model, ax: ax)
     elif graph_name == "confusion_mosaic":
