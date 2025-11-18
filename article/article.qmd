@@ -204,7 +204,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 **Speaker**
 
-1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note]
+1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note] This parallellism between speaking frequency and observed frequency is known "probability matching" [@labov_principles_1994].
 2. The speaker chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. There is no mechanism influencing the probability of a specific exemplar being chosen. Of course, if a specific neighbourhood area is more dense, there is a higher probability of the chosen exemplar coming from that area.
 3. With a probability of $p$, reduction is applied (see @sec-reduction).
 4. The (potentially reduced) vector is communicated to the hearer.
