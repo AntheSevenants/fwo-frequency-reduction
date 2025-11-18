@@ -135,7 +135,7 @@ In our model, each agent has a memory of $L$ exemplars. This memory can be thoug
 
 At the model initialisation stage, we fill each of the pre-assigned memory slots with vector representations from @tbl-model_design_speech_vector_examples. In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$. Substantially larger noise patterns would cause the distinctions between the exemplars of different constructions to become lost. Noise is added to each exemplar individually. If an agent starts with five exemplars of specific constructions in their memory, all five will be slightly different.
 
-Because an agent's memory is limited to size $L$, whenever a new exemplar needs to be stored, an older exemplar needs to be removed or "forgotten". We apply the logic that the oldest exemplar of a construction is replaced. An example of the forgetting mechanic for a given construction is given in @tbl-model_design_forgetting_example.
+Because an agent's memory is limited to size $L$, whenever a new exemplar needs to be stored, an older exemplar needs to be removed or "forgotten". We apply the logic that the oldest exemplar of the construction in question is replaced. An example of the forgetting mechanic for a given construction is given in @tbl-model_design_forgetting_example.
 
 |  Exemplar  | Age in model iterations | 
 | ---- | ----- |
