@@ -71,18 +71,13 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
     chosen_word_indices = range(0, n)
     legend_values = [ model.tokens[chosen_word_index] for chosen_word_index in chosen_word_indices ]
 
-    # Get frequencies and normalize them
-    frequencies = np.array([model.frequencies[i] for i in chosen_word_indices])
-    log_freq = np.log1p(frequencies)  # log1p to avoid log(0)
-    log_freq = (log_freq - log_freq.min()) / (log_freq.max() - log_freq.min())  # Normalize between 0 and 1
-
     # Create colors (darker for more frequent)
-    colors = [plt.cm.Blues(f) for f in log_freq]
+    colors = [plt.cm.Blues(1 / (i + 0.001)) for i in chosen_word_indices]
 
     # Plot each word with its corresponding color
     for i, color in zip(chosen_word_indices, colors):
         jitter = np.random.uniform(-jitter_strength, jitter_strength)
-        ax.plot(matrix_3d[:, i] + jitter, color=color, label=f"{model.tokens[i]} {model.ranks[i]}")
+        ax.plot(matrix_3d[:, i] + jitter, color=color, label=f"{model.tokens[i]}")
 
     ax.legend(legend_values)
 
