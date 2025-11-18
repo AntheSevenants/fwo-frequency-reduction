@@ -87,27 +87,13 @@ def show_interface(live=False):
     # Cone / toroidal model?
     toroidal = False
 
+    # Temp value
+    graphs = []
+    GRAPHS = []
+
     # There are keywords used by the application, these do not appear as parameters
     # We filter to check whether the user has made an actual parameter selection
     no_selection = len(list(set(selected_parameters) - set(export.parameters.RESERVED_KEYWORDS))) == 0
-
-    # Regular analysis graphs
-    if aggregate is None:
-        # What graphs to show changes depending on whether the model is toroidal or not
-        GRAPHS = export.graphs.get_analysis_graph_names(toroidal=toroidal)
-    else:
-        GRAPHS = export.aggregate.graphs.get_aggregate_graph_names()
-
-    # Filter logic (what graph should we show?)
-    if selected_filter == "no":
-        selected_filter = None
-    elif selected_filter in GRAPHS:
-        graphs = [ selected_filter ]
-    else:
-        selected_filter = None
-
-    if selected_filter is None:
-        graphs = GRAPHS.copy()
 
     # Model selection logic
     if selected_run is not None:
@@ -136,13 +122,38 @@ def show_interface(live=False):
         if selected_models.shape[0] == 0:
             raise ValueError("No models found with the selected parameter combination")
         
+        # Check if the models are toroidal
+        if "toroidal" in selected_models.iloc[0]:
+            toroidal = selected_models.iloc[0]["toroidal"]  
+
+        # Regular analysis graphs
+        if aggregate is None:
+            # What graphs to show changes depending on whether the model is toroidal or not
+            GRAPHS = export.graphs.get_analysis_graph_names(toroidal=toroidal)
+        else:
+            GRAPHS = export.aggregate.graphs.get_aggregate_graph_names()
+
+        # Filter logic (what graph should we show?)
+        if selected_filter == "no":
+            selected_filter = None
+        elif selected_filter in GRAPHS:
+            graphs = [ selected_filter ]
+        else:
+            selected_filter = None
+
+        if selected_filter is None:
+            graphs = GRAPHS.copy()
+        
         # Get the IDs from the selected models
         selected_model_ids = selected_models["run_id"].to_list()
         # Remember the ID for this specific parameter selection
         parameter_selection_id = get_parameter_selection_id(selected_model_ids=selected_model_ids)
 
         # Render the graphs
-        prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_parameter=aggregate)
+        prerender_profile_graphs(selected_models,
+                                 selected_run, graphs,
+                                 aggregate_parameter=aggregate,
+                                 toroidal=toroidal)
 
     if live:
         selected_run = "live"
@@ -162,11 +173,11 @@ def show_interface(live=False):
                            live=live, # na na na na na
                            no_selection=no_selection,
                            graphs=graphs,
-                           all_graphs=graphs,
+                           all_graphs=GRAPHS,
                            enum_mapping=ENUM_MAPPING,
                            get_enum_name=get_enum_name)
 
-def prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_parameter=None):
+def prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_parameter=None, toroidal=False):
     # Get the IDs from the selected models
     selected_model_ids = selected_models["run_id"].to_list()
     parameter_selection_id = get_parameter_selection_id(selected_model_ids=selected_model_ids)
@@ -175,7 +186,7 @@ def prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_pa
     cached_graphs = get_cached_graphs(selected_run, parameter_selection_id, graphs)
     non_cached_graph_count = len(list(set(graphs) - set(cached_graphs)))
 
-    if non_cached_graph_count == 0:
+    if non_cached_graph_count == -1:
         pass
     # If we still need some graphs, just build all of them again
     else:
@@ -187,11 +198,9 @@ def prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_pa
         # All graphs in a dict representation
         # Create profile graphs
         if aggregate_parameter is None:
-            print("No aggregate needed")
-            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, graphs)
+            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, graphs, toroidal=toroidal)
         # Else, create aggregate graphs
         else:
-            print("Aggregate in vogue")
             graphs_output = export.aggregate.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, aggregate_parameter, RUNS_DIR, graphs)
 
         # Save the files to disk!
