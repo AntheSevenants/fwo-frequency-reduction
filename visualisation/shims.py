@@ -11,7 +11,7 @@ class Datacollector:
             return self._df
 
 class Model:
-    def __init__(self, dfs, run_infos, token_infos, min_steps=None):
+    def __init__(self, dfs, run_infos, min_steps=None):
         # All my code is written for a single simulation run
         # Hooray. I now have 100 simulation runs to aggregate
         # Time for some magic.
@@ -61,12 +61,11 @@ class Model:
 
         self.datacollector = Datacollector(df_aggregated)
 
-        self.tokens = token_infos["tokens"].to_list()
-        self.frequencies = token_infos["frequencies"].to_list()
-        self.percentiles = token_infos["percentiles"].to_list()
-        self.ranks = token_infos["ranks"].to_list()
-
-        self.num_tokens = len(self.tokens)
+        self.num_tokens = run_infos["num_tokens"]
+        self.tokens = [ str(i) for i in range(1, self.num_tokens + 1) ]
+        self.frequencies = None
+        self.percentiles = None
+        self.ranks = None
 
         self.datacollector_step_size = run_infos["datacollector_step_size"]
         self.current_step = min_steps if min_steps is not None else run_infos["max_steps"]

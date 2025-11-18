@@ -182,20 +182,16 @@ def prerender_profile_graphs(selected_models, selected_run, graphs, aggregate_pa
         # Generate the directory where we will put the figures
         temp_models_figures_dir = make_temp_models_figures_dir(selected_run=selected_run, parameter_selection_id=parameter_selection_id)
             
-        # Get tokens information
-        # Token info is just the information on the tokens and their ranks
-        # I don't think we even still use it all that much, I should try to remove it some time
-        token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=selected_run)
-
-        # TODO make configurable !!!
-        token_infos["tokens"] = [str(i+1) for i in token_infos.index]
+        token_infos = None
 
         # All graphs in a dict representation
         # Create profile graphs
         if aggregate_parameter is None:
-            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, token_infos, graphs)
+            print("No aggregate needed")
+            graphs_output = export.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, RUNS_DIR, graphs)
         # Else, create aggregate graphs
         else:
+            print("Aggregate in vogue")
             graphs_output = export.aggregate.graphs.generate_graphs(selected_run, selected_model_ids, selected_models, aggregate_parameter, RUNS_DIR, graphs)
 
         # Save the files to disk!
