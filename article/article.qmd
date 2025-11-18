@@ -174,14 +174,14 @@ At speech time (see @sec-language-game), the speaker agent has the opportunity t
 \node[box, right=0cm of B] (C) {75};
 \node[box, right=0cm of C] (D) {85};
 \node[box, right=0cm of D] (E) {62};
-\node[redbox, right=0cm of E] (F) {15};
+\node[redbox, right=0cm of E] (F) {5};
 
 \node[box, right=2cm of F] (G) {20};
 \node[box, right=0cm of G] (H) {22};
 \node[box, right=0cm of H] (I) {60};
 \node[box, right=0cm of I] (J) {70};
 \node[box, right=0cm of J] (K) {47};
-\node[redbox, right=0cm of K] (L) {15};
+\node[redbox, right=0cm of K] (L) {5};
 
 \draw[brace] (A.north west) -- (F.north east);
 \draw[brace] (F.south east) -- (A.south west);
