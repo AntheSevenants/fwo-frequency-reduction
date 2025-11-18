@@ -269,10 +269,10 @@ In this section, we will run through the different parameters the model has and 
 | --- | --- | --- |
 | $N$ | Number of agents | 25 |
 | $V$ | Number of constructions | 100 |
-| $D$ | Number of vector dimensions | 100 |
+| $D$ | Number of vector dimensions | 10 |
 | $L$ | Number of exemplars in memory | 1000 |
-| $R$ | Value subtracted from exemplar vector at reduction time. Also functions as threshold floor value. A vector dimension cannot reduce below this point. | 15 |
-| $n$ | Neighbourhood size. Only exemplars within this range count towards the interpretation of a vector. | 150 |
+| $R$ | Value subtracted from exemplar vector at reduction time. Also functions as threshold floor value. A vector dimension cannot reduce below this point. | 5 |
+| $n$ | Neighbourhood size. Only exemplars within this range count towards the interpretation of a vector. | 5 |
 | $p$ | Reduction probability at speech time | 0.5 |
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
