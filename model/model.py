@@ -22,6 +22,7 @@ class ReductionModel(mesa.Model):
                  num_agents=50,
                  num_dimensions=50,
                  num_tokens=100,
+                 num_distribution_tokens=None,
                  reduction_prior = 0.5,
                  memory_size=1000,
                  fixed_memory=False,
@@ -149,6 +150,11 @@ class ReductionModel(mesa.Model):
         if dynamic_neighbourhood_size:
             self.neighbourhood_size = self.num_dimensions * 1.5
 
+        if num_distribution_tokens is not None:
+            self.num_distribution_tokens = num_distribution_tokens
+        else:
+            self.num_distribution_tokens = num_tokens
+
         # Toroidal model
         if self.toroidal:
             vectors, angles = generate_quarter_circle_vectors(
@@ -188,24 +194,30 @@ class ReductionModel(mesa.Model):
                 print(f"Num tokens = {num_tokens}")
         self.vectors = vectors
 
-        # Now we can safely generate the tokens
+        # Now we can safely assign the tokens
         self.num_tokens = num_tokens
         self.tokens = [ str(token) for token in range(0, self.num_tokens) ]
         self.ranks = [ rank for rank in range(1, self.num_tokens + 1) ]
         # Frequency vector (different scale)
         if self.sampling_type == SamplingTypes.ZIPFIAN:
-            self.frequencies = generate_zipfian_frequencies(n_sample=self.num_tokens)
+            self.frequencies = generate_zipfian_frequencies(n_sample=self.num_distribution_tokens)
         elif self.sampling_type == SamplingTypes.LINEAR:
             self.frequencies = generate_linear_frequencies(
                 self.linear_sampling_intercept,
-                self.linear_sampling_slope)
+                self.linear_sampling_slope,
+                n_sample=self.num_distribution_tokens)
         elif self.sampling_type == SamplingTypes.FLAT:
             self.frequencies = [ 1 ] * self.num_tokens
         elif self.sampling_type == SamplingTypes.EXPONENTIAL:
             self.frequencies = generate_exponential_frequencies(
-                n_sample=self.num_tokens,
+                n_sample=self.num_distribution_tokens,
                 exp_param=self.exponential_sampling_lambda
             )
+        else:
+            raise ValueError("Unrecognised sampling type")
+    
+        # Now, we can cut at the actual num_tokens
+        self.frequencies = self.frequencies[0:self.num_tokens]
         
         # Compute fixed memory vector
         if self.sampling_type == SamplingTypes.ZIPFIAN:
