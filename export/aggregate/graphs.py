@@ -5,7 +5,7 @@ import export.aggregate.mapping
 
 import visualisation.aggregate
 
-AGGREGATE_GRAPHS = ["success-graph"]
+AGGREGATE_GRAPHS = ["success-graph", "success-graph-macro"]
 
 
 def get_aggregate_graph_names():
@@ -54,15 +54,27 @@ def create_graph(
 ):
     fig, ax = plt.subplots()
 
-    if graph_name == "success-graph":
-        parameter_mapping = export.aggregate.mapping.get_parameter_value_mapping(
+    get_mapping = (
+        lambda outcome_variable: export.aggregate.mapping.get_parameter_value_mapping(
             datacollector_dataframes,
             selected_model_ids,
             selected_models,
             aggregate_parameter,
-            "communicative_success",
+            outcome_variable,
         )
+    )
+
+    if graph_name == "success-graph":
+        parameter_mapping = get_mapping("communicative_success")
         figure = visualisation.aggregate.communicative_success(parameter_mapping, ax)
+    elif graph_name == "success-graph-macro":
+        parameter_mapping = get_mapping("communicative_success_macro")
+        figure = visualisation.aggregate.communicative_success_macro(
+            parameter_mapping, ax
+        )
+    elif graph_name == "success-graph-macro":
+        parameter_mapping = get_mapping("communicative_success")
+        figure = visualisation.aggregate.mean_agent_l1(parameter_mapping, ax)
     else:
         raise ValueError(f"Unrecognised aggregate graph: {graph_name}")
 
