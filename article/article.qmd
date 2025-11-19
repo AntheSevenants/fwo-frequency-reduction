@@ -378,6 +378,8 @@ An overview of the different simulation behaviour metrics and their evolutions f
 
 ### Evaluation
 
+### No Zipfian distribution, no feedback
+
 We explained in @sec-evaluation that the key point of simulation research is the search for the minimal specification of conditions that produces a specific effect. This is our current minimal specification which is conducive to the reducing effect: 
 
 1. Zipfian frequency difference between constructions
@@ -386,56 +388,41 @@ We explained in @sec-evaluation that the key point of simulation research is the
 
 We know that (3) is essential for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. We cannot disable (2), as the association between frequency and reduction willingness was never implemented, and it also never proved necessary in the (successful) re-entrance model (@sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
 
-To investigate this, we built a model in which we sample constructions using a linear distribution instead of a Zipfian one. In practice, this means that the most frequent construction is no longer twice as frequent as the second most frequent construction, three times as frequent as the third most frequent construction, and so on. Instead, the most frequent construction is only one "unit" more frequent than the second most frequent construction, which is one "unit" more frequent than the third most frequent construction, etc. This difference is demonstrated in @fig-linear-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction. The frequency drop of the Zipfian distribution is much more steep than the one of the linear distribution.
+To investigate this, we built a model in which we sample constructions from a completely flat distribution instead of a Zipfian one. This means that all constructions have the same probability of being selected, and they also all claim the same number of slots in agent memory. The difference between the two distributions is demonstrated in @fig-flat-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction.
 
-```{r}
-#| label: fig-linear-distribution
-#| fig-cap: "Overview of the two construction distributions tested in the model" 
-#| layout-ncol: 2
-#| layout-nrow: 1
-#| fig-subcap:
-#|   - "Theoretical Zipfian distribution of constructions" 
-#|   - "Theoretical Linear distribution of constructions"
-#| echo: FALSE
+The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous.
 
-library(ggplot2)
+To try and explain this behaviour, we have taken two approaches. In the first approach, we built feedback into the model. In the second approach, we increasingly skewed an exponential frequency distribution to check at what point communicative success matched the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
 
-# Zipfian
+### No Zipfian distribution, feedback
 
-MAX_FREQ = 10000
-x <- 1:100
-# Theoretical zipf
-y <- x^(-1) * MAX_FREQ
+In this subsection, we investigate the model behaviour of the following specification:
 
-# Create a data frame
-data <- data.frame(x, y)
+1. No frequency difference between constructions
+2. No association between frequency and reduction willingness on behalf of the speaker
+3. Re-entrance as an ambiguity avoidance mechanism
+4. Feedback allowed during communication
 
-# Plot the linear distribution
-ggplot(data, aes(x = x, y = y)) +
-  geom_bar(stat = "identity") +
-  ggtitle("Zipfean distribution") +
-  xlab("Rank") +
-  ylab("Frequency") +
-  theme_minimal()
+The addition of feedback adds another dimension to our model behaviour. At communication time, the hearer still uses their frequency-based approach to interpret the heard construction, but they now also receive a feedback signal from the speaker. If their interpretation was correct, they save the heard exemplar in their agent memory. If not, they do not save anything, and communication fails (i.e. there is no further repair mechanism). The revised flow of the language game is shown schematically in TODO.
 
-# Linear
+When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared. Communication now proceeds without issue.
 
-x <- 1:100
-y <- seq(10000, 100, -100)
+## Increasingly skewed exponential distribution
 
-# Create a data frame
-data <- data.frame(x, y)
+In this subsection, we look at the model behaviour of the following specification:
 
-# Plot the linear distribution
-ggplot(data, aes(x = x, y = y)) +
-  geom_bar(stat = "identity") +
-  ggtitle("Linear distribution") +
-  xlab("Rank") +
-  ylab("Frequency") +
-  theme_minimal()
-```
+1. Exponential frequency difference between constructions (to a varying degree)
+2. No association between frequency and reduction willingness on behalf of the speaker
+3. Re-entrance as an ambiguity avoidance mechanism
+4. No feedback allowed during communication
 
-The question is to what extent this change from Zipfian to linear frequency has an influence on the course of the simulation, most notably on the extent of reduction among representations and their respective reduction speed. To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. One can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we saw in @fig-base-model-l1-per-construction (repeated below) that the Zipfian simulation maintains a clear distinction between high frequent and less frequent constructions. Highly frequent constructions have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
+Our exponential distribution is organised according to TODO. We vary the skew in the exponential distribution from $log_{10}\left(1\right)$ to $log_{10}\left(3\right)$.
+
+Because this set of models covers a wide array of models, we build an aggregation graph over the model outcomes. TODO shows the average communicative success for each lambda parameter at the end of the model runs. It is clear that the more skewed the distribution becomes, the better the model performs.
+
+ALLES HIERONDER WELLICHT VOOR DE VUILBAK
+
+To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. One can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we saw in @fig-base-model-l1-per-construction (repeated below) that the Zipfian simulation maintains a clear distinction between high frequent and less frequent constructions. Highly frequent constructions have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
 
 In @fig-no-zipfian-model-half-life-per-construction, we again show the "half life" period for each construction. We see that very few acoustic representations reduce to half their energy in the Zipfian simulation, in contrast to the linear simulation, where many representations have indeed reduced at least halfway. This shows that, if frequency is assumed to be linear, reduction goes faster and applies to more constructions than when frequency is assumed to be Zipfian.
 
