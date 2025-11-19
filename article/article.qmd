@@ -353,13 +353,11 @@ Nevertheless, a solution within this design is possible on behalf of the speaker
 
 ![A schematic overview of the language game played by the speaker and hearer, with re-entrance. Before speaking, the speaker checks whether they would understand the uttered form themselves. If they do, reduction is kept, but if they do not, reduction is reversed. The new elements in the overview are indicated in teal.](language_game_reentrance.svg){#fig-model_design_language_game_reentrance}
 
-With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increasing sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion. Therefore, it seems the minimal number of preconditions for the reducing effect should be increased to five:
+With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increase in sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion. Therefore, it seems that an ambiguity avoidance mechanism is indeed required to obtain simulations results comparable with corpus data, leading to the following specification:
 
-1. Language users employ a shared code
-2. Language users sample constructions according to Zipf's law
-3. Language users remember multiple forms of the same construction
-4. Language users spontaneously reduce forms
-5. Language users should be able to understand reduced forms before uttering them
+1. Zipfian frequency difference between constructions
+2. No association between frequency and reduction willingness on behalf of the speaker
+3. Re-entrance as an ambiguity avoidance mechanism
 
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
