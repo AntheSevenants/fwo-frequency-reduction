@@ -439,7 +439,7 @@ In this regard, we can say that expected behaviour #2 (see @sec-expected-behavio
 ![Average L1 value in the re-entrance model with linear sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
 
-A comparison of the mean L1 values per construction in two models with Zipfean and linear sampling respectively.
+A comparison of the mean L1 values per construction in two models with Zipfian and linear sampling respectively.
 :::
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
@@ -448,7 +448,7 @@ A comparison of the mean L1 values per construction in two models with Zipfean a
 
 ![Average L1 half life in the with linear sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
-A comparison of the average half life per construction in two models with Zipfean and linear sampling respectively.
+A comparison of the average half life per construction in two models with Zipfian and linear sampling respectively.
 :::
 
 ## Discussion {#sec-discussion}
