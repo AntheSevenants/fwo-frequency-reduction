@@ -390,7 +390,7 @@ We know that (3) is essential for reducing effect behaviour, as the results for 
 
 To investigate this, we built a model in which we sample constructions from a completely flat distribution instead of a Zipfian one. This means that all constructions have the same probability of being selected, and they also all claim the same number of slots in agent memory. The difference between the two distributions is demonstrated in @fig-flat-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction.
 
-The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous.
+The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous. It is clear, then, that the Zipfian distribution seems relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
 
 To try and explain this behaviour, we have taken two approaches. In the first approach, we built feedback into the model. In the second approach, we increasingly skewed an exponential frequency distribution to check at what point communicative success matched the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
 
