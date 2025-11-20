@@ -411,16 +411,20 @@ When we look at the results, we see that the communicative chaos from the no fee
 
 ## Increasingly skewed exponential distribution
 
-In this subsection, we look at the model behaviour of the following specification:
+In the previous section, we saw that we can prevent communicative collapse in a flat distribution model if we incorporate a feedback mechanism. However, we saw in @sec-reentrance-model that with a Zipfian distribution, such a feedback mechanism is not necessary. To confirm this pattern, we investigate the link between a skewed (exponential) distribution and communicative success. We use the following specification:
 
 1. Exponential frequency difference between constructions (to a varying degree)
 2. No association between frequency and reduction willingness on behalf of the speaker
 3. Re-entrance as an ambiguity avoidance mechanism
 4. No feedback allowed during communication
 
-Our exponential distribution is organised according to TODO. We vary the skew in the exponential distribution from $log_{10}\left(1\right)$ to $log_{10}\left(3\right)$.
+Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$.
 
-Because this set of models covers a wide array of models, we build an aggregation graph over the model outcomes. TODO shows the average communicative success for each lambda parameter at the end of the model runs. It is clear that the more skewed the distribution becomes, the better the model performs.
+$$
+\operatorname{freq}(x) = e^{-\lambda} \cdot x
+$$ {#eq-exponential_distribution}
+
+Because this set of models covers a wide array of models, we build an aggregation graph over the model outcomes. @eq-exponential_distribution shows the average communicative success for each lambda parameter at the end of the model runs. It is clear that the more skewed the distribution becomes, the better the model performs. Broadly speaking, the more the distribution starts to resemble a typical Zipfian distribution, the better the model performs communicatively. We turn to the discussion to attempt to explain this behaviour.
 
 ALLES HIERONDER WELLICHT VOOR DE VUILBAK
 
