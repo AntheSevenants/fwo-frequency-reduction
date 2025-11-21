@@ -459,7 +459,13 @@ A comparison of the average half life per construction in two models with Zipfia
 
 ## Discussion {#sec-discussion}
 
-In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. We found that at least the following specification of specifications was required to lead to the reducing effect:
+In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. The required behaviour for a successful model of reduction was as follows:
+
+1. The language system has reorganised itself to express the same constructions using more efficient representations.
+1. More frequent constructions have reduced to a greater extent than less frequent constructions.
+1. Communication between agents remains successful. If the language system has reorganised itself in a way that makes effective communication impossible, the simulation has failed to simulate realistic conditions. Nonetheless, some tradeoff between communicative effort and communicative success can be seen as normal.
+
+We found that at least the following specification of specifications was required to lead to the reducing effect:
 
 1. Zipfian frequency difference between constructions
 2. No association between frequency and reduction willingness on behalf of the speaker
