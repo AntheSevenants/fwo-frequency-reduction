@@ -378,7 +378,7 @@ An overview of the different simulation behaviour metrics and their evolutions f
 
 ### Evaluation
 
-### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
+#### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
 
 We explained in @sec-evaluation that the key point of simulation research is the search for the minimal specification of conditions that produces a specific effect. This is our current minimal specification which is conducive to the reducing effect: 
 
@@ -394,7 +394,7 @@ The question is to what extent this change from Zipfian to flat frequency has an
 
 To try and explain this behaviour, we have taken two approaches. In the first approach, we built feedback into the model. In the second approach, we increasingly skewed an exponential frequency distribution to check at what point communicative success matched the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
 
-### No Zipfian distribution, feedback {#sec-no-zipfian-feedback-model}
+#### No Zipfian distribution, feedback {#sec-no-zipfian-feedback-model}
 
 In this subsection, we investigate the model behaviour of the following specification:
 
@@ -409,7 +409,7 @@ The addition of feedback adds another dimension to our model behaviour. At commu
 
 When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared. Communication now proceeds without issue.
 
-### Increasingly skewed exponential distribution {#sec-exponential-model}
+#### Increasingly skewed exponential distribution {#sec-exponential-model}
 
 In the previous section, we saw that we can prevent communicative collapse in a flat distribution model if we incorporate a feedback mechanism. However, we saw in @sec-reentrance-model that with a Zipfian distribution, such a feedback mechanism is not necessary. To confirm this pattern, we investigate the link between a skewed (exponential) distribution and communicative success. We use the following specification:
 
