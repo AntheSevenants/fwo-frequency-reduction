@@ -409,7 +409,7 @@ The addition of feedback adds another dimension to our model behaviour. At commu
 
 When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared. Communication now proceeds without issue.
 
-## Increasingly skewed exponential distribution {#sec-exponential-model}
+### Increasingly skewed exponential distribution {#sec-exponential-model}
 
 In the previous section, we saw that we can prevent communicative collapse in a flat distribution model if we incorporate a feedback mechanism. However, we saw in @sec-reentrance-model that with a Zipfian distribution, such a feedback mechanism is not necessary. To confirm this pattern, we investigate the link between a skewed (exponential) distribution and communicative success. We use the following specification:
 
