@@ -378,8 +378,6 @@ An overview of the different simulation behaviour metrics and their evolutions f
 
 ### Evaluation
 
-#### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
-
 We explained in @sec-evaluation that the key point of simulation research is the search for the minimal specification of conditions that produces a specific effect. This is our current minimal specification which is conducive to the reducing effect: 
 
 1. Zipfian frequency difference between constructions
@@ -388,9 +386,11 @@ We explained in @sec-evaluation that the key point of simulation research is the
 
 We know that (3) is essential for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. We cannot disable (2), as the association between frequency and reduction willingness was never implemented, and it also never proved necessary in the (successful) re-entrance model (@sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
 
-To investigate this, we built a model in which we sample constructions from a completely flat distribution instead of a Zipfian one. This means that all constructions have the same probability of being selected, and they also all claim the same number of slots in agent memory. The difference between the two distributions is demonstrated in @fig-flat-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction.
+To investigate this, we built a model in which we sample constructions from a completely flat distribution instead of a Zipfian one. This means that all constructions have the same probability of being selected, and they also all claim the same number of slots in agent memory. The difference between the two distributions is demonstrated in @fig-flat-distribution, where we show two distributions which both have 10,000 as the frequency of the most frequent construction. The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. We will address this in the next subsection.
 
-The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous. It is clear, then, that the Zipfian distribution seems relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
+#### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
+
+From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous. It is clear, then, that the Zipfian distribution seems relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
 
 To try and explain this behaviour, we have taken two approaches. In the first approach, we built feedback into the model. In the second approach, we increasingly skewed an exponential frequency distribution to check at what point communicative success matched the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
 
