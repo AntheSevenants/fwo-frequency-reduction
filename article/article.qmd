@@ -390,9 +390,9 @@ To investigate this, we built a model in which we sample constructions from a co
 
 #### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
 
-From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous. It is clear, then, that the Zipfian distribution seems relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
+From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous. It is clear, then, that skewed distributions seem relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
 
-To try and explain this behaviour, we have taken two approaches. In the first approach, we built feedback into the model. In the second approach, we increasingly skewed an exponential frequency distribution to check at what point communicative success matched the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
+To try and explain this behaviour, we have taken two approaches. In the first approach, we built feedback into the flat distribution model. In the second approach, we increasingly skewed an exponential frequency distribution to check at what point communicative success matched the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
 
 #### No Zipfian distribution, feedback {#sec-no-zipfian-feedback-model}
 
