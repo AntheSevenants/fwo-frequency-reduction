@@ -20,7 +20,6 @@ parser.add_argument('profile', type=str,
                     help='all | base-model | reentrance-model | no-shared-code-model | no-zipfian-model | single-exemplar-model | no-reduction-model | (cone-model)')
 parser.add_argument('--overwrite_tokens_path', nargs='?', type=str, default=False, help='path to a tokens file to overwrite the existing tokens')
 parser.add_argument("--no_titles", action="store_true", help="removes titles from the graphs")
-parser.add_argument("--neutral_tokens", action="store_true", help="make tokens neutral (C1, C2, C3 ...)")
 args = parser.parse_args()
 
 # Get the run information dataframe
@@ -28,7 +27,7 @@ args = parser.parse_args()
 run_infos = export.runs.get_run_infos(RUNS_DIR, args.selected_run)
 
 # Check if the profile we are asked to export actually exists
-if not args.profile in (export.profiles.ALL_PROFILE_NAMES + [ "all", "cone-model "]):
+if not args.profile in (export.profiles.ALL_PROFILE_NAMES + [ "all", "cone-model"]):
     raise ValueError("Unknown profile")
 
 # Convert profiles internally to a selection of profiles if necessary
@@ -37,11 +36,6 @@ if args.profile == "all":
     profiles_to_process = export.profiles.ALL_PROFILE_NAMES
 elif args.profile == "cone-model":
     profiles_to_process = [ "cone-model" ]
-
-# Get tokens information
-# Token info is just the information on the tokens and their ranks
-# I don't think we even still use it all that much, I should try to remove it some time
-token_infos = export.runs.get_token_infos(RUNS_DIR, selected_run=args.selected_run)
 
 # Ability to overwrite pseudo-token names in the different graphs
 if args.overwrite_tokens_path and not args.neutral_tokens:
@@ -59,16 +53,6 @@ if args.overwrite_tokens_path and not args.neutral_tokens:
     for column_name in [ "token", "rank" ]:
         if not column_name in overwrite_tokens.columns:
             raise ValueError(f"No '{column_name}' column in overwrite tokens file")
-    
-    token_infos = token_infos.drop('tokens', axis=1)
-    token_infos = pd.merge(token_infos, overwrite_tokens, left_on="ranks", right_on="rank")
-    
-    if not "tokens" in token_infos:
-        token_infos = token_infos.rename(columns={"token": "tokens"})
-
-# Ability to overwrite token names with neutral names (ranks)
-if args.neutral_tokens:
-    token_infos["tokens"] = [str(i+1) for i in token_infos.index]
 
 # Go over each profile and create the graphs for this profile
 for profile in profiles_to_process:
@@ -99,9 +83,16 @@ for profile in profiles_to_process:
     # We need different graphs depending on what profile we use
     # Also a different size for the confusion matrix
     graphs = export.graphs.get_export_graph_names(toroidal=toroidal)
-    n = export.graphs.get_n(toroidal=toroidal)
 
-    graphs_output = export.graphs.generate_graphs(args.selected_run, selected_model_ids, selected_models, RUNS_DIR, token_infos, graphs, disable_title=True)
+    graphs_output = export.graphs.generate_graphs(
+        args.selected_run,
+        selected_model_ids,
+        selected_models,
+        RUNS_DIR,
+        graphs,
+        disable_title=True,
+        toroidal=toroidal
+    )
 
     # Save the files to disk!
     export.files.export_files(graphs_output, profile, FIGURES_DIR)
