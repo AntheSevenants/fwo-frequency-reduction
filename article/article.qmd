@@ -432,37 +432,6 @@ $$ {#eq-exponential_distribution}
 
 Because this set of models covers a wide array of models, we build an aggregation graph over the model outcomes. @eq-exponential_distribution shows the average communicative success for each lambda parameter at the end of the model runs. It is clear that the more skewed the distribution becomes, the better the model performs. Broadly speaking, the more the distribution starts to resemble a typical Zipfian distribution, the better the model performs communicatively. We turn to the discussion to attempt to explain this behaviour.
 
-ALLES HIERONDER WELLICHT VOOR DE VUILBAK
-
-To answer this question, we look at @fig-no-zipfian-model-l1-per-construction. One can see that, generally speaking, there is hardly any difference in average L1 value among constructions. As the simulation unfolds, any variation in L1 is flattened down. In contrast, we saw in @fig-base-model-l1-per-construction (repeated below) that the Zipfian simulation maintains a clear distinction between high frequent and less frequent constructions. Highly frequent constructions have a lower L1 floor compared to higher frequency values, and this distinction is maintained over time.
-
-In @fig-no-zipfian-model-half-life-per-construction, we again show the "half life" period for each construction. We see that very few acoustic representations reduce to half their energy in the Zipfian simulation, in contrast to the linear simulation, where many representations have indeed reduced at least halfway. This shows that, if frequency is assumed to be linear, reduction goes faster and applies to more constructions than when frequency is assumed to be Zipfian.
-
-In this regard, we can say that expected behaviour #2 (see @sec-expected-behaviour) is violated, since linear frequency does not lead to any stark differences in reduction speed and extent between high and low frequency items. Therefore, we have not successfully modelled the reducing effect. As such, we now know that in our simulation, only the following specification successfully leads to the reducing effect:
-
-1. Zipfian frequency difference between constructions
-2. No association between frequency and reduction willingness on behalf of the speaker
-3. Re-entrance as an ambiguity avoidance mechanism
-
-::: {#fig-no-zipfian-model-l1-per-construction-group layout-ncol=2}
-
-![Average L1 value in the re-entrance model with Zipfian sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-l1-per-construction.png){#fig-base-model-l1-per-construction-repeat}
-
-![Average L1 value in the re-entrance model with linear sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
-
-
-A comparison of the mean L1 values per construction in two models with Zipfian and linear sampling respectively.
-:::
-
-::: {#fig-no-zipfian-model-group layout-ncol=2}
-
-![Average L1 half life in the re-entrance model with Zipfian sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-half-life-per-construction.png){#fig-bases-model-half-life-per-construction-repeat}
-
-![Average L1 half life in the with linear sampling (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
-
-A comparison of the average half life per construction in two models with Zipfian and linear sampling respectively.
-:::
-
 ## Discussion {#sec-discussion}
 
 In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. The required behaviour for a successful model of reduction was as follows:
