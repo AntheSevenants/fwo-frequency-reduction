@@ -422,11 +422,13 @@ In the previous section, we saw that we can prevent communicative collapse in a 
 3. Re-entrance as an ambiguity avoidance mechanism
 4. No feedback allowed during communication
 
-Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$.
+Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$. An example of some of the resulting distributions can be found in @fig-exponential-probabilities.
 
 $$
 \operatorname{freq}(x) = e^{-\lambda} \cdot x
 $$ {#eq-exponential_distribution}
+
+![A comparison of different lambda values for the exponential distribution. We show $\lambda = log_{10}\left(1\right)$, $\lambda = log_{10}\left(2\right)$ and $\lambda = log_{10}\left(3\right)$. The x axis shows the rank of the construction, the y axis shows its probability of being chosen (between 0 and 1). There are 100 constructions in total. As lambda increases, so does the asymmetry of the probability distribution.](figures/fig-exponential-probabilities-2.png){#fig-exponential-probabilities}
 
 Because this set of models covers a wide array of models, we build an aggregation graph over the model outcomes. @eq-exponential_distribution shows the average communicative success for each lambda parameter at the end of the model runs. It is clear that the more skewed the distribution becomes, the better the model performs. Broadly speaking, the more the distribution starts to resemble a typical Zipfian distribution, the better the model performs communicatively. We turn to the discussion to attempt to explain this behaviour.
 
