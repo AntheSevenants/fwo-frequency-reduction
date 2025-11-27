@@ -64,7 +64,7 @@ for profile in profiles_to_process:
         selected_models,
         RUNS_DIR,
         graphs,
-        disable_title=True,
+        disable_title=args.no_titles,
         toroidal=toroidal
     )
 
