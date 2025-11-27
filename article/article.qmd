@@ -394,9 +394,26 @@ To investigate this, we built a model in which we sample constructions from a co
 
 #### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
 
-From @fig-no-zipfian-model-success and @fig-base-model-matrix, we can tell that this model delivers poor performance. Communicative success is low, and confusion is ubiquitous. It is clear, then, that skewed distributions seem relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
+In this subsection, we look at the results of the model in which the Zipfian distribution was replaced with a flat distribution. We will evaluate the same dimensions as in the previous model specifications (see @sec-expected-behaviour):
+
+@fig-no-zipfian-model-l1-general shows that for this flat distribution model, the sparsity of the system still increases. However, when we look at @fig-no-zipfian-model-l1-per-construction and @fig-no-zipfian-model-half-life-per-construction, we do not see the same differentiation in reduction extent and speed under the influence of frequency. In addition, from @fig-no-zipfian-model-success and @fig-no-zipfian-model-matrix, we can tell that this model delivers poor communicative performance: communicative success is low, and confusion is ubiquitous. It appears that skewed distributions seem relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
 
 To try and explain this behaviour, we take two approaches. In the first approach, we build feedback into the flat distribution model. In the second approach, we increasingly skew an exponential frequency distribution to check at what point communicative success matches the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
+
+::: {#fig-no-zipfian-model-group layout-ncol=2}
+
+![Average L1 evolution in the re-entrance model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-l1-general.png){#fig-no-zipfian-model-l1-general}
+
+![Average L1 value in the flat distribution model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+
+![Average L1 half life in the flat distribution model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+
+![Global communicative success in the flat distribution model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-success.png){#fig-no-zipfian-model-success}
+
+![Confusion matrix showing the mistakes that agents make in the flat distribution model. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-no-zipfian-model-matrix.png){#fig-no-zipfian-model-matrix}
+
+An overview of the different simulation behaviour metrics and their evolutions for the flat distribution model.
+:::
 
 #### No Zipfian distribution, feedback {#sec-no-zipfian-feedback-model}
 
@@ -407,11 +424,20 @@ In this subsection, we investigate the model behaviour of the following specific
 3. Re-entrance as an ambiguity avoidance mechanism
 4. Feedback allowed during communication
 
-The addition of feedback adds another dimension to our model behaviour. At communication time, the hearer still uses their frequency-based approach to interpret the heard construction, but they now also receive a feedback signal from the speaker. If their interpretation was correct, they save the heard exemplar in their agent memory. If not, they do not save anything, and communication fails (i.e. there is no further repair mechanism). The revised flow of the language game is shown schematically in @fig-model_design_language_game_reentrance_feedback.
+While we originally opted not to use feedback in our language game because we did not want to make language redundant, perhaps some external, extralinguistic factor could be decisive in acting as a feedback mechanism. Therefore, as an exploratory measure, we additionally implement feedback for this specification. The addition of feedback adds another dimension to our model behaviour. At communication time, the hearer still uses their frequency-based approach to interpret the heard construction, but they now also receive a feedback signal from the speaker. If their interpretation was correct, they save the heard exemplar in their agent memory. If not, they do not save anything, and communication fails (i.e. there is no further repair mechanism). The revised flow of the language game is shown schematically in @fig-model_design_language_game_reentrance_feedback.
 
 ![A schematic overview of the language game played by the speaker and hearer, with re-entrance and feedback. After the exemplar is interpreted by the hearer, the speaker confirms whether this interpretation was correct. If so, the exemplar is saved, but if not, communication fails and nothing is saved. The new elements in the overview are indicated in teal.](tikz/language_game_reentrance_feedback.svg){#fig-model_design_language_game_reentrance_feedback}
 
-When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared. Communication now proceeds without issue.
+When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared (@fig-no-zipfian-model-feedback-success and @fig-no-zipfian-model-feedback-matrix). Communication now proceeds without issue.
+
+::: {#fig-no-zipfian-model-feedback-group layout-ncol=2}
+
+![Global communicative success in the flat distribution model with feedback (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-feedback-success.png){#fig-no-zipfian-model-feedback-success}
+
+![Confusion matrix showing the mistakes that agents make in the flat distribution model with feedback. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-no-zipfian-model-feedback-matrix.png){#fig-no-zipfian-model-feedback-matrix}
+
+An overview of the different simulation behaviour metrics and their evolutions for the flat distribution model with feedback.
+:::
 
 #### Increasingly skewed exponential distribution {#sec-exponential-model}
 
