@@ -27,15 +27,17 @@ args = parser.parse_args()
 run_infos = export.runs.get_run_infos(RUNS_DIR, args.selected_run)
 
 # Check if the profile we are asked to export actually exists
-if not args.profile in (export.profiles.ALL_PROFILE_NAMES + [ "all", "cone-model"]):
+if not args.profile in (export.profiles.ALL_PROFILE_NAMES):
     raise ValueError("Unknown profile")
 
 # Convert profiles internally to a selection of profiles if necessary
 profiles_to_process = [ args.profile ]
-if args.profile == "all":
-    profiles_to_process = export.profiles.ALL_PROFILE_NAMES
-elif args.profile == "cone-model":
-    profiles_to_process = [ "cone-model" ]
+
+# TODO: remove
+# if args.profile == "all":
+#     profiles_to_process = export.profiles.ALL_PROFILE_NAMES
+# elif args.profile == "cone-model":
+#     profiles_to_process = [ "cone-model" ]
 
 # Ability to overwrite pseudo-token names in the different graphs
 if args.overwrite_tokens_path and not args.neutral_tokens:
@@ -58,19 +60,15 @@ if args.overwrite_tokens_path and not args.neutral_tokens:
 for profile in profiles_to_process:
     print(f"Processing profile '{profile}'")
 
-    if profile != "cone-model":
-        # We are now taking the exact parameter specification from the associated profile
-        # So: Zipfian = True, dimensions = 10 etc.
-        specification = export.profiles.PROFILES[profile]
-
-        # Find the models adhering to this specification
-        selected_models = export.parameters.find_eligible_models(run_infos, specification)
+    # We are now taking the exact parameter specification from the associated profile
+    # So: Zipfian = True, dimensions = 10 etc.
+    specification = export.profiles.PROFILES[profile]
+    
+    # Find the models adhering to this specification
+    selected_models = export.parameters.find_eligible_models(run_infos, specification)
         
-        if selected_models.shape[0] == 0:
-            raise ValueError(f"No models found for profile '{profile}'")
-    # Cone model is just the entire model run
-    else:
-        selected_models = run_infos
+    if selected_models.shape[0] == 0:
+        raise ValueError(f"No models found for profile '{profile}'")
         
     # Get the IDs from the selected models
     selected_model_ids = selected_models["run_id"].to_list()
