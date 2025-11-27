@@ -85,7 +85,6 @@ def create_graph(
                 for l1_per_construction
                 in parameter_mapping[parameter]
             ]
-            print(parameter_mapping[parameter])
             parameter_mapping[parameter] = np.mean(parameter_mapping[parameter])
 
         figure = visualisation.aggregate.entropy(parameter_mapping, ax)
