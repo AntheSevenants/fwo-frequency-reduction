@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import entropy
 
 import export.models
 import export.aggregate.mapping
@@ -72,9 +74,21 @@ def create_graph(
         figure = visualisation.aggregate.communicative_success_macro(
             parameter_mapping, ax
         )
-    elif graph_name == "success-graph-macro":
-        parameter_mapping = get_mapping("communicative_success")
-        figure = visualisation.aggregate.mean_agent_l1(parameter_mapping, ax)
+    elif graph_name == "l1-entropy":
+        parameter_mapping = get_mapping("mean_token_l1")
+        for parameter in parameter_mapping:
+            parameter_mapping[parameter] = [
+                entropy(
+                    np.divide(l1_per_construction,
+                              np.sum(l1_per_construction)),
+                    base=l1_per_construction.shape[0])
+                for l1_per_construction
+                in parameter_mapping[parameter]
+            ]
+            print(parameter_mapping[parameter])
+            parameter_mapping[parameter] = np.mean(parameter_mapping[parameter])
+
+        figure = visualisation.aggregate.entropy(parameter_mapping, ax)
     else:
         raise ValueError(f"Unrecognised aggregate graph: {graph_name}")
 
