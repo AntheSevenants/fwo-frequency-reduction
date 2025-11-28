@@ -428,9 +428,13 @@ While we originally opted not to use feedback in our language game because we di
 
 ![A schematic overview of the language game played by the speaker and hearer, with re-entrance and feedback. After the exemplar is interpreted by the hearer, the speaker confirms whether this interpretation was correct. If so, the exemplar is saved, but if not, communication fails and nothing is saved. The new elements in the overview are indicated in teal.](tikz/language_game_reentrance_feedback.svg){#fig-model_design_language_game_reentrance_feedback}
 
-When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared (@fig-no-zipfian-model-feedback-success and @fig-no-zipfian-model-feedback-matrix). Communication now proceeds without issue.
+When we look at the results, we see that the communicative chaos from the no feedback model has completely disappeared (@fig-no-zipfian-model-feedback-success and @fig-no-zipfian-model-feedback-matrix). Communication now proceeds without issue. Still, there is no differentiation in reduction extent and speed under the influence of frequency (@fig-no-zipfian-model-feedback-l1-per-construction and @fig-no-zipfian-model-feedback-half-life-per-construction).
 
 ::: {#fig-no-zipfian-model-feedback-group layout-ncol=2}
+
+![Average L1 value in the flat distribution model with feedback (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
+
+![Average L1 half life in the flat distribution model with feedback (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
 
 ![Global communicative success in the flat distribution model with feedback (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-feedback-success.png){#fig-no-zipfian-model-feedback-success}
 
