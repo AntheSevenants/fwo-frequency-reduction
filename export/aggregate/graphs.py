@@ -68,11 +68,17 @@ def create_graph(
 
     if graph_name == "success-graph":
         parameter_mapping = get_mapping("communicative_success")
-        figure = visualisation.aggregate.communicative_success(parameter_mapping, ax)
+        figure = visualisation.aggregate.communicative_success(
+            parameter_mapping,
+            ax,
+            disable_title=disable_title
+        )
     elif graph_name == "success-graph-macro":
         parameter_mapping = get_mapping("communicative_success_macro")
         figure = visualisation.aggregate.communicative_success_macro(
-            parameter_mapping, ax
+            parameter_mapping,
+            ax,
+            disable_title=disable_title
         )
     elif graph_name == "l1-entropy":
         parameter_mapping = get_mapping("mean_token_l1")
