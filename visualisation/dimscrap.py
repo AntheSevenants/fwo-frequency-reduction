@@ -137,7 +137,8 @@ def make_communication_plot_combined(model, smooth=True, ax=None, disable_title=
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=model.datacollector_step_size))
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
     
     return ax
 
@@ -186,13 +187,12 @@ def make_words_distribution_plot(model, ax=None):
     df = model.datacollector.get_model_vars_dataframe()
     
     tokens_chosen = df["tokens_chosen"].iloc[-1]
-    tokens = tokens_chosen.keys()
-    frequencies = tokens_chosen.values()
+    ranks = range(1, len(tokens_chosen) + 1)
 
     if ax is None:
         ax = plt
     
     ax.tick_params(axis='x', labelrotation=90, labelsize=8)
-    ax.bar(tokens, frequencies)
+    ax.bar(ranks, tokens_chosen)
     
     return ax

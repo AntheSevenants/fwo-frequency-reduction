@@ -133,7 +133,8 @@ def make_angle_vocabulary_plot_2d(model, step, n=10, agent_filter=None, agent_co
         ax.set_title(title)
 
     fig = ax.get_figure()
-    fig.tight_layout()
+    if disable_title:
+        fig.tight_layout()
 
     return ax
 
@@ -208,7 +209,8 @@ def make_angle_vocabulary_plot_3d(model, step, n=10, agent_filter=None, agent_co
     ax.set_ylim(-max_radius, max_radius)
     ax.set_zlim(0, max_radius)
     #ax.legend()
-    plt.tight_layout()
+    if disable_title:
+        fig.tight_layout()
     plt.show()
 
     return fig

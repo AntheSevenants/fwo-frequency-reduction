@@ -5,11 +5,12 @@ import numpy as np
 
 import model.reduction
 
-from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, counts_to_percentages, generate_word_vectors
+from model.helpers import add_value_to_row, add_noise, get_neighbours, get_neighbours_nearest, get_neighbours_levenshtein, counts_to_percentages, generate_word_vectors
 from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
+from model.types.sampling import SamplingTypes
 from model.types.repair import Repair
 from model.types.who_saves import WhoSaves
 
@@ -60,7 +61,10 @@ class ReductionAgent(mesa.Agent):
 
             # Add each token twice
             for j in range(self.model.initial_token_count):
-                noisy_vector = add_noise(vector, ceiling=self.model.value_ceil)
+                if not self.model.disable_noise:
+                    noisy_vector = add_noise(vector, ceiling=self.model.value_ceil)
+                else:
+                    noisy_vector = vector
 
                 # Save the vector to memory
                 self.commit_to_memory(noisy_vector, token_index, good_origin=True)
@@ -70,20 +74,38 @@ class ReductionAgent(mesa.Agent):
 
         # To prevent certain model anomalies, we prefill the memory
         if self.model.prefill_memory:
-            while self.num_exemplars_in_memory < self.model.memory_size:
-                if self.model.zipfian_sampling:
-                    random_index = self.model.weighted_random_index()
-                else:
-                    random_index = self.model.linear_random_index()
+            if not self.model.fixed_memory:
+                while self.num_exemplars_in_memory < self.model.memory_size:
+                    random_index = self.get_random_index()
 
-                if not self.model.jumble_vocabulary:
-                    random_vector = self.model.get_original_vector(random_index)
-                else:
-                    random_vector = self.model.get_original_vector(random_index, self.personalised_vocabulary)
-                
-                noisy_vector = add_noise(random_vector)
+                    if not self.model.jumble_vocabulary:
+                        random_vector = self.model.get_original_vector(random_index)
+                    else:
+                        random_vector = self.model.get_original_vector(random_index, self.personalised_vocabulary)
 
-                self.commit_to_memory(noisy_vector, random_index, good_origin=True)
+                    if not self.model.disable_noise:
+                        noisy_vector = add_noise(random_vector)
+                    else:
+                        noisy_vector = random_vector
+
+                    self.commit_to_memory(noisy_vector, random_index, good_origin=True)
+            else:
+                for i in range(self.model.num_tokens):
+                    for j in range(self.model.fixed_memory_vector[i] - self.model.initial_token_count):                       
+                        random_vector = self.model.get_original_vector(i)
+                        if not self.model.disable_noise:
+                            noisy_vector = add_noise(random_vector)
+                        else:
+                            noisy_vector = random_vector
+
+                        self.commit_to_memory(noisy_vector, i, good_origin=True)
+
+
+    def get_random_index(self):
+        # The model knows what type of sampling is active
+        random_index = self.model.get_random_index()
+
+        return random_index
 
     def update_last_used(self, index, grow=False):
         if not grow:
@@ -105,11 +127,18 @@ class ReductionAgent(mesa.Agent):
         if self.num_exemplars_in_memory == self.model.memory_size:
             # We look for indices which are associated with tokens that have more than one exemplar in memory
             eligible_indices = []
+
             # Exception if we don't want to have multiple exemplars
             override_frequency_floor = self.model.num_tokens == self.model.memory_size
-            for token_index, frequency_count in enumerate(self.frequency_count):
-                if frequency_count > 1 or (override_frequency_floor and token_index == concept_index):
-                    eligible_indices += self.indices_per_token[token_index]
+
+            # If fixed memory, only the token's own exemplars can be overwritten
+            if self.model.fixed_memory:
+                eligible_indices += self.indices_per_token[concept_index]
+            # Else, look in the global memory
+            else:
+                for token_index, frequency_count in enumerate(self.frequency_count):
+                    if frequency_count > 1 or (override_frequency_floor and token_index == concept_index):
+                        eligible_indices += self.indices_per_token[token_index]
 
             if not eligible_indices:
                 # This should rarely happen if you always ensure every token retains at least one exemplar.
@@ -128,7 +157,7 @@ class ReductionAgent(mesa.Agent):
 
             # Add extra test to be absolutely certain that no token lacks exemplars
             for token_index, exemplar_indices in enumerate(self.indices_per_token):
-                if len(exemplar_indices) == 0 and not override_frequency_floor:
+                if len(exemplar_indices) == 0 and not override_frequency_floor and concept_index != remove_index:
                     raise ValueError(f"Token {token_index} has zero associated exemplars. This should never happen!\n\
 Old concept index was {old_concept_index}.\n\
 {token_index} has {self.frequency_count[token_index]} registered associated exemplar(s)")
@@ -157,10 +186,7 @@ Old concept index was {old_concept_index}.\n\
             self.num_exemplars_in_memory += 1
 
     def interact_do(self):
-        if self.model.zipfian_sampling:
-            event_index = self.model.weighted_random_index()
-        else:
-            event_index = self.model.linear_random_index()
+        event_index = self.get_random_index()
         
         while True:
             hearer_agent = self.random.choice(self.model.agents)
@@ -178,6 +204,8 @@ Old concept index was {old_concept_index}.\n\
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.WEIGHTED_NEAREST:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
+        elif self.model.neighbourhood_type == NeighbourhoodTypes.LEVENSHTEIN:
+            hearer_neighbourhood_indices, hearer_weights = get_neighbours_levenshtein(hearer_agent.memory, spoken_token_vector, neighbourhood_size)
         elif self.model.neighbourhood_type == NeighbourhoodTypes.ONE_SHOT:
             hearer_neighbourhood_indices, hearer_weights = get_neighbours_nearest(hearer_agent.memory, spoken_token_vector, neighbourhood_size, weighted=True)
             # Get only the closest exemplar
@@ -336,6 +364,7 @@ Old concept index was {old_concept_index}.\n\
         # So I programmed two modes: a success-dependent one and a "dumb" one which just always reduces under a certain threshold
 
         reduction_strength = self.model.reduction_strength
+        alpha = self.model.alpha
 
         if self.model.reduction_mode == ReductionModes.ALWAYS:
             reduction_prob = self.model.reduction_prior
@@ -373,21 +402,45 @@ Old concept index was {old_concept_index}.\n\
         # Save the current vector
         unreduced_vector = spoken_token_vector.copy()
         if do_reduction:
+            self.model.total_reductions += 1
+
+            threshold = self.model.value_floor 
             if self.model.reduction_method == ReductionMethod.DIMENSION_SCRAP:
                 raise NotImplementedError("Dimension scrapping has not (yet) been reimplemented")
             elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING:
                 # Apply L1-based soft thresholding to encourage further sparsity
-                threshold = self.model.reduction_strength  # the threshold value can be adjusted
-                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, 15)
+                spoken_token_vector = np.maximum(spoken_token_vector - reduction_strength, self.model.value_floor)
+            elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_2:
+                # Apply L1-based soft thresholding to encourage further sparsity
+                spoken_token_vector = model.reduction.soft_thresholding_2(spoken_token_vector, reduction_strength, self.model.value_floor)
             elif self.model.reduction_method == ReductionMethod.GAUSSIAN_MASK:
-                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, 15, width_ratio=0.5)
+                spoken_token_vector = model.reduction.reduction_mask(self.model, spoken_token_vector, reduction_strength, width_ratio=0.5, threshold=threshold)
+            elif self.model.reduction_method == ReductionMethod.TAPER:
+                spoken_token_vector = model.reduction.taper(spoken_token_vector, reduction_strength, self.model.num_dimensions)
             elif self.model.reduction_method == ReductionMethod.ANGLE:
                 spoken_token_vector = model.reduction.angle_reduction(spoken_token_vector, reduction_strength)
+            elif self.model.reduction_method == ReductionMethod.SOFT_THRESHOLDING_DIM:
+                spoken_token_vector = model.reduction.soft_thresholding_dimension(self.model, spoken_token_vector, self.model.reduction_strength, threshold, dimension_vector=self.model.dimension_vector[event_index,])
+            elif self.model.reduction_method == ReductionMethod.NON_LINEAR:
+                step = reduction_strength
+                spoken_token_vector = model.reduction.non_linear(spoken_token_vector, alpha, step)
+            elif self.model.reduction_method == ReductionMethod.BYE_MAX:
+                spoken_token_vector = model.reduction.bye_max(spoken_token_vector, reduction_strength, threshold)
+            elif self.model.reduction_method == ReductionMethod.ALPHA_ONLY:
+                spoken_token_vector = model.reduction.decay_only(spoken_token_vector, alpha, threshold)
 
             # print("Reduction applied: Token vector sparsified.")
         else:
             pass
             # print("No reduction applied.")
+
+        if (spoken_token_vector == unreduced_vector).all():
+            do_reduction = False
+
+        if do_reduction:
+            self.model.reduction_per_token[event_index] += 1
+        else:
+            self.model.non_reduction_per_token[event_index] += 1
 
         if self.model.toroidal:
             toroidal_size = self.model.value_ceil
@@ -402,10 +455,11 @@ Old concept index was {old_concept_index}.\n\
             
                 reception_result = self.reception_logic(unique, counts, event_index)
                 if reception_result:
-                    understood_themselves, self_understood_concept_index, should_repair = self.reception_logic(unique, counts, event_index)
+                    understood_themselves, self_understood_concept_index, should_repair = reception_result
 
-                    percentages = counts_to_percentages(counts)
-                    confident_judgement = percentages[0] >= self.model.speaker_confidence_threshold
+                    if self_understood_concept_index is not None:
+                        percentages = counts_to_percentages(counts)
+                        confident_judgement = percentages[0] >= self.model.speaker_confidence_threshold
                     break
                 else:
                     # print("- Growing")
@@ -413,6 +467,12 @@ Old concept index was {old_concept_index}.\n\
 
             # If the speaker wouldn't have understood themselves, turn back the reduction
             # Or if the speaker is not confident!
+            if not understood_themselves:
+                self.model.reversed_reductions += 1
+                self.model.reentrance_activation_per_token += 1
+            else:
+                self.model.reentrance_non_activation_per_token += 1
+
             if not understood_themselves or not confident_judgement:
                 spoken_token_vector = unreduced_vector
 

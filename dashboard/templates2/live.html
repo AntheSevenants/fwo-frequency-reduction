@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Live{% endblock %}
 {% block head %}
 {{ super() }}
 <style type="text/css">
@@ -10,16 +10,20 @@
     <div class="container d-flex justify-content-center align-items-center pt-4" style="min-height: 100vh;">
         <div class="section row justify-content-center pb-5 w-100">
             <div class="col-12 col-lg-5">
-                <p class="pt-2">Choose a model run to get started.</p>
+                <p class="pt-2">No selection variable.</p>
             </div>
         </div>
     </div>
     {% else %}
     <input id="input_note" spellcheck="false">
-    <div class="container d-flex align-items-center {{ 'justify-content-center' if selected_filter is not none }}" style="min-height: 100vh;">
-    {% for graph_name in graphs %}
-        <img src='{{ url_for("send_graph", graph_name=graph_name, selected_run=selected_run, parameter_selection_id=parameter_selection_id) }}?v=99999'>
-    {% endfor %}
+    <div class="container d-flex align-items-center justify-content-start }}" style="min-height: 100vh;">
+    {% if graphs | length == 0 %}
+        No figures found. Run an export, then refresh.
+    {% else %}
+        {% for graph_name in graphs %}
+            <img src='{{ url_for("generate_graph", graph_name=graph_name) }}?v=99999'>
+        {% endfor %}
+    {% endif %}
     </div>
     {% endif %}
 {% endblock %}

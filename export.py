@@ -18,6 +18,8 @@ import visualisation.dimscrap
 import visualisation.angle
 import visualisation.shims
 
+import export.graphs
+
 FIGURES_FOLDER = "figures/"
 MODELS_FOLDER = "models/"
 REGULAR_GRAPH_NAMES = [ "l1-general", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
@@ -159,50 +161,16 @@ for profile_name in profiles_to_process:
         token_infos["tokens"] = [str(i+1) for i in token_infos.index]
     
     # Fake model to satisfy my shoddy programming
-    model = visualisation.shims.Model(dfs, run_infos.iloc[0], token_infos)
+    if "steps" in selected_model:
+        min_steps = selected_model["steps"].min() # Minimum run time
+    else:
+        min_steps = selected_model["max_steps"].min()
+    model = visualisation.shims.Model(dfs, run_infos.iloc[0], token_infos, min_steps)
 
     graphs = {}
 
     for graph_name in GRAPH_NAMES:
-        fig, ax = plt.subplots()
-
-        if graph_name == "l1-general":
-            figure = visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False, disable_title=args.no_titles)
-        elif graph_name == "l1-per-construction-mosaic":
-            figure = visualisation.meta.make_layout_plot(model, visualisation.l1.words_mean_l1_bar,
-                                                        steps=[math.floor(model.current_step / 4) * 1,
-                                                            math.floor(model.current_step / 4) * 2,
-                                                            math.floor(model.current_step / 4) * 3,
-                                                            model.current_step],
-                                                        disable_title=args.no_titles)
-        elif graph_name == "l1-per-construction":
-            figure = visualisation.l1.words_mean_l1_bar(model, model.current_step, ax=ax, disable_title=args.no_titles)
-        elif  graph_name == "success":
-            figure = visualisation.dimscrap.make_communication_plot_combined(model, smooth=False, ax=ax, disable_title=args.no_titles)
-        elif graph_name == "matrix":
-            figure = visualisation.meta.make_confusion_plot(model, model.current_step, n=n, ax=ax, disable_title=args.no_titles)
-        elif graph_name == "matrix-mosaic":
-            figure = visualisation.meta.make_layout_plot(model, visualisation.meta.make_confusion_plot, n=n,
-                                                         steps=[math.floor(model.current_step / 4) * 1,
-                                                            math.floor(model.current_step / 4) * 2,
-                                                            math.floor(model.current_step / 4) * 3,
-                                                            model.current_step],
-                                                        disable_title=args.no_titles)
-        elif graph_name == "confusion-ratio":
-            figure = visualisation.l1.token_good_origin_first_n(model, ax=ax, disable_title=args.no_titles)
-        elif graph_name in [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end" ]:
-            if graph_name == "angle-vocabulary-plot-2d-begin":
-                step = 0
-            elif graph_name == "angle-vocabulary-plot-2d-end":
-                step = 700
-
-            figure = visualisation.angle.make_angle_vocabulary_plot_2d(model, step, agent_filter=0, disable_title=args.no_titles)
-        elif graph_name == "angle-vocabulary-plot-3d-begin":
-            step = 0
-
-            figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0, disable_title=args.no_titles)
-        elif graph_name == "half-life-per-construction":
-            figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax, disable_title=args.no_titles)
+        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=n, disable_title=args.no_titles)
 
         graphs[graph_name] = figure
 

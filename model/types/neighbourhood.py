@@ -4,3 +4,4 @@ class NeighbourhoodTypes:
     WEIGHTED_NEAREST = 2
     ONE_SHOT = 3
     SPATIAL_WEIGHTED = 4
+    LEVENSHTEIN = 5
