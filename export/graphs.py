@@ -70,7 +70,7 @@ def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
         if graph_name == "angle-vocabulary-plot-2d-begin":
             step = 0
         elif graph_name == "angle-vocabulary-plot-2d-end":
-            step = 700
+            step = 750
 
         figure = visualisation.angle.make_angle_vocabulary_plot_2d(model, step, agent_filter=0, disable_title=disable_title)
     elif graph_name == "angle-vocabulary-plot-3d-begin":
