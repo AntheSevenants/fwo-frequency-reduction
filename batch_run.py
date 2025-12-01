@@ -4,17 +4,21 @@ from model.types.neighbourhood import NeighbourhoodTypes
 from model.types.production import ProductionModels
 from model.types.reduction import ReductionModes, ReductionMethod
 from model.types.feedback import FeedbackTypes
+from model.types.sampling import SamplingTypes
 from model.types.repair import Repair
 from model.types.who_saves import WhoSaves
+from model.types.vector import VectorTypes
 
 from batchrunner import batch_run
 
 from datetime import datetime
 
 import pandas as pd
+import numpy as np
 import os
 import argparse
 import random
+import math
 
 parser = argparse.ArgumentParser(
     description='batch_run - volt go brr (and crash sometimes)')
@@ -23,35 +27,44 @@ parser.add_argument('profile', type=str,
 parser.add_argument('iterations', type=int, default=1, help='number of iterations, default = 1')
 args = parser.parse_args()
 
+NUM_STEPS = 100000
+
 params_template = {
+    "num_tokens": [ 100 ],
     "num_agents": 25,
     "reduction_prior": 0.5,
-    "initial_token_count": 1,
+    "value_ceil": 100,
+    "memory_size": 1000,
+    "reduction_strength": [ 5 ],
+    "neighbourhood_size": 5,
+    "num_dimensions": [ 10 ],
+    "initial_token_count": 5,
     "prefill_memory": True,
     "neighbourhood_step_size": 0,
-    "reduction_strength": 15,
     "production_model": ProductionModels.SINGLE_EXEMPLAR,
-    "neighbourhood_type": NeighbourhoodTypes.SPATIAL,
+    "neighbourhood_type": NeighbourhoodTypes.LEVENSHTEIN,
     "reduction_mode": ReductionModes.ALWAYS,
-    "feedback_type": FeedbackTypes.NO_FEEDBACK,
+    "feedback_type": [ FeedbackTypes.FEEDBACK, FeedbackTypes.NO_FEEDBACK ],
+    "reduction_method": [ ReductionMethod.SOFT_THRESHOLDING ],
+    "sampling_type": [ SamplingTypes.ZIPFIAN ],
     "repair": Repair.NO_REPAIR,
     "confidence_threshold": 0,
+    "value_floor": 5,
     "who_saves": [ WhoSaves.HEARER ],
-    "max_turns": 1
+    "max_turns": 1,
+    "vectors_type": [ VectorTypes.DIRK_P2 ],
+    "fixed_memory": True
 }
 
 if args.profile == "regular":
-    NUM_STEPS = 50000
-
     params = { **params_template,
-        "num_tokens": 100,
-        "memory_size": [ 100, 1000 ],
-        "num_dimensions": 100,
-        "neighbourhood_size": [ 150 ],
-        "reduction_method": ReductionMethod.SOFT_THRESHOLDING,
-        "jumble_vocabulary": [ False, True ],
-        "zipfian_sampling": [ True, False ],
-        "disable_reduction": [ False, True ],
+        "self_check": [ False, True ],
+        "datacollector_step_size": 1000
+    }
+elif args.profile == "exponential":
+    params = { **params_template,
+        "sampling_type": [ SamplingTypes.EXPONENTIAL ],
+        "exponential_sampling_lambda": [ math.log(x, 10) for x in np.arange(1, 3 + 0.05, 0.05) ],
         "self_check": [ False, True ],
         "datacollector_step_size": 1000
     }
@@ -61,18 +74,17 @@ elif args.profile == "cone":
     params = {
         **params_template,
         "num_tokens": 10,
-        "value_ceil": 250,
+        "num_agents": 5,
+        "num_distribution_tokens": 100,
+        "value_ceil": 100,
+        "reduction_strength": 5,
         "memory_size": 100,
+        "initial_token_count": 1,
         "num_dimensions": 2,
-        "neighbourhood_size": 25,
         "reduction_method": ReductionMethod.ANGLE,
-        "jumble_vocabulary": False,
-        "zipfian_sampling": True,
-        "disable_reduction": False,
         "self_check": False,
         "datacollector_step_size": 50,
         "toroidal": True,
-        "seed": random.randint(0, 99999999),
         "light_serialisation": False
     }
 
@@ -84,15 +96,15 @@ if __name__ == '__main__':
     os.makedirs(run_folder, exist_ok=True)
 
     # Save frequency, token and percentile information
-    tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{params['num_tokens']}.tsv", theoretical=True)
+    # tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{max(params['num_tokens'])}.tsv", theoretical=True)
 
-    tokens_df = pd.DataFrame({
-        "tokens": tokens,
-        "frequencies": frequencies,
-        "percentiles": percentiles,
-        "ranks": ranks
-    })
-    tokens_df.to_csv(f"{run_folder}token_infos.csv", index=False)
+    # tokens_df = pd.DataFrame({
+    #     "tokens": tokens,
+    #     "frequencies": frequencies,
+    #     "percentiles": percentiles,
+    #     "ranks": ranks
+    # })
+    # tokens_df.to_csv(f"{run_folder}token_infos.csv", index=False)
 
     results = batch_run(
         ReductionModel,

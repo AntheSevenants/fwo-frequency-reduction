@@ -7,5 +7,11 @@ class ReductionModes:
 class ReductionMethod:
     DIMENSION_SCRAP = 0
     SOFT_THRESHOLDING = 1
+    SOFT_THRESHOLDING_DIM = 4
     GAUSSIAN_MASK = 2
     ANGLE = 3
+    TAPER = 5
+    NON_LINEAR = 6
+    ALPHA_ONLY = 9
+    BYE_MAX = 7
+    SOFT_THRESHOLDING_2 = 8

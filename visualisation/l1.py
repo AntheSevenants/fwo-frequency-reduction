@@ -42,6 +42,9 @@ def make_general_plot(model, attribute, smooth=True, ax=None, title=None, ratio=
 def make_mean_l1_plot(model, smooth=True, ax=None, disable_title=False):
     return make_general_plot(model, "mean_agent_l1", ax=ax, smooth=smooth, title="Mean L1 (across tokens, across agents)", disable_title=disable_title)
 
+def make_micro_mean_l1_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "micro_mean_agent_l1", ax=ax, smooth=smooth, title="Micro mean L1 (across tokens, across agents)", disable_title=disable_title)
+
 def make_communicative_success_macro_plot(model, smooth=True, ax=None, disable_title=False):
     return make_general_plot(model, "communicative_success_macro", ax=ax, smooth=smooth, title="Global communicative success (macro avg across tokens)", ratio=True, disable_title=disable_title)
 
@@ -50,6 +53,9 @@ def make_mean_exemplar_age_plot(model, smooth=True, ax=None, disable_title=False
 
 def make_reduction_success_plot(model, smooth=True, ax=None, disable_title=False):
     return make_general_plot(model, "reduction_success", ax=ax, smooth=smooth, title="Global reduction success ratio", ratio=True, disable_title=disable_title)
+
+def make_reentrance_ratio_plot(model, smooth=True, ax=None, disable_title=False):
+    return make_general_plot(model, "reentrance_ratio", ax=ax, smooth=smooth, title="Re-entrance reversal ratio", ratio=True, disable_title=disable_title)
 
 def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, title=None, ratio=False, disable_title=False):
     df = model.datacollector.get_model_vars_dataframe()
@@ -65,18 +71,13 @@ def property_plot_first_n(model, attribute, n=10, jitter_strength=0.2, ax=None, 
     chosen_word_indices = range(0, n)
     legend_values = [ model.tokens[chosen_word_index] for chosen_word_index in chosen_word_indices ]
 
-    # Get frequencies and normalize them
-    frequencies = np.array([model.frequencies[i] for i in chosen_word_indices])
-    log_freq = np.log1p(frequencies)  # log1p to avoid log(0)
-    log_freq = (log_freq - log_freq.min()) / (log_freq.max() - log_freq.min())  # Normalize between 0 and 1
-
     # Create colors (darker for more frequent)
-    colors = [plt.cm.Blues(f) for f in log_freq]
+    colors = [plt.cm.Blues(1 / (i + 0.001)) for i in chosen_word_indices]
 
     # Plot each word with its corresponding color
     for i, color in zip(chosen_word_indices, colors):
         jitter = np.random.uniform(-jitter_strength, jitter_strength)
-        ax.plot(matrix_3d[:, i] + jitter, color=color, label=f"{model.tokens[i]} {model.ranks[i]}")
+        ax.plot(matrix_3d[:, i] + jitter, color=color, label=f"{model.tokens[i]}")
 
     ax.legend(legend_values)
 
@@ -103,6 +104,12 @@ def communicative_success_first_n(model, n=10, jitter_strength=0.02, ax=None, di
 def token_good_origin_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
     return property_plot_first_n(model, "token_good_origin", n, jitter_strength, ax, "Ratio of authentic exemplars per token (across agents)", ratio=True, disable_title=disable_title)
 
+def reduction_per_token_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "reduction_per_token", n, jitter_strength, ax, "Ratio of reduction per token (across agents)", ratio=True, disable_title=disable_title)
+
+def reentrance_per_token_first_n(model, n=10, jitter_strength=0.02, ax=None, disable_title=False):
+    return property_plot_first_n(model, "reentrance_per_token", n, jitter_strength, ax, "Ratio of re-entrance per token (across agents)", ratio=True, disable_title=disable_title)
+
 def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
     if ax is None:
         ax = plt
@@ -110,7 +117,7 @@ def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
         pass
 
     frequency_counts = model.datacollector.get_model_vars_dataframe()["mean_exemplar_count"].iloc[-1]
-    ax.bar(model.tokens, frequency_counts)   
+    ax.bar(model.tokens[:len(frequency_counts)], frequency_counts)   
 
     if not disable_title:
         ax.set_title("Mean exemplar count per token (across agents)")
@@ -121,7 +128,7 @@ def words_mean_exemplar_count_bar(model, ax=None, disable_title=False):
 
     return ax
 
-def words_mean_l1_bar(model, step, ax=None, disable_title=False):
+def words_mean_l1_bar(model, step, ax=None, ylim=7000, disable_title=False):
     if ax is None:
         ax = plt
         no_ax = True
@@ -132,7 +139,7 @@ def words_mean_l1_bar(model, step, ax=None, disable_title=False):
         step = step // model.datacollector_step_size
 
     token_l1 = model.datacollector.get_model_vars_dataframe()["mean_token_l1"].iloc[step]
-    ax.bar(model.tokens, token_l1)
+    ax.bar(model.tokens[:len(token_l1)], token_l1)
 
     x_tokens = [ str(i) if i % 10 == 0 or i in [1, model.num_tokens] else "" for i in range(1, model.num_tokens + 1) ]
     if not no_ax:
@@ -146,7 +153,7 @@ def words_mean_l1_bar(model, step, ax=None, disable_title=False):
     if not disable_title:
         if not no_ax:
             ax.set_title(title) 
-            ax.set_ylim([0, 7000])
+            ax.set_ylim([0, ylim])
         else:
             ax.title(title)
 
