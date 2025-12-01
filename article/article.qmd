@@ -27,8 +27,6 @@ format:
     css: style.css
   docx:
     toc: false
-filters:
-  - tikz
 editor: source
 title-block-banner: true
 bibliography: references.bib
@@ -158,43 +156,7 @@ In principle, it is true that such a bottom-up approach is possible. However, gi
 
 At speech time (see @sec-language-game), the speaker agent has the opportunity to reduce the exemplar vector representation that they retrieved from memory. Our implementation of reduction is extremely simple: a set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
 
-::: {#fig-model_design_reduction}
-```{.tikz}
-\usetikzlibrary{shapes.misc, positioning, decorations.pathreplacing}
-
-\begin{tikzpicture}[
-    box/.style={draw, minimum width=1cm, minimum height=1cm, font=\Large},
-    redbox/.style={box, fill=red!30},
-    brace/.style={decorate, decoration={brace, amplitude=5pt}},
-    arrow/.style={->, ultra thick}
-]
-
-\node[box] (A) {35};
-\node[box, right=0cm of A] (B) {37};
-\node[box, right=0cm of B] (C) {75};
-\node[box, right=0cm of C] (D) {85};
-\node[box, right=0cm of D] (E) {62};
-\node[redbox, right=0cm of E] (F) {5};
-
-\node[box, right=2cm of F] (G) {30};
-\node[box, right=0cm of G] (H) {32};
-\node[box, right=0cm of H] (I) {70};
-\node[box, right=0cm of I] (J) {80};
-\node[box, right=0cm of J] (K) {57};
-\node[redbox, right=0cm of K] (L) {5};
-
-\draw[brace] (A.north west) -- (F.north east);
-\draw[brace] (F.south east) -- (A.south west);
-\draw[brace] (G.north west) -- (L.north east);
-\draw[brace] (L.south east) -- (G.south west);
-
-\draw[arrow] ([xshift=0.5cm]F.east) -- ([xshift=-0.5cm]G.west);
-
-\end{tikzpicture}
-```
-
-How reduction works in our simulation. In this case, $R = 5$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 5 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.
-:::
+![How reduction works in our simulation. In this case, $R = 5$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 5 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.](tikz/reduction.svg){#fig-model_design_reduction}
 
 ### Language game and course of the simulation {#sec-language-game}
 
