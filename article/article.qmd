@@ -276,6 +276,8 @@ In this section, we will run through the different parameters the model has and 
 | $p$ | Reduction probability at speech time | 0.5 |
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
+In the following sections, we will present the results of several different parameter combinations ("specifications") of our reducing effect model. Because our model is partially probabilistic, each specification is run 100 times. Any graph shown is an aggregate of the behaviour of those 100 runs. We make this aggregate by taking the mean across all runs of a specification.
+
 ## Results
 
 In this section, we will go over the results produced by the model operationalised according to the requirements detailed in the previous sections. More specifically, we will check if the model behaviour adheres to the expected behaviour defined in @sec-expected-behaviour.
