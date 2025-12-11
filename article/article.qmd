@@ -151,34 +151,30 @@ Usage-based theories of language generally take a very broad view on memory. Usu
 In principle, it is true that such a bottom-up approach is possible. However, given the restrictions in a limited computer model, we opted to take a shortcut to guarantee the cognitive plausibility of our model. While we have no doubts that in the context of real human memory, certain frequency distributions need not be presupposed, our memory of 1000 exemplars is just too small to guarantee the stability of lower-frequency constructions. If we were to use a global memory, new variants of high frequency constructions would push out exemplars of low frequency constructions too easily, leading to unreliable representations of those constructions. Because it is unfortunately computationally intractable to equip agents with memories tallying hundreds of thousands of exemplars, we opted to simply assume the presupposed effect and model the frequency distribution directly in memory.
 ::: -->
 
-### Reduction {#sec-reduction}
-
-At speech time (see @sec-language-game), the speaker agent has the opportunity to reduce the exemplar vector representation that they retrieved from memory. Our implementation of reduction is extremely simple: a set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
-
-![How reduction works in our simulation. In this case, $R = 5$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 5 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.](tikz/reduction.svg){#fig-model_design_reduction}
-
-### Language game and course of the simulation {#sec-language-game}
+### Language game and course of the simulation
 
 We mentioned that we estimate that the interaction between agents, given specific preconditions, is naturally conducive to reducing behaviour. In this section, we will explain this interactional behaviour of our virtual speakers and hearers in more detail.
 
-At each step in the simulation, each agent in the simulation enters into a "conversation" at random with another randomly selected agent. The agent initiating the conversation functions as the speaker, the other agent functions as the hearer. In this conversation, speaker and hearer play a so-called "language game" [@smith_models_2014], the core of our simulation. In a language game, a speaker and a hearer agent perform a joint task rooted in language, the execution of this task naturally exerting some influence on the way language is used or organised. In our simulation, the goal of the language game is for the speaker to communicate a specific construction to the hearer, which the hearer then has to understand successfully. The exact course of the language game is as follows:
+At each step in the simulation, each agent in the simulation enters into a "conversation" at random with another randomly selected agent. The agent initiating the conversation functions as the speaker, the other agent functions as the hearer. In this conversation, speaker and hearer play a so-called "language game" [@smith_models_2014], the core of our simulation. The goal of the language game is for the speaker to communicate a specific construction to the hearer, which the hearer then has to understand successfully. An overview of the game can be found in @fig-model_design_language_game. The language game goes as follows:
 
 **Speaker**
 
-1. The speaker chooses a construction to utter from the $V$ constructions available. The probability of each construction is influenced by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note] This parallellism between speaking frequency and observed frequency is known "probability matching" [@labov_principles_1994].
-2. The speaker chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. There is no mechanism influencing the probability of a specific exemplar being chosen. Of course, if a specific neighbourhood area is more dense, there is a higher probability of the chosen exemplar coming from that area.
-3. With a probability of $p$, reduction is applied (see @sec-reduction).
+1. The speaker is assigned a construction to utter from the $V$ constructions available. The probability of each construction being assigned is determined by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note]
+2. The speaker randomly chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. This means that if a specific neighbourhood area contains more exemplars, there is a higher probability of the chosen exemplar coming from that area.
+3. With a probability of $p$, reduction is applied (see @sec-reduction). A set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
 4. The (potentially reduced) vector is communicated to the hearer.
 
 **Hearer**
 
 1. The hearer "hears" the vector communicated by the speaker.
-2. The hearer interprets the vector representation of the speaker. They calculate the Manhattan distance (see @eq-manhattan_distance) between the spoken vector and their entire exemplar memory (normalised for the number of dimensions) and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction. In the case of a tie, communication fails and no exemplars are saved. In the case that no exemplars were selected, communication fails and no exemplars are saved. 
-3. The exemplar heard is saved in the hearer's memory and is associated with the understood construction. The speaker does not adapt their own memory to keep the model design as simple as possible.
+2. The hearer interprets the vector representation of the speaker. They calculate the Manhattan distance (see @eq-manhattan_distance) between the spoken vector and their entire exemplar memory (normalised for the number of dimensions) and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction. In the case of a tie, communication fails and the game immediately ends. In the case that no exemplars were selected, communication fails the game immediately ends. 
+3. If communication succeeds, the exemplar heard is saved in the hearer's memory and is associated with the understood construction.
 
 [^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through the assumed frequency distribution. For our model, the addition of an outside world with events would not have any added value, which is why we implemented agents about the world in this way.
 
-![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a construction, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](tikz/language_game.svg){#fig-model_design_language_game}
+![A schematic overview of the language game played by the speaker and hearer.](tikz/language_game.svg){#fig-model_design_language_game}
+
+![How reduction works in our simulation. In this case, $R = 5$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 5 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.](tikz/reduction.svg){#fig-model_design_reduction}
 
 $$
 d(X, Y) = \frac{\sum_{i=1}^{D} |x_i - y_i|}{D} \text{where } D = \text{ number of dimensions}
