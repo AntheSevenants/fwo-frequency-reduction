@@ -212,7 +212,7 @@ We will consider a set of preconditions to be conducive to the reducing effect i
 
 {{< include snippets/expected-behaviour-conditions.qmd >}}
 
-If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour equivalent to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect. 
+If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour sufficiently similar to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect. 
 
 If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect.
 
