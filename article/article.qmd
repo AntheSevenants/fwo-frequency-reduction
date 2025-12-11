@@ -109,7 +109,7 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 : Example base vector representations for the constructions in the simulation model. {#tbl-model_design_speech_vector_examples}
 
-Note also that, for the sake of simplicity, the meaning of the constructions in our simulations is not explicitly modelled. Instead, we implicitly assume that all meanings remain constant across different exemplars of the same constructions.
+Note also that, since are interested in the reduction of the form of constructions, the meaning of constructions is not explicitly modelled in our simulations. Instead, we implicitly assume that all meanings remain constant across different exemplars of the same constructions. This drive towards simplicity is in accordance with best practices in agent-based modelling [@landsbergen_cultural_2009; @beuls_agent-based_2013; @pijpops_lectal_2022].
 
 ### Agent memory {#sec-agent-memory}
 
