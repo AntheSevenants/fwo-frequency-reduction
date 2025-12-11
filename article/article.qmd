@@ -202,7 +202,7 @@ As for (3), we also started minimal and assumed that no ambiguity avoidance mech
 
 Note that there is no built-in assumption which dictates that frequent constructions should reduce faster and to a larger extent than less frequent constructions. Rather, this is the emergent behaviour that needs to occur naturally out of the interplay of the different assumptions.
 
-## Methodology
+## Evaluation
 
 Because we use computer simulations, we apply a different methodology from traditional, empirical research. In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether the minimal assumptions from @sec-underspecification-filling lead to the occurrence of the reducing effect as defined by @bybee_usage_2006.
 
@@ -214,9 +214,7 @@ We will consider a set of preconditions to be conducive to the reducing effect i
 1. More frequent constructions have reduced to a greater extent than less frequent constructions.
 1. Communication between agents remains successful. If the language system has reorganised itself in a way that makes effective communication impossible, the simulation has failed to simulate realistic conditions. Nonetheless, some tradeoff between communicative effort and communicative success can be seen as normal.
 
-If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour equivalent to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect.
-
-### Evaluation {#sec-evaluation}
+If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour equivalent to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect. 
 
 If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect.
 
