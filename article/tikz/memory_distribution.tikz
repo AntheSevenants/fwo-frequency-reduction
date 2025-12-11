@@ -27,7 +27,7 @@
 \node[greenbox, right=0cm of H] (I) {2};
 \node[greenbox, right=0cm of I] (J) {2};
 
-\node[greenbox, below=1cm of A.northeast, anchor=east] (A2) {2};
+\node[greenbox, left=0cm of I] (A2) {2};
 \node[greenbox, right=0cm of A2] (B2) {2};
 \node[greenbox, right=0cm of B2] (C2) {2};
 \node[bluebox, right=0cm of C2] (D2) {3};
