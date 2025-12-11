@@ -68,13 +68,13 @@ The first unknown pertains to the frequency difference between the different con
 
 1. What frequency distribution do constructions in language have to follow for the reducing effect to arise as expected?[^expected]
 
-The second unknown revolves around an explicit link between frequency and reduction willingness on behalf of the speaker. @bybee_phonology_2003 [11] states:
+The second unknown revolves around an explicit link between frequency and the speaker's inclination to reduce. @bybee_phonology_2003 [11] states:
 
 > If sound changes are the result of phonetic processes that apply in real time as words are used, then those words that are used more often have more opportunity to be affected by phonetic processes.
 
 The expectation by Bybee is that frequency in itself should be enough for reduction to arise organically. This implies there is no need for an explicit link that causes speakers to reduce more in high-frequency constructions than in low-frequency constructions. As this premise has not been tested, it is more an assumption rather than a finding. Therefore, our second research question is as follows:
 
-2. Does there need to be an explicit link between frequency and reduction willingness on behalf of the speaker for the reducing effect to arise as expected?[^expected]
+2. Does there need to be an explicit link between frequency and the speaker's inclination to reduce for the reducing effect to arise as expected?[^expected]
 
 Finally, existing theory on reduction also does not interact with the prospect of possible ambiguity. Reduction is, in essence, the act of expressing the same content in a narrower acoustic representation. Gradually, however, that also means that these representations will start looking alike more. It is currently unclear whether that implies some ambiguity avoidance mechanism is required to make sure that communicative confusion is avoided. Our final research question, then, is as follows:
 
@@ -193,12 +193,12 @@ Note that we deliberately left out any feedback mechanism from the language game
 We saw in @sec-underspecification that several aspects of reducing effect theory are unknown or underspecified. Through our computer simulations, we will attempt to move away from these unknowns and build a minimal set of assumptions that leads to the reducing effect with all its properties. Our strategy throughout is to start with minimal but motivated assumptions. If these prove to be insufficient, we will make the specification more complex. As a reminder, these are the three unknowns defined in @sec-underspecification:
 
 1. What frequency difference is required between different constructions?
-2. Does there need to be an explicit association between frequency and reduction willingness on behalf of the speaker?
+2. Does there need to be an explicit association between frequency and the speaker's inclination to reduce?
 3. Does there need to be an ambiguity avoidance mechanism?
 
 As for (1), the minimal, motivated assumption can be inferred easily from corpus data. Indeed, words, constructions and in fact most other units in language follow Zipf's Law [@zipf_psycho-biology_1965]. Zipf's Law dictates that many "units" in language (words, constructions, sounds ...) naturally occur according to a power law in which rank is inversely related to frequency. This means that the first item in a Zipfian distribution is twice as frequent as the second item, three times as frequent as the third item, and so on. In practice, this leads to an extremely unbalanced distribution with few highly frequent items, and a long tail of infrequent items. This uneven distribution is also called an "A-curve" by @kretzschmar_language_2015. For our simulation, this has the consequence that in the construction choice stage (Speaker step 1 in @sec-language-game), agents are more likely to talk about high-frequent constructions rather than low-frequent constructions. In addition, the exemplars in an agent's memory will also follow the Zipfian distribution ["probability matching" in @labov_principles_1994].
 
-As for (2), we suppose the most minimal option and initially assume there not to be an explicit relation between frequency and willingness of reduction. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
+As for (2), we suppose the most minimal option and initially assume there not to be an explicit relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
 As for (3), we also started minimal and assumed that no ambiguity avoidance mechanism was required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
 
@@ -250,7 +250,7 @@ In this section, we will go over the results produced by the model operationalis
 First, we tested the simulation model with all minimal assumptions from @sec-underspecification-filling. As a reminder, this minimal specification is as follows:
 
 1. Zipfian frequency difference between constructions
-2. No association between frequency and reduction willingness on behalf of the speaker
+2. No association between frequency and the speaker's inclination to reduce
 3. No ambiguity avoidance mechanism
 
 We will discuss the behaviour of the simulation by going over the "checklist" defined in @sec-expected-behaviour, viz.: 
@@ -323,7 +323,7 @@ Nevertheless, a solution within this design is possible on behalf of the speaker
 With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increase in sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion. Therefore, it seems that an ambiguity avoidance mechanism is indeed required to obtain simulations results comparable with corpus data, leading to the following specification:
 
 1. Zipfian frequency difference between constructions
-2. No association between frequency and reduction willingness on behalf of the speaker
+2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 
 ::: {#fig-reentrance-model-group layout-ncol=2}
@@ -348,10 +348,10 @@ An overview of the different simulation behaviour metrics and their evolutions f
 We explained in @sec-evaluation that the key point of simulation research is the search for the minimal specification of conditions that produces a specific effect. This is our current minimal specification which is conducive to the reducing effect: 
 
 1. Zipfian frequency difference between constructions
-2. No association between frequency and reduction willingness on behalf of the speaker
+2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 
-We know that (3) is essential for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. We cannot disable (2), as the association between frequency and reduction willingness was never implemented, and it also never proved necessary in the (successful) re-entrance model (@sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
+We know that (3) is essential for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. We cannot disable (2), as the association between frequency and the speaker's inclination to reduce was never implemented, and it also never proved necessary in the (successful) re-entrance model (@sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
 
 To investigate this, we built a model in which we sample constructions from a completely flat distribution instead of a Zipfian one. This means that all constructions have the same probability of being selected, and they also all claim the same number of slots in agent memory. The difference between the two distributions is demonstrated in @fig-evaluation-probabilities, where we show the probabilities of each construction being chosen in the two distributions. The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. We will address this in the next subsection.
 
@@ -385,7 +385,7 @@ An overview of the different simulation behaviour metrics and their evolutions f
 In this subsection, we investigate the model behaviour of the following specification:
 
 1. No frequency difference between constructions
-2. No association between frequency and reduction willingness on behalf of the speaker
+2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 4. Feedback allowed during communication
 
@@ -413,7 +413,7 @@ An overview of the different simulation behaviour metrics and their evolutions f
 In the previous section, we saw that we can prevent communicative collapse in a flat distribution model if we incorporate a feedback mechanism. However, we saw in @sec-reentrance-model that with a Zipfian distribution, such a feedback mechanism is not necessary. To confirm this pattern, we investigate the link between a skewed (exponential) distribution and communicative success. We use the following specification:
 
 1. Exponential frequency difference between constructions (to a varying degree)
-2. No association between frequency and reduction willingness on behalf of the speaker
+2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 4. No feedback allowed during communication
 
@@ -440,7 +440,7 @@ In this article, we attempted to find the minimal conditions necessary to produc
 We found that at least the following specification of specifications was required to lead to the reducing effect:
 
 1. Zipfian frequency difference between constructions
-2. No association between frequency and reduction willingness on behalf of the speaker
+2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 
 If we replace the Zipfian distribution with a flat distribution, we also need an additional feedback mechanism to guarantee communicative stability. In this discussion section, we will go over the role of the Zipfian distribution, and what the necessity of the several requirements means for reducing effect theory and usage-based linguistics as a whole.
