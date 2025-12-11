@@ -216,7 +216,7 @@ If the behaviour of a simulation corresponds with any of these three statements 
 
 If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect.
 
-In order to check whether a specification of assumptions is also the minimal specification, we will apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumptively the most likely one. Therefore, we will disable each precondition iteratively and check whether the simpler conditions can also produce the expected reducing effect behaviour. If a simpler specification produces equivalent behaviour, we have found a more minimal specification. If no simpler specification produces equivalent behaviour, our initial specification was already the minimal one.
+In order to check whether a specification of assumptions is also the minimal specification, we will apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumably the most likely one. Therefore, we will disable each precondition iteratively and check whether the simpler conditions can also produce the expected reducing effect behaviour. If a simpler specification produces equivalent behaviour, we have found a more minimal specification. If no simpler specification produces equivalent behaviour, our initial specification was already the minimal one.
 
 ### Parameters
 
