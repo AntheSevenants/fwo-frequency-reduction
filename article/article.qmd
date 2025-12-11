@@ -210,9 +210,7 @@ In this section, we will explain how we will analyse the simulation behaviour, a
 
 We will consider a set of preconditions to be conducive to the reducing effect if the following is true:
 
-1. The language system has reorganised itself to express the same constructions using more efficient representations.
-1. More frequent constructions have reduced to a greater extent than less frequent constructions.
-1. Communication between agents remains successful. If the language system has reorganised itself in a way that makes effective communication impossible, the simulation has failed to simulate realistic conditions. Nonetheless, some tradeoff between communicative effort and communicative success can be seen as normal.
+{{< include snippets/expected-behaviour-conditions.qmd >}}
 
 If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour equivalent to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect. 
 
@@ -251,15 +249,13 @@ First, we tested the simulation model with all minimal assumptions from @sec-und
 
 We will discuss the behaviour of the simulation by going over the "checklist" defined in @sec-expected-behaviour, viz.: 
 
-1. The language system has reorganised itself to express the same constructions using more efficient representations.
-2. More frequent constructions have reduced to a greater extent than less frequent constructions.
-3. Communication between agents remains successful.
+{{< include snippets/expected-behaviour-conditions.qmd >}}
 
 The formulas at the basis of all visualisations can be found in the Appendix.
 
-As for (1), we can see in @fig-base-model-l1-general that the average L1, i.e. the average energy in the acoustic representations of constructions (see @sec-speech-formalisation) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
+With respect to (1), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph).
 
-With respect to (2), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph).
+As for (2), we can see in @fig-base-model-l1-general that the average L1, i.e. the average energy in the acoustic representations of constructions (see @sec-speech-formalisation) of the constructicon of the agents drops sharply and then remains more or less constant. Therefore, we can say that, indeed, the system seems to have reorganised itself to be more efficient. Of course, given the non-zero probability of reduction (see @tbl-parameters), this is to be expected.
 
 In @fig-base-model-half-life-per-construction, the "half life" period for each construction is given. We show how many iterations in the simulation it took for every acoustic representation to reach half of its original energy. We see that for more frequent constructions (at the left of the graph), this half time tends to be reached faster than for less frequent constructions (at the right of the graph). Most constructions do not even show up in the graph, since they have not reached half their original energy yet.
 
@@ -429,9 +425,7 @@ Because this set of models covers a wide array of models, we built an aggregatio
 
 In this article, we attempted to find the minimal conditions necessary to produce the reducing effect as described by @bybee_usage_2006. The required behaviour for a successful model of reduction was as follows:
 
-1. The language system has reorganised itself to express the same constructions using more efficient representations.
-1. More frequent constructions have reduced to a greater extent than less frequent constructions.
-1. Communication between agents remains successful. If the language system has reorganised itself in a way that makes effective communication impossible, the simulation has failed to simulate realistic conditions. Nonetheless, some tradeoff between communicative effort and communicative success can be seen as normal.
+{{< include snippets/expected-behaviour-conditions.qmd >}}
 
 We found that at least the following specification of specifications was required to lead to the reducing effect:
 
