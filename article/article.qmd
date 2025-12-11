@@ -68,13 +68,13 @@ The first unknown pertains to the frequency difference between the different con
 
 1. What frequency distribution do constructions in language have to follow for the reducing effect to arise as expected?[^expected]
 
-The second unknown revolves around an explicit link between frequency and the speaker's inclination to reduce. @bybee_phonology_2003 [11] states:
+The second unknown revolves around an built-in link between frequency and the speaker's inclination to reduce. @bybee_phonology_2003 [11] states:
 
 > If sound changes are the result of phonetic processes that apply in real time as words are used, then those words that are used more often have more opportunity to be affected by phonetic processes.
 
-The expectation by Bybee is that frequency in itself should be enough for reduction to arise organically. This implies there is no need for an explicit link that causes speakers to reduce more in high-frequency constructions than in low-frequency constructions. As this premise has not been tested, it is more an assumption rather than a finding. Therefore, our second research question is as follows:
+The expectation by Bybee is that frequency in itself should be enough for reduction to arise organically. This implies there is no need for an built-in link that causes speakers to reduce more in high-frequency constructions than in low-frequency constructions. As this premise has not been tested, it is more an assumption rather than a finding. Therefore, our second research question is as follows:
 
-2. Does there need to be an explicit link between frequency and the speaker's inclination to reduce for the reducing effect to arise as expected?[^expected]
+2. Does there need to be an built-in link between frequency and the speaker's inclination to reduce for the reducing effect to arise as expected?[^expected]
 
 Finally, existing theory on reduction also does not interact with the prospect of possible ambiguity. Reduction is, in essence, the act of expressing the same content in a narrower acoustic representation. Gradually, however, that also means that these representations will start looking more alike. It is currently unclear whether that implies some ambiguity avoidance mechanism is required to make sure that communicative confusion is avoided. Our final research question, then, is as follows:
 
@@ -191,12 +191,12 @@ Note that we deliberately left out any feedback mechanism from the language game
 We saw in @sec-underspecification that several aspects of reducing effect theory are unknown or underspecified. Through our computer simulations, we will attempt to move away from these unknowns and build a minimal set of assumptions that leads to the reducing effect with all its properties. Our strategy throughout is to start with minimal but motivated assumptions. If these prove to be insufficient, we will make the specification more complex. As a reminder, these are the three unknowns defined in @sec-underspecification:
 
 1. What frequency difference is required between different constructions?
-2. Does there need to be an explicit association between frequency and the speaker's inclination to reduce?
+2. Does there need to be an built-in association between frequency and the speaker's inclination to reduce?
 3. Does there need to be an ambiguity avoidance mechanism?
 
 As for (1), the minimal, motivated assumption can be inferred easily from corpus data. Indeed, constructions language follow Zipf's Law [@zipf_psycho-biology_1965]. Zipf's Law dictates that many "units" in language (words, constructions, sounds ...) naturally occur according to a power law in which rank is inversely related to frequency. This means that the first item in a Zipfian distribution is twice as frequent as the second item, three times as frequent as the third item, and so on. In practice, this leads to an extremely unbalanced distribution with few highly frequent items, and a long tail of infrequent items. This uneven distribution is also called an "A-curve" by @kretzschmar_language_2015. For our simulation, the frequency distribution is effective in the construction choice step. In addition, the exemplars in an agent's memory will also follow the Zipfian distribution ["probability matching" in @labov_principles_1994].
 
-As for (2), we suppose the most minimal option and initially assume there not to be an explicit relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
+As for (2), we suppose the most minimal option and initially assume there not to be an built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
 As for (3), we also started minimal and assumed that no ambiguity avoidance mechanism was required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
 
