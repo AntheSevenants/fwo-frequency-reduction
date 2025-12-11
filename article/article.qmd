@@ -204,7 +204,7 @@ Note that there is no built-in assumption which dictates that frequent construct
 
 ## Evaluation
 
-Because we use computer simulations, we apply a different methodology from traditional, empirical research. In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether the minimal assumptions from @sec-underspecification-filling lead to the occurrence of the reducing effect as defined by @bybee_usage_2006.
+In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether the minimal assumptions from @sec-underspecification-filling lead to the occurrence of the reducing effect as defined by @bybee_usage_2006.
 
 ### Expected behaviour {#sec-expected-behaviour}
 
