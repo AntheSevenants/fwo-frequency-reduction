@@ -181,7 +181,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 ![A schematic overview of the language game played by the speaker and hearer. The diagram shows the different steps of the language game. For the speaker, this means: choosing a construction, choosing an associated exemplar, applying reduction, and speaking the resulting vector representation. For the hearer, this means: hearing the exemplar, interpreting it by tallying the exemplars in the neighbourhood of the communicated vector location, and then finally committing the exemplar to memory.](tikz/language_game.svg){#fig-model_design_language_game}
 
 $$
-d(X, Y) = \frac{\sum_{i=1}^{D} |x_i - y_i|}{D}
+d(X, Y) = \frac{\sum_{i=1}^{D} |x_i - y_i|}{D} \text{where } D = \text{ number of dimensions}
 $$ {#eq-manhattan_distance}
 
 Note that we deliberately left out any feedback mechanism from the language game. We assume that our agents can only communicate through language. Our intention was to make the reducing effect work without the hearer agent knowing whether what they understood was indeed the construction intended by the speaker. If we implemented a way to communicate "perfect" feedback from speaker to hearer, there would be no point for our agents to communicate through language. In this way, the task our agents face also becomes harder. They need to evolve the language system into a more sparse representation without any feedback of how effective that representation actually is.
