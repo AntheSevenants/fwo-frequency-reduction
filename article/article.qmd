@@ -410,7 +410,7 @@ In the previous section, we saw that we can prevent communicative collapse in a 
 Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$. An example of some of the resulting distributions can be found in @fig-exponential-probabilities.
 
 $$
-\operatorname{freq}(x) = e^{-\lambda} \cdot x
+\operatorname{freq}(x) = e^{-\lambda \cdot x}
 $$ {#eq-exponential_distribution}
 
 ![A comparison of different lambda values for the exponential distribution. We show $\lambda = log_{10}\left(1\right)$, $\lambda = log_{10}\left(2\right)$ and $\lambda = log_{10}\left(3\right)$. The x axis shows the rank of the construction, the y axis shows its probability of being chosen (between 0 and 1). There are 100 constructions in total. As lambda increases, so does the asymmetry of the probability distribution.](figures/fig-exponential-probabilities-2.png){#fig-exponential-probabilities}
