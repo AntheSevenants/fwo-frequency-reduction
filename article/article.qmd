@@ -277,7 +277,7 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 ![Confusion matrix showing the mistakes that agents make in the base model. The y axis shows the intended constructions, the x axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-base-model-matrix.png){#fig-base-model-matrix}
 
-![Correct interpretation ratio evolution in the base model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly. The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-confusion-ratio.png){#fig-base-model-confusion-ratio}
+![Correct interpretation ratio evolution in the base model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly. The x axis shows how many iterations the simulations have run for. 1-10 refer to the 10 most frequent constructions, with line colour indicating frequency (darker is more frequent).](figures/fig-base-model-confusion-ratio.png){#fig-base-model-confusion-ratio}
 
 An overview of the different simulation behaviour metrics and their evolutions for the base model.
 :::
@@ -330,7 +330,7 @@ With this new precondition added to our basic assumptions, the model now behaves
 
 ![Confusion matrix showing the mistakes that agents make in the re-entrance model. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-reentrance-model-matrix.png){#fig-reentrance-model-matrix}
 
-![Correct interpretation ratio evolution in the re-entrance model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly. The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-confusion-ratio.png){#fig-reentrance-model-confusion-ratio}
+![Correct interpretation ratio evolution in the re-entrance model (per construction, across agents). The ratio expresses how many times a specific construction was interpreted correctly. The x axis shows how many iterations the simulations have run for. 1-10 refer to the 10 most frequent constructions, with line colour indicating frequency (darker is more frequent).](figures/fig-reentrance-model-confusion-ratio.png){#fig-reentrance-model-confusion-ratio}
 
 An overview of the different simulation behaviour metrics and their evolutions for the re-entrance model.
 :::
