@@ -2,6 +2,7 @@
 *.html
 *.docx
 *.pdf
+*.tex
 
 figures/
 
