@@ -357,7 +357,7 @@ We explained in @sec-expected-behaviour that the key point of simulation researc
 2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 
-We know that (3) is essential for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. As for (2), it never proved necessary in the (successful) re-entrance model (@sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
+We have found (3) to be necessary for reducing effect behaviour, as the results for our base model (@sec-base-model) did not satisfy our expected behaviour. We do not want to dismiss (2), as this would entail adding an additional mechanism to the model that up to this point did not prove to be necessary (see @sec-reentrance-model). This leaves us with our Zipfian assumption in (1). Is it really needed to lead to the reducing effect?
 
 To investigate this, we built a model in which we sample constructions from a completely flat distribution instead of a Zipfian one. This means that all constructions have the same probability of being selected, and they also all claim the same number of slots in agent memory. The difference between the two distributions is demonstrated in @fig-evaluation-probabilities, where we show the probabilities of each construction being chosen in the two distributions. The question is to what extent this change from Zipfian to flat frequency has an influence on the course of the simulation. We will address this in the next subsection.
 
