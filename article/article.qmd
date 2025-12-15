@@ -441,7 +441,7 @@ In this article, we attempted to find the minimal conditions necessary to produc
 
 {{< include snippets/expected-behaviour-conditions.qmd >}}
 
-We found that at least the following specification of specifications was required to lead to the reducing effect:
+We found that at least the following specification was required to lead to the reducing effect:
 
 1. Zipfian frequency difference between constructions
 2. No association between frequency and the speaker's inclination to reduce
