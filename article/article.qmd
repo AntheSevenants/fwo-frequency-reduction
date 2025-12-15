@@ -190,7 +190,7 @@ $$
 d(X, Y) = \frac{\sum_{i=1}^{D} |x_i - y_i|}{D} \text{where } D = \text{ number of dimensions}
 $$ {#eq-manhattan_distance}
 
-Note that we deliberately left out any feedback mechanism from the language game. We assume that our agents can only communicate through language. Our intention was to make the reducing effect work without the hearer agent knowing whether what they understood was indeed the construction intended by the speaker. If we implemented a way to communicate "perfect" feedback from speaker to hearer, there would be no point for our agents to communicate through language. In this way, the task our agents face also becomes harder. They need to evolve the language system into a more sparse representation without any feedback of how effective that representation actually is.
+Note that we deliberately left out any feedback mechanism from the language game, as we are looking for the absolute minimal specification that is conducive to the reducing effect. Since including feedback implies adding an extra assumption, our initial aim is to attempt to model the reducing effect without a feedback mechanism.
 
 ### Moving away from the unknowns {#sec-underspecification-filling}
 
