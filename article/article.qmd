@@ -170,7 +170,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 **Speaker**
 
 1. The speaker is assigned a construction to utter from the $V$ constructions available. The probability of each construction being assigned is determined by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note]
-2. The speaker randomly chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. This means that if a specific neighbourhood area contains more exemplars, there is a higher probability of the chosen exemplar coming from that area.
+2. The speaker randomly chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. This means that if a specific neighbourhood area in the vector space contains more exemplars, there is a higher probability of the chosen exemplar coming from that area.
 3. With a probability of $p$, reduction is applied. A set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
 4. The (potentially reduced) vector is communicated to the hearer.
 
