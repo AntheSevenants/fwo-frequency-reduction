@@ -363,7 +363,7 @@ To investigate this, we built a model in which we sample constructions from a co
 
 ![A comparison between a Zipfian distribution (in blue) and a flat distribution (in orange), expressed in the probabilities of constructions being chosen. The x axis shows the rank of the construction, the y axis shows its probability of being chosen (between 0 and 1). There are 100 constructions in total.](figures/fig-evaluation-probabilities.png){#fig-evaluation-probabilities}
 
-#### No Zipfian distribution, no feedback {#sec-no-zipfian-model}
+#### Uniform distribution, no feedback {#sec-no-zipfian-model}
 
 In this subsection, we look at the results of the model in which the Zipfian distribution was replaced with a flat distribution. We will evaluate the same dimensions as in the previous model specifications (see @sec-expected-behaviour):
 
@@ -386,7 +386,7 @@ To try and explain this behaviour, we take two approaches. In the first approach
 An overview of the different simulation behaviour metrics and their evolutions for the flat distribution model.
 :::
 
-#### No Zipfian distribution, feedback {#sec-no-zipfian-feedback-model}
+#### Uniform distribution, feedback {#sec-no-zipfian-feedback-model}
 
 In this subsection, we investigate the model behaviour of the following specification:
 
