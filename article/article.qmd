@@ -443,11 +443,11 @@ In this article, we attempted to find the minimal conditions necessary to produc
 
 We found the following minimal set of conditions to suffice for the reducing effect to emerge in our simulations:
 
-1. Zipfian frequency difference between constructions
+1. A sufficiently skewed distribution (see @sec-exponential-model)
 2. No association between frequency and the speaker's inclination to reduce
-3. Re-entrance as an ambiguity avoidance mechanism
+3. Re-entrance as an ambiguity avoidance mechanism (see @sec-reentrance-model)
 
-If we replace the Zipfian distribution with a flat distribution, we also need an additional feedback mechanism to guarantee communicative stability. In this discussion section, we will go over the role of the Zipfian distribution, and what the necessity of the several requirements means for reducing effect theory and usage-based linguistics as a whole.
+If we replace the skewed distribution with a flat distribution, we also need an additional feedback mechanism to guarantee communicative stability. In this discussion section, we will go over the role of the Zipfian distribution, and what the necessity of the several requirements means for reducing effect theory and usage-based linguistics as a whole.
 
 ### Role of the Zipfian distribution
 
