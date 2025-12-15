@@ -497,12 +497,12 @@ In order to keep track of the simulation course, we computed the following metri
 4. **Average agent L1:**  
   Number expressing the average L1 norm of exemplars, across all agents.  
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L_i} \sum_{j=1}^{L_i}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{jk}}}{D} \right] } \right]}
+  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L} \sum_{j=1}^{L}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{jk}}}{D} \right] } \right]}
   $$
 5. **Average construction L1:**  
   Number expressing for each construction $c$ the average L1 norm of its exemplars, across all agents.
   $$  
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{jk}}}{D} \right] } \right] }
+  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c} \sum_{j=1}^{L^c}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{jk}}}{D} \right] } \right] }
   $$ with $L^c$ = # exemplars associated with construction $c$
 6. **Confusion matrix:**  
   Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
