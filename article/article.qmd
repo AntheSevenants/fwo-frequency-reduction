@@ -377,9 +377,9 @@ To try and explain this behaviour, we take two approaches. In the first approach
 
 ![Average L1 evolution in the re-entrance model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-l1-general.png){#fig-no-zipfian-model-l1-general}
 
-![Average L1 value in the flat distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Average L1 value in the flat distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
-![Average L1 half life in the flat distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Average L1 half life in the flat distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
 ![Global communicative success in the flat distribution model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-success.png){#fig-no-zipfian-model-success}
 
@@ -403,13 +403,13 @@ When we look at the results, we see that the communicative chaos from the no fee
 
 ::: {#fig-no-zipfian-model-feedback-group layout-ncol=2}
 
-![Average L1 value in the flat distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
+![Average L1 value in the flat distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
 
-![Average L1 half life in the flat distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
+![Average L1 half life in the flat distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
 
 ![Global communicative success in the flat distribution model with feedback (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-feedback-success.png){#fig-no-zipfian-model-feedback-success}
 
-![Confusion matrix showing the mistakes that agents make in the flat distribution model with feedback. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the top 35 most frequent constructions from most frequent to less frequent.](figures/fig-no-zipfian-model-feedback-matrix.png){#fig-no-zipfian-model-feedback-matrix}
+![Confusion matrix showing the mistakes that agents make in the flat distribution model with feedback. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the originally Zipfian rank, up to 35.](figures/fig-no-zipfian-model-feedback-matrix.png){#fig-no-zipfian-model-feedback-matrix}
 
 An overview of the different simulation behaviour metrics and their evolutions for the flat distribution model with feedback.
 :::
