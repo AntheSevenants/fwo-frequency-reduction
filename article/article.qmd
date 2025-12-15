@@ -157,6 +157,7 @@ Because an agent's memory is limited to size $L$, whenever a new exemplar needs 
 | Exemplar 2 | 4780 |
 | Exemplar 3 | 3009 |
 | Exemplar 4 | 1231 |
+| Exemplar 5 | 895 |
 
 : An example of how "forgetting" an exemplar of a specific construction works in the model. Exemplar 1 is the oldest exemplar for this construction, so it will be removed and make place for a new exemplar. {#tbl-model_design_forgetting_example}
 
