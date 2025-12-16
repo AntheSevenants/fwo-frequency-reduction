@@ -210,6 +210,14 @@ $$
 \operatorname{freq}(x) = \frac{1}{x^\alpha}
 $$ {#eq-zipfian_distribution}
 
+The Zipfian frequency distribution has a notoriously long tail in the lower-frequency regions, which is difficult to compress into a limited number of constructions (see @sec-parameters). Therefore, the frequency values for our $V$ constructions are sampled from a much larger distribution with $S$ constructions. The sampling procedure works as follows:
+
+1. Generate a Zipfian distribution of size $S$
+2. Sample $V$ constructions of the large distribution with size $S$ with Zipfian weights. Take the absolute frequencies of the sampled constructions.
+3. Assign the construction choice probabilities based on the sampled frequencies.
+
+With this sampling procedure, our limited construction set aligns more with the properties of a typical, larger Zipfian distribution.
+
 As for (2), we suppose the most minimal option and initially assume there not to be an built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
 As for (3), we also start minimal and assume that no ambiguity avoidance mechanism was required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
@@ -232,7 +240,7 @@ If any specification of assumptions produces behaviour which fully falls within 
 
 In order to check whether a specification of assumptions is also the minimal specification, we will apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumably the most likely one. Therefore, we will disable each precondition iteratively and check whether the simpler conditions can also produce the expected reducing effect behaviour. If a simpler specification produces equivalent behaviour, we have found a new minimal specification. If no simpler specification produces equivalent behaviour, our initial specification was already the minimal one.
 
-### Parameters
+### Parameters {#sec-parameters}
 
 In this section, we will run through the different parameters the model has and what values we chose for them. Parameters control specific aspects of our model, like how many agents inhabit our virtual world or how likely reduction is. An important limitation to our parameter settings is computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts, large constructions counts and large memory sizes all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we had to keep number of agents and constructions to a modest amount. This is standard practice in agent-based simulation [cf. @dale_understanding_2012, 5]. Review @tbl-parameters for an overview of our choices.
 
@@ -240,6 +248,7 @@ In this section, we will run through the different parameters the model has and 
 | --- | --- | --- |
 | $N$ | Number of agents | 25 |
 | $V$ | Number of constructions | 100 |
+| $S$ | Number of constructions from which we sample | 130000 |
 | $D$ | Number of vector dimensions | 10 |
 | $L$ | Number of exemplars in memory | 1000 |
 | $F$ | Minimum number of exemplars per construction | 5 |
@@ -424,7 +433,7 @@ In the previous section, we saw that we can prevent communicative collapse in a 
 3. Re-entrance as an ambiguity avoidance mechanism
 4. No feedback allowed during communication
 
-Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$. An example of some of the resulting distributions can be found in @fig-exponential-probabilities.
+Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$. We apply the same sampling procedure as in @sec-underspecification-filling. An example of some of the resulting distributions can be found in @fig-exponential-probabilities.
 
 $$
 \operatorname{freq}(x) = e^{-\lambda \cdot x}
