@@ -367,23 +367,23 @@ To investigate this, we built a model in which we sample constructions from a co
 
 In this subsection, we look at the results of the model in which the Zipfian distribution was replaced with a flat distribution. We will evaluate the same dimensions as in the previous model specifications (see @sec-expected-behaviour):
 
-@fig-no-zipfian-model-l1-general shows that for this flat distribution model, the sparsity of the system still increases. However, when we look at @fig-no-zipfian-model-l1-per-construction and @fig-no-zipfian-model-half-life-per-construction, we do not see the same differentiation in reduction extent and speed, as expected for a lack of a frequency difference. In addition, from @fig-no-zipfian-model-success, we can tell that this model delivers poor communicative performance: communicative success is low.[^confusion-matrix-missing] It appears that skewed distributions seem relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
+@fig-no-zipfian-model-l1-general shows that for this uniform distribution model, the sparsity of the system still increases. However, when we look at @fig-no-zipfian-model-l1-per-construction and @fig-no-zipfian-model-half-life-per-construction, we do not see the same differentiation in reduction extent and speed, as expected for a lack of a frequency difference. In addition, from @fig-no-zipfian-model-success, we can tell that this model delivers poor communicative performance: communicative success is low.[^confusion-matrix-missing] It appears that skewed distributions seem relevant for maintaining communicative stability during reduction. The question rises, however, how and why this is the case.
 
 [^confusion-matrix-missing]: We do not show the confusion matrix here, as the essentially random variation gets obscured through the pooling operation across iterations.
 
-To try and explain this behaviour, we take two approaches. In the first approach, we build feedback into the flat distribution model. In the second approach, we increasingly skew an exponential frequency distribution to check at what point communicative success matches the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
+To try and explain this behaviour, we take two approaches. In the first approach, we build feedback into the uniform distribution model. In the second approach, we increasingly skew an exponential frequency distribution to check at what point communicative success matches the model with the Zipfian distribution without feedback. We will go over these two approaches in the following subsections.
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
 ![Average L1 evolution in the re-entrance model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-l1-general.png){#fig-no-zipfian-model-l1-general}
 
-![Average L1 value in the flat distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Average L1 value in the uniform distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
-![Average L1 half life in the flat distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Average L1 half life in the uniform distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
-![Global communicative success in the flat distribution model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-success.png){#fig-no-zipfian-model-success}
+![Global communicative success in the uniform distribution model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-success.png){#fig-no-zipfian-model-success}
 
-An overview of the different simulation behaviour metrics and their evolutions for the flat distribution model.
+An overview of the different simulation behaviour metrics and their evolutions for the uniform distribution model.
 :::
 
 #### Uniform distribution, feedback {#sec-no-zipfian-feedback-model}
@@ -403,20 +403,20 @@ When we look at the results, we see that the communicative chaos from the no fee
 
 ::: {#fig-no-zipfian-model-feedback-group layout-ncol=2}
 
-![Average L1 value in the flat distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
+![Average L1 value in the uniform distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
 
-![Average L1 half life in the flat distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
+![Average L1 half life in the uniform distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
 
-![Global communicative success in the flat distribution model with feedback (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-feedback-success.png){#fig-no-zipfian-model-feedback-success}
+![Global communicative success in the uniform distribution model with feedback (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-feedback-success.png){#fig-no-zipfian-model-feedback-success}
 
-![Confusion matrix showing the mistakes that agents make in the flat distribution model with feedback. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the originally Zipfian rank, up to 35.](figures/fig-no-zipfian-model-feedback-matrix.png){#fig-no-zipfian-model-feedback-matrix}
+![Confusion matrix showing the mistakes that agents make in the uniform distribution model with feedback. The x axis shows the intended constructions, the y axis shows the understood construction (across agents). Both x and y axis show the originally Zipfian rank, up to 35.](figures/fig-no-zipfian-model-feedback-matrix.png){#fig-no-zipfian-model-feedback-matrix}
 
-An overview of the different simulation behaviour metrics and their evolutions for the flat distribution model with feedback.
+An overview of the different simulation behaviour metrics and their evolutions for the uniform distribution model with feedback.
 :::
 
 #### Increasingly skewed exponential distribution {#sec-exponential-model}
 
-In the previous section, we saw that we can prevent communicative collapse in a flat distribution model if we incorporate a feedback mechanism. However, we saw in @sec-reentrance-model that with a Zipfian distribution, such a feedback mechanism is not necessary. To confirm this pattern, we investigate the link between a skewed (exponential) distribution and communicative success. We use the following specification:
+In the previous section, we saw that we can prevent communicative collapse in a uniform distribution model if we incorporate a feedback mechanism. However, we saw in @sec-reentrance-model that with a Zipfian distribution, such a feedback mechanism is not necessary. To confirm this pattern, we investigate the link between a skewed (exponential) distribution and communicative success. We use the following specification:
 
 1. Exponential frequency difference between constructions (to a varying degree)
 2. No association between frequency and the speaker's inclination to reduce
