@@ -108,6 +108,26 @@ elif args.type == "exponential":
             label="log(3)")
    
     filename = "fig-exponential-probabilities-2"
+elif args.type == "memory-zipfian":
+    zipfian_memory = model.helpers.zipf_exemplars_per_construction(
+        1000,
+        100,
+        1.1,
+        5
+    )
+    plt.bar(range(1, len(zipfian_memory) + 1), zipfian_memory)
+    
+    filename = "fig-memory-zipfian"
+elif args.type == "memory-exponential-zero":
+    exponential_memory = model.helpers.exp_exemplars_per_construction(
+        1000,
+        100,
+        0,
+        5
+    )
+    plt.bar(range(1, len(exponential_memory) + 1), exponential_memory)
+
+    filename = "fig-memory-exponential"
 else:
     raise ValueError("Unknown graph type")
 
