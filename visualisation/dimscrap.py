@@ -115,6 +115,8 @@ def make_communication_plot_combined(model, smooth=True, ax=None, disable_title=
         ax = plt.gca()
         
     ax.set_ylim([0, 1])
+
+    print(df["communicative_success"].iloc[-1])
     
     if smooth:
         window_length = 500
