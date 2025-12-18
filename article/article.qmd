@@ -55,7 +55,7 @@ reference-location: margin
 csl: chicago-author-date.csl
 df-print: kable
 abstract: |
-  TODO
+  The reducing effect [@bybee_usage_2006], which causes frequent constructions to become phonetically reduced over time, is a well-documented usage-based phenomenon. While corpus studies confirm its prevalence, they fail to explain how communication remains effective despite increasing ambiguity. To investigate this, we built a computer simulation with virtual speakers ("agents"). Each agent has a memory of constructions represented as vectors [cfr. @baevski_wav2vec_2020] and communicates on the basis of simple, local rules. Reduction is simulated by gradually increasingly sparsifying these vectors. Our results reveal two requirements for reducing behaviour comparable to corpus data: (1) a skewed frequency distribution of constructions, which synchronises the reduction paths among agents and eliminates the need for explicit feedback, and (2) re-entrance, where speakers verify their own comprehension before speaking. Without this self-monitoring, reduction spirals into confusion. Our results show that there might be more to the reduction principle than just a link between usage and sparsity, as certain properties inherent to language (Zipfian distribution, inner voice) are indispensable in our model world.
 execute:
   echo: false
 ---
