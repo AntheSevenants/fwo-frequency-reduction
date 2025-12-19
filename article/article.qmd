@@ -445,7 +445,7 @@ $$ {#eq-exponential_distribution}
 
 Because this set of models covers a wide array of models, we built an aggregation graph over the model outcomes. @fig-no-zipfian-model-aggregate-success shows the average communicative success at the end of the model runs for each lambda parameter. It is clear that the larger lambda and thus the more skewed the distribution becomes, the better the model works. We turn to the discussion to attempt to explain this behaviour.
 
-![Global communicative success in the exponential distribution model (across constructions, across agents) after 100,000 iterations. This micro-average is taken across all constructions. The x axis shows the parameter value for lambda. The variation between lambda parameter values can be attributed to the stochastic nature of the model, and the aggregation over 100 runs for each parameter.](figures/fig-no-zipfian-model-success-graph.png){#fig-no-zipfian-model-aggregate-success}
+![Global communicative success in the exponential distribution model (across constructions, across agents) after 100,000 iterations. This micro-average is taken across all constructions. The x axis shows the parameter value for lambda. The small variation between lambda parameter outcomes can be attributed to the stochastic nature of the model, and the aggregation over 100 runs for each parameter.](figures/fig-no-zipfian-model-success-graph.png){#fig-no-zipfian-model-aggregate-success}
 
 ## Discussion {#sec-discussion}
 
