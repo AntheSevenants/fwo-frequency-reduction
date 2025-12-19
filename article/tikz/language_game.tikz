@@ -51,7 +51,7 @@
 % Nodes for the steps (hearer)
 \node[modelstep] (interpret_form) [right=1.5cm of choose_exemplar.east,anchor=west] {2. Interpret exemplar};
 \node[modelstep] (hear_form) [above=of interpret_form.west, anchor=west] {1. Hear exemplar};
-\node[circle, draw] (neighbourhood) [below=1.5cm of interpret_form.west, anchor=west, minimum size=2cm];
+\node[circle, draw] (neighbourhood) [below=1.5cm of interpret_form.west, anchor=west, minimum size=2cm] {};
 \draw[thick] ($(neighbourhood.center) + (-0.15,0)$) -- ($(neighbourhood.center) + (0.15,0)$); 
 \draw[thick] ($(neighbourhood.center) + (0,-0.15)$) -- ($(neighbourhood.center) + (0,0.15)$); 
 
