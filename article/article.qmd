@@ -295,7 +295,7 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 ::: {#fig-base-model-group layout-ncol=2}
 
-![Average L1 evolution in the base model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
+![Average L1 evolution in the base model (across exemplars, across agents). Note that this metric averages over agents' entire memories, and is therefore influenced by the Zipfian distribution of exemplars. The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
 
 ![Average L1 value in the base model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
 
@@ -346,7 +346,7 @@ With this new precondition added to our basic assumptions, the model now behaves
 
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
-![Average L1 evolution in the re-entrance model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
+![Average L1 evolution in the re-entrance model (across exemplars, across agents). Note that this metric averages over agents' entire memories, and is therefore influenced by the Zipfian distribution of exemplars. The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
 
 ![Average L1 value in the re-entrance model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
 
@@ -387,7 +387,7 @@ To try and explain this behaviour, we take two approaches. In the first approach
 
 ::: {#fig-no-zipfian-model-group layout-ncol=2}
 
-![Average L1 evolution in the re-entrance model (across constructions, across agents). The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-l1-general.png){#fig-no-zipfian-model-l1-general}
+![Average L1 evolution in the uniform distribution model (across exemplars, across agents). Note that this metric averages over agents' entire memories. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-l1-general.png){#fig-no-zipfian-model-l1-general}
 
 ![Average L1 value in the uniform distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
