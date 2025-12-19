@@ -506,23 +506,23 @@ In order to keep track of the simulation course, we computed the following metri
   $$
   \frac{\text{\# successful turns}}{\text{\# turns}}
   $$
-4. **Average agent L1:**  
+10. **Communicative success (macro average):**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
+  $$
+  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
+  $$
+4. **Average L1 of agents' memories:**  
   Number expressing the average L1 norm of exemplars, across all agents.  
   $$
   \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L} \sum_{j=1}^{L}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{j,k}}}{D} \right] } \right]}
   $$
-5. **Average construction L1:**  
+5. **Average L1 :**  
   Number expressing for each construction $c$ the average L1 norm of its exemplars, across all agents.
   $$  
   \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c} \sum_{j=1}^{L^c}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{j,k}}}{D} \right] } \right] }
   $$ with $L^c$ = # exemplars associated with construction $c$
 6. **Confusion matrix:**  
   Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
-10. **Communicative success (macro average):**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
-  $$
-  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
-  $$
 11. **Correct interpretation ratio:**  
   Ratio expressing for each construction $c$ how many exemplars come from successful speaking turns.  
   $$
