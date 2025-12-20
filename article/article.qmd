@@ -91,11 +91,11 @@ The second unknown revolves around an built-in link between frequency and the sp
 
 The expectation by Bybee is that frequency in itself should be enough for reduction to arise organically. This implies there is no need for an built-in link that causes speakers to reduce more in high-frequency constructions than in low-frequency constructions. As this premise has not been tested, it is more an assumption rather than a finding. Therefore, our second research question is as follows:
 
-2. Does there need to be an built-in link between frequency and the speaker's inclination to reduce for the reducing effect to arise as expected?[^expected]
+2. Does there need to be an built-in link between frequency and the speaker's inclination to reduce for the reducing effect to arise as expected?
 
 Finally, existing theory on reduction also does not interact with the prospect of possible ambiguity. Reduction is, in essence, the act of expressing the same content in a narrower acoustic representation. Gradually, however, that also means that these representations will start looking more alike. It is currently unclear whether that implies some ambiguity avoidance mechanism is required to make sure that communicative confusion is avoided. Our final research question, then, is as follows:
 
-3. Does there need to be an ambiguity avoidance mechanism for the reducing effect to arise as expected?[^expected]
+3. Does there need to be an ambiguity avoidance mechanism for the reducing effect to arise as expected?
 
 [^expected]: For the reducing effect to arise "as expected", we mean that it should display the same properties as those we find in corpus data. Please see @sec-expected-behaviour for an explicit definition of expected reduction behaviour.
 
