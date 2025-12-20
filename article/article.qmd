@@ -286,9 +286,9 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 
 ![Average L1 evolution in the base model (across exemplars, across agents). Note that this metric averages over agents' entire memories, and is therefore influenced by the Zipfian distribution of exemplars. The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-l1-general.png){#fig-base-model-l1-general}
 
-![Average L1 value in the base model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
+![Average L1 value in the base model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-l1-per-construction.png){#fig-base-model-l1-per-construction}
 
-![Average L1 half life in the base model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
+![Average L1 half life in the base model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-base-model-half-life-per-construction.png){#fig-base-model-half-life-per-construction}
 
 ![Global communicative success in the base model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-base-model-success.png){#fig-base-model-success}
 
@@ -327,19 +327,21 @@ Nevertheless, a solution within this design is possible on behalf of the speaker
 
 ![A schematic overview of the language game played by the speaker and hearer, with re-entrance. Before speaking, the speaker checks whether they would understand the uttered form themselves. If they do, reduction is kept, but if they do not, reduction is reversed. The new elements in the overview are indicated in teal.](tikz/language_game_reentrance.svg){#fig-model_design_language_game_reentrance}
 
-With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increase in sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion. Therefore, it seems that an ambiguity avoidance mechanism is indeed required to obtain simulation results comparable with corpus data, leading to the following specification:
+With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increase in sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion.[^remaining-confusion] Therefore, it seems that an ambiguity avoidance mechanism is indeed required to obtain simulation results comparable with corpus data, leading to the following specification:
 
 1. Zipfian frequency difference between constructions
 2. No association between frequency and the speaker's inclination to reduce
 3. Re-entrance as an ambiguity avoidance mechanism
 
+[^remaining-confusion]: We manually inspected individual model runs to check what situations still cause communication to fail. We found that most confusion occurs between constructions with similar frequencies. This problem is further elaborated on in @sec-zipfian-role.
+
 ::: {#fig-reentrance-model-group layout-ncol=2}
 
 ![Average L1 evolution in the re-entrance model (across exemplars, across agents). Note that this metric averages over agents' entire memories, and is therefore influenced by the Zipfian distribution of exemplars. The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-l1-general.png){#fig-reentrance-model-l1-general}
 
-![Average L1 value in the re-entrance model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
+![Average L1 value in the re-entrance model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-l1-per-construction.png){#fig-reentrance-model-l1-per-construction}
 
-![Average L1 half life in the re-entrance model (per construction, across agents, 100,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
+![Average L1 half life in the re-entrance model (per construction, across agents, 50,000 iterations). The x axis shows each construction from most frequent to less frequent.](figures/fig-reentrance-model-half-life-per-construction.png){#fig-reentrance-model-half-life-per-construction}
 
 ![Global communicative success in the re-entrance model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for.](figures/fig-reentrance-model-success.png){#fig-reentrance-model-success}
 
@@ -378,9 +380,9 @@ To try and explain this behaviour, we take two approaches. In the first approach
 
 ![Average L1 evolution in the uniform distribution model (across exemplars, across agents). Note that this metric averages over agents' entire memories. The x axis shows how many iterations the simulations have run for.](figures/fig-no-zipfian-model-l1-general.png){#fig-no-zipfian-model-l1-general}
 
-![Average L1 value in the uniform distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
+![Average L1 value in the uniform distribution model (per construction, across agents, 50,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-l1-per-construction.png){#fig-no-zipfian-model-l1-per-construction}
 
-![Average L1 half life in the uniform distribution model (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
+![Average L1 half life in the uniform distribution model (per construction, across agents, 50,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-half-life-per-construction.png){#fig-no-zipfian-model-half-life-per-construction}
 
 ![Global communicative success in the uniform distribution model (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for. Note that the micro- and macro-average coincide here, as all constructions have equal weight in a uniform distribution.](figures/fig-no-zipfian-model-success.png){#fig-no-zipfian-model-success}
 
@@ -404,9 +406,9 @@ When we look at the results, we see that the communicative chaos from the no fee
 
 ::: {#fig-no-zipfian-model-feedback-group layout-ncol=2}
 
-![Average L1 value in the uniform distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
+![Average L1 value in the uniform distribution model with feedback (per construction, across agents, 50,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-l1-per-construction.png){#fig-no-zipfian-model-feedback-l1-per-construction}
 
-![Average L1 half life in the uniform distribution model with feedback (per construction, across agents, 100,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
+![Average L1 half life in the uniform distribution model with feedback (per construction, across agents, 50,000 iterations). The x axis shows each construction starting from the originally Zipfian rank 1.](figures/fig-no-zipfian-model-feedback-half-life-per-construction.png){#fig-no-zipfian-model-feedback-half-life-per-construction}
 
 ![Global communicative success in the uniform distribution model with feedback (across constructions, across agents). The micro-average is taken across all constructions. The macro-average is an average across averages, with each construction contributing equally towards the average. The x axis shows how many iterations the simulations have run for. Note that the micro- and macro-average coincide here, as all constructions have equal weight in a uniform distribution.](figures/fig-no-zipfian-model-feedback-success.png){#fig-no-zipfian-model-feedback-success}
 
@@ -434,7 +436,7 @@ $$ {#eq-exponential_distribution}
 
 Because this set of models covers a wide array of models, we built an aggregation graph over the model outcomes. @fig-no-zipfian-model-aggregate-success shows the average communicative success at the end of the model runs for each lambda parameter. It is clear that the larger lambda and thus the more skewed the distribution becomes, the better the model works. We turn to the discussion to attempt to explain this behaviour.
 
-![Global communicative success in the exponential distribution model (across constructions, across agents) after 100,000 iterations. This micro-average is taken across all constructions. The x axis shows the parameter value for lambda. The small variation between lambda parameter outcomes can be attributed to the stochastic nature of the model, and the aggregation over 100 runs for each parameter.](figures/fig-no-zipfian-model-success-graph.png){#fig-no-zipfian-model-aggregate-success}
+![Global communicative success in the exponential distribution model (across constructions, across agents) after 50,000 iterations. This micro-average is taken across all constructions. The x axis shows the parameter value for lambda. The small variation between lambda parameter outcomes can be attributed to the stochastic nature of the model, and the aggregation over 100 runs for each parameter.](figures/fig-no-zipfian-model-success-graph.png){#fig-no-zipfian-model-aggregate-success}
 
 ## Discussion {#sec-discussion}
 
@@ -450,7 +452,7 @@ We found the following minimal set of conditions to suffice for the reducing eff
 
 If we replace the skewed distribution with a flat distribution, we also need an additional feedback mechanism to guarantee communicative stability. In this discussion section, we will go over the role of the Zipfian distribution, and what the necessity of the several requirements means for reducing effect theory and usage-based linguistics as a whole.
 
-### Role of the Zipfian distribution
+### Role of the Zipfian distribution {#sec-zipfian-role}
 
 We saw that, paired with re-entrance, the Zipfian distribution can lead to a communicatively stable model that produces behaviour mimicking corpus data (@sec-reentrance-model). However, when we removed the Zipfian distribution and replaced it with a flat distribution, communication failed (@sec-no-zipfian-model). If we added feedback to the same specification, communication recovered (@sec-no-zipfian-feedback-model). Subsequently, we saw that feedback can be disabled and still lead to good results, as long as the distribution is decently skewed, i.e. comparable to a Zipfian distribution (@sec-exponential-model). In short, there seem to be two ways to achieve communicative success: either any distribution paired with feedback, or a heavily skewed distribution, like the Zipfian distribution, but without the requirement for feedback.
 
