@@ -204,21 +204,10 @@ We saw in @sec-underspecification that several aspects of reducing effect theory
 
 As for (1), the minimal, motivated assumption can be inferred easily from corpus data. Indeed, constructions language follow Zipf's Law [@zipf_psycho-biology_1965]. Zipf's Law dictates that many "units" in language (constructions, sounds ...) naturally occur according to a power law in which rank is inversely related to frequency. This means that the first item in a Zipfian distribution is twice as frequent as the second item, three times as frequent as the third item, and so on. In practice, this leads to an extremely unbalanced distribution with few highly frequent items, and a long tail of infrequent items. This uneven distribution is also called an "A-curve" by @kretzschmar_language_2015. For our simulation, the frequency distribution is effective in the construction choice step. In addition, the exemplars in an agent's memory will also follow the Zipfian distribution ["probability matching" in @labov_principles_1994].
 
-For our implementation of Zipf's Law, we chose the standard Zipfian equation (shown in @eq-zipfian_distribution). While other iterations of the Zipfian equation, devised to improve alignment with empirical data, exist [i.e. the Zipf-Mandelbrot equation, @mandelbrot_information_1966], these improved alignments are not perfect either [@montemurro_beyond_2001]. Most notably for our use case, the more involved Zipfian distribution equations require more parameters, which makes our search for the smallest set of assumptions conducive to the reducing effect more difficult. The only parameter in the original Zipfian equation is $\alpha$, which we set to 1.1.[^alpha-choice]
-
-[^alpha-choice]: Our choice for $\alpha$ stems from a comparison with Dutch spoken corpus data [@schuurman_cgn_2003]. Note that the choice of $\alpha$ is, to a certain extent, arbitrary, and we do not expect qualitatively different results with other plausible parameter values such as 0.9 or 1.
-
+For our implementation of Zipf's Law, we chose the standard Zipfian equation (shown in @eq-zipfian_distribution). While other iterations of the Zipfian equation, devised to improve alignment with empirical data, exist [i.e. the Zipf-Mandelbrot equation, @mandelbrot_information_1966], these improved alignments are not perfect either [@montemurro_beyond_2001]. Most notably for our use case, the more involved Zipfian distribution equations require more parameters, which makes our search for the smallest set of assumptions conducive to the reducing effect more difficult. The only parameter in the original Zipfian equation is $\alpha$, which we set to 1.
 $$
 \operatorname{freq}(x) = \frac{1}{x^\alpha}
 $$ {#eq-zipfian_distribution}
-
-The Zipfian frequency distribution has a notoriously long tail in the lower-frequency regions, which is difficult to compress into a limited number of constructions (see @sec-parameters). Therefore, the frequency values for our $V$ constructions are sampled from a much larger distribution with $S$ constructions. The sampling procedure works as follows:
-
-1. Generate a Zipfian distribution of size $S$
-2. Sample $V$ constructions of the large distribution with size $S$ with Zipfian weights. Take the absolute frequencies of the sampled constructions.
-3. Assign the construction choice probabilities based on the sampled frequencies.
-
-With this sampling procedure, our limited construction set aligns more with the properties of a typical, larger Zipfian distribution.
 
 As for (2), we suppose the most minimal option and initially assume there not to be an built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
