@@ -214,7 +214,7 @@ $$ {#eq-zipfian_distribution}
 
 As for (2), we suppose the most minimal option and initially assume there not to be a built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949] dictates that, when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
-As for (3), we also start minimal and assume that no ambiguity avoidance mechanism was required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
+As for (3), we also start minimal and assume that no ambiguity avoidance mechanism is required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
 
 Note that there is no built-in assumption which dictates that frequent constructions should reduce faster and to a larger extent than less frequent constructions. Rather, this is the emergent behaviour that needs to occur naturally out of the interplay of the different assumptions.
 
