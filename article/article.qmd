@@ -429,7 +429,7 @@ In the previous section, we saw that we can prevent communicative collapse in a 
 3. Re-entrance as an ambiguity avoidance mechanism
 4. No feedback allowed during communication
 
-Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$. We apply the same sampling procedure as in @sec-underspecification-filling. An example of some of the resulting distributions can be found in @fig-exponential-probabilities.
+Our exponential distribution is organised according to @eq-exponential_distribution. We vary the skew in the exponential distribution from $\lambda = log_{10}\left(1\right)$ to $\lambda = log_{10}\left(3\right)$. An example of some of the resulting distributions can be found in @fig-exponential-probabilities.
 
 $$
 \operatorname{freq}(x) = e^{-\lambda \cdot x}
