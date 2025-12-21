@@ -49,6 +49,8 @@ class ReductionModel(mesa.Model):
                  max_turns=1,
                  jumble_vocabulary=False,
                  sampling_type=SamplingTypes.ZIPFIAN,
+                 n_large=130000,
+                 zipf_param=1.1,
                  linear_sampling_intercept=None,
                  linear_sampling_slope=None,
                  exponential_sampling_lambda=0,
@@ -119,6 +121,8 @@ class ReductionModel(mesa.Model):
         self.linear_sampling_slope = 1 if linear_sampling_slope is None else linear_sampling_slope
         # Exponential sampling lambda
         self.exponential_sampling_lambda = exponential_sampling_lambda
+        self.n_large = n_large
+        self.zipf_param = zipf_param
 
         # Maximum number of turns
         self.max_turns = max_turns
@@ -200,7 +204,11 @@ class ReductionModel(mesa.Model):
         self.ranks = [ rank for rank in range(1, self.num_tokens + 1) ]
         # Frequency vector (different scale)
         if self.sampling_type == SamplingTypes.ZIPFIAN:
-            self.frequencies = generate_zipfian_frequencies(n_sample=self.num_distribution_tokens)
+            self.frequencies = generate_zipfian_frequencies(
+                n_sample=self.num_distribution_tokens,
+                n_large=self.n_large,
+                zipf_param=self.zipf_param
+            )
         elif self.sampling_type == SamplingTypes.LINEAR:
             self.frequencies = generate_linear_frequencies(
                 self.linear_sampling_intercept,
@@ -211,7 +219,8 @@ class ReductionModel(mesa.Model):
         elif self.sampling_type == SamplingTypes.EXPONENTIAL:
             self.frequencies = generate_exponential_frequencies(
                 n_sample=self.num_distribution_tokens,
-                exp_param=self.exponential_sampling_lambda
+                exp_param=self.exponential_sampling_lambda,
+                n_large=self.n_large
             )
         else:
             raise ValueError("Unrecognised sampling type")

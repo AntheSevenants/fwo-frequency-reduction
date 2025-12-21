@@ -49,12 +49,16 @@ def generate_sample(ranks, n_sample, probabilities):
     # Compute cumulative distribution function
     cumulative_percentiles = np.cumsum(probabilities)
 
-    # Sample n_sample items, ensuring distribution
-    sampled_indices = np.random.choice(ranks, size=n_sample, replace=False, p=probabilities)
-    sampled_indices.sort()  # Keep order for clarity
+    if len(ranks) != n_sample:
+        # Sample n_sample items, ensuring distribution
+        sampled_indices = np.random.choice(ranks, size=n_sample, replace=False, p=probabilities)
+        sampled_indices.sort()  # Keep order for clarity
     
-    # Get corresponding cumulative percentiles
-    sampled_percentiles = [cumulative_percentiles[idx - 1] for idx in sampled_indices]
+        # Get corresponding cumulative percentiles
+        sampled_percentiles = [cumulative_percentiles[idx - 1] for idx in sampled_indices]
+    else:
+        sampled_indices = ranks
+        sampled_percentiles = cumulative_percentiles
     
     return list(zip(sampled_indices, sampled_percentiles))
 
@@ -64,7 +68,7 @@ def generate_zipfian_sample(n_large=130000, n_sample=100, zipf_param=1.1):
     probabilities = 1 / np.power(ranks, zipf_param)
 
     return generate_sample(ranks, n_sample, probabilities)
-
+    
 def generate_exponential_sample(n_large=130000, n_sample=100, exp_param=0.001):
     # Generate exponentially decreasing probabilities
     ranks = np.arange(1, n_large + 1)
