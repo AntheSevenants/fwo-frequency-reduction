@@ -512,21 +512,32 @@ In order to keep track of the simulation course, we computed the following metri
   $$
 5. **Average L1 :**  
   Number expressing for each construction $c$ the average L1 norm of its exemplars, across all agents.
-  $$  
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c} \sum_{j=1}^{L^c}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{j,k}}}{D} \right] } \right] }
-  $$ with $L^c$ = # exemplars associated with construction $c$
+  $$
+  \begin{align}
+  & \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c} \sum_{j=1}^{L^c}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{j,k}}}{D} \right] } \right] } \\
+  & \text{with~} L^c = \text{\# exemplars associated with construction~} c 
+  \end{align}
+  $$
 6. **Confusion matrix:**  
   Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
 11. **Correct interpretation ratio:**  
   Ratio expressing for each construction $c$ how many exemplars come from successful speaking turns.  
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \operatorname{good origin}(L^c_i) } \right] }
-  $$ with $L^c$ = # exemplars associated with construction $c$ and $\operatorname{good origin}(exemplar) = \begin{cases}
+  \begin{align}
+  & \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \operatorname{good origin}(L^c_i) } \right] } \\
+  & \text{with~} L^c = \text{\# exemplars associated with construction~} c \\
+  & \text{and} \operatorname{good origin}(\text{exemplar}) = \begin{cases}
 0 & \text{if from failed speaking turn} \\
 1 & \text{if from successful speaking turn}
-\end{cases}$
+\end{cases}
+  \end{align}
+  $$
 12. **Half life time:**  
   Number expressing for each construction $c$ the timestep at which half of its original energy was reached.  
   $$
-  \operatorname{min}(t) : E^c[t] \leq \frac{E^c[0]}{2}
-  $$ with $t$ = time step in the model and $E^c$ list of L1 values per time step in the model for construction $c$
+  \begin{align}
+  & \operatorname{min}(t) : E^c[t] \leq \frac{E^c[0]}{2} \\
+  & \text{with~} t = \text{time step in the model} \\
+  & \text{and~} E^c = \text{list of L1 values per time step in the model for construction~} c
+  \end{align}
+  $$
