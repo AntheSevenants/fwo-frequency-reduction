@@ -1,5 +1,6 @@
 ---
-title: "Speak less, say more. FWO frequency reduction article"
+title: "Speak less, say more. Finding the preconditions for the reducing effect with an agent-based model"
+title-short: Speak less, say more.
 author:
   - name: Anthe Sevenants
     email: anthe.sevenants@kuleuven.be
@@ -21,6 +22,7 @@ author:
     orcid: 0000-0002-3820-8099
     affiliations:
       - name: Universiteit Antwerpen
+keywords: [usage-based linguistics, reducing effect, computer simulations, agent-based models, complex systems]
 format:
   html:
     toc: true
