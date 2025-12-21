@@ -12,14 +12,22 @@ def ratio_bar(parameter_mapping, ax, title, disable_title=False):
         disable_title=disable_title
     )
 
-def ratio_stem(parameter_mapping, ax, title, log=False, disable_title=False):
+def ratio_stem(parameter_mapping,
+               ax,
+               title,
+               log=False,
+               disable_title=False,
+               references=[],
+               primary_label=False):
     return stem(
         parameter_mapping,
         ax,
         ylim=[0, 1],
         title=title,
         log=log,
-        disable_title=disable_title
+        disable_title=disable_title,
+        references=references,
+        primary_label=primary_label
     )
 
 def communicative_success(parameter_mapping, ax, disable_title=False):
@@ -27,7 +35,25 @@ def communicative_success(parameter_mapping, ax, disable_title=False):
         parameter_mapping,
         ax,
         "Communicative success across selected parameter",
-        disable_title=disable_title
+        disable_title=disable_title,
+        references=[
+            {
+                "y": 0.949,
+                "colour": "C1",
+                "label": "Zipfian success level"
+            },
+            {
+                "y": 0.473, # todo
+                "colour": "C2",
+                "label": "Uniform success level, no feedback" 
+            },
+            {
+                "y": 0.967, # todo
+                "colour": "C3",
+                "label": "Uniform success level, feedback"
+            }
+        ],
+        primary_label="Exponential distribution"
     )
 
 
@@ -80,14 +106,29 @@ def bar(parameter_mapping, ax, ylim=None, title=None, disable_title=False):
 
     return ax
 
-def stem(parameter_mapping, ax, ylim=None, title=None, log=False, disable_title=False):
+def stem(parameter_mapping,
+         ax,
+         ylim=None,
+         title=None,
+         log=False,
+         disable_title=False,
+         references=[],
+         primary_label=False):
     parameter_mapping = export.aggregate.tools.mean(parameter_mapping)
 
     x = list(parameter_mapping.keys())
+
+    for reference in references:
+        plt.axhline(y = reference["y"], c=reference["colour"], label=reference["label"], ls="--")
     
     if log:
         ax.set_xscale("log")
-    ax.stem(x, list(parameter_mapping.values()))
+    
+    if primary_label:
+        ax.stem(x, list(parameter_mapping.values()), label=primary_label, linefmt="C0-", basefmt="C0-", bottom=-15)
+    else:
+        ax.stem(x, list(parameter_mapping.values()))
+
 
     if disable_title:
         title = None
@@ -105,5 +146,8 @@ def stem(parameter_mapping, ax, ylim=None, title=None, log=False, disable_title=
     fig = ax.get_figure()
     if title is None:
         fig.tight_layout()
+
+    if references:
+        plt.legend()
 
     return ax

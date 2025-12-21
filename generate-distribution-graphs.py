@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument("type", help="evaluation | exponential")
 args = parser.parse_args()
 
-MAX_FREQ = 10000
+MAX_FREQ = 100
 SAMPLE_SIZE = 100
 
 x = list(range(1, SAMPLE_SIZE + 1, 1))
@@ -18,7 +18,7 @@ if args.type == "evaluation":
     zipfian_frequencies = model.helpers.generate_zipfian_frequencies(
         MAX_FREQ,
         SAMPLE_SIZE,
-        zipf_param=0.9)
+        zipf_param=1.0)
     flat_frequencies = [ 1 ] * SAMPLE_SIZE
 
     zipfian_probabilities = np.divide(zipfian_frequencies, np.sum(zipfian_frequencies))
@@ -35,7 +35,7 @@ if args.type == "evaluation":
     width = 1
 
     plt.bar(x[:cross_idx], zipf_first, label="Zipfian distribution", color="C0")
-    plt.bar(x, flat_probabilities, label="Flat distribution", color="C1")
+    plt.bar(x, flat_probabilities, label="Uniform distribution", color="C1")
     plt.bar(x[cross_idx:], zipf_second, label="_Zipfian distribution", color="C0")
     plt.tight_layout()
 
@@ -108,6 +108,45 @@ elif args.type == "exponential":
             label="log(3)")
    
     filename = "fig-exponential-probabilities-2"
+elif args.type == "memory-zipfian":
+    zipfian_memory = model.helpers.zipf_exemplars_per_construction(
+        1000,
+        100,
+        1.1,
+        5
+    )
+    plt.bar(range(1, len(zipfian_memory) + 1), zipfian_memory)
+    
+    filename = "fig-memory-zipfian"
+elif args.type == "memory-exponential-zero":
+    exponential_memory = model.helpers.exp_exemplars_per_construction(
+        1000,
+        100,
+        0,
+        5
+    )
+    plt.bar(range(1, len(exponential_memory) + 1), exponential_memory)
+
+    filename = "fig-memory-exponential"
+elif args.type == "distribution-comparison":
+    N_SAMPLE = 100
+    N_LARGE = 130000
+    zipfian_sample = model.helpers.generate_zipfian_sample(
+        n_sample=N_SAMPLE,
+        n_large=N_LARGE
+    )
+    exponential_sample = model.helpers.generate_exponential_sample(
+        n_sample=N_SAMPLE,
+        n_large=N_LARGE,
+        exp_param=math.log(2.8, 10)
+    )
+    zipfian_sample = [ 1 - item[1] for item in zipfian_sample ]
+    exponential_sample = [ 1 - item[1] for item in exponential_sample ]
+
+    plt.plot(zipfian_sample, c="C0", label="Zipfian distribution")
+    plt.plot(exponential_sample, c="C1", label="Exponential distribution")
+
+    filename = "fig-distribution-comparison"
 else:
     raise ValueError("Unknown graph type")
 
