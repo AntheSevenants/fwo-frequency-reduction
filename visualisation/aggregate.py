@@ -38,17 +38,17 @@ def communicative_success(parameter_mapping, ax, disable_title=False):
         disable_title=disable_title,
         references=[
             {
-                "y": 0.949,
+                "y": 0.885,
                 "colour": "C1",
                 "label": "Zipfian success level"
             },
             {
-                "y": 0.473, # todo
+                "y": 0.63, # todo
                 "colour": "C2",
                 "label": "Uniform success level, no feedback" 
             },
             {
-                "y": 0.967, # todo
+                "y": 0.94, # todo
                 "colour": "C3",
                 "label": "Uniform success level, feedback"
             }

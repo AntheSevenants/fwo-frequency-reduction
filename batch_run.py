@@ -27,10 +27,11 @@ parser.add_argument('profile', type=str,
 parser.add_argument('iterations', type=int, default=1, help='number of iterations, default = 1')
 args = parser.parse_args()
 
-NUM_STEPS = 100000
+NUM_STEPS = 50000
 
 params_template = {
     "num_tokens": [ 100 ],
+    "n_large": 100,
     "num_agents": 25,
     "reduction_prior": 0.5,
     "value_ceil": 100,
@@ -59,7 +60,8 @@ params_template = {
 if args.profile == "regular":
     params = { **params_template,
         "self_check": [ False, True ],
-        "datacollector_step_size": 1000
+        "datacollector_step_size": 1000,
+        "zipf_param": 1.0,
     }
 elif args.profile == "exponential":
     params = { **params_template,
