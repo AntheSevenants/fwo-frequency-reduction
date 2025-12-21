@@ -189,7 +189,10 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 ![How reduction works in our simulation. In this case, $R = 5$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 5 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.](tikz/reduction.svg){#fig-model_design_reduction}
 
 $$
-d(X, Y) = \frac{\sum_{i=1}^{D} |x_i - y_i|}{D} \text{where } D = \text{ number of dimensions}
+\begin{aligned}
+d(X, Y) &= \frac{\sum_{i=1}^{D} |x_i - y_i|}{D} \\
+& \text{where } D = \text{ number of dimensions}
+\end{aligned}
 $$ {#eq-manhattan_distance}
 
 Note that we deliberately left out any feedback mechanism from the language game, as we are looking for the absolute minimal specification that is conducive to the reducing effect. Since including feedback implies adding an extra assumption, our initial aim is to attempt to model the reducing effect without a feedback mechanism.
