@@ -212,7 +212,7 @@ $$
 \operatorname{freq}(x) = \frac{1}{x^\alpha}
 $$ {#eq-zipfian_distribution}
 
-As for (2), we suppose the most minimal option and initially assume there not to be a built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949], dictates that when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
+As for (2), we suppose the most minimal option and initially assume there not to be a built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949] dictates that, when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
 
 As for (3), we also start minimal and assume that no ambiguity avoidance mechanism was required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
 
