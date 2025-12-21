@@ -35,7 +35,7 @@ if args.type == "evaluation":
     width = 1
 
     plt.bar(x[:cross_idx], zipf_first, label="Zipfian distribution", color="C0")
-    plt.bar(x, flat_probabilities, label="Flat distribution", color="C1")
+    plt.bar(x, flat_probabilities, label="Uniform distribution", color="C1")
     plt.bar(x[cross_idx:], zipf_second, label="_Zipfian distribution", color="C0")
     plt.tight_layout()
 
