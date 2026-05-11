@@ -105,7 +105,7 @@ def fraction_to_step(frac: float, total_steps: int) -> int:
         int: The absolute step
     """
 
-    return round(frac * total_steps)
+    return round(frac * (total_steps - 1))
 
 
 def check_attributes(attributes: str | List[str]) -> List[str]:
@@ -871,6 +871,10 @@ def plot_confusion(
         # Convert to absolute step
         _step = convert_step(step, len(value_list))
         matrix = value_list[_step, :]
+
+        # Adjust title
+        if title is not None:
+            title = f"{title} (t={_step})"
     else:
         # Take mean across step axis
         matrix = value_list.mean(axis=0)
