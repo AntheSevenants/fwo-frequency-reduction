@@ -1,35 +1,73 @@
 import os
+import json
 import pandas as pd
+import numpy as np
 
-def get_runs(runs_dir):
-    run_dirs = next(os.walk(runs_dir))[1]
+import export.sweeps
 
-    return run_dirs
+from typing import Dict, Any
 
-def get_run_infos(runs_dir, selected_run):
-    selected_run_dir = make_selected_run_dir(runs_dir, selected_run)
 
-    # I am not a French speaker, I just like using the word "infos" because it is goofy
-    model_infos_path = os.path.join(selected_run_dir, "run_infos.csv")
-    if not os.path.exists(model_infos_path):
-        raise FileNotFoundError("Run infos CSV does nost exist")
-    
-    return pd.read_csv(model_infos_path)
+def make_run_data_path(
+    sweeps_dir: str, selected_sweep: str, run_id: int, create: bool = False
+) -> str:
+    """Make the path for where run data JSON is stored
 
-def make_selected_run_dir(runs_dir, selected_run):
-    selected_run_dir = os.path.join(runs_dir, selected_run)
-    if not os.path.exists(selected_run_dir):
-        raise FileNotFoundError("Run directory does not exist")
-    
-    return selected_run_dir
+    Args:
+        sweeps_dir (str): The path to the directory where all sweeps are stored
+        selected_sweep (str): The name of the sweep of interest
+        run_id (int): ID of the run of interest
+        create (bool): Whether to create any missing directories
 
-def get_token_infos(runs_dir, selected_run):
-    selected_run_dir = make_selected_run_dir(runs_dir, selected_run)
+    Returns:
+        str: Path where run data is stored
+    """
 
-    # This info is the same across model runs and parameter combinations
-    token_infos_path = os.path.join(selected_run_dir, "token_infos.csv")
-    if not os.path.exists(token_infos_path):
-        raise FileNotFoundError("Token infos CSV does not exist")
-    
-    token_infos = pd.read_csv(token_infos_path)
-    return token_infos
+    sweep_dir = export.sweeps.make_selected_sweep_dir(
+        sweeps_dir, selected_sweep, create
+    )
+    return os.path.join(sweep_dir, f"{run_id}.json")
+
+
+def get_run_data(sweeps_dir: str, selected_sweep: str, run_id: int) -> Dict[str, Any]:
+    """Load a data dump for a specific combination
+
+    Args:
+        sweeps_dir (str): The path to the directory where all sweeps are stored
+        selected_sweep (str): The name of the sweep of interest
+        run_id (int): Unique ID for the run of interest
+
+    Returns:
+        Dict[str, Any]: Unserialised data dump of the specified run
+    """
+
+    run_data_path = make_run_data_path(sweeps_dir, selected_sweep, run_id)
+
+    with open(run_data_path, "rt") as reader:
+        data = json.loads(reader.read())
+
+    return data
+
+
+def load_dataframe(sweeps_dir: str, selected_sweep: str, run_id: int) -> Dict[str, Any]:
+    """Load a data dump for a specific run
+
+    Args:
+        sweeps_dir (str): The path to the directory where all sweeps are stored
+        selected_sweep (str): The name of the sweep of interest
+        run_id (int): interID of the run of interest
+
+    Returns:
+        Dict[str, Any]: Unserialised data dump of the specified run
+    """
+
+    sweep_dir = export.sweeps.make_selected_sweep_dir(sweeps_dir, selected_sweep)
+    run_data_path = os.path.join(sweep_dir, f"{run_id}.json")
+
+    # Load the selected simulation run from disk
+    with open(run_data_path, "rt") as run_file:
+        # Load the dataframe-as-json from disk
+        # There is no need to really turn it into a dataframe, downstream will figure it out
+        json_object = json.loads(run_file.read())
+
+        return json_object

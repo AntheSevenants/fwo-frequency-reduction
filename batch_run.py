@@ -1,126 +1,109 @@
-from model.helpers import load_vectors, generate_word_vectors, generate_zipfian_sample, load_info, compute_average_vocabulary, compute_mean_communicative_success_per_token, generate_quarter_circle_vectors
-from model.model import ReductionModel
-from model.types.neighbourhood import NeighbourhoodTypes
-from model.types.production import ProductionModels
-from model.types.reduction import ReductionModes, ReductionMethod
-from model.types.feedback import FeedbackTypes
-from model.types.sampling import SamplingTypes
-from model.types.repair import Repair
-from model.types.who_saves import WhoSaves
-from model.types.vector import VectorTypes
-
-from batchrunner import batch_run
+from batch.runner import batch_run
 
 from datetime import datetime
 
 import pandas as pd
-import numpy as np
-import os
 import argparse
-import random
-import math
+import dataclasses
+import json
 
-parser = argparse.ArgumentParser(
-    description='batch_run - volt go brr (and crash sometimes)')
-parser.add_argument('profile', type=str,
-                    help='regular | cone')
-parser.add_argument('iterations', type=int, default=1, help='number of iterations, default = 1')
+import batch.profiles
+import batch.sweep_info
+import batch.messaging
+import export.sweeps
+import batch_run_post
+
+from model.model import ReductionModel
+
+parser = argparse.ArgumentParser(description="batch_run - volt go brr again, and again")
+parser.add_argument("profile", type=str, help="regular")
+parser.add_argument(
+    "num_steps", type=int, default=1, help="number of steps, default = 1"
+)
+parser.add_argument(
+    "iterations", type=int, default=1, help="number of iterations, default = 1"
+)
+parser.add_argument(
+    "--webhook_info",
+    type=str,
+    default=None,
+    help="path to webhook info json, default = disabled",
+)
 args = parser.parse_args()
 
-NUM_STEPS = 50000
+sweep_info = batch.sweep_info.SweepInfo(
+    num_steps=args.num_steps, datacollector_step_ratio=0.01
+)
 
-params_template = {
-    "num_tokens": [ 100 ],
-    "n_large": 100,
-    "num_agents": 25,
-    "reduction_prior": 0.5,
-    "value_ceil": 100,
-    "memory_size": 1000,
-    "reduction_strength": [ 5 ],
-    "neighbourhood_size": 5,
-    "num_dimensions": [ 10 ],
-    "initial_token_count": 5,
-    "prefill_memory": True,
-    "neighbourhood_step_size": 0,
-    "production_model": ProductionModels.SINGLE_EXEMPLAR,
-    "neighbourhood_type": NeighbourhoodTypes.LEVENSHTEIN,
-    "reduction_mode": ReductionModes.ALWAYS,
-    "feedback_type": [ FeedbackTypes.FEEDBACK, FeedbackTypes.NO_FEEDBACK ],
-    "reduction_method": [ ReductionMethod.SOFT_THRESHOLDING ],
-    "sampling_type": [ SamplingTypes.ZIPFIAN ],
-    "repair": Repair.NO_REPAIR,
-    "confidence_threshold": 0,
-    "value_floor": 5,
-    "who_saves": [ WhoSaves.HEARER ],
-    "max_turns": 1,
-    "vectors_type": [ VectorTypes.DIRK_P2 ],
-    "fixed_memory": True
-}
+SWEEPS_DIR = "sweeps/"
 
-if args.profile == "regular":
-    params = { **params_template,
-        "self_check": [ False, True ],
-        "datacollector_step_size": 1000,
-        "zipf_param": 1.0,
-    }
-elif args.profile == "exponential":
-    params = { **params_template,
-        "sampling_type": [ SamplingTypes.EXPONENTIAL ],
-        "exponential_sampling_lambda": [ math.log(x, 10) for x in np.arange(1, 3 + 0.05, 0.05) ],
-        "self_check": [ False, True ],
-        "datacollector_step_size": 1000
-    }
-elif args.profile == "cone":
-    NUM_STEPS = 1000
+if not args.profile in batch.profiles.params:
+    raise ValueError("Unrecognised profile")
 
-    params = {
-        **params_template,
-        "num_tokens": 10,
-        "num_agents": 5,
-        "num_distribution_tokens": 100,
-        "value_ceil": 100,
-        "reduction_strength": 5,
-        "memory_size": 100,
-        "initial_token_count": 1,
-        "num_dimensions": 2,
-        "reduction_method": ReductionMethod.ANGLE,
-        "self_check": False,
-        "datacollector_step_size": 50,
-        "toroidal": True,
-        "light_serialisation": False
-    }
+webhook = None
+if args.webhook_info is not None:
+    with open(args.webhook_info, "rt") as reader:
+        webhook_info = json.loads(reader.read())
 
-if __name__ == '__main__':
-    now = datetime.now() # current date and time
+    required_fields = ["endpoint", "payload", "api_key"]
+    for required_field in required_fields:
+        if required_field not in webhook_info:
+            raise ValueError(f"Field '{required_field}' missing from webhook info")
+
+    webhook = batch.messaging.Webhook(
+        webhook_info["endpoint"], webhook_info["api_key"], webhook_info["payload"]
+    )
+
+params = batch.profiles.params[args.profile]
+
+if __name__ == "__main__":
+    now = datetime.now()  # current date and time
     date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
-    run_folder = f"models/{args.profile}-{date_time}/"
-    os.makedirs(run_folder, exist_ok=True)
-
-    # Save frequency, token and percentile information
-    # tokens, frequencies, percentiles, ranks = load_info(f"vectors/theoretical-percentile-info-{max(params['num_tokens'])}.tsv", theoretical=True)
-
-    # tokens_df = pd.DataFrame({
-    #     "tokens": tokens,
-    #     "frequencies": frequencies,
-    #     "percentiles": percentiles,
-    #     "ranks": ranks
-    # })
-    # tokens_df.to_csv(f"{run_folder}token_infos.csv", index=False)
+    # Name of the current sweep
+    current_sweep = f"{args.profile}-{date_time}"
 
     results = batch_run(
         ReductionModel,
-        run_folder,
+        SWEEPS_DIR,
+        current_sweep,
         parameters=params,
         iterations=args.iterations,
-        max_steps=NUM_STEPS,
+        max_steps=sweep_info.num_steps,
+        datacollector_step_size=sweep_info.datacollector_step_size,
         number_processes=None,
         data_collection_period=100,
         display_progress=True,
+        webhook=webhook,
     )
 
-    csv_filename = f"{run_folder}run_infos.csv"
+    csv_filename = export.sweeps.make_run_infos_path(SWEEPS_DIR, current_sweep)
     br_df = pd.DataFrame(results)
+    br_df = br_df.sort_values(by=["run_id"])
     br_df.to_csv(csv_filename, index=False)
 
-#     print(results)
+    if webhook is not None:
+        webhook.handle_event(
+            batch.messaging.Event(
+                current_sweep,
+                batch.messaging.EventState.FINISHED,
+                batch.messaging.EventType.BATCH_RUN,
+            )
+        )
+
+    # Write meta information about this parameter sweep
+    sweep_info_path = export.sweeps.make_sweep_info_path(SWEEPS_DIR, current_sweep)
+    with open(sweep_info_path, "wt") as writer:
+        sweep_info_dict = dataclasses.asdict(sweep_info)
+        writer.write(json.dumps(sweep_info_dict))
+
+    batch_run_post.do_post_run_aggregation(current_sweep)
+
+    if webhook is not None:
+        webhook.handle_event(
+            batch.messaging.Event(
+                current_sweep,
+                batch.messaging.EventState.FINISHED,
+                batch.messaging.EventType.AGGREGATION,
+            )
+        )

@@ -1,6 +1,0 @@
-class Repair:
-    MEAN = 0
-    NEGATIVE_REDUCTION = 2
-    PICK_ANOTHER = 3
-    NEGATIVE_REDUCTION_ANGLE = 4
-    NO_REPAIR = 1

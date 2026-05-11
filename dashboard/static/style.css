@@ -1,47 +1,53 @@
 main {
-	height: 100vh;
-	max-height: 100vh;
-	overflow-x: auto;
-	overflow-y: hidden;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .sidebar {
-	background-color: #212529;
-	overflow-y: scroll;
-	width: 325px; 
+    background-color: #5a3e7a;
+    overflow-y: scroll;
+    width: 325px;
 }
 
 .sidebar hr {
-	background-color: #eee;
+    border-color: #888ea3;
+    color: #888ea3;
+    opacity: 1;
 }
 
 .scrollable {
-	overflow-y: auto;
-	width: auto;
+    overflow-y: auto;
+    width: auto;
 }
 
-.card, .list-group-item {
-	background-color: transparent !important;
-	border-color: #54575A !important;
+.card,
+.list-group-item {
+    background-color: transparent !important;
+    border-color: #888ea3 !important;
 }
 
 .card-header {
-	background-color: rgba(255, 255, 255, 0.3) !important;
-	text-align: center;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    text-align: center;
+    border-bottom: 1px solid #888ea3 !important;
 }
 
+.card-body {}
+
 .wrapper {
-	position: relative;
+    position: relative;
 }
 
 .wrapper i {
-	position: absolute;
-	left: 0;
+    position: absolute;
+    left: 0;
 }
 
 .card-header.secondary {
-	background-color: rgba(255, 255, 255, 0.5) !important;
-	text-align: left;
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    text-align: left;
 }
 
 .container img {
@@ -55,7 +61,7 @@ main {
     background-color: transparent;
     position: absolute;
     width: 100%;
-    top: 1em    ;
+    top: 1em;
     left: 0;
     padding: 0;
 
@@ -65,6 +71,6 @@ main {
     text-align: center;
 }
 
-#input_note:focus{
+#input_note:focus {
     outline: none;
 }

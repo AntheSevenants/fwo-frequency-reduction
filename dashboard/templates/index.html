@@ -6,20 +6,27 @@
 </style>
 {% endblock %}
 {% block content %}
-    {% if no_selection %}
-    <div class="container d-flex justify-content-center align-items-center pt-4" style="min-height: 100vh;">
-        <div class="section row justify-content-center pb-5 w-100">
-            <div class="col-12 col-lg-5">
-                <p class="pt-2">Choose a model run to get started.</p>
-            </div>
+{% if no_selection %}
+<div class="container d-flex justify-content-center align-items-center pt-4" style="min-height: 100vh;">
+    <div class="section row justify-content-center pb-5 w-100">
+        <div class="col-12 col-lg-5">
+            <p class="pt-2">Choose a model sweep to get started.</p>
         </div>
     </div>
-    {% else %}
-    <input id="input_note" spellcheck="false">
-    <div class="container d-flex align-items-center {{ 'justify-content-center' if selected_filter is not none }}" style="min-height: 100vh;">
+</div>
+{% else %}
+<input id="input_note" spellcheck="false">
+<div class="container d-flex align-items-center {{ 'justify-content-center' if selected_filter is not none }}"
+    style="min-height: 100vh;">
     {% for graph_name in graphs %}
-        <img src='{{ url_for("send_graph", graph_name=graph_name, selected_run=selected_run, parameter_selection_id=parameter_selection_id) }}?v=99999'>
-    {% endfor %}
-    </div>
+    {% if selected_run is none %}
+    <img
+        src='{{ url_for("send_combination_graph", graph_name=graph_name, selected_sweep=selected_sweep, combination_id=combination_id) }}?v=99999'>
+    {% else %}
+    <img
+        src='{{ url_for("send_single_run_graph", graph_name=graph_name, selected_sweep=selected_sweep, combination_id=combination_id, single_run_id=selected_run) }}?v=99999'>
     {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}

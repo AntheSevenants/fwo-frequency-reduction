@@ -6,7 +6,7 @@ function submitForm() {
     if (aggregateInput.value == "") {
         aggregateInput.name = "";
     }
-    document.getElementById("form_select_run").submit();
+    document.getElementById("form_select_sweep").submit();
 }
 
 let interactiveElements = Array.from(document.getElementsByClassName("interactive"));

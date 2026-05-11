@@ -1,152 +1,559 @@
-import math
+from dataclasses import dataclass, field
+from typing import Callable, Dict, Any, Optional, List, Dict, Sequence, Union, Tuple
 
+import matplotlib.axes
+import matplotlib.figure
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 
-import export.models
+import model.reporters_agent
 
-import visualisation
-import visualisation.l1
-import visualisation.meta
-import visualisation.dimscrap
-import visualisation.angle
-import visualisation.shims
+import export.sweeps
+import export.runs
+import export.combinations
 
-ANALYSIS_REGULAR_GRAPHS = [ "mosaic_1", "mosaic_2", "mosaic_3", "confusion_mosaic", "l1_plot" ]
-ANALYSIS_NON_LIGHT_SERIALISATION_GRAPHS = [ "umap_mosaic", "memory_mosaic" ]
-ANALYSIS_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
+import batch.aggregate
 
-EXPORT_REGULAR_GRAPHS = [ "l1-general", "l1-general-micro", "l1-per-construction", "success", "matrix", "confusion-ratio", "half-life-per-construction" ]
-EXPORT_TOROIDAL_GRAPHS = [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end", "angle-vocabulary-plot-3d-begin" ]
 
-# TODO implement toroidal support better
-def generate_graphs(selected_run, selected_model_ids, selected_models, runs_dir, graphs, toroidal=False, disable_title=False):
-    datacollector_dataframes = export.models.get_datacollector_dataframes(runs_dir, selected_run=selected_run, selected_model_ids=selected_model_ids)
+class GraphContext:
+    """Describes the context in which a graph can appear. This can be either be: (1) export for paper output (2) dashboard for analysis and exploration."""
 
-    # TODO implement min_steps
-    # Build an aggregate model from all the different datacollector dataframes
-    # Then we can build one beautiful big graph
-    model = visualisation.shims.Model(datacollector_dataframes, selected_models.iloc[0], min_steps=None)
+    EXPORT = 0
+    DASHBOARD = 1
+
+
+@dataclass
+class GraphConfig:
+    """The configuration for a single graph. It defines what column the graph data comes from, what function needs to be called to create the graph, how extra parameters can be retrieved, etc."""
+
+    reporter_name: str  # What model reporter does the required data come from?
+    plot_func: Callable  # How can the figure be made?
+    reporter_type: int = model.reporters_agent.ReporterType.MEDIAN  # MEAN, MEDIAN, NONE
+    data_columns: List[str] = field(default_factory=lambda: [])
+    agent_types: List[int] = field(
+        default_factory=lambda: [model.reporters_agent.AgentType.ALL]
+    )
+    # Shorthands for common operations that are given to plot functions.
+    # can be: x_scale_factor, min_data or max_data
+    common_args: List[str] = field(default_factory=lambda: [])
+    extra_args: Optional[Dict[str, Any]] = (
+        None  # What extra arguments are needed to plot this figure?  # These can be either Callables or constants
+    )
+    action_column: str = "median"  # Aggregate operation column to use data from
+    action_column_inner: str = "median"  # Combination operation column to use data from
+    aggregate: bool = False  # Aggregate graph or not?
+    aggregate_extension: bool = (
+        False  # Can this graph be extended to become an overlayed aggregate graph?
+    )
+    is_mosaic: bool = False  # Is this a mosaic graph?
+    single_run_sensible: bool = (
+        True  # Does it make sense to show this graph for a single run?
+    )
+    context: int = GraphContext.EXPORT  # In what context should this graph be shown?
+
+    # Allow setting data columns directly if needed
+    disable_autogenerate_columns: bool = False
+
+    def __post_init__(self):
+        if self.disable_autogenerate_columns:
+            return
+
+        if self.aggregate:
+            self.data_columns = [self.reporter_name]
+            return
+
+        self.data_columns = [
+            model.reporters_agent.get_model_reporter_key(
+                self.reporter_name, self.reporter_type, agent_type
+            )
+            for agent_type in self.agent_types
+        ]
+
+
+@dataclass
+class MosaicConfig:
+    """The configuration for a mosaic graph. It defines what other graphs are part of the mosaic, and in what order they need to be arranged on the mosaic."""
+
+    layout: List[List[str]]  # Names of other graphs
+    size: Tuple[int, int] = (10, 16)  # Size of the mosaic
+    is_mosaic: bool = True  # Is this a mosaic graph?
+    context: int = GraphContext.DASHBOARD  # In what context should this graph be shown?
+    single_run_sensible: bool = (
+        True  # Does it make sense to show this graph for a single run?
+    )
+    aggregate: bool = False  # Aggregate graph or not?
+    aggregate_extension: bool = (
+        False  # Mosaic graph can pass the extension to its children
+    )
+
+
+@dataclass
+class AggregateSettings:
+    """Configuration in aggregate situations, i.e. when model output is abstracted over several parameter combinations."""
+
+    combination_ids: List[int]
+    parameter: str
+    parameter_values: List[Any]
+    combination_data: List[Dict[str, Any]] | None
+
+    def __init__(
+        self,
+        sweeps_dir: str,
+        selected_sweep: str,
+        combination_ids: List[int],
+        parameter: str,
+    ):
+        """Initialise an aggregate configuration.
+
+        Args:
+            sweeps_dir (str): The path to the directory where all sweeps are stored
+            selected_sweep (str): The name of the sweep of interest
+            combination_ids (List[int]): Unique IDs for the selected parameter combinations
+            parameter (str): The parameter of which the permutations are currently under scrutiny
+        """
+
+        self.combination_ids = combination_ids
+        self.parameter = parameter
+
+        # We want to know what possible values are they for the parameter that is being expanded
+        # So then for each parameter value, we will check what the outcomes are from that combination
+        run_infos = export.sweeps.get_run_infos(sweeps_dir, selected_sweep)
+        self.parameter_values = [
+            str(item)
+            for item in sorted(
+                run_infos[run_infos["combination_id"].isin(combination_ids)][parameter]
+                .unique()
+                .tolist()
+            )
+        ]
+
+        self.combination_data = (
+            None  # by default, we do not send along combination data
+        )
+
+
+def get_num_constructions(
+    data: Dict[str, Any] | List[Dict[str, Any]],
+    is_single_run: bool = False,
+    aggregate_extension: bool = False,
+) -> int:
+    """Get the number of constructions from a model run evolution of combination of run evolutions.
+
+    Args:
+        data (Dict[str, Any]): Run evolution or series of run evolutions.
+        is_single_run (bool, optional): Whether the input is a single run. Defaults to False.
+        aggregate_extension (bool, optional): Whether the input is data from an aggregate extension graph. Defaults to False.
+
+    Returns:
+        int: The number of constructions
+    """
+
+    # the additional type checks (list, dict) are to satisfy the type checker
+
+    if not is_single_run:
+        if not aggregate_extension and type(data) == dict:
+            return len(data["ctx_base_rate_mean"]["mean"][0])
+        elif aggregate_extension and type(data) == list:
+            return len(data[0]["ctx_base_rate_mean"]["mean"][0])
+    elif is_single_run and type(data) == dict:
+        return len(data["ctx_base_rate_mean"][0])
+
+    return -1  # to satisfy the type checker
+
+
+# These are all definitions of graphs
+graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
+    "ctx_activation_mean": GraphConfig(
+        reporter_name="ctx_activation",
+        plot_func=visualisation.activation.plot_ctx_activation_mean,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        aggregate_extension=True,
+    ),
+}
+
+
+def get_graph_names(context: int, is_single_run: bool = False) -> List[str]:
+    """Returns a list of the names of all available graphs
+
+    Args:
+        context (int): Context where the graphs will be used
+        is_single_run (bool): Whether the graphs are meant for a single run display
+
+    Returns:
+        List[str]: A list of the names of all available graphs
+    """
+
+    return [
+        graph_config
+        for graph_config in list(graph_configs.keys())
+        if graph_configs[graph_config].context == context
+        and not graph_configs[graph_config].aggregate
+        and (not is_single_run or graph_configs[graph_config].single_run_sensible)
+    ]
+
+
+def get_aggregate_graph_names(context: int) -> List[str]:
+    """Returns a list of the names of all available aggregate graphs
+
+    Args:
+        context (int): Context where the graphs will be used
+
+    Returns:
+        List[str]: A list of the names of all available graphs
+    """
+
+    return [
+        graph_config
+        for graph_config in list(graph_configs.keys())
+        if graph_configs[graph_config].context == context
+        and (
+            graph_configs[graph_config].aggregate
+            or graph_configs[graph_config].aggregate_extension
+        )
+    ]
+
+
+def get_graph_config(graph_name: str) -> Union[GraphConfig, MosaicConfig]:
+    """Retrieve the configuration for a graph or mosaic graph
+
+    Args:
+        graph_name (str): Name of the graph
+
+    Raises:
+        ValueError: Raised if name of the graph does not reference an existing config
+
+    Returns:
+        Union[GraphConfig, MosaicConfig]: Configuration associated with the specified graph name
+    """
+
+    # First, retrieve the config for this graph (see above)
+    if not graph_name in graph_configs:
+        raise ValueError(f"'{graph_name}' is not a valid graph")
+
+    return graph_configs[graph_name]
+
+
+def generate_graphs(
+    sweeps_dir: str,
+    selected_sweep: str,
+    combination_ids: Union[int, List[int]],
+    graphs: List[str],
+    aggregate: Optional[AggregateSettings] = None,
+    single_run: Optional[int] = None,
+    disable_title=False,
+) -> Dict[str, matplotlib.figure.Figure]:
+    """Generate the specified graphs depending on the given sweep
+
+    Args:
+        sweeps_dir (str): Path to the directory where all sweeps are stored
+        selected_sweep (str): Name of the sweep of interest
+        combination_id (int): ID of the unique parameter combination
+        graphs (List[str]): List of names of the graphs to be generated
+        aggregate (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
+        single_run (int, optional): ID of the single run to generate a graph for. Defaults to None.
+        disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
+
+    Raises:
+        ValueError: Raised if a supplied graph name does not have an associated graph
+        ValueError: Raised if multiple combination IDs appear without an aggregate configuration
+
+    Returns:
+        Dict[str, matplotlib.figure.Figure]: Dictionary with graph names as keys and generated graphs as values
+    """
+
+    scale_factor: int = int(
+        export.sweeps.get_sweep_info(sweeps_dir, selected_sweep)[
+            "datacollector_step_size"
+        ]
+    )
+
+    data: Union[dict[str, Any], pd.DataFrame]
+    # If only a single combination_id is given, this is a single graph
+    if isinstance(combination_ids, int) and aggregate is None and single_run is None:
+        # Retrieve the data for the single combination
+        combination_id = combination_ids
+        data = export.combinations.get_combination_data(
+            sweeps_dir, selected_sweep, combination_id
+        )
+    elif (
+        isinstance(combination_ids, int)
+        and aggregate is None
+        and single_run is not None
+    ):
+        data = export.runs.get_run_data(sweeps_dir, selected_sweep, single_run)
+    elif isinstance(combination_ids, list) and aggregate is not None:
+        # Get the combination infos dataframe
+        combination_infos = export.sweeps.get_combination_infos(
+            sweeps_dir, selected_sweep
+        )
+        # Filter for the required combinations
+        data = combination_infos[
+            combination_infos["combination_id"].isin(combination_ids)
+        ]
+
+        needs_combination_data = False
+        # Now, check if we need combination data
+        # With this I meant the data that is needed to overlay multiple regular graphs
+        # over each other in an aggregate context
+        for graph in graphs:
+            print(graph)
+            graph_config = graph_configs[graph]
+            if graph_config.aggregate_extension:
+                needs_combination_data = True
+
+        if needs_combination_data:
+            # Get the combination data for each combination_id that is involved in this aggregate
+            combination_data: List[Dict[str, Any]] = []
+            for combination_id in aggregate.combination_ids:
+                combination_data_single = export.combinations.get_combination_data(
+                    sweeps_dir, selected_sweep, combination_id
+                )
+                combination_data.append(combination_data_single)
+            # Attach to aggregate settings
+            aggregate.combination_data = combination_data
+    else:
+        raise ValueError(
+            "Unrecognised combination of combination IDs and aggregate settings"
+        )
+
+    return generate_graphs_inner(data, graphs, aggregate, single_run, scale_factor)
+
+
+def generate_graphs_inner(
+    data: Union[dict[str, Any], pd.DataFrame],
+    graphs: List[str],
+    aggregate: Optional[AggregateSettings] = None,
+    single_run: Optional[int] = None,
+    scale_factor: int = 1,
+) -> Dict[str, matplotlib.figure.Figure]:
 
     # Now, we can build the desired graphs and save them
     graphs_output = {}
 
-    n = export.graphs.get_n(toroidal)
-
+    # We go over all requested graphs and generate them
     for graph_name in graphs:
-        figure = export.graphs.create_graph(graph_name=graph_name, model=model, n=n, ylim=model.value_ceil * model.num_dimensions, disable_title=disable_title)
+        config = get_graph_config(graph_name)
+
+        # Check if mosaic plot
+        if isinstance(config, MosaicConfig):
+            # One by one, we replace the names of the graphs with the actual functions that build them
+            plot_functions = []
+            for row in config.layout:
+                inner_functions = []
+                for references_graph_name in row:
+                    # Skip graphs that do not make sense in single run view
+                    if (
+                        single_run is not None
+                        and not get_graph_config(
+                            references_graph_name
+                        ).single_run_sensible
+                    ):
+                        continue
+
+                    graph_function = generate_inner_lambda(
+                        data,
+                        references_graph_name,
+                        scale_factor=scale_factor,
+                        aggregate_config=aggregate,
+                        single_run=single_run,
+                    )
+                    inner_functions.append(graph_function)
+
+                # Because we filter graphs, it can be that the row is empty
+                # So check first
+                if len(inner_functions) > 0:
+                    plot_functions.append(inner_functions)
+
+            # Make the plot based on the functions
+            figure = visualisation.multiplot.combine(plot_functions, config.size)
+        else:
+            # Make a single plot. We pass ax=None because there is no existing axis to hook into
+            figure, ax = generate_inner_lambda(
+                data,
+                graph_name,
+                scale_factor=scale_factor,
+                aggregate_config=aggregate,
+                single_run=single_run,
+            )(ax=None)
 
         graphs_output[graph_name] = figure
 
     return graphs_output
 
-def create_graph(graph_name, model, disable_title, n=35, ylim=7000):
-    fig, ax = plt.subplots()
 
-    if graph_name == "l1-general":
-        figure = visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False, disable_title=disable_title)
-    elif graph_name == "l1-general-micro":
-        figure = visualisation.l1.make_micro_mean_l1_plot(
-            model,
-            ax=ax,
-            smooth=False,
-            disable_title=disable_title
-        )
-    elif graph_name == "l1-per-construction-mosaic":
-        figure = visualisation.meta.make_layout_plot(model, visualisation.l1.words_mean_l1_bar,
-                                                    steps=[math.floor(model.current_step / 4) * 1,
-                                                        math.floor(model.current_step / 4) * 2,
-                                                        math.floor(model.current_step / 4) * 3,
-                                                        model.current_step],
-                                                    disable_title=disable_title)
-    elif graph_name == "l1-per-construction":
-        figure = visualisation.l1.words_mean_l1_bar(model, model.current_step, ax=ax, disable_title=disable_title)
-    elif  graph_name == "success":
-        figure = visualisation.dimscrap.make_communication_plot_combined(model, smooth=False, ax=ax, disable_title=disable_title)
-    elif graph_name == "matrix":
-        figure = visualisation.meta.make_confusion_plot(model, model.current_step, n=n, ax=ax, disable_title=disable_title)
-    elif graph_name == "matrix-mosaic":
-        figure = visualisation.meta.make_layout_plot(model, visualisation.meta.make_confusion_plot, n=n,
-                                                     steps=[math.floor(model.current_step / 4) * 1,
-                                                        math.floor(model.current_step / 4) * 2,
-                                                        math.floor(model.current_step / 4) * 3,
-                                                        model.current_step],
-                                                    disable_title=disable_title)
-    elif graph_name == "confusion-ratio":
-        figure = visualisation.l1.token_good_origin_first_n(model, ax=ax, disable_title=disable_title)
-    elif graph_name in [ "angle-vocabulary-plot-2d-begin", "angle-vocabulary-plot-2d-end" ]:
-        if graph_name == "angle-vocabulary-plot-2d-begin":
-            step = 0
-        elif graph_name == "angle-vocabulary-plot-2d-end":
-            step = 750
+def generate_inner_lambda(
+    data: Union[Dict[str, Any], pd.DataFrame],
+    graph_name: str,
+    scale_factor: int = 1,
+    single_run: Optional[int] = None,
+    aggregate_config: Optional[AggregateSettings] = None,
+) -> Callable:
+    """Generate the function which builds the graph specified by the graph name
 
-        figure = visualisation.angle.make_angle_vocabulary_plot_2d(model, step, agent_filter=0, disable_title=disable_title)
-    elif graph_name == "angle-vocabulary-plot-3d-begin":
-        step = 0
+    Args:
+        data (Union[Dict[str, Any], pd.DataFrame]): Data dump of a specific parameter combination, or combinations
+        graph_name (str): Name of the graph to generate the function for
+        single_run (int, optional): ID of the single run to plot. Defaults to None.
+        aggregate_config (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
 
-        figure = visualisation.angle.make_angle_vocabulary_plot_3d(model, step, model.num_tokens, agent_filter=0, disable_title=disable_title)
-    elif graph_name == "half-life-per-construction":
-        figure = visualisation.l1.half_time_bar(model, model.current_step, ax=ax, disable_title=disable_title)
-    elif graph_name == "mosaic_1":
-        figure = visualisation.meta.combine_plots(model,
-            lambda model, ax: visualisation.dimscrap.make_communication_plot_combined(model, ax=ax, smooth=False),
-            visualisation.l1.communicative_success_first_n,
-            lambda model, ax: visualisation.l1.make_reentrance_ratio_plot(model, ax=ax, smooth=False),
-            lambda model, ax: visualisation.l1.token_good_origin_first_n(model, ax=ax),
-            lambda model, ax: visualisation.l1.make_mean_exemplar_age_plot(model, ax=ax, smooth=False),
-            lambda model, ax: visualisation.l1.make_reduction_success_plot(model, ax=ax, smooth=False),
+    Raises:
+        TypeError: Raised if the graph name is associated with a mosaic function
+
+    Returns:
+        Callable: Function which generates the graph specified by the graph name
+    """
+
+    config = get_graph_config(graph_name)
+
+    if isinstance(config, MosaicConfig):
+        raise TypeError("Inner plot function cannot be of mosaic type")
+
+    # Check if there are other arguments to be supplied, based on data argument
+    kwargs = {}
+    if config.extra_args:
+        for arg_name, arg_func in config.extra_args.items():
+            # extra_arg is a lambda function
+            if isinstance(arg_func, Callable):
+                # Data source changes depending on whether this is an aggregate extension graph
+                # or just a regular extension graph
+                arg_func_args: List[Any] = [data]
+                arg_func_kwargs: Dict[str, Any] = {}
+
+                if aggregate_config is not None and config.aggregate_extension:
+                    if aggregate_config.combination_data is None:
+                        raise ValueError(
+                            "Cannot apply argument function Callable if combination data is None"
+                        )
+
+                    arg_func_args = [aggregate_config.combination_data]
+
+                if single_run is not None:
+                    arg_func_kwargs["is_single_run"] = True
+
+                if config.aggregate_extension and aggregate_config is not None:
+                    arg_func_kwargs["aggregate_extension"] = True
+
+                kwargs[arg_name] = arg_func(*arg_func_args, **arg_func_kwargs)
+            # extra_arg is a constant
+            else:
+                kwargs[arg_name] = arg_func
+
+    # If aggregate config is None, this is always a simple graph
+    # If this is an aggregate extension graph, this is also a simple graph
+    # DESPITE the aggregate configuration being defined
+    is_regular_graph = aggregate_config is None or config.aggregate_extension
+
+    if is_regular_graph:
+        # You cannot have both innovators/conservators and an aggregate extension
+        if config.aggregate_extension and len(config.data_columns) > 1:
+            raise ValueError(
+                "Cannot build aggregate extension graph if innovators_share > 0. This is an architectural decision, and no mistake on your behalf."
             )
-    elif graph_name == "mosaic_2":
-        figure = visualisation.meta.combine_plots(model,
-            lambda model, ax: visualisation.l1.make_fail_reason_plot(model, ax=ax, include_success=True),
-            visualisation.l1.words_l1_plot_first_n,
-            lambda model, ax: visualisation.l1.make_mean_l1_plot(model, ax=ax, smooth=False),
-            lambda model, ax: visualisation.l1.make_micro_mean_l1_plot(model, ax=ax, smooth=False),
-            visualisation.l1.words_mean_exemplar_count_first_n,
-            visualisation.l1.words_mean_exemplar_count_bar)
-    elif graph_name == "mosaic_3":
-        figure = visualisation.meta.combine_plots(model,
-            lambda model, ax: visualisation.l1.reduction_per_token_first_n(model, n=10, ax=ax),
-            lambda model, ax: visualisation.l1.reentrance_per_token_first_n(model, n=10, ax=ax),
-            lambda model, ax: visualisation.dimscrap.make_words_distribution_plot(model, ax),
-            lambda model, ax: visualisation.l1.half_time_bar(model, model.current_step, ax=ax),
-            lambda model, ax: ax,
-            lambda model, ax: ax)
-    elif graph_name == "confusion_mosaic":
-        figure = visualisation.meta.make_layout_plot(model,
-                                    visualisation.meta.make_confusion_plot,
-                                    n=n, steps=[math.floor(model.current_step / 4) * 1,
-                                                 math.floor(model.current_step / 4) * 2,
-                                                 math.floor(model.current_step / 4) * 3, model.current_step])
-    elif graph_name == "l1_plot":
-        figure = visualisation.meta.make_layout_plot(model,
-                                    visualisation.l1.words_mean_l1_bar,
-                                    steps=[math.floor(model.current_step / 4) * 1,
-                                                 math.floor(model.current_step / 4) * 2,
-                                                 math.floor(model.current_step / 4) * 3, model.current_step],
-                                    ylim=ylim)
-    elif graph_name == "umap_mosaic":
-        figure = visualisation.meta.make_layout_plot(model,
-                                    visualisation.meta.make_umap_plot,
-                                    steps=[math.floor(model.current_step / 4) * 1,
-                                           math.floor(model.current_step / 4) * 2,
-                                           math.floor(model.current_step / 4) * 3,
-                                           model.current_step])
-    else:
-        raise ValueError(f"Unrecognised graph: {graph_name}")
-    
-    return figure
 
-def get_analysis_graph_names(toroidal=False):
-    if not toroidal:
-        return ANALYSIS_REGULAR_GRAPHS
-    else:
-        return ANALYSIS_REGULAR_GRAPHS + ANALYSIS_TOROIDAL_GRAPHS
+        central_data = []
 
-def get_export_graph_names(toroidal=False):
-    if not toroidal:
-        return EXPORT_REGULAR_GRAPHS
-    else:
-        return EXPORT_REGULAR_GRAPHS + EXPORT_TOROIDAL_GRAPHS
+        # Since the aggregate extension graphs complicate things even further,
+        # allow me to explain ...
 
-def get_n(toroidal=False):
-    return 35 if not toroidal else 10
+        # Either there is a single data source (one combination ID), and then there can be
+        # multiple data columns (innovator, conservator)
+        # Or, there are multiple data sources (multiple combination IDs)
+        # then there can only be ONE data column
+        # So I'm adding one more layer of abstraction where we loop over data sources
+        # so then I can switch out the data sources in case fo an aggregate extension graph
+        data_sources: Sequence[Union[Dict[str, Any], pd.DataFrame]] = []
+        aggregate_extension_x: List[str] | None = (
+            None  # x values for aggregate extension graph
+        )
+        if not config.aggregate_extension or (
+            config.aggregate_extension and aggregate_config is None
+        ):
+            data_sources = [data]
+        elif config.aggregate_extension and aggregate_config is not None:
+            if aggregate_config.combination_data is None:
+                raise ValueError(
+                    "Combination data stored in aggregate config cannot be None"
+                )
+
+            data_sources = aggregate_config.combination_data
+            aggregate_extension_x = aggregate_config.parameter_values
+        else:
+            raise ValueError("Invalid aggregate config argument")
+
+        min_data: List[List[float]] = []
+        max_data: List[List[float]] = []
+
+        for data in data_sources:
+            for data_column in config.data_columns:
+                for common_arg in config.common_args:
+                    value = None
+                    if common_arg == "x_scale_factor":
+                        value = scale_factor
+                    elif common_arg == "min_data" and single_run is None:
+                        min_data.append(data[data_column]["q1"])
+                    elif common_arg == "max_data" and single_run is None:
+                        max_data.append(data[data_column]["q3"])
+
+                    kwargs[common_arg] = value
+
+                # Combination graph
+                if single_run is None:
+                    central_data.append(data[data_column][config.action_column])
+                else:
+                    # No need for aggregation
+                    central_data.append(data[data_column])
+
+        if len(min_data) > 0:
+            kwargs["min_data"] = min_data
+        if len(max_data) > 0:
+            kwargs["max_data"] = max_data
+        if aggregate_extension_x is not None:
+            kwargs["aggregate_extension_x"] = aggregate_extension_x
+
+        kwargs["attributes"] = config.data_columns
+
+        # Make the plot function
+        return lambda ax: config.plot_func(central_data, **kwargs, ax=ax)
+    # Aggregate graph
+    else:
+        # To satisfy the type checker
+        if aggregate_config is None:
+            raise ValueError(
+                "Aggregate config cannot be None when an aggregate graph is requested"
+            )
+
+        data_column = config.data_columns[
+            0
+        ]  # temporary workaround for aggregate graphs
+        for common_arg in config.common_args:
+            value = None
+            if common_arg == "min_data":
+                value = data[
+                    batch.aggregate.make_aggregate_output_name(
+                        data_column, config.action_column_inner, "q1"
+                    )
+                ]
+            elif common_arg == "max_data":
+                value = kwargs["max_data"] = data[
+                    batch.aggregate.make_aggregate_output_name(
+                        data_column, config.action_column_inner, "q3"
+                    )
+                ]
+            kwargs[common_arg] = value
+
+        kwargs["attributes"] = data_column
+
+        return lambda ax: config.plot_func(
+            [
+                data[
+                    batch.aggregate.make_aggregate_output_name(
+                        data_column, config.action_column_inner, config.action_column
+                    )
+                ].tolist()
+            ],  # I "temporarily" wrap this in brackets until I fix the dimensionality issue
+            aggregate_config.parameter_values,
+            parameter=aggregate_config.parameter,
+            **kwargs,
+            ax=ax,
+        )
