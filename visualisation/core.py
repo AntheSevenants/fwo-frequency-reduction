@@ -478,20 +478,21 @@ def plot_ratio(
             # Line colour normally indicates the construction
             # Across parameter combinations, we only show the innovative construction
             # so here line colour can encode a specific parameter value
-            line_colour = COLOURS[i]
+            line_colour = COLOURS[attribute_idx]
             line_style = get_line_style_by_group_context(
                 attribute_idx, num_groups, multi_group_context
             )
-            # TODO: make work with aggregate extension agay
-            # legend_label = make_legend_label_by_group_context(
-            #     attribute_idx, i, aggregate_extension_x
-            # )
+            legend_label = (
+                enum_translation[i]
+                if aggregate_extension_x is None
+                else aggregate_extension_x[attribute_idx]
+            )
 
             ax.plot(
                 matrix[:, i],
                 color=line_colour,
                 linestyle=line_style,
-                label=enum_translation[i],
+                label=legend_label,
             )
 
             # Plot the shaded area between min and max values
@@ -683,7 +684,7 @@ def plot_histogram(
 
 def plot_error_bar(
     data: model.model.ReductionModel | List[float],
-    attributes: str,
+    attributes: str | List[str],
     x: List[str] | None = None,
     ylim: Optional[List[float]] = None,
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -694,6 +695,7 @@ def plot_error_bar(
     y_label: Optional[str] = None,
     title: Optional[str] = None,
     disable_title: bool = False,
+    aggregate_extension_x: Any = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
     """Plot a bar chart with values from a model run
 
@@ -715,45 +717,60 @@ def plot_error_bar(
         Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
     """
 
-    # Get the right data based on the supplied arguments
-    value_list = get_value_lists(data, attributes)[0]
+    # Convert single string to list for uniform processing
+    attributes = check_attributes(attributes)
 
-    # Convert to absolute step
-    _step = convert_step(step, len(value_list))
-    # Get the data from the right step
-    value_list = value_list[_step, :]
+    # Get the right data based on the supplied arguments
+    value_lists = get_value_lists(data, attributes)
+    num_groups = len(value_lists)
 
     # Check if min and max data are supplied correctly
     _min_data, _max_data = check_min_max_data(data, min_data, max_data)
 
-    if _min_data is not None:
-        _min_data = _min_data[0][step, :]
-    if _max_data is not None:
-        _max_data = _max_data[0][step, :]
+    fig, ax = check_ax(ax, disable_title)
 
-    fix, ax = check_ax(ax, disable_title)
+    multi_group_context = get_multi_group_context(aggregate_extension_x is not None)
 
-    if x is None:
-        _x = [str(x) for x in list(range(len(value_list)))]
-    else:
-        _x = x
+    for attribute_idx, value_list in enumerate(value_lists):
+        # Convert to absolute step
+        _step = convert_step(step, len(value_list))
 
-    _yerr = (
-        None
-        if _min_data is None or _max_data is None
-        else [np.abs(value_list - _min_data), np.abs(_max_data - value_list)]
-    )
+        # Get the data from the right step
+        value_list = value_list[_step, :]
 
-    ax.errorbar(
-        _x,
-        value_list,
-        yerr=_yerr,
-        fmt="s",
-        capsize=5,
-        ecolor="lightgray",
-        color="blue",
-        elinewidth=1.5,
-    )
+        __min_data, __max_data = None, None
+        if _min_data is not None:
+            __min_data = _min_data[attribute_idx][step, :]
+        if _max_data is not None:
+            __max_data = _max_data[attribute_idx][step, :]
+
+        if x is None:
+            _x = [str(x) for x in list(range(len(value_list)))]
+        else:
+            _x = x
+
+        _yerr = (
+            None
+            if __min_data is None or __max_data is None
+            else [np.abs(value_list - __min_data), np.abs(__max_data - value_list)]
+        )
+
+        line_colour = COLOURS[attribute_idx]
+        legend_label = make_legend_label_by_group_context(
+            attribute_idx, aggregate_extension_x=aggregate_extension_x
+        )
+
+        ax.errorbar(
+            _x,
+            value_list,
+            yerr=_yerr,
+            fmt="s",
+            capsize=5,
+            ecolor="lightgray",
+            color=line_colour,
+            elinewidth=1.5,
+            label=legend_label,
+        )
 
     if ylim is not None:
         ax.set_ylim(*ylim)
@@ -765,6 +782,9 @@ def plot_error_bar(
 
     if title is not None and not disable_title:
         ax.set_title(title)
+
+    if num_groups > 1:
+        ax.legend()
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
