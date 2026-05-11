@@ -216,6 +216,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
             ["ctx_energy_mean"],
         ],
         size=(12, 12),
+        aggregate_extension=True,
     ),
     "confusion_mosaic": MosaicConfig(
         layout=[
