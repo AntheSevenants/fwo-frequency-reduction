@@ -37,12 +37,15 @@ def get_sweep_info(
         return json.loads(reader.read())
 
 
-def get_run_infos(sweeps_dir: str, selected_sweep: str) -> pd.DataFrame:
+def get_run_infos(
+    sweeps_dir: str, selected_sweep: str, hashable_safe=False
+) -> pd.DataFrame:
     """Returns a dataframe containing the run info associated with different sweeps
 
     Args:
         sweeps_dir (str): The path to the directory where all sweeps are stored
         selected_sweep (str): The name of the sweep of interest
+        hashable_safe (bool): Whether to stringify non-hashable types. Defaults to False.
 
     Raises:
         FileNotFoundError: Raised if the run infos file cannot be found in the sweep directory
@@ -56,7 +59,14 @@ def get_run_infos(sweeps_dir: str, selected_sweep: str) -> pd.DataFrame:
     if not os.path.exists(model_infos_path):
         raise FileNotFoundError("Run infos CSV does nost exist")
 
-    return pd.read_json(model_infos_path)
+    run_infos = pd.read_json(model_infos_path)
+    if hashable_safe:
+        for column in run_infos.columns:
+            run_infos[column] = run_infos[column].apply(
+                lambda x: str(x) if isinstance(x, (list, dict, set)) else x
+            )
+
+    return run_infos
 
 
 def make_run_infos_path(sweeps_dir: str, selected_sweep: str) -> str:

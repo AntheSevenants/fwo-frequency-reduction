@@ -128,7 +128,9 @@ class AggregateSettings:
 
         # We want to know what possible values are they for the parameter that is being expanded
         # So then for each parameter value, we will check what the outcomes are from that combination
-        run_infos = export.sweeps.get_run_infos(sweeps_dir, selected_sweep)
+        run_infos = export.sweeps.get_run_infos(
+            sweeps_dir, selected_sweep, hashable_safe=True
+        )
         self.parameter_values = [
             str(item)
             for item in sorted(

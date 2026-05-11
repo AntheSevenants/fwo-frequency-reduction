@@ -31,15 +31,6 @@ def index():
     return show_interface()
 
 
-def make_hashable(run_infos: pd.DataFrame):
-    for column in run_infos.columns:
-        run_infos[column] = run_infos[column].apply(
-            lambda x: str(x) if isinstance(x, (list, dict, set)) else x
-        )
-
-    return run_infos
-
-
 # Live = are we looking at graphs from the jupyter notebook?
 def show_interface(live: bool = False):
     # "sweep" = a complete batch run with multiple parameter combinations
@@ -86,8 +77,9 @@ def show_interface(live: bool = False):
     # Run selection logic
     if selected_sweep is not None:
         # Get information about all runs in the sweep as a  dataframe
-        run_infos = export.sweeps.get_run_infos(args.sweeps_dir, selected_sweep)
-        run_infos = make_hashable(run_infos)
+        run_infos = export.sweeps.get_run_infos(
+            args.sweeps_dir, selected_sweep, hashable_safe=True
+        )
 
         parameter_mapping, constants_mapping = export.parameters.build_mapping(
             run_infos
