@@ -14,6 +14,9 @@ import export.runs
 import export.combinations
 
 import batch.aggregate
+import visualisation.multiplot
+import visualisation.energy
+import visualisation.communication
 
 
 class GraphContext:
@@ -29,6 +32,9 @@ class GraphConfig:
 
     reporter_name: str  # What model reporter does the required data come from?
     plot_func: Callable  # How can the figure be made?
+    model_reporter: bool = (
+        False  # Is this a model reporter (True) or an agent reporter? (False)
+    )
     reporter_type: int = model.reporters_agent.ReporterType.MEDIAN  # MEAN, MEDIAN, NONE
     data_columns: List[str] = field(default_factory=lambda: [])
     agent_types: List[int] = field(
@@ -59,7 +65,7 @@ class GraphConfig:
         if self.disable_autogenerate_columns:
             return
 
-        if self.aggregate:
+        if self.aggregate or self.model_reporter:
             self.data_columns = [self.reporter_name]
             return
 
@@ -164,11 +170,46 @@ def get_num_constructions(
 
 # These are all definitions of graphs
 graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
-    "ctx_activation_mean": GraphConfig(
-        reporter_name="ctx_activation",
-        plot_func=visualisation.activation.plot_ctx_activation_mean,
-        common_args=["x_scale_factor", "min_data", "max_data"],
+    "total_l1_mean": GraphConfig(
+        reporter_name="energy_mean",
+        plot_func=visualisation.energy.plot_energy,
+        common_args=["x_scale_factor", "min_data", "max_data", "y_max"],
         aggregate_extension=True,
+    ),
+    "communicative_success": GraphConfig(
+        reporter_name="communication_results_go",
+        model_reporter=True,
+        plot_func=visualisation.communication.plot_communication,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        extra_args={
+            "filter_dimension": 1,
+        },
+        aggregate_extension=True,
+    ),
+    "ctx_energy_mean": GraphConfig(
+        reporter_name="ctx_energy_mean",
+        plot_func=visualisation.energy.plot_energy_per_ctx,
+        # TODO: re-introduce min_data and max_data once the graph type has been changed
+        common_args=["min_data", "max_data", "y_max"],
+        aggregate_extension=True,
+    ),
+    "communicative_confusion": GraphConfig(
+        reporter_name="confusion_matrix_go",
+        model_reporter=True,
+        plot_func=visualisation.communication.plot_confusion,
+        # TODO: re-introduce min_data and max_data once the graph type has been changed
+        # common_args=["x_scale_factor"],
+        extra_args={
+            "n": 35,
+        },
+        aggregate_extension=True,
+    ),
+    "og_mosaic": MosaicConfig(
+        layout=[
+            ["total_l1_mean", "communicative_success"],
+            ["ctx_energy_mean", "communicative_confusion"],
+        ],
+        size=(12, 12),
     ),
 }
 
@@ -267,6 +308,15 @@ def generate_graphs(
             "datacollector_step_size"
         ]
     )
+    # Find ymax by looking at the run infos
+    if isinstance(combination_ids, int):
+        _combination_ids = [combination_ids]
+    else:
+        _combination_ids = combination_ids
+    # Filter for the required combination ids
+    run_infos = export.sweeps.get_run_infos(sweeps_dir, selected_sweep)
+    run_infos = run_infos[run_infos["combination_id"].isin(_combination_ids)]
+    y_max = np.max(np.array(run_infos["vector_bounds"].tolist())[:, 1])
 
     data: Union[dict[str, Any], pd.DataFrame]
     # If only a single combination_id is given, this is a single graph
@@ -317,7 +367,9 @@ def generate_graphs(
             "Unrecognised combination of combination IDs and aggregate settings"
         )
 
-    return generate_graphs_inner(data, graphs, aggregate, single_run, scale_factor)
+    return generate_graphs_inner(
+        data, graphs, aggregate, single_run, scale_factor, y_max
+    )
 
 
 def generate_graphs_inner(
@@ -326,6 +378,7 @@ def generate_graphs_inner(
     aggregate: Optional[AggregateSettings] = None,
     single_run: Optional[int] = None,
     scale_factor: int = 1,
+    y_max: int = 100,
 ) -> Dict[str, matplotlib.figure.Figure]:
 
     # Now, we can build the desired graphs and save them
@@ -386,6 +439,7 @@ def generate_inner_lambda(
     data: Union[Dict[str, Any], pd.DataFrame],
     graph_name: str,
     scale_factor: int = 1,
+    y_max: int = 100,
     single_run: Optional[int] = None,
     aggregate_config: Optional[AggregateSettings] = None,
 ) -> Callable:
@@ -490,6 +544,8 @@ def generate_inner_lambda(
                     value = None
                     if common_arg == "x_scale_factor":
                         value = scale_factor
+                    elif common_arg == "y_max":
+                        value = y_max
                     elif common_arg == "min_data" and single_run is None:
                         min_data.append(data[data_column]["q1"])
                     elif common_arg == "max_data" and single_run is None:
