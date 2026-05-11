@@ -38,6 +38,7 @@ def plot_energy(
 def plot_energy_per_ctx(
     data: model.model.ReductionModel | List[float],
     attributes: str,
+    y_max: int,
     step: int = -1,
     **kwargs: Any,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
@@ -53,9 +54,10 @@ def plot_energy_per_ctx(
         Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
     """
 
-    return visualisation.core.plot_bar(
+    return visualisation.core.plot_error_bar(
         data,
-        attributes=attributes,
+        attributes,
+        ylim=[0, y_max],
         title=f"Average L1 value in the base model (per construction, across agents",
         y_label="Energy",
         **kwargs,
