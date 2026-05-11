@@ -12,6 +12,7 @@ class Base:
         return input_vector
 
 
+@dataclass
 class SoftThresholding(Base):
     strength: float = 15
 
