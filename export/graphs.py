@@ -92,6 +92,10 @@ class MosaicConfig:
     aggregate_extension: bool = (
         False  # Mosaic graph can pass the extension to its children
     )
+    extra_args: List[List[Dict[str, Any]]] | None = (
+        None  # What extra arguments are needed to plot this figure? These can be either Callables or constants
+        # These will be passed 1:1 to the child graphs, so be careful!
+    )
 
 
 @dataclass
@@ -392,9 +396,9 @@ def generate_graphs_inner(
         if isinstance(config, MosaicConfig):
             # One by one, we replace the names of the graphs with the actual functions that build them
             plot_functions = []
-            for row in config.layout:
+            for row_index, row in enumerate(config.layout):
                 inner_functions = []
-                for references_graph_name in row:
+                for column_index, references_graph_name in enumerate(row):
                     # Skip graphs that do not make sense in single run view
                     if (
                         single_run is not None
@@ -404,12 +408,17 @@ def generate_graphs_inner(
                     ):
                         continue
 
+                    parent_extra_args = None
+                    if config.extra_args is not None:
+                        parent_extra_args = config.extra_args[row_index][column_index]
+
                     graph_function = generate_inner_lambda(
                         data,
                         references_graph_name,
                         scale_factor=scale_factor,
                         aggregate_config=aggregate,
                         single_run=single_run,
+                        parent_extra_args=parent_extra_args,
                     )
                     inner_functions.append(graph_function)
 
@@ -442,6 +451,7 @@ def generate_inner_lambda(
     y_max: int = 100,
     single_run: Optional[int] = None,
     aggregate_config: Optional[AggregateSettings] = None,
+    parent_extra_args: Dict[str, Any] | None = None,
 ) -> Callable:
     """Generate the function which builds the graph specified by the graph name
 
@@ -450,6 +460,7 @@ def generate_inner_lambda(
         graph_name (str): Name of the graph to generate the function for
         single_run (int, optional): ID of the single run to plot. Defaults to None.
         aggregate_config (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
+        extra_args (Dict[str, Any] | None): Extra arguments supplied by the parent mosaic. Defaults to None.
 
     Raises:
         TypeError: Raised if the graph name is associated with a mosaic function
@@ -466,7 +477,12 @@ def generate_inner_lambda(
     # Check if there are other arguments to be supplied, based on data argument
     kwargs = {}
     if config.extra_args:
-        for arg_name, arg_func in config.extra_args.items():
+        if parent_extra_args is not None:
+            extra_args = {**config.extra_args, **parent_extra_args}
+        else:
+            extra_args = config.extra_args
+
+        for arg_name, arg_func in extra_args.items():
             # extra_arg is a lambda function
             if isinstance(arg_func, Callable):
                 # Data source changes depending on whether this is an aggregate extension graph
