@@ -35,6 +35,7 @@ import multiprocessing
 import json
 import gc
 import random
+import numpy as np
 import export.runs
 import batch.messaging
 
@@ -52,6 +53,20 @@ from batch.params import dict_to_params
 multiprocessing.set_start_method("spawn", force=True)
 
 last_update_percentage = 0
+
+
+# idek
+# for some reason all my ints are suddenly np.int64
+# so I need to define this to get rid of them
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)
 
 
 def batch_run(
@@ -289,7 +304,7 @@ def _model_run_func(
     with open(run_data_path, "wt") as model_file:
         output_data = serialise_data_collector(model)
 
-        model_file.write(json.dumps(output_data))
+        model_file.write(json.dumps(output_data, cls=NpEncoder))
         # pickle.dump(model, model_file)
 
     data = [
