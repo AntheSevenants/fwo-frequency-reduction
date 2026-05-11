@@ -211,9 +211,17 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "og_mosaic": MosaicConfig(
         layout=[
             ["total_l1_mean", "communicative_success"],
-            ["ctx_energy_mean", "communicative_confusion"],
+            ["ctx_energy_mean"],
         ],
         size=(12, 12),
+    ),
+    "confusion_mosaic": MosaicConfig(
+        layout=[
+            ["communicative_confusion", "communicative_confusion"],
+            ["communicative_confusion", "communicative_confusion"],
+        ],
+        size=(12, 12),
+        extra_args=[[{"step": 0.25}, {"step": 0.5}], [{"step": 0.75}, {"step": -1}]],
     ),
 }
 
