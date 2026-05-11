@@ -56,7 +56,7 @@ def do_post_run_aggregation(current_sweep: str):
                             batch.combination.CombinationOperations.MEAN,
                             batch.combination.CombinationOperations.MIN,
                             batch.combination.CombinationOperations.MAX,
-                            batch.combination.CombinationOperations.SLOPE,
+                            # batch.combination.CombinationOperations.SLOPE,
                         ],
                     )
                 )
