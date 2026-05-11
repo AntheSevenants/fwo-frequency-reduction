@@ -17,7 +17,7 @@ SWEEPS_DIR = "sweeps/"
 
 def do_post_run_aggregation(current_sweep: str):
     csv_filename = export.sweeps.make_run_infos_path(SWEEPS_DIR, current_sweep)
-    br_df = pd.read_csv(csv_filename)
+    br_df = pd.read_json(csv_filename)
 
     # Post runs aggregation
     combinations = br_df.groupby("combination_id")["run_id"].agg(list).reset_index()

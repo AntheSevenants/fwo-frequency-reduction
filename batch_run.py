@@ -77,10 +77,10 @@ if __name__ == "__main__":
         webhook=webhook,
     )
 
-    csv_filename = export.sweeps.make_run_infos_path(SWEEPS_DIR, current_sweep)
+    json_filename = export.sweeps.make_run_infos_path(SWEEPS_DIR, current_sweep)
     br_df = pd.DataFrame(results)
     br_df = br_df.sort_values(by=["run_id"])
-    br_df.to_csv(csv_filename, index=False)
+    br_df.to_json(json_filename, index=False)
 
     if webhook is not None:
         webhook.handle_event(

@@ -56,7 +56,7 @@ def get_run_infos(sweeps_dir: str, selected_sweep: str) -> pd.DataFrame:
     if not os.path.exists(model_infos_path):
         raise FileNotFoundError("Run infos CSV does nost exist")
 
-    return pd.read_csv(model_infos_path)
+    return pd.read_json(model_infos_path)
 
 
 def make_run_infos_path(sweeps_dir: str, selected_sweep: str) -> str:
@@ -71,7 +71,7 @@ def make_run_infos_path(sweeps_dir: str, selected_sweep: str) -> str:
     """
 
     selected_sweep_dir = make_selected_sweep_dir(sweeps_dir, selected_sweep)
-    return os.path.join(selected_sweep_dir, "run_infos.csv")
+    return os.path.join(selected_sweep_dir, "run_infos.json")
 
 
 def get_combination_infos(sweeps_dir: str, selected_sweep: str) -> pd.DataFrame:
