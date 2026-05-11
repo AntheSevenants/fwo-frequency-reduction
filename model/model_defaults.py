@@ -17,6 +17,7 @@ class Parameters:
     # Non-default
     # ----
     reduction: model.reduction.Base | model.reduction.SoftThresholding
+    vector_bounds: List[int]
 
     # ----
     # Model housekeeping
@@ -33,7 +34,6 @@ class Parameters:
     num_constructions: int = 100
     num_dims: int = 10
 
-    vector_bounds: List[int] = field(default_factory=lambda: [70, 100])
     value_floor: int = 5
     initial_sigma: int = 5
 
