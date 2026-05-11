@@ -77,6 +77,37 @@ def check_ax(
     return fig, ax
 
 
+def convert_step(exact_step: float | int, total_steps: int) -> int:
+    """Convert a fraction to an absolute step, or return an already absolute step as-is.
+
+    Args:
+        exact_step (float | int): The fraction or absolute step
+        total_steps (int): The total number of steps
+
+    Returns:
+        int: An absolute step
+    """
+
+    if exact_step > 0 and exact_step < 1:
+        return fraction_to_step(exact_step, total_steps)
+    else:
+        return int(exact_step)
+
+
+def fraction_to_step(frac: float, total_steps: int) -> int:
+    """Convert a fraction (between 0 and 1) to an absolute step number from the total steps
+
+    Args:
+        frac (float): The fraction to be converted to a step
+        total_steps (int): The total number of steps
+
+    Returns:
+        int: The absolute step
+    """
+
+    return round(frac * total_steps)
+
+
 def check_attributes(attributes: str | List[str]) -> List[str]:
     """Turn an attributes argument into a list, always!
 
@@ -658,7 +689,7 @@ def plot_error_bar(
     ax: Optional[matplotlib.axes.Axes] = None,
     min_data: List[float] | List[List[float]] | None = None,
     max_data: List[float] | List[List[float]] | None = None,
-    step: int = -1,
+    step: int | float = -1,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
     title: Optional[str] = None,
@@ -674,7 +705,7 @@ def plot_error_bar(
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
         min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
         max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
-        step (int): Step to get the data from. On the scale of the datacollector.
+        step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step.
         x_label (Optional[str], optional): The label for the X axis. Defaults to None.
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
@@ -686,8 +717,11 @@ def plot_error_bar(
 
     # Get the right data based on the supplied arguments
     value_list = get_value_lists(data, attributes)[0]
+
+    # Convert to absolute step
+    _step = convert_step(step, len(value_list))
     # Get the data from the right step
-    value_list = value_list[step, :]
+    value_list = value_list[_step, :]
 
     # Check if min and max data are supplied correctly
     _min_data, _max_data = check_min_max_data(data, min_data, max_data)
@@ -744,7 +778,7 @@ def plot_bar(
     x: List[str] | None = None,
     ylim: Optional[List[float]] = None,
     ax: Optional[matplotlib.axes.Axes] = None,
-    step: int = -1,
+    step: int | float = -1,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
     title: Optional[str] = None,
@@ -758,7 +792,7 @@ def plot_bar(
         x (List[str]): A list of values for the X axis
         ylim (Optional[List[float]], optional): The expected range of values for y axis. Defaults to None.
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
-        step (int): Step to get the data from. On the scale of the datacollector.
+        step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step.
         x_label (Optional[str], optional): The label for the X axis. Defaults to None.
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
@@ -770,8 +804,10 @@ def plot_bar(
 
     # Get the right data based on the supplied arguments
     value_list = get_value_lists(data, attributes)[0]
+    # Convert to absolute step
+    _step = convert_step(step, len(value_list))
     # Get the data from the right step
-    value_list = value_list[step, :]
+    value_list = value_list[_step, :]
 
     fix, ax = check_ax(ax, disable_title)
 
@@ -803,7 +839,7 @@ def plot_confusion(
     data: model.model.ReductionModel | List[float],
     attributes: str,
     ax: Optional[matplotlib.axes.Axes] = None,
-    step: int | None = -1,
+    step: int | float | None = -1,
     n: int | None = None,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
@@ -816,7 +852,7 @@ def plot_confusion(
         data (List[float]): A list of values
         attributes (Optional[str], optional): The name of the series to model.
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
-        step (int | None): Step to get the data from. On the scale of the datacollector. If set to None, will take the mean across all steps.
+        step (int | None): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. If set to None, will take the mean across all steps.
         n (int | None): Top n constructions to show confusion for. Defaults to None.
         x_label (Optional[str], optional): The label for the X axis. Defaults to None.
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
@@ -832,7 +868,9 @@ def plot_confusion(
 
     if step is not None:
         # Get the data from the right step
-        matrix = value_list[step, :]
+        # Convert to absolute step
+        _step = convert_step(step, len(value_list))
+        matrix = value_list[_step, :]
     else:
         # Take mean across step axis
         matrix = value_list.mean(axis=0)
