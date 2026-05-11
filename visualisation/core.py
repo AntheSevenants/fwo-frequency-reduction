@@ -650,6 +650,94 @@ def plot_histogram(
     return (output_fig, ax)
 
 
+def plot_error_bar(
+    data: model.model.ReductionModel | List[float],
+    attributes: str,
+    x: List[str] | None = None,
+    ylim: Optional[List[float]] = None,
+    ax: Optional[matplotlib.axes.Axes] = None,
+    min_data: List[float] | List[List[float]] | None = None,
+    max_data: List[float] | List[List[float]] | None = None,
+    step: int = -1,
+    x_label: Optional[str] = None,
+    y_label: Optional[str] = None,
+    title: Optional[str] = None,
+    disable_title: bool = False,
+) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
+    """Plot a bar chart with values from a model run
+
+    Args:
+        data (List[float]): A list of values
+        attributes (Optional[str], optional): The name of the series to model.
+        x (List[str]): A list of values for the X axis
+        ylim (Optional[List[float]], optional): The expected range of values for y axis. Defaults to None.
+        ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
+        min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
+        max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
+        step (int): Step to get the data from. On the scale of the datacollector.
+        x_label (Optional[str], optional): The label for the X axis. Defaults to None.
+        y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
+        title (Optional[str], optional): The title for the graph. Defaults to None.
+        disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
+
+    Returns:
+        Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
+    """
+
+    # Get the right data based on the supplied arguments
+    value_list = get_value_lists(data, attributes)[0]
+    # Get the data from the right step
+    value_list = value_list[step, :]
+
+    # Check if min and max data are supplied correctly
+    _min_data, _max_data = check_min_max_data(data, min_data, max_data)
+
+    if _min_data is not None:
+        _min_data = _min_data[0][step, :]
+    if _max_data is not None:
+        _max_data = _max_data[0][step, :]
+
+    fix, ax = check_ax(ax, disable_title)
+
+    if x is None:
+        _x = [str(x) for x in list(range(len(value_list)))]
+    else:
+        _x = x
+
+    _yerr = (
+        None
+        if _min_data is None or _max_data is None
+        else [np.abs(value_list - _min_data), np.abs(_max_data - value_list)]
+    )
+
+    ax.errorbar(
+        _x,
+        value_list,
+        yerr=_yerr,
+        fmt="s",
+        capsize=5,
+        ecolor="lightgray",
+        color="blue",
+        elinewidth=1.5,
+    )
+
+    if ylim is not None:
+        ax.set_ylim(*ylim)
+
+    if x_label is not None:
+        ax.set_xlabel(x_label)
+    if y_label is not None:
+        ax.set_ylabel(y_label)
+
+    if title is not None and not disable_title:
+        ax.set_title(title)
+
+    output_fig = get_ax_figure(ax)
+    plt.close(output_fig)
+
+    return (output_fig, ax)
+
+
 def plot_bar(
     data: model.model.ReductionModel | List[float],
     attributes: str,
