@@ -26,12 +26,12 @@ model_reporters_base = {
     "chosen_constructions": ModelReporter(
         property_name="chosen_constructions", reporter_types=[ReporterType.AS_IS]
     ),
-    "communication_results": ModelReporter(
+    "communication_results_go": ModelReporter(
         property_name="communication_results",
         reporter_types=[ReporterType.PERCENT],
         associated_enum=model.enums.CommunicationResult,
     ),
-    "confusion_matrix": ModelReporter(
+    "confusion_matrix_go": ModelReporter(
         property_name="confusion_matrix", reporter_types=[ReporterType.AS_IS]
     ),
 }
