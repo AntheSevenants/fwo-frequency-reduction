@@ -81,17 +81,11 @@ class ReductionAgent(mesa.Agent):
             # Update category representations!
             for ctx, weight in zip(self.atts.vocabulary.words, weights):
                 ctx.update(heard_vector, weight)
-<<<<<<< HEAD
         elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
             # Update only the winner with full weights
             self.atts.vocabulary.words[win_index].update(heard_vector)
         else:
             raise ValueError("Unknown update destination")
-=======
-        else:
-            # Update only the winner with full weights
-            self.atts.vocabulary.words[win_index].update(heard_vector)
->>>>>>> fad00740a76266890b6eee975be6bc42ad54335b
 
         # TODO: add uncertainty step if needed
 
