@@ -1,6 +1,7 @@
 import mesa
 import model.agent_defaults
 import numpy as np
+import model.enums
 
 from typing import Self, TYPE_CHECKING
 
@@ -66,17 +67,27 @@ class ReductionAgent(mesa.Agent):
             ctx.calculate_log_score(heard_vector) for ctx in self.atts.vocabulary.words
         ]
 
-        # Re-check what is going on here
+        # Which construction has the highest score?
         win_index = np.argmax(log_scores)
-        max_score = np.max(log_scores)  # winning score
-        exp_scores = np.exp(log_scores - max_score)
-        weights = exp_scores / np.sum(exp_scores)
 
-        # Update category representations!
-        for ctx, weight in zip(self.atts.vocabulary.words, weights):
-            ctx.update(heard_vector, weight)
+        if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
+            # What is the highest score?
+            max_score = np.max(log_scores)
+            # Compute difference with max score
+            exp_scores = np.exp(log_scores - max_score)
+            # Turn into weights
+            weights = exp_scores / np.sum(exp_scores)
 
-        # TODO: add uncertainty step
+            # Update category representations!
+            for ctx, weight in zip(self.atts.vocabulary.words, weights):
+                ctx.update(heard_vector, weight)
+        elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
+            # Update only the winner with full weights
+            self.atts.vocabulary.words[win_index].update(heard_vector)
+        else:
+            raise ValueError("Unknown update destination")
+
+        # TODO: add uncertainty step if needed
 
         communication_successful = true_construction_index == win_index
         self.model.tracker.register_communication_result(int(communication_successful))
