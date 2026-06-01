@@ -30,6 +30,7 @@ class Word:
 class Vocabulary:
     num_words: int
     num_dims: int
+    initial_sigma: int
 
     valid_range: List[int]
 
@@ -41,7 +42,9 @@ class Vocabulary:
     display_names: List[str]
 
     def __post_init__(self):
-        self.sigmas: np.ndarray = np.array([[5.0] * self.num_dims] * self.num_words)
+        self.sigmas: np.ndarray = np.array(
+            [[self.initial_sigma] * self.num_dims] * self.num_words
+        )
         self.log_priors: np.ndarray = np.log(self.priors)
 
         self.words: List[Word] = [

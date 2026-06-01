@@ -79,6 +79,7 @@ class Parameters:
         self.vocabulary = model.vocabulary.Vocabulary(
             num_words=self.num_constructions,
             num_dims=self.num_dims,
+            initial_sigma=self.initial_sigma,
             means=vectors,
             priors=self.priors.tolist(),
             display_names=display_names,
