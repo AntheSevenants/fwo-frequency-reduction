@@ -31,6 +31,11 @@ model_reporters_base = {
         reporter_types=[ReporterType.PERCENT],
         associated_enum=model.enums.CommunicationResult,
     ),
+    "reduction_outcomes_go": ModelReporter(
+        property_name="reduction_outcomes",
+        reporter_types=[ReporterType.PERCENT],
+        associated_enum=model.enums.CommunicationResult,
+    ),
     "confusion_matrix_go": ModelReporter(
         property_name="confusion_matrix", reporter_types=[ReporterType.AS_IS]
     ),

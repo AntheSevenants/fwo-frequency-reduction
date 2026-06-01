@@ -46,6 +46,7 @@ class Tracker:
     # Per step!
     def reset(self):
         self.chosen_constructions = []
+        self.reduction_outcomes = []
         self.communication_results = []
         self.confusion_matrix = np.zeros(
             (self.model.params.num_constructions, self.model.params.num_constructions)
@@ -62,6 +63,9 @@ class Tracker:
 
     def register_communication_result(self, communication_result: int):
         self.communication_results.append(communication_result)
+
+    def register_reduction_outcome(self, communication_result: int):
+        self.reduction_outcomes.append(communication_result)
 
     def register_win_index(self, win_index: int, true_index: int):
         self.confusion_matrix[true_index][win_index] += 1

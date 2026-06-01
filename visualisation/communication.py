@@ -12,6 +12,7 @@ from typing import Optional, List, Union, Tuple, Any
 def plot_communication(
     data: model.model.ReductionModel | List[List[float]],
     attributes: str | List[str],
+    title_override: str | None = None,
     **kwargs: Any,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
     """Plot the communication outcome across agents
@@ -19,17 +20,22 @@ def plot_communication(
     Args:
         data (Union[model.model.ReductionModel, List[float]]): Either a model instance or a list of values.
         attributes (str | List[str]): The column to fetch data from. Always supply, even if input data is not a model, so dimensionality of the data can be assessed.
+        title_override: str | None: Overrides the default title. Defaults to None (disabled).
         **kwargs: Additional keyword arguments passed to parent plotting function.
 
     Returns:
         Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
     """
 
+    title = "Communication outcome across agents"
+    if title_override:
+        title = title_override
+
     return visualisation.core.plot_ratio(
         data,
         attributes,
         model.enums.to_dict(model.enums.CommunicationResult),
-        title=f"Communication outcome across agents",
+        title=title,
         **kwargs,
     )
 

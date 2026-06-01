@@ -60,3 +60,8 @@ class CommunicationResult:
 class ToUpdate:
     WINNER_ONLY = 0
     DISTRIBUTED = 1
+
+
+class ReductionOutcomes:
+    FAILURE = 0
+    SUCCESS = 1

@@ -192,6 +192,17 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         },
         aggregate_extension=True,
     ),
+    "reduction_outcomes": GraphConfig(
+        reporter_name="reduction_outcomes_go",
+        model_reporter=True,
+        plot_func=visualisation.communication.plot_communication,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        extra_args={
+            "filter_dimension": 1,
+            "title_override": "Communication outcome when reducing, across agents",
+        },
+        aggregate_extension=True,
+    ),
     "ctx_energy_mean": GraphConfig(
         reporter_name="ctx_energy_mean",
         plot_func=visualisation.energy.plot_energy_per_ctx,
@@ -213,7 +224,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "og_mosaic": MosaicConfig(
         layout=[
             ["total_l1_mean", "communicative_success"],
-            ["ctx_energy_mean"],
+            ["ctx_energy_mean", "reduction_outcomes"],
         ],
         size=(12, 12),
         aggregate_extension=True,
