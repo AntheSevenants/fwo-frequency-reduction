@@ -2,6 +2,7 @@ import model.vectors
 import model.vocabulary
 import model.reduction
 import model.sampling
+import model.enums
 import numpy as np
 
 from dataclasses import dataclass, asdict, field
@@ -42,6 +43,9 @@ class Parameters:
         | model.sampling.ExponentialSampling
         | model.sampling.LinearSampling
     ) = field(default_factory=lambda: model.sampling.ZipfianSampling())
+
+    # Do we only update one form (the winner) or all forms (weighted)
+    to_update: int = model.enums.ToUpdate.WINNER_ONLY
 
     # ----
     # Reduction

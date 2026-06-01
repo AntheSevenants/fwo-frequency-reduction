@@ -55,3 +55,8 @@ class CommunicationResult:
     FAILURE = 0
     SUCCESS = 1
     UNCERTAIN = 2
+
+
+class ToUpdate:
+    WINNER_ONLY = 0
+    DISTRIBUTED = 1
