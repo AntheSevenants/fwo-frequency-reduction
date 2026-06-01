@@ -78,7 +78,7 @@ class Parameters:
         self.vocabulary = model.vocabulary.Vocabulary(
             num_words=self.num_constructions,
             num_dims=self.num_dims,
-            vectors=vectors,
+            means=vectors,
             priors=self.priors.tolist(),
             display_names=display_names,
             # value floor = minimum value for vector
