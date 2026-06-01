@@ -30,7 +30,7 @@ class Word:
         # Normalise for the frequency of the word (expressed as the prior)
         return np.log(self.prior) + np.sum(log_likelihoods)
 
-    def update(self, vector: np.ndarray, weight, learning_rate: float = 0.2):
+    def update(self, vector: np.ndarray, weight: float = 1, learning_rate: float = 0.2):
         self.means = (1 - (learning_rate * weight)) * self.means + (
             learning_rate * weight * vector
         )
