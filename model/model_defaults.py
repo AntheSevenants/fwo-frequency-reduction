@@ -37,6 +37,7 @@ class Parameters:
 
     value_floor: int = 5
     initial_sigma: int = 5
+    learning_rate: float = 0.2
 
     sampling_type: (
         model.sampling.ZipfianSampling
