@@ -65,14 +65,18 @@ class Vocabulary:
 
         return generated_vector
 
-    def calculate_log_score(self, input_vector: np.ndarray):
+    def calculate_log_likelihood(self, input_vector: np.ndarray):
         # Calculate log-likelihood for each of the n dimensions
         # We use norm.logpdf for numerical stability
         # We compute the likelihood over the entire vocabulary to make things go faster
         log_likelihoods = norm.logpdf(input_vector, self.means, self.sigmas)
 
-        # Normalise for the frequency of the word (expressed as the prior)
-        return self.log_priors + np.sum(log_likelihoods)
+        return np.sum(log_likelihoods, axis=1)
+
+    def calculate_log_score(self, input_vector: np.ndarray):
+        log_likelihoods = self.calculate_log_likelihood(input_vector)
+
+        return self.log_priors + log_likelihoods
 
     @property
     def __means__(self):
