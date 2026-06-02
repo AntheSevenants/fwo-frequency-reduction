@@ -143,6 +143,10 @@ def get_line_style_by_group_context(
     )
 
 
+def get_colour(index: int):
+    return COLOURS[index % len(COLOURS)]
+
+
 def make_legend_label(agent_type_index: int, construction_index: int | None = None):
     agent_type_translation = {
         model.reporters_agent.AgentType.INNOVATOR: "innovator",
@@ -683,7 +687,7 @@ def plot_histogram(
 
 
 def plot_error_bar(
-    data: model.model.ReductionModel | List[float],
+    data: model.model.ReductionModel | List[float] | List[List[float]],
     attributes: str | List[str],
     x: List[str] | None = None,
     ylim: Optional[List[float]] = None,
@@ -691,6 +695,7 @@ def plot_error_bar(
     min_data: List[float] | List[List[float]] | None = None,
     max_data: List[float] | List[List[float]] | None = None,
     step: int | float = -1,
+    n: int | None = None,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
     title: Optional[str] = None,
@@ -700,7 +705,7 @@ def plot_error_bar(
     """Plot a bar chart with values from a model run
 
     Args:
-        data (List[float]): A list of values
+        data (model.model.ReductionModel | List[float] | List[List[float]]): A list of values
         attributes (Optional[str], optional): The name of the series to model.
         x (List[str]): A list of values for the X axis
         ylim (Optional[List[float]], optional): The expected range of values for y axis. Defaults to None.
@@ -708,6 +713,7 @@ def plot_error_bar(
         min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
         max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
         step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step.
+        n (int | None): Maximum number of items in the value lists to be plotted. Can be used for limiting the number of vectors plotted. Defaults to None (= show all items).
         x_label (Optional[str], optional): The label for the X axis. Defaults to None.
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
@@ -730,6 +736,9 @@ def plot_error_bar(
     fig, ax = check_ax(ax, disable_title)
 
     multi_group_context = get_multi_group_context(aggregate_extension_x is not None)
+
+    # For the vectors plot. Quit early if needed!
+    _n = n if n is not None else len(value_lists)
 
     for attribute_idx, value_list in enumerate(value_lists):
         # Convert to absolute step
@@ -755,7 +764,7 @@ def plot_error_bar(
             else [np.abs(value_list - __min_data), np.abs(__max_data - value_list)]
         )
 
-        line_colour = COLOURS[attribute_idx]
+        line_colour = get_colour(attribute_idx)
         legend_label = make_legend_label_by_group_context(
             attribute_idx, aggregate_extension_x=aggregate_extension_x
         )
@@ -771,6 +780,9 @@ def plot_error_bar(
             elinewidth=1.5,
             label=legend_label,
         )
+
+        if (attribute_idx + 1) >= _n:
+            break
 
     if ylim is not None:
         ax.set_ylim(*ylim)
