@@ -175,3 +175,4 @@ models/
 sweeps/
 test/
 webhook.json
+*.sh
