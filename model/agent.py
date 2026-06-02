@@ -70,6 +70,8 @@ class ReductionAgent(mesa.Agent):
         # Which construction has the highest score?
         win_index = np.argmax(log_scores)
 
+        # print(true_construction_index, "-> chosen:", win_index)
+
         if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
             # What is the highest score?
             max_score = np.max(log_scores)
@@ -79,14 +81,21 @@ class ReductionAgent(mesa.Agent):
             weights = exp_scores / np.sum(exp_scores)
 
             # Update category representations!
-            for ctx, weight in zip(self.atts.vocabulary.words, weights):
-                ctx.update(
-                    heard_vector, weight, learning_rate=self.model.params.learning_rate
+            for ctx_index, weight in zip(
+                self.model.params.construction_indices, weights
+            ):
+                self.atts.vocabulary.update_distribution(
+                    ctx_index,
+                    heard_vector,
+                    weight,
+                    learning_rate=self.model.params.learning_rate,
                 )
         elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
             # Update only the winner with full weights
-            self.atts.vocabulary.words[win_index].update(
-                heard_vector, learning_rate=self.model.params.learning_rate
+            self.atts.vocabulary.update_distribution(
+                int(win_index),
+                heard_vector,
+                learning_rate=self.model.params.learning_rate,
             )
         else:
             raise ValueError("Unknown update destination")

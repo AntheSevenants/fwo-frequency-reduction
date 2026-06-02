@@ -6,27 +6,6 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Word:
-    index: int
-    display_name: str
-    vocabulary: "Vocabulary"
-
-    def update(self, vector: np.ndarray, weight: float = 1, learning_rate: float = 0.2):
-        self.vocabulary.means[self.index, :] = (
-            1 - (learning_rate * weight)
-        ) * self.vocabulary.means[self.index, :] + (learning_rate * weight * vector)
-
-        # Update sigmas dimension by dimension
-        errors = np.abs(vector - self.vocabulary.means[self.index, :])
-        self.vocabulary.sigmas[self.index, :] = (
-            1 - (learning_rate * weight)
-        ) * self.vocabulary.sigmas[self.index, :] + (learning_rate * weight * errors)
-        self.vocabulary.sigmas[self.index, :] = np.maximum(
-            self.vocabulary.sigmas[self.index, :], 0.5
-        )  # Prevent sigma from hitting 0
-
-
-@dataclass
 class Vocabulary:
     num_words: int
     num_dims: int
@@ -46,10 +25,6 @@ class Vocabulary:
             [[self.initial_sigma] * self.num_dims] * self.num_words
         )
         self.log_priors: np.ndarray = np.log(self.priors)
-
-        self.words: List[Word] = [
-            Word(i, self.display_names[i], self) for i in range(self.num_words)
-        ]
 
     def get_construction_vector(
         self, word_index: int, random: np.random.Generator | None = None
@@ -80,6 +55,26 @@ class Vocabulary:
         log_likelihoods = self.calculate_log_likelihood(input_vector)
 
         return self.log_priors + log_likelihoods
+
+    def update_distribution(
+        self,
+        index: int,
+        vector: np.ndarray,
+        weight: float = 1,
+        learning_rate: float = 0.2,
+    ):
+        self.means[index, :] = (1 - (learning_rate * weight)) * self.means[index, :] + (
+            learning_rate * weight * vector
+        )
+
+        # Update sigmas dimension by dimension
+        errors = np.abs(vector - self.means[index, :])
+        self.sigmas[index, :] = (1 - (learning_rate * weight)) * self.sigmas[
+            index, :
+        ] + (learning_rate * weight * errors)
+        self.sigmas[index, :] = np.maximum(
+            self.sigmas[index, :], 0.5
+        )  # Prevent sigma from hitting 0
 
     @property
     def __means__(self):
