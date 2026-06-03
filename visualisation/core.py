@@ -700,7 +700,7 @@ def plot_error_bar(
     y_label: Optional[str] = None,
     title: Optional[str] = None,
     disable_title: bool = False,
-    aggregate_extension_x: Any = None,
+    aggregate_extension_x: List[str] | None = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
     """Plot a bar chart with values from a model run
 
@@ -718,6 +718,7 @@ def plot_error_bar(
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
+        aggregate_extension_x (List[str] | None, optional): Labels for aggregate values, to be used as group labels. Defaults to None.
 
     Returns:
         Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
@@ -772,6 +773,121 @@ def plot_error_bar(
         ax.errorbar(
             _x,
             value_list,
+            yerr=_yerr,
+            fmt="s",
+            capsize=5,
+            ecolor="lightgray",
+            color=line_colour,
+            elinewidth=1.5,
+            label=legend_label,
+        )
+
+        if (attribute_idx + 1) >= _n:
+            break
+
+    if ylim is not None:
+        ax.set_ylim(*ylim)
+
+    if x_label is not None:
+        ax.set_xlabel(x_label)
+    if y_label is not None:
+        ax.set_ylabel(y_label)
+
+    if title is not None and not disable_title:
+        ax.set_title(title)
+
+    if num_groups > 1:
+        ax.legend()
+
+    output_fig = get_ax_figure(ax)
+    plt.close(output_fig)
+
+    return (output_fig, ax)
+
+
+def plot_error_bar_horizontal(
+    data: model.model.ReductionModel | List[float] | List[List[float]],
+    attributes: str | List[str],
+    group_labels: List[str],
+    x: List[str] | None = None,
+    ylim: Optional[List[float]] = None,
+    ax: Optional[matplotlib.axes.Axes] = None,
+    min_data: List[float] | List[List[float]] | None = None,
+    max_data: List[float] | List[List[float]] | None = None,
+    step: int | float = -1,
+    n: int | None = None,
+    x_label: Optional[str] = None,
+    y_label: Optional[str] = None,
+    title: Optional[str] = None,
+    disable_title: bool = False,
+) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
+    """Plot a bar chart with values from a model run
+
+    Args:
+        data (model.model.ReductionModel | List[float] | List[List[float]]): A list of values
+        attributes (Optional[str], optional): The name of the series to model.
+        group_labels (List[str]). Group labels. Makes this graph type incompatible with aggregate extension.
+        x (List[str]): A list of values for the X axis
+        ylim (Optional[List[float]], optional): The expected range of values for y axis. Defaults to None.
+        ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
+        min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
+        max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
+        step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step.
+        n (int | None): Maximum number of items in the value lists to be plotted. Can be used for limiting the number of vectors plotted. Defaults to None (= show all items).
+        x_label (Optional[str], optional): The label for the X axis. Defaults to None.
+        y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
+        title (Optional[str], optional): The title for the graph. Defaults to None.
+        disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
+
+    Returns:
+        Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
+    """
+
+    # Convert single string to list for uniform processing
+    attributes = check_attributes(attributes)
+
+    # Get the right data based on the supplied arguments
+    value_list = get_value_lists(data, attributes)[0]
+    num_groups = len(value_list)
+
+    # Check if min and max data are supplied correctly
+    _min_data, _max_data = check_min_max_data(data, min_data, max_data)
+
+    # Convert to absolute step
+    _step = convert_step(step, len(value_list))
+
+    # Get the data from the right step
+    value_list = value_list[_step, :]
+
+    __min_data, __max_data = None, None
+    if _min_data is not None:
+        __min_data = _min_data[_step]
+    if _max_data is not None:
+        __max_data = _max_data[_step]
+
+    fig, ax = check_ax(ax, disable_title)
+
+    if x is None:
+        _x = [str(x) for x in list(range(len(value_list)))]
+    else:
+        _x = x
+
+    # For the vectors plot. Quit early if needed!
+    _n = n if n is not None else len(value_list)
+
+    for attribute_idx, vector in enumerate(value_list):
+        _yerr = (
+            None
+            if __min_data is None or __max_data is None
+            else [np.abs(value_list - __min_data), np.abs(__max_data - value_list)]
+        )
+
+        line_colour = get_colour(attribute_idx)
+        legend_label = group_labels[attribute_idx]
+
+        ax.errorbar(
+            _x,
+            vector,
             yerr=_yerr,
             fmt="s",
             capsize=5,

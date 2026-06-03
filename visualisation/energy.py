@@ -84,11 +84,11 @@ def plot_energy_per_ctx_per_dim(
         Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
     """
 
-    return visualisation.core.plot_error_bar(
+    return visualisation.core.plot_error_bar_horizontal(
         data,
         attributes,
+        [str(i) for i in range(0, n)],
         x=[str(i) for i in range(0, num_dims)],
-        aggregate_extension_x=[str(i) for i in range(0, n)],
         ylim=[0, y_max],
         title=f"L1 values in the base model (per construction, across agents)",
         y_label="Energy",
