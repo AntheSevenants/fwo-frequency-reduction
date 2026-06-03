@@ -47,7 +47,7 @@ class ReductionModel(mesa.Model):
         self.datacollector = mesa.DataCollector(
             model_reporters={**model_reporters_agents, **model_reporters_model}
         )
-        # self.datacollector.collect(self)
+        self.datacollector.collect(self)
 
     def step(self):
         """Routine run at every step in the simulation"""
