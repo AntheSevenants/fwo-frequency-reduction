@@ -70,7 +70,7 @@ class Parameters:
         # TODO add seed!
         vectors = model.vectors.generate(
             self.num_constructions,
-            dims=self.num_dims,
+            num_dims=self.num_dims,
             min_val=self.vector_bounds[0],
             max_val=self.vector_bounds[1] - self.initial_sigma,
         )
