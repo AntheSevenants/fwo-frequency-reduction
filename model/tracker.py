@@ -1,5 +1,7 @@
 import mesa
+import model.enums
 import numpy as np
+
 
 from typing import Any, Optional, TYPE_CHECKING
 
@@ -45,9 +47,13 @@ class Tracker:
 
     # Per step!
     def reset(self):
-        self.chosen_constructions = []
-        self.reduction_outcomes = []
-        self.communication_results = []
+        self.chosen_constructions = np.zeros(self.model.params.num_constructions)
+        self.reduction_outcomes = np.zeros(
+            len(model.enums.to_dict(model.enums.CommunicationResult))
+        )
+        self.communication_results = np.zeros(
+            len(model.enums.to_dict(model.enums.CommunicationResult))
+        )
         self.confusion_matrix = np.zeros(
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
@@ -59,13 +65,13 @@ class Tracker:
             construction_index (int): The index of the chosen construction
         """
 
-        self.chosen_constructions.append(construction_index)
+        self.chosen_constructions[construction_index] += 1
 
     def register_communication_result(self, communication_result: int):
-        self.communication_results.append(communication_result)
+        self.communication_results[communication_result] += 1
 
     def register_reduction_outcome(self, communication_result: int):
-        self.reduction_outcomes.append(communication_result)
+        self.reduction_outcomes[communication_result] += 1
 
     def register_win_index(self, win_index: int, true_index: int):
         self.confusion_matrix[true_index][win_index] += 1
@@ -75,9 +81,7 @@ class Tracker:
 
     def get_global_property_percentages(self, property_name: str, enum_length: int):
         # Get the value of this property
-        property_value = getattr(self, property_name)
-        # Count how many times each value occurs
-        counts = np.bincount(property_value, minlength=enum_length)
+        counts = getattr(self, property_name)
 
         # Division by zero check
         if np.sum(counts) == 0:
