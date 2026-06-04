@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Callable, Dict, Any, Optional, List, Dict, Sequence, Union, Tuple
 
+import copy
 import matplotlib.axes
 import matplotlib.figure
 import matplotlib.pyplot as plt
@@ -46,6 +47,8 @@ class GraphConfig:
     extra_args: Optional[Dict[str, Any]] = (
         None  # What extra arguments are needed to plot this figure?  # These can be either Callables or constants
     )
+    # Interactive arguments that can be received from the interface
+    interactive_args: List[str] | None = None
     action_column: str = "median"  # Aggregate operation column to use data from
     action_column_inner: str = "median"  # Combination operation column to use data from
     aggregate: bool = False  # Aggregate graph or not?
@@ -96,6 +99,8 @@ class MosaicConfig:
         None  # What extra arguments are needed to plot this figure? These can be either Callables or constants
         # These will be passed 1:1 to the child graphs, so be careful!
     )
+    # Interactive arguments that can be received from the interface
+    interactive_args: List[str] | None = None
 
 
 @dataclass
@@ -181,6 +186,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         plot_func=visualisation.energy.plot_energy,
         common_args=["x_scale_factor", "min_data", "max_data", "y_max"],
         aggregate_extension=True,
+        interactive_args=["step"],
     ),
     "communicative_success": GraphConfig(
         reporter_name="communication_results_go",
@@ -190,6 +196,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         extra_args={
             "filter_dimension": 1,
         },
+        interactive_args=["step"],
         aggregate_extension=True,
     ),
     "reduction_outcomes": GraphConfig(
@@ -201,6 +208,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
             "filter_dimension": 1,
             "title_override": "Communication outcome when reducing, across agents",
         },
+        interactive_args=["step"],
         aggregate_extension=True,
     ),
     "ctx_energy_mean": GraphConfig(
@@ -208,7 +216,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         plot_func=visualisation.energy.plot_energy_per_ctx,
         # TODO: re-introduce min_data and max_data once the graph type has been changed
         common_args=["min_data", "max_data", "y_max"],
-        extra_args={"step": -1},
+        interactive_args=["step"],
         aggregate_extension=True,
     ),
     "communicative_confusion": GraphConfig(
@@ -217,10 +225,8 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         plot_func=visualisation.communication.plot_confusion,
         # TODO: re-introduce min_data and max_data once the graph type has been changed
         # common_args=["x_scale_factor"],
-        extra_args={
-            "n": 35,
-            "step": -1,
-        },
+        extra_args={"n": 35},
+        interactive_args=["step"],
         aggregate_extension=True,
     ),
     "og_mosaic": MosaicConfig(
@@ -511,12 +517,20 @@ def generate_inner_lambda(
 
     # Check if there are other arguments to be supplied, based on data argument
     kwargs = {}
+    extra_args = {}
     if config.extra_args:
         if parent_extra_args is not None:
             extra_args = {**config.extra_args, **parent_extra_args}
-        else:
-            extra_args = config.extra_args
+        elif config.extra_args is not None:
+            extra_args = copy.deepcopy(config.extra_args)
 
+    if config.interactive_args is not None:
+        # Overwrite default arguments with interactive arguments
+        for interactive_arg_name in config.interactive_args:
+            if interactive_arg_name == "step" and selected_step is not None:
+                extra_args["step"] = selected_step
+
+    if len(extra_args) > 0:
         for arg_name, arg_func in extra_args.items():
             # extra_arg is a lambda function
             if isinstance(arg_func, Callable):
@@ -542,9 +556,6 @@ def generate_inner_lambda(
                 kwargs[arg_name] = arg_func(*arg_func_args, **arg_func_kwargs)
             # extra_arg is a constant
             else:
-                # Overwrite with interactive argument
-                if arg_name == "step" and selected_step is not None:
-                    arg_func = selected_step
                 kwargs[arg_name] = arg_func
 
     # If aggregate config is None, this is always a simple graph

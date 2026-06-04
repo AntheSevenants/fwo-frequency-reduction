@@ -339,6 +339,7 @@ def plot_value(
     agent_filter: Optional[int] = None,
     min_data: List[float] | List[List[float]] | None = None,
     max_data: List[float] | List[List[float]] | None = None,
+    step: int | float | None = None,
     title: Optional[str] = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
@@ -354,6 +355,7 @@ def plot_value(
         agent_filter (Optional[int], optional): The index of the agent you want to filter values for. If not supplied, no filtering is applied. Defaults to None.
         min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
         max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
+        step (int | float): Step to highlighted in the graph (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to None (= no highlight).
         title (Optional[str], optional): The title for the graph. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
@@ -402,6 +404,12 @@ def plot_value(
                 alpha=0.2,
             )
 
+    # Draw step focus line if required
+    if step is not None:
+        _step = convert_step(step, len(value_lists[0]))
+        print(_step)
+        ax.axvline(_step, color="red")
+
     scale_x_axis(ax, x_scale_factor)
 
     if ylim is not None:
@@ -430,6 +438,7 @@ def plot_ratio(
     agent_filter: Optional[int] = None,
     min_data: List[float] | List[List[float]] | None = None,
     max_data: List[float] | List[List[float]] | None = None,
+    step: int | float | None = None,
     title: Optional[str] = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
@@ -447,6 +456,7 @@ def plot_ratio(
         agent_filter (Optional[int], optional): The index of the agent you want to filter values for. If not supplied, no filtering is applied. Defaults to None.
         min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
         max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
+        step (int | float): Step to highlighted in the graph (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to None (= no highlight).
         title (Optional[str], optional): The title for the graph. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
@@ -520,6 +530,11 @@ def plot_ratio(
 
     if title is not None and not disable_title:
         ax.set_title(title)
+
+    # Draw step focus line if required
+    if step is not None:
+        _step = convert_step(step, len(value_lists[0]))
+        ax.axvline(_step, color="red")
 
     scale_x_axis(ax, x_scale_factor)
 
