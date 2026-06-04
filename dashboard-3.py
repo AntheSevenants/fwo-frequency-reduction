@@ -21,6 +21,16 @@ app = Flask(
 )
 
 
+def url_add_param(endpoint, args, key, value):
+    params = args.to_dict()
+    params[key] = value
+    return url_for(endpoint, **params)
+
+
+# Register the filter
+app.jinja_env.filters["url_add_param"] = url_add_param
+
+
 @app.route("/live/")
 def live():
     return show_interface(live=True)
