@@ -57,6 +57,61 @@ main {
     width: auto;
 }
 
+.graph_wrapper {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.graph_wrapper .time_expand {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.graph_wrapper .slider {
+    width: 100%;
+}
+
+.toolbar.slider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
+    overflow-x: hidden;
+
+    text-align: center;
+
+    width: 100%;
+
+    position: absolute;
+    bottom: 0;
+}
+
+.toolbar .selected_step {
+    width: 7em;
+    font-weight: bold;
+}
+
+.graph_wrapper .slider_container {
+    max-width: 500px;
+}
+
+.slider.slider-horizontal .slider-handle {
+    background: #5A3E7A;
+}
+
+.slider.slider-horizontal .slider-selection {
+    background: #8C78A2;
+}
+
+.slider .slider-tick.in-selection {
+    background: #b29acc;
+}
+
 #input_note {
     background-color: transparent;
     position: absolute;

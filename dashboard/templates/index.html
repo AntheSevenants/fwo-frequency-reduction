@@ -19,13 +19,34 @@
 <div class="container d-flex align-items-center {{ 'justify-content-center' if selected_filter is not none }}"
     style="min-height: 100vh;">
     {% for graph_name in graphs %}
-    {% if selected_run is none %}
-    <img
-        src='{{ url_for("send_combination_graph", graph_name=graph_name, selected_sweep=selected_sweep, combination_id=combination_id) }}?v=99999'>
-    {% else %}
-    <img
-        src='{{ url_for("send_single_run_graph", graph_name=graph_name, selected_sweep=selected_sweep, combination_id=combination_id, single_run_id=selected_run) }}?v=99999'>
-    {% endif %}
+    <div class="graph_wrapper">
+        {% set selected_step_serialised = selected_step if selected_step is not none else "_" %}
+        {% if selected_run is none %}
+        <img
+            src='{{ url_for("send_combination_graph", graph_name=graph_name, selected_sweep=selected_sweep, combination_id=combination_id, selected_step=selected_step_serialised) }}?v=99999'>
+        {% else %}
+        <img
+            src='{{ url_for("send_single_run_graph", graph_name=graph_name, selected_sweep=selected_sweep, combination_id=combination_id, single_run_id=selected_run, selected_step=selected_step_serialised) }}?v=99999'>
+        {% endif %}
+        {% if selected_filter is none and sweep_info is not none %}
+        <a type="button" class="btn btn-primary time_expand" title="Expand into time dimension"
+            href="{{ request.endpoint | url_add_param(request.args, 'filter', graph_name) }}">
+            <i class="bi bi-stopwatch-fill"></i>
+        </a>
+        {% elif sweep_info is not none %}
+        <div class="toolbar slider">
+            {% set initial_step_value = 0 if selected_step is none else selected_step %}
+            <div id="selected_step" class="selected_step">{{ initial_step_value }}</div>
+            <div id="slider_container" class="slider_container">
+                <input id="step_slider" data-slider-min="0" data-slider-max="{{ sweep_info['num_steps'] }}"
+                    data-slider-value="{{ initial_step_value }}"
+                    data-slider-step="{{ sweep_info['datacollector_step_size'] }}" data-slider-tooltip="hide"
+                    data-slider-ticks="[ {{ ticks | join(',') }} ]"
+                    data-slider-ticks-labels="[ {{ ticks | join(',') }} ]">
+            </div>
+        </div>
+        {% endif %}
+    </div>
     {% endfor %}
 </div>
 {% endif %}

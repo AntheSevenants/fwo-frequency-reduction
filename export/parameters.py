@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Dict, Tuple, List, Union
 
 # Parameters used by the application. These are not parameters
-RESERVED_KEYWORDS = ["sweep", "filter", "aggregate", "run"]
+RESERVED_KEYWORDS = ["sweep", "filter", "aggregate", "run", "step"]
 
 
 def build_mapping(

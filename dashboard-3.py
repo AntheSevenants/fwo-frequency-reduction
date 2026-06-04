@@ -55,6 +55,15 @@ def show_interface(live: bool = False):
     # Aggregate parameter allows you to aggregate over multiple parameter combinations
     aggregate = request.args.get("aggregate")
 
+    # Selected step is an extra parameter to inspect the model state at a specific step
+    selected_step = request.args.get("step")
+    if selected_step is not None:
+        selected_step = int(selected_step)
+
+    # Information about how the sweep was run (datacollector step size)
+    sweep_info = None
+    ticks = []
+
     # Combinatino of parameters selected
     selected_parameters = dict(request.args)
     parameter_mapping = None
@@ -80,6 +89,20 @@ def show_interface(live: bool = False):
         == 0
     )
 
+    # If no filter is active, step from arguments and redirect
+    if (
+        selected_filter is None or selected_filter == "none"
+    ) and selected_step is not None:
+        del selected_parameters["step"]
+        return redirect(url_for("index", _external=False, **selected_parameters))
+
+    # If filter is active, but there is no step argument, set step to zero and redirect
+    if (
+        selected_filter is not None and selected_filter != "none"
+    ) and selected_step is None:
+        selected_parameters["step"] = "0"
+        return redirect(url_for("index", _external=False, **selected_parameters))
+
     # Clear empty run selection
     if selected_run == "none":
         selected_run = None
@@ -89,6 +112,13 @@ def show_interface(live: bool = False):
         # Get information about all runs in the sweep as a  dataframe
         run_infos = export.sweeps.get_run_infos(
             args.sweeps_dir, selected_sweep, hashable_safe=True
+        )
+
+        sweep_info = export.sweeps.get_sweep_info(args.sweeps_dir, selected_sweep)
+        # Set ticks for time expansion
+        tick_step = round(int(sweep_info["num_steps"]) / 10)
+        ticks = list(
+            range(0, int(sweep_info["num_steps"]) + tick_step, tick_step),
         )
 
         parameter_mapping, constants_mapping = export.parameters.build_mapping(
@@ -176,6 +206,7 @@ def show_interface(live: bool = False):
             graphs,
             aggregate_parameter=aggregate,
             selected_run=selected_run,
+            selected_step=selected_step,
         )
 
         cache_combination_id = export.cache.get_cache_combination_id(combination_ids)
@@ -200,6 +231,7 @@ def show_interface(live: bool = False):
         aggregate_parameter=aggregate,
         selected_parameters=selected_parameters,
         selected_filter=selected_filter,
+        selected_step=selected_step,
         parameter_mapping=parameter_mapping,
         constants_mapping=constants_mapping,
         live=live,  # opus
@@ -208,6 +240,8 @@ def show_interface(live: bool = False):
         all_graphs=GRAPHS,
         runs=matched_run_ids,
         selected_run=selected_run,
+        sweep_info=sweep_info,
+        ticks=ticks,
         get_enum_name=get_enum_name,
         enum_mapping=model.model_defaults.PARAMETER_ENUM_MAPPING,
     )
@@ -217,8 +251,9 @@ def prerender_profile_graphs(
     selected_sweep: str,
     combination_ids: Union[int, List[int]],
     graphs: List[str],
-    aggregate_parameter: Optional[str] = None,
-    selected_run: Optional[int] = None,
+    aggregate_parameter: str | None = None,
+    selected_run: int | None = None,
+    selected_step: int | None = None,
 ) -> None:
     figures_dir = args.figures_dir
 
@@ -237,6 +272,7 @@ def prerender_profile_graphs(
         PROFILE_NAME,
         figures_dir,
         single_run_id=selected_run,
+        selected_step=selected_step,
     )
     non_cached_graph_count = len(list(set(graphs) - set(cached_graphs)))
 
@@ -250,6 +286,7 @@ def prerender_profile_graphs(
             cache_combination_id,
             figures_dir,
             single_run_id=selected_run,
+            selected_step=selected_step,
         )
 
         # All graphs in a dict representation
@@ -276,6 +313,7 @@ def prerender_profile_graphs(
             combination_ids,
             graphs,
             single_run=selected_run,
+            selected_step=selected_step,
             aggregate=aggregate_settings,
         )
 
@@ -284,33 +322,53 @@ def prerender_profile_graphs(
 
 
 @app.route(
-    "/graph/<string:selected_sweep>/<string:combination_id>/<string:single_run_id>/<string:graph_name>"
+    "/graph/<string:selected_sweep>/<string:combination_id>/<string:single_run_id>/<string:selected_step>/<string:graph_name>"
 )
 def send_single_run_graph(
-    graph_name: str, selected_sweep: str, combination_id: str, single_run_id: str
+    graph_name: str,
+    selected_sweep: str,
+    combination_id: str,
+    single_run_id: str,
+    selected_step: str,
 ):
     return send_graph(
-        graph_name, selected_sweep, combination_id, single_run_id=single_run_id
+        graph_name,
+        selected_sweep,
+        combination_id,
+        single_run_id=single_run_id,
+        selected_step=selected_step,
     )
 
 
-@app.route("/graph/<string:selected_sweep>/<string:combination_id>/<string:graph_name>")
-def send_combination_graph(graph_name: str, selected_sweep: str, combination_id: str):
-    return send_graph(graph_name, selected_sweep, combination_id)
+@app.route(
+    "/graph/<string:selected_sweep>/<string:combination_id>/<string:selected_step>/<string:graph_name>"
+)
+def send_combination_graph(
+    graph_name: str, selected_sweep: str, combination_id: str, selected_step: str
+):
+    return send_graph(
+        graph_name, selected_sweep, combination_id, selected_step=selected_step
+    )
 
 
-def send_graph(graph_name, selected_sweep, combination_id, single_run_id=None):
+def send_graph(
+    graph_name, selected_sweep, combination_id, single_run_id=None, selected_step=None
+):
     # Live graphs live in the same folder always, so we do not need to compute where to find them
     if selected_sweep == "live" and combination_id == "live":
         temp_models_figures_dir = args.figures_dir_live
         profile = "jupyter"
     else:
+        if selected_step == "_":
+            selected_step = None
+
         # Where our figures are stored for this parameter combination
         temp_models_figures_dir = export.cache.make_temp_runs_figures_dir(
             selected_sweep,
             combination_id,
             args.figures_dir,
             single_run_id=single_run_id,
+            selected_step=selected_step,
         )
         profile = PROFILE_NAME
 

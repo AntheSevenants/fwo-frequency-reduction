@@ -208,6 +208,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         plot_func=visualisation.energy.plot_energy_per_ctx,
         # TODO: re-introduce min_data and max_data once the graph type has been changed
         common_args=["min_data", "max_data", "y_max"],
+        extra_args={"step": -1},
         aggregate_extension=True,
     ),
     "communicative_confusion": GraphConfig(
@@ -218,6 +219,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         # common_args=["x_scale_factor"],
         extra_args={
             "n": 35,
+            "step": -1,
         },
         aggregate_extension=True,
     ),
@@ -308,6 +310,7 @@ def generate_graphs(
     graphs: List[str],
     aggregate: Optional[AggregateSettings] = None,
     single_run: Optional[int] = None,
+    selected_step: int | None = None,
     disable_title=False,
 ) -> Dict[str, matplotlib.figure.Figure]:
     """Generate the specified graphs depending on the given sweep
@@ -319,6 +322,7 @@ def generate_graphs(
         graphs (List[str]): List of names of the graphs to be generated
         aggregate (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
         single_run (int, optional): ID of the single run to generate a graph for. Defaults to None.
+        selected_step (int). Number of the step being inspected. Defaults to None for the default step.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
 
     Raises:
@@ -394,7 +398,7 @@ def generate_graphs(
         )
 
     return generate_graphs_inner(
-        data, graphs, aggregate, single_run, scale_factor, y_max
+        data, graphs, aggregate, single_run, selected_step, scale_factor, y_max
     )
 
 
@@ -403,12 +407,17 @@ def generate_graphs_inner(
     graphs: List[str],
     aggregate: Optional[AggregateSettings] = None,
     single_run: Optional[int] = None,
+    selected_step: int | None = None,
     scale_factor: int = 1,
     y_max: int = 100,
 ) -> Dict[str, matplotlib.figure.Figure]:
 
     # Now, we can build the desired graphs and save them
     graphs_output = {}
+
+    # Scale selected step by scale factor
+    if selected_step is not None:
+        selected_step = selected_step // scale_factor
 
     # We go over all requested graphs and generate them
     for graph_name in graphs:
@@ -440,6 +449,7 @@ def generate_graphs_inner(
                         scale_factor=scale_factor,
                         aggregate_config=aggregate,
                         single_run=single_run,
+                        selected_step=selected_step,
                         parent_extra_args=parent_extra_args,
                     )
                     inner_functions.append(graph_function)
@@ -459,6 +469,7 @@ def generate_graphs_inner(
                 scale_factor=scale_factor,
                 aggregate_config=aggregate,
                 single_run=single_run,
+                selected_step=selected_step,
             )(ax=None)
 
         graphs_output[graph_name] = figure
@@ -472,6 +483,7 @@ def generate_inner_lambda(
     scale_factor: int = 1,
     y_max: int = 100,
     single_run: Optional[int] = None,
+    selected_step: int | None = None,
     aggregate_config: Optional[AggregateSettings] = None,
     parent_extra_args: Dict[str, Any] | None = None,
 ) -> Callable:
@@ -481,6 +493,7 @@ def generate_inner_lambda(
         data (Union[Dict[str, Any], pd.DataFrame]): Data dump of a specific parameter combination, or combinations
         graph_name (str): Name of the graph to generate the function for
         single_run (int, optional): ID of the single run to plot. Defaults to None.
+        selected_step (int). Number of the step being inspected. Defaults to None for the default step.
         aggregate_config (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
         extra_args (Dict[str, Any] | None): Extra arguments supplied by the parent mosaic. Defaults to None.
 
@@ -529,6 +542,9 @@ def generate_inner_lambda(
                 kwargs[arg_name] = arg_func(*arg_func_args, **arg_func_kwargs)
             # extra_arg is a constant
             else:
+                # Overwrite with interactive argument
+                if arg_name == "step" and selected_step is not None:
+                    arg_func = selected_step
                 kwargs[arg_name] = arg_func
 
     # If aggregate config is None, this is always a simple graph
