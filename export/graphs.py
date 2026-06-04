@@ -229,6 +229,15 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         interactive_args=["step"],
         aggregate_extension=True,
     ),
+    "ctx_energy_per_dim": GraphConfig(
+        reporter_name="means",
+        plot_func=visualisation.energy.plot_energy_per_ctx_per_dim,
+        common_args=["min_data", "max_data", "y_max"],
+        context=GraphContext.DASHBOARD,
+        extra_args={"n": 5},
+        interactive_args=["step"],
+        aggregate_extension=False,
+    ),
     "og_mosaic": MosaicConfig(
         layout=[
             ["total_l1_mean", "communicative_success"],
