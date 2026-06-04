@@ -876,9 +876,9 @@ def plot_error_bar_horizontal(
 
     __min_data, __max_data = None, None
     if _min_data is not None:
-        __min_data = _min_data[_step]
+        __min_data = _min_data[0, _step]
     if _max_data is not None:
-        __max_data = _max_data[_step]
+        __max_data = _max_data[0, _step]
 
     fig, ax = check_ax(ax, disable_title)
 
@@ -894,7 +894,10 @@ def plot_error_bar_horizontal(
         _yerr = (
             None
             if __min_data is None or __max_data is None
-            else [np.abs(value_list - __min_data), np.abs(__max_data - value_list)]
+            else [
+                np.abs(vector - __min_data[attribute_idx]),
+                np.abs(__max_data[attribute_idx] - vector),
+            ]
         )
 
         line_colour = get_colour(attribute_idx)
