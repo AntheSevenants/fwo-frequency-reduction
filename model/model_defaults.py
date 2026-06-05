@@ -53,6 +53,7 @@ class Parameters:
     # ----
     value_floor: int = 5
     reduction_prob: float = 0.5
+    reentrance: bool = False
 
     def __post_init__(self):
         # Initialise random number generator
