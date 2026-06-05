@@ -103,9 +103,6 @@ class ReductionAgent(mesa.Agent):
         decision_entropy = model.entropy.compute_entropy(
             score_probabilities / np.sum(score_probabilities)
         )
-        # if np.isnan(decision_entropy):
-        #     print(log_scores)
-        #     print(score_probabilities)
         self.model.tracker.register_decision_entropy(decision_entropy)
 
         if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
