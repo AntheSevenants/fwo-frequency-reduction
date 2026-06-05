@@ -106,10 +106,18 @@ class Tracker:
 
     def get_global_property_mean(self, property_name: str):
         value = getattr(self, property_name)
+
+        if len(value) == 0:
+            return 0
+
         return np.mean(value)
 
     def get_global_property_median(self, property_name: str):
         value = getattr(self, property_name)
+
+        if len(value) == 0:
+            return 0
+
         return np.median(value)
 
     def get_property_per_agent(self, property_name: str, index: int | None = None):
