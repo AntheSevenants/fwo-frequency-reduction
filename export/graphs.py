@@ -234,6 +234,16 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         interactive_args=["step"],
         aggregate_extension=True,
     ),
+    "decision_entropy": GraphConfig(
+        reporter_name="decision_entropy_go",
+        model_reporter=True,
+        reporter_type=model.reporters_model.ReporterType.MEDIAN,
+        plot_func=visualisation.communication.plot_decision_entropy,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        extra_args={"num_constructions": get_num_constructions},
+        interactive_args=["step"],
+        aggregate_extension=True,
+    ),
     "ctx_energy_mean": GraphConfig(
         reporter_name="ctx_energy_mean",
         plot_func=visualisation.energy.plot_energy_per_ctx,
@@ -263,10 +273,10 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     ),
     "comms_mosaic": MosaicConfig(
         layout=[
-            ["total_l1_mean", "communicative_success"],
+            ["total_l1_mean", "communicative_success", "decision_entropy"],
             ["reentrance_usage", "reduction_outcomes"],
         ],
-        size=(12, 12),
+        size=(18, 12),
         aggregate_extension=True,
     ),
     "energy_mosaic": MosaicConfig(
