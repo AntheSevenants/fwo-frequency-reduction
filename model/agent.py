@@ -54,6 +54,7 @@ class ReductionAgent(mesa.Agent):
         else:
             reduced_vector = vector
 
+        reentrance_used = False
         if self.model.params.reentrance:
             win_index, log_scores = self.get_construction_winner(reduced_vector)
 
@@ -62,6 +63,8 @@ class ReductionAgent(mesa.Agent):
             if win_index != chosen_construction_index:
                 reduced_vector = vector
                 do_reduction = False
+                reentrance_used = True
+        self.model.tracker.register_reentrance_usage(int(reentrance_used))
 
         # Now, the other agent "hears" the construction that we just chose
         hearer_agent.receive_construction(

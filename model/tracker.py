@@ -54,6 +54,9 @@ class Tracker:
         self.communication_results = np.zeros(
             len(model.enums.to_dict(model.enums.CommunicationResult))
         )
+        self.reentrance_usage = np.zeros(
+            len(model.enums.to_dict(model.enums.ReentranceUsage))
+        )
         self.confusion_matrix = np.zeros(
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
@@ -75,6 +78,9 @@ class Tracker:
 
     def register_win_index(self, win_index: int, true_index: int):
         self.confusion_matrix[true_index][win_index] += 1
+
+    def register_reentrance_usage(self, reentrance_usage_index: int):
+        self.reentrance_usage[reentrance_usage_index] += 1
 
     def get_global(self, property_name):
         return getattr(self, property_name)

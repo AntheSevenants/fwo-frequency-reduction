@@ -65,3 +65,8 @@ class ToUpdate:
 class ReductionOutcomes:
     FAILURE = 0
     SUCCESS = 1
+
+
+class ReentranceUsage:
+    NOT_USED = 0
+    USED = 1
