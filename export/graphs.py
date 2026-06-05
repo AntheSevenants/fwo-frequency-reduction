@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 
 import model.reporters_agent
+import model.reporters_model
 
 import export.sweeps
 import export.runs
@@ -68,8 +69,16 @@ class GraphConfig:
         if self.disable_autogenerate_columns:
             return
 
-        if self.aggregate or self.model_reporter:
+        if self.aggregate:
             self.data_columns = [self.reporter_name]
+            return
+
+        if self.model_reporter:
+            self.data_columns = [
+                model.reporters_model.get_model_reporter_key(
+                    self.reporter_name, self.reporter_type
+                )
+            ]
             return
 
         self.data_columns = [
@@ -170,11 +179,11 @@ def get_num_constructions(
 
     if not is_single_run:
         if not aggregate_extension and type(data) == dict:
-            return len(data["ctx_base_rate_mean"]["mean"][0])
+            return len(data["ctx_energy_mean_mean"]["mean"][0])
         elif aggregate_extension and type(data) == list:
-            return len(data[0]["ctx_base_rate_mean"]["mean"][0])
+            return len(data[0]["ctx_energy_mean_mean"]["mean"][0])
     elif is_single_run and type(data) == dict:
-        return len(data["ctx_base_rate_mean"][0])
+        return len(data["ctx_energy_mean_mean"][0])
 
     return -1  # to satisfy the type checker
 
@@ -191,6 +200,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "communicative_success": GraphConfig(
         reporter_name="communication_results_go",
         model_reporter=True,
+        reporter_type=model.reporters_model.ReporterType.PERCENT,
         plot_func=visualisation.communication.plot_communication,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
@@ -202,6 +212,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "reduction_outcomes": GraphConfig(
         reporter_name="reduction_outcomes_go",
         model_reporter=True,
+        reporter_type=model.reporters_model.ReporterType.PERCENT,
         plot_func=visualisation.communication.plot_communication,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
@@ -214,6 +225,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "reentrance_usage": GraphConfig(
         reporter_name="reentrance_usage_go",
         model_reporter=True,
+        reporter_type=model.reporters_model.ReporterType.PERCENT,
         plot_func=visualisation.communication.plot_reentrance,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
@@ -233,6 +245,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "communicative_confusion": GraphConfig(
         reporter_name="confusion_matrix_go",
         model_reporter=True,
+        reporter_type=model.reporters_model.ReporterType.AS_IS,
         plot_func=visualisation.communication.plot_confusion,
         # TODO: re-introduce min_data and max_data once the graph type has been changed
         # common_args=["x_scale_factor"],
