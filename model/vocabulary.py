@@ -40,6 +40,8 @@ class Vocabulary:
         generated_vector = np.clip(
             generated_vector, self.valid_range[0], self.valid_range[1]
         )
+        # Snap to nearest integer
+        generated_vector = np.round(generated_vector)
 
         return generated_vector
 
