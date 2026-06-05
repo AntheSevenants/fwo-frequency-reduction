@@ -43,7 +43,7 @@ class Vocabulary:
 
         return generated_vector
 
-    def calculate_log_likelihood(self, input_vector: np.ndarray):
+    def calculate_log_likelihood(self, input_vector: np.ndarray) -> np.ndarray:
         # Calculate log-likelihood for each of the n dimensions
         # We use norm.logpdf for numerical stability
         # We compute the likelihood over the entire vocabulary to make things go faster
@@ -51,7 +51,7 @@ class Vocabulary:
 
         return np.sum(log_likelihoods, axis=1)
 
-    def calculate_log_score(self, input_vector: np.ndarray):
+    def calculate_log_score(self, input_vector: np.ndarray) -> np.ndarray:
         log_likelihoods = self.calculate_log_likelihood(input_vector)
 
         return self.log_priors + log_likelihoods
@@ -62,7 +62,7 @@ class Vocabulary:
         vector: np.ndarray,
         weight: float = 1,
         learning_rate: float = 0.2,
-    ):
+    ) -> None:
         self.means[index, :] = (1 - (learning_rate * weight)) * self.means[index, :] + (
             learning_rate * weight * vector
         )
@@ -77,25 +77,25 @@ class Vocabulary:
         )  # Prevent sigma from hitting 0
 
     @property
-    def __means__(self):
+    def __means__(self) -> np.ndarray:
         return self.means
 
     @property
-    def __sigmas__(self):
+    def __sigmas__(self) -> np.ndarray:
         return self.sigmas
 
     @property
-    def __ctx_energy_mean_per_ctx__(self):
+    def __ctx_energy_mean_per_ctx__(self) -> np.ndarray:
         return np.mean(self.__means__, axis=1)
 
     @property
-    def __energy_mean__(self):
-        return np.mean(self.__ctx_energy_mean_per_ctx__)
+    def __energy_mean__(self) -> float:
+        return float(np.mean(self.__ctx_energy_mean_per_ctx__))
 
     @property
-    def __ctx_energy_median_per_ctx__(self):
+    def __ctx_energy_median_per_ctx__(self) -> np.ndarray:
         return np.median(self.__means__, axis=1)
 
     @property
-    def __energy_median__(self):
-        return np.median(self.__ctx_energy_median_per_ctx__)
+    def __energy_median__(self) -> float:
+        return float(np.median(self.__ctx_energy_median_per_ctx__))
