@@ -73,7 +73,7 @@ class Vocabulary:
             index, :
         ] + (learning_rate * weight * errors)
         self.sigmas[index, :] = np.maximum(
-            self.sigmas[index, :], 0.5
+            self.sigmas[index, :], 1
         )  # Prevent sigma from hitting 0
 
     @property
