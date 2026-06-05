@@ -2,6 +2,7 @@ import mesa
 import model.agent_defaults
 import numpy as np
 import model.enums
+import model.entropy
 
 from typing import Self, TYPE_CHECKING, Tuple
 
@@ -88,16 +89,26 @@ class ReductionAgent(mesa.Agent):
         self, heard_vector: np.ndarray, true_construction_index: int, is_reduced: bool
     ):
         win_index, log_scores = self.get_construction_winner(heard_vector)
-        # print(true_construction_index, "-> chosen:", win_index)
+
+        # What is the highest score?
+        max_score = np.max(log_scores)
+        # Compute difference with max score
+        exp_scores = np.exp(log_scores - max_score)
+        # Turn into weights
+        weights = exp_scores / np.sum(exp_scores)
+
+        # The entropy of the current decision
+        # How certain are we making this decision?
+        score_probabilities = np.exp(log_scores)
+        decision_entropy = model.entropy.compute_entropy(
+            score_probabilities / np.sum(score_probabilities)
+        )
+        # if np.isnan(decision_entropy):
+        #     print(log_scores)
+        #     print(score_probabilities)
+        self.model.tracker.register_decision_entropy(decision_entropy)
 
         if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
-            # What is the highest score?
-            max_score = np.max(log_scores)
-            # Compute difference with max score
-            exp_scores = np.exp(log_scores - max_score)
-            # Turn into weights
-            weights = exp_scores / np.sum(exp_scores)
-
             # Update category representations!
             for ctx_index, weight in zip(
                 self.model.params.construction_indices, weights

@@ -20,6 +20,8 @@ class ModelReporter:
 class ReporterType:
     AS_IS = 0
     PERCENT = 1
+    MEAN = 2
+    MEDIAN = 3
 
 
 model_reporters_base = {
@@ -41,10 +43,39 @@ model_reporters_base = {
         reporter_types=[ReporterType.PERCENT],
         associated_enum=model.enums.ReentranceUsage,
     ),
+    "decision_entropy_go": ModelReporter(
+        property_name="decision_entropy",
+        reporter_types=[ReporterType.MEAN, ReporterType.MEDIAN],
+    ),
     "confusion_matrix_go": ModelReporter(
         property_name="confusion_matrix", reporter_types=[ReporterType.AS_IS]
     ),
 }
+
+# For the reporter keys
+reporter_type_translation = {
+    ReporterType.AS_IS: "",
+    ReporterType.PERCENT: "_share",
+    ReporterType.MEAN: "_mean",
+    ReporterType.MEDIAN: "_median",
+}
+
+
+def get_model_reporter_key(reporter_name: str, reporter_type: int) -> str:
+    """Generates a unique key for a model reporter based on the given parameters.
+
+    Args:
+        reporter_name (str): The name of the reporter.
+        reporter_type (int): The type of the reporter, will be translated to its corresponding string representation.
+
+    Returns:
+        str: The generated key, a concatenation of the reporter name, the string representation of the reporter type,
+        and the string representation of the agent type.
+    """
+
+    reporter_type_ = reporter_type_translation[reporter_type]
+
+    return f"{reporter_name}{reporter_type_}"
 
 
 def get_global_reporter_function(property_name: str):
@@ -60,6 +91,22 @@ def get_percentage_reporter_function(property_name: str, enum_length: int):
         lambda model: model.tracker.get_global_property_percentages(
             property_name, enum_length=enum_length
         )
+    )
+
+    return reporter_function
+
+
+def get_mean_reporter_function(property_name: str):
+    reporter_function: Callable[["ReductionModel"], np.ndarray] = (
+        lambda model: model.tracker.get_global_property_mean(property_name)
+    )
+
+    return reporter_function
+
+
+def get_median_reporter_function(property_name: str):
+    reporter_function: Callable[["ReductionModel"], np.ndarray] = (
+        lambda model: model.tracker.get_global_property_median(property_name)
     )
 
     return reporter_function
@@ -91,6 +138,14 @@ def get_model_reporters() -> Dict[str, Callable[["ReductionModel"], np.ndarray |
                 reporter_function = get_percentage_reporter_function(
                     property_name, enum_length
                 )
-            model_reporters[model_reporter_name] = reporter_function
+            elif reporter_type == ReporterType.MEAN:
+                reporter_function = get_mean_reporter_function(property_name)
+            elif reporter_type == ReporterType.MEDIAN:
+                reporter_function = get_median_reporter_function(property_name)
+
+            model_reporter_key = get_model_reporter_key(
+                model_reporter_name, reporter_type
+            )
+            model_reporters[model_reporter_key] = reporter_function
 
     return model_reporters

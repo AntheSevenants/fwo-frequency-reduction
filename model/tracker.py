@@ -60,6 +60,7 @@ class Tracker:
         self.confusion_matrix = np.zeros(
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
+        self.decision_entropy = []
 
     def register_construction_chosen(self, construction_index: int):
         """Register in the tracker which construction was chosen by an agent.
@@ -82,6 +83,9 @@ class Tracker:
     def register_reentrance_usage(self, reentrance_usage_index: int):
         self.reentrance_usage[reentrance_usage_index] += 1
 
+    def register_decision_entropy(self, decision_entropy: float):
+        self.decision_entropy.append(decision_entropy)
+
     def get_global(self, property_name):
         return getattr(self, property_name)
 
@@ -99,6 +103,14 @@ class Tracker:
         # For now I'm only returning the shares as-is.
         # The legend is added afterwards anyway
         return shares
+
+    def get_global_property_mean(self, property_name: str):
+        value = getattr(self, property_name)
+        return np.mean(value)
+
+    def get_global_property_median(self, property_name: str):
+        value = getattr(self, property_name)
+        return np.median(value)
 
     def get_property_per_agent(self, property_name: str, index: int | None = None):
         """Retrieve a list of property values of each agent. If a property is multi-dimensional, you can ask to retrieve the value of one of the dimensions.
