@@ -211,6 +211,17 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         interactive_args=["step"],
         aggregate_extension=True,
     ),
+    "reentrance_usage": GraphConfig(
+        reporter_name="reentrance_usage_go",
+        model_reporter=True,
+        plot_func=visualisation.communication.plot_reentrance,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        extra_args={
+            "filter_dimension": 1,
+        },
+        interactive_args=["step"],
+        aggregate_extension=True,
+    ),
     "ctx_energy_mean": GraphConfig(
         reporter_name="ctx_energy_mean",
         plot_func=visualisation.energy.plot_energy_per_ctx,
@@ -233,18 +244,20 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         reporter_name="means",
         plot_func=visualisation.energy.plot_energy_per_ctx_per_dim,
         common_args=["min_data", "max_data", "y_max"],
-        context=GraphContext.DASHBOARD,
         extra_args={"n": 5},
         interactive_args=["step"],
         aggregate_extension=False,
     ),
-    "og_mosaic": MosaicConfig(
+    "comms_mosaic": MosaicConfig(
         layout=[
             ["total_l1_mean", "communicative_success"],
-            ["ctx_energy_mean", "reduction_outcomes"],
+            ["reentrance_usage", "reduction_outcomes"],
         ],
         size=(12, 12),
         aggregate_extension=True,
+    ),
+    "energy_mosaic": MosaicConfig(
+        layout=[["ctx_energy_mean"], ["ctx_energy_per_dim"]], size=(6, 12)
     ),
     "confusion_mosaic": MosaicConfig(
         layout=[
