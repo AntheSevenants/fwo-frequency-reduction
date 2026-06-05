@@ -45,11 +45,7 @@ def do_post_run_aggregation(current_sweep: str):
         # Now aggregate, then turn into a list
         for column_name in aggregated_data:
             data_matrix = np.array(aggregated_data[column_name])
-            if (
-                column_name.endswith("_mean")
-                or column_name.endswith("_median")
-                or column_name.endswith("_go")
-            ):
+            if column_name.endswith("_mean") or column_name.endswith("_median") or True:
                 aggregated_data_out[column_name] = (
                     batch.combination.get_combination_metrics(
                         data_matrix,
