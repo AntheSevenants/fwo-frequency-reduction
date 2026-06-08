@@ -1148,8 +1148,8 @@ def plot_norm_dist_pass(
             _ax.plot(x, y, color=colour, label=label)
             _ax.fill_between(x, y, color=colour, alpha=0.2)
 
-            if ylim is not None:
-                _ax.set_xlim(*ylim)
+            if xlim is not None:
+                _ax.set_xlim(*xlim)
             _ax.set_title(f"Dimension {i + 1}", loc="left")
             # _ax.set_xticks([])
             _ax.grid(True)
