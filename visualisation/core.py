@@ -7,6 +7,8 @@ import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
 
+import scipy.stats
+
 from typing import Dict, List, Optional, Union, Any, Tuple, Dict
 
 COLOURS = ["blue", "orange", "green", "red", "purple"]
@@ -1066,3 +1068,101 @@ def plot_confusion(
     plt.close(output_fig)
 
     return (output_fig, ax)
+
+
+def plot_norm_dist_pass(
+    data: Union[model.model.ReductionModel, List[List[float]]],
+    attributes: List[str],
+    xlim: List[float],
+    ylim: List[float] | None = None,
+    ax: Optional[matplotlib.axes.Axes] = None,
+    step: int | float = -1,
+    n: int | None = None,
+    title: Optional[str] = None,
+    disable_title: Optional[bool] = False,
+) -> Tuple[matplotlib.figure.Figure, None]:
+    """Plot a desired series of normal distributions across all dimensions.
+
+    Args:
+        data (Union[model.model.ReductionModel, List[List[float]]): Either a model instance or a list of values
+        attributes (List[str]): The names of the series to model.
+        xlim (List[float]): The expected range of values for y axis.
+        ylim (List[float] | None, optional): The expected range of values for y axis. Defaults to None.
+        ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Please do not pass any axes currently. Defaults to None.
+        step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to -1.
+        n (int | None): Maximum number of items in the value lists to be plotted. Can be used for limiting the number of distributions plotted. Defaults to None (= show all items).
+        title (Optional[str], optional): The title for the graph. Defaults to None.
+        disable_title (Optional[bool], optional): Whether to show a title for this graph. Defaults to False.
+
+    Raises:
+        ValueError: Passing an Axis through ax is currently not supported
+        ValueError: Input matrix dimensions can only be 2 or 3
+
+    Returns:
+        Tuple[matplotlib.figure.Figure, None]: The created graph
+    """
+
+    # Get the right data based on the supplied arguments
+    value_lists = get_value_lists(data, attributes)
+    if len(value_lists) != 2:
+        raise ValueError(
+            "Supplied data should be of dimensionality two (= means + sigmas)"
+        )
+
+    if ax is not None:
+        raise ValueError(
+            "Cannot do mosaic plots for this graph type. Please do not pass an axis."
+        )
+
+    # data dimensionality =
+    # layer 1: 0 = mean, 1 = sigma
+    # layer 2: steps
+    # layer 3: matrix, dim 0 = #ctxs, dim 1 = #vector dims
+
+    # num_dimensions = shape 1
+    num_dims = value_lists[0][0].shape[1]
+    # Convert to absolute step
+    _step = convert_step(step, len(value_lists[0]))
+    # How many constructions to plot?
+    _n = n if n is not None else value_lists[0][0].shape[0]
+
+    fig, axes = plt.subplots(nrows=num_dims, ncols=1, figsize=(10, 25), sharex=True)
+
+    # Possible vector values
+    x = np.arange(xlim[0], xlim[1] + 1, 1)
+
+    THRESHOLD = 0.001
+
+    for i, _ax in enumerate(fig.axes):
+        for ctx_index in range(_n):
+            mu = value_lists[0][_step][ctx_index, i]
+            sigma = value_lists[1][_step][ctx_index, i]
+
+            y = scipy.stats.norm.pdf(x, mu, sigma)
+            # Mask values below the threshold by replacing them with NaN
+            y[y < THRESHOLD] = np.nan
+
+            colour = get_colour(ctx_index)
+            label = f"Ctx {ctx_index + 1}"
+
+            _ax.plot(x, y, color=colour, label=label)
+            _ax.fill_between(x, y, color=colour, alpha=0.2)
+
+            if ylim is not None:
+                _ax.set_xlim(*ylim)
+            _ax.set_title(f"Dimension {i + 1}", loc="left")
+            # _ax.set_xticks([])
+            _ax.grid(True)
+
+            # Disable ugly boxes
+            for spine in _ax.spines.values():
+                spine.set_visible(False)
+
+    fig.axes[0].set_ylabel("Time steps in the simulation")
+    # fig.axes[0].invert_yaxis()
+
+    plt.legend()
+
+    plt.close(fig)
+
+    return (fig, None)

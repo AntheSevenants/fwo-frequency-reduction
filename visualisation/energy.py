@@ -96,3 +96,31 @@ def plot_energy_per_ctx_per_dim(
         n=n,
         **kwargs,
     )
+
+
+def plot_energy_per_ctx_per_dim_norm(
+    data: model.model.ReductionModel | List[List[float]],
+    attributes: List[str],
+    y_min: int,
+    y_max: int,
+    n: int,
+    step: int = -1,
+    **kwargs: Any,
+) -> Tuple[matplotlib.figure.Figure, None]:
+    """Plot the energy for each construction of a given parameter combnation, plot each dimension as a normal distribution
+
+    Args:
+        data (model.model.ReductionModel | List[List[float]]): Either a model instance or a list of values. Length must be two: first item = means, second item = sigmas
+        attributes (List[str]): The columns to fetch data from. Always supply, even if input data is not a model, so dimensionality of the data can be assessed.
+        y_min (int): Minimum energy value
+        y_max (int): Maximum energy value
+        n (int): Top n constructions to show distributionsfor. Defaults to None (= show all constructions).
+        step (int, optional): Step to get the data from. On the scale of the datacollector. Defaults to -1 (= last step).
+
+    Returns:
+        Tuple[matplotlib.figure.Figure, None]: The finished graph
+    """
+
+    return visualisation.core.plot_norm_dist_pass(
+        data, attributes, [y_min, y_max], n=n, step=step, **kwargs
+    )

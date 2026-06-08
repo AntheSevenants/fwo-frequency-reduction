@@ -32,7 +32,9 @@ class GraphContext:
 class GraphConfig:
     """The configuration for a single graph. It defines what column the graph data comes from, what function needs to be called to create the graph, how extra parameters can be retrieved, etc."""
 
-    reporter_name: str  # What model reporter does the required data come from?
+    reporter_name: (
+        str | List[str]
+    )  # What model reporter does the required data come from?
     plot_func: Callable  # How can the figure be made?
     model_reporter: bool = (
         False  # Is this a model reporter (True) or an agent reporter? (False)
@@ -66,27 +68,36 @@ class GraphConfig:
     disable_autogenerate_columns: bool = False
 
     def __post_init__(self):
+        if isinstance(self.reporter_name, list):
+            reporter_names = self.reporter_name
+        elif isinstance(self.reporter_name, str):
+            reporter_names = [self.reporter_name]
+        else:
+            raise ValueError("Unrecognised reporter name type")
+
         if self.disable_autogenerate_columns:
             return
 
         if self.aggregate:
-            self.data_columns = [self.reporter_name]
+            self.data_columns = reporter_names
             return
 
         if self.model_reporter:
-            self.data_columns = [
-                model.reporters_model.get_model_reporter_key(
-                    self.reporter_name, self.reporter_type
-                )
-            ]
+            for reporter_name in reporter_names:
+                self.data_columns += [
+                    model.reporters_model.get_model_reporter_key(
+                        reporter_name, self.reporter_type
+                    )
+                ]
             return
 
-        self.data_columns = [
-            model.reporters_agent.get_model_reporter_key(
-                self.reporter_name, self.reporter_type, agent_type
-            )
-            for agent_type in self.agent_types
-        ]
+        for reporter_name in reporter_names:
+            self.data_columns += [
+                model.reporters_agent.get_model_reporter_key(
+                    reporter_name, self.reporter_type, agent_type
+                )
+                for agent_type in self.agent_types
+            ]
 
 
 @dataclass
@@ -290,6 +301,15 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         size=(12, 12),
         extra_args=[[{"step": 0.25}, {"step": 0.5}], [{"step": 0.75}, {"step": -1}]],
     ),
+    "plot_energy_per_ctx_per_dim_norm": GraphConfig(
+        reporter_name=["means", "sigmas"],
+        plot_func=visualisation.energy.plot_energy_per_ctx_per_dim_norm,
+        common_args=["y_max", "y_min"],
+        extra_args={"n": 5},
+        interactive_args=["step"],
+        aggregate_extension=False,
+        context=GraphContext.DASHBOARD,
+    ),
 }
 
 
@@ -398,6 +418,7 @@ def generate_graphs(
     run_infos = export.sweeps.get_run_infos(sweeps_dir, selected_sweep)
     run_infos = run_infos[run_infos["combination_id"].isin(_combination_ids)]
     y_max = np.max(np.array(run_infos["vector_bounds"].tolist())[:, 1])
+    y_min = np.min(np.array(run_infos["reduction"].tolist())[0]["value_floor"])
 
     data: Union[dict[str, Any], pd.DataFrame]
     # If only a single combination_id is given, this is a single graph
@@ -449,7 +470,14 @@ def generate_graphs(
         )
 
     return generate_graphs_inner(
-        data, graphs, aggregate, single_run, selected_step, scale_factor, y_max
+        data,
+        graphs,
+        aggregate,
+        single_run,
+        selected_step,
+        scale_factor,
+        y_max=y_max,
+        y_min=y_min,
     )
 
 
@@ -461,6 +489,7 @@ def generate_graphs_inner(
     selected_step: int | None = None,
     scale_factor: int = 1,
     y_max: int = 100,
+    y_min: int = 0,
 ) -> Dict[str, matplotlib.figure.Figure]:
 
     # Now, we can build the desired graphs and save them
@@ -502,6 +531,8 @@ def generate_graphs_inner(
                         single_run=single_run,
                         selected_step=selected_step,
                         parent_extra_args=parent_extra_args,
+                        y_max=y_max,
+                        y_min=y_min,
                     )
                     inner_functions.append(graph_function)
 
@@ -521,6 +552,8 @@ def generate_graphs_inner(
                 aggregate_config=aggregate,
                 single_run=single_run,
                 selected_step=selected_step,
+                y_max=y_max,
+                y_min=y_min,
             )(ax=None)
 
         graphs_output[graph_name] = figure
@@ -533,6 +566,7 @@ def generate_inner_lambda(
     graph_name: str,
     scale_factor: int = 1,
     y_max: int = 100,
+    y_min: int = 0,
     single_run: Optional[int] = None,
     selected_step: int | None = None,
     aggregate_config: Optional[AggregateSettings] = None,
@@ -656,6 +690,8 @@ def generate_inner_lambda(
                         value = scale_factor
                     elif common_arg == "y_max":
                         value = y_max
+                    elif common_arg == "y_min":
+                        value = y_min
                     elif common_arg == "min_data" and single_run is None:
                         min_data.append(data[data_column]["q1"])
                     elif common_arg == "max_data" and single_run is None:
