@@ -65,9 +65,6 @@ class Vocabulary:
         weight: float = 1,
         learning_rate: float = 0.2,
     ) -> None:
-        self.means[index, :] = (1 - (learning_rate * weight)) * self.means[index, :] + (
-            learning_rate * weight * vector
-        )
 
         # Update sigmas dimension by dimension
         errors = np.abs(vector - self.means[index, :])
@@ -77,6 +74,11 @@ class Vocabulary:
         self.sigmas[index, :] = np.maximum(
             self.sigmas[index, :], 1
         )  # Prevent sigma from hitting 0
+
+        # Now update means
+        self.means[index, :] = (1 - (learning_rate * weight)) * self.means[index, :] + (
+            learning_rate * weight * vector
+        )
 
     @property
     def __means__(self) -> np.ndarray:
