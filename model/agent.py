@@ -44,7 +44,16 @@ class ReductionAgent(mesa.Agent):
         self.model.tracker.register_construction_chosen(chosen_construction_index)
 
         # Now, generate a vector for that specific construction
-        vector = self.atts.vocabulary.get_construction_vector(chosen_construction_index)
+        vector = self.atts.vocabulary.get_construction_vector(
+            chosen_construction_index, self.model.params.nprandom
+        )
+        vector_difference = (
+            vector - self.atts.vocabulary.means[chosen_construction_index, :]
+        )
+        self.model.tracker.register_vector_difference(
+            chosen_construction_index, vector_difference
+        )
+
         # Check whether we are going to reduce
         do_reduction = (
             self.model.params.nprandom.random() < self.model.params.reduction_prob
@@ -105,26 +114,27 @@ class ReductionAgent(mesa.Agent):
         )
         self.model.tracker.register_decision_entropy(decision_entropy)
 
-        if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
-            # Update category representations!
-            for ctx_index, weight in zip(
-                self.model.params.construction_indices, weights
-            ):
+        if self.model.params.do_update:
+            if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
+                # Update category representations!
+                for ctx_index, weight in zip(
+                    self.model.params.construction_indices, weights
+                ):
+                    self.atts.vocabulary.update_distribution(
+                        ctx_index,
+                        heard_vector,
+                        weight,
+                        learning_rate=self.model.params.learning_rate,
+                    )
+            elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
+                # Update only the winner with full weights
                 self.atts.vocabulary.update_distribution(
-                    ctx_index,
+                    int(win_index),
                     heard_vector,
-                    weight,
                     learning_rate=self.model.params.learning_rate,
                 )
-        elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
-            # Update only the winner with full weights
-            self.atts.vocabulary.update_distribution(
-                int(win_index),
-                heard_vector,
-                learning_rate=self.model.params.learning_rate,
-            )
-        else:
-            raise ValueError("Unknown update destination")
+            else:
+                raise ValueError("Unknown update destination")
 
         # TODO: add uncertainty step if needed
 

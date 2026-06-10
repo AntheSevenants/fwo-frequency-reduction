@@ -45,6 +45,8 @@ class Tracker:
 
         self.reset()
 
+        self.vector_differences = []
+
     # Per step!
     def reset(self):
         self.chosen_constructions = np.zeros(self.model.params.num_constructions)
@@ -82,6 +84,11 @@ class Tracker:
 
     def register_reentrance_usage(self, reentrance_usage_index: int):
         self.reentrance_usage[reentrance_usage_index] += 1
+
+    def register_vector_difference(
+        self, true_index: int, vector_difference: np.ndarray
+    ):
+        self.vector_differences.append(vector_difference)
 
     def register_decision_entropy(self, decision_entropy: float):
         self.decision_entropy.append(decision_entropy)

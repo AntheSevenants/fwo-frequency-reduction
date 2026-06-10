@@ -47,6 +47,7 @@ class Parameters:
 
     # Do we only update one form (the winner) or all forms (weighted)
     to_update: int = model.enums.ToUpdate.WINNER_ONLY
+    do_update: bool = True
 
     # ----
     # Reduction
@@ -74,6 +75,7 @@ class Parameters:
             num_dims=self.num_dims,
             min_val=self.vector_bounds[0],
             max_val=self.vector_bounds[1] - self.initial_sigma,
+            random_generator=self.nprandom,
         )
         display_names = [f"#{idx}" for idx in self.construction_indices]
 

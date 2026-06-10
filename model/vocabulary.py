@@ -65,7 +65,6 @@ class Vocabulary:
         weight: float = 1,
         learning_rate: float = 0.2,
     ) -> None:
-
         # Update sigmas dimension by dimension
         errors = np.abs(vector - self.means[index, :])
         self.sigmas[index, :] = (1 - (learning_rate * weight)) * self.sigmas[
