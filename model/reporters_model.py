@@ -50,6 +50,10 @@ model_reporters_base = {
     "confusion_matrix_go": ModelReporter(
         property_name="confusion_matrix", reporter_types=[ReporterType.AS_IS]
     ),
+    "vector_differences_go": ModelReporter(
+        property_name="vector_differences",
+        reporter_types=[ReporterType.MEAN, ReporterType.MEDIAN],
+    ),
 }
 
 # For the reporter keys

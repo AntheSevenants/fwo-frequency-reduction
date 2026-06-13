@@ -45,8 +45,6 @@ class Tracker:
 
         self.reset()
 
-        self.vector_differences = []
-
     # Per step!
     def reset(self):
         self.chosen_constructions = np.zeros(self.model.params.num_constructions)
@@ -63,6 +61,7 @@ class Tracker:
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
         self.decision_entropy = []
+        self.vector_differences = []
 
     def register_construction_chosen(self, construction_index: int):
         """Register in the tracker which construction was chosen by an agent.
@@ -88,7 +87,7 @@ class Tracker:
     def register_vector_difference(
         self, true_index: int, vector_difference: np.ndarray
     ):
-        self.vector_differences.append(vector_difference)
+        self.vector_differences.append(np.array(vector_difference))
 
     def register_decision_entropy(self, decision_entropy: float):
         self.decision_entropy.append(decision_entropy)
