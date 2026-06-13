@@ -65,4 +65,4 @@ def generate(
         # the vector that is closest to all other vectors (this ensures maximum distance)
         min_squared_distances = np.minimum(min_squared_distances, new_distances)
 
-    return np.array(selected_vectors, dtype=np.int64)
+    return np.array(selected_vectors, dtype=np.float64)
