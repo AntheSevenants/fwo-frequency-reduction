@@ -310,6 +310,17 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         aggregate_extension=False,
         context=GraphContext.DASHBOARD,
     ),
+    "vector_difference": GraphConfig(
+        reporter_name="vector_differences_go",
+        plot_func=visualisation.energy.plot_energy_differences,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        aggregate_extension=True,
+        interactive_args=["step"],
+        context=GraphContext.DASHBOARD,
+        extra_args={
+            "plot_mean": True,
+        },
+    ),
 }
 
 

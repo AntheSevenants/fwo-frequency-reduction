@@ -345,6 +345,7 @@ def plot_value(
     title: Optional[str] = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
+    plot_mean: bool = False,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
     """Plot a desired series of values from a model run
 
@@ -361,6 +362,7 @@ def plot_value(
         title (Optional[str], optional): The title for the graph. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
+        plot_mean (bool, optional): Whether to indicate the mean. Defaults to False.
 
     Returns:
         Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
@@ -405,6 +407,10 @@ def plot_value(
                 color=line_colour,
                 alpha=0.2,
             )
+
+        if plot_mean:
+            value_mean = float(np.mean(value_list))
+            ax.axhline(value_mean, color="gray")
 
     # Draw step focus line if required
     if step is not None:

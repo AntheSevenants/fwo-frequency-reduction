@@ -124,3 +124,29 @@ def plot_energy_per_ctx_per_dim_norm(
     return visualisation.core.plot_norm_dist_pass(
         data, attributes, [y_min, y_max], n=n, step=step, **kwargs
     )
+
+
+def plot_energy_differences(
+    data: model.model.ReductionModel | List[float],
+    attributes: str | List[str],
+    **kwargs: Any,
+) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
+    """Plot the energy difference across vectors
+
+    Args:
+        model.model.ReductionModel | List[float]: Either a model instance or a list of values.
+        attributes (str | List[str]): The column to fetch data from. Always supply, even if input data is not a model, so dimensionality of the data can be assessed.
+        y_max (int): The maximum y value
+        **kwargs: Additional keyword arguments passed to parent plotting function.
+
+    Returns:
+        Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
+    """
+
+    return visualisation.core.plot_value(
+        data,
+        attributes,
+        ylim=[-0.1, 0.1],
+        title=f"Mean vector difference energy",
+        **kwargs,
+    )
