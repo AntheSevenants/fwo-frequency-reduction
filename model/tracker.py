@@ -57,6 +57,9 @@ class Tracker:
         self.reentrance_usage = np.zeros(
             len(model.enums.to_dict(model.enums.ReentranceUsage))
         )
+        self.reentrance_outcomes = np.full(
+            len(model.enums.to_dict(model.enums.CommunicationResult)), np.nan
+        )
         self.confusion_matrix = np.zeros(
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
@@ -77,6 +80,13 @@ class Tracker:
 
     def register_reduction_outcome(self, communication_result: int):
         self.reduction_outcomes[communication_result] += 1
+
+    def register_reentrance_outcome(self, communication_result: int):
+        # Now that we are registering an outcome, set all outcomes to zero
+        if np.isnan(self.reentrance_outcomes).any():
+            self.reentrance_outcomes[:] = 0
+
+        self.reentrance_outcomes[communication_result] += 1
 
     def register_win_index(self, win_index: int, true_index: int):
         self.confusion_matrix[true_index][win_index] += 1

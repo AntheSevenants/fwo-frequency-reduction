@@ -38,6 +38,11 @@ model_reporters_base = {
         reporter_types=[ReporterType.PERCENT],
         associated_enum=model.enums.CommunicationResult,
     ),
+    "reentrance_outcomes_go": ModelReporter(
+        property_name="reentrance_outcomes",
+        reporter_types=[ReporterType.PERCENT],
+        associated_enum=model.enums.CommunicationResult,
+    ),
     "reentrance_usage_go": ModelReporter(
         property_name="reentrance_usage",
         reporter_types=[ReporterType.PERCENT],

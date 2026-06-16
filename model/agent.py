@@ -78,7 +78,7 @@ class ReductionAgent(mesa.Agent):
 
         # Now, the other agent "hears" the construction that we just chose
         hearer_agent.receive_construction(
-            reduced_vector, chosen_construction_index, do_reduction
+            reduced_vector, chosen_construction_index, do_reduction, reentrance_used
         )
 
     def get_construction_winner(
@@ -95,7 +95,11 @@ class ReductionAgent(mesa.Agent):
 
     # update vocabulary distributions etc.
     def receive_construction(
-        self, heard_vector: np.ndarray, true_construction_index: int, is_reduced: bool
+        self,
+        heard_vector: np.ndarray,
+        true_construction_index: int,
+        is_reduced: bool,
+        reentrance_used: bool,
     ):
         win_index, log_scores = self.get_construction_winner(heard_vector)
 
@@ -144,3 +148,8 @@ class ReductionAgent(mesa.Agent):
 
         if is_reduced:
             self.model.tracker.register_reduction_outcome(int(communication_successful))
+
+        if reentrance_used:
+            self.model.tracker.register_reentrance_outcome(
+                int(communication_successful)
+            )

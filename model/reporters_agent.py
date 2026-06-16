@@ -12,6 +12,7 @@ class ReporterType:
     SINGULAR = 0
     MEAN = 1
     MEDIAN = 2
+    STD = 3
 
 
 # For which agent types does the computation need to be done?
@@ -30,6 +31,7 @@ class ModelReporter:
             ReporterType.SINGULAR,
             ReporterType.MEAN,
             ReporterType.MEDIAN,
+            ReporterType.STD,
         ]
     )
     index: int | None = None
@@ -73,6 +75,14 @@ function_translation: Dict[
         index=index,
         # for_innovator=for_innovator,
     ),
+    ReporterType.STD: lambda property_name, index, for_innovator: lambda model: np.std(
+        model.tracker.get_property_per_agent(
+            property_name,
+            index=index,
+            # for_innovator=for_innovator,
+        ),
+        axis=0,
+    ),
 }
 
 # For the reporter keys
@@ -87,6 +97,7 @@ reporter_type_translation = {
     ReporterType.SINGULAR: "_per_agent",
     ReporterType.MEAN: "_mean",
     ReporterType.MEDIAN: "_median",
+    ReporterType.STD: "_deviation",
 }
 
 # Translate type to an argument value for the tracker methods

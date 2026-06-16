@@ -233,6 +233,19 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         interactive_args=["step"],
         aggregate_extension=True,
     ),
+    "reentrance_outcomes": GraphConfig(
+        reporter_name="reentrance_outcomes_go",
+        model_reporter=True,
+        reporter_type=model.reporters_model.ReporterType.PERCENT,
+        plot_func=visualisation.communication.plot_communication,
+        common_args=["x_scale_factor", "min_data", "max_data"],
+        extra_args={
+            "filter_dimension": 1,
+            "title_override": "Communication outcome after re-entrance used, across agents",
+        },
+        interactive_args=["step"],
+        aggregate_extension=True,
+    ),
     "reentrance_usage": GraphConfig(
         reporter_name="reentrance_usage_go",
         model_reporter=True,
@@ -282,16 +295,29 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         interactive_args=["step"],
         aggregate_extension=False,
     ),
+    "ctx_energy_deviation_per_dim": GraphConfig(
+        reporter_name="means",
+        reporter_type=model.reporters_agent.ReporterType.STD,
+        plot_func=visualisation.energy.plot_energy_std_per_ctx_per_dim,
+        common_args=["min_data", "max_data", "y_max"],
+        extra_args={"n": 5},
+        interactive_args=["step"],
+        aggregate_extension=False,
+    ),
     "comms_mosaic": MosaicConfig(
         layout=[
             ["total_l1_mean", "communicative_success", "decision_entropy"],
-            ["reentrance_usage", "reduction_outcomes"],
+            ["reentrance_usage", "reduction_outcomes", "reentrance_outcomes"],
         ],
         size=(18, 12),
         aggregate_extension=True,
     ),
     "energy_mosaic": MosaicConfig(
-        layout=[["ctx_energy_mean"], ["ctx_energy_per_dim"]], size=(6, 12)
+        layout=[
+            ["ctx_energy_mean", "ctx_energy_per_dim"],
+            ["ctx_energy_deviation_per_dim"],
+        ],
+        size=(12, 12),
     ),
     "confusion_mosaic": MosaicConfig(
         layout=[

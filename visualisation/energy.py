@@ -1,6 +1,6 @@
 import matplotlib.axes
 import matplotlib.figure
-
+import numpy as np
 
 import model.model
 import visualisation.core
@@ -92,6 +92,39 @@ def plot_energy_per_ctx_per_dim(
         x=[str(i) for i in range(0, num_dims)],
         ylim=[0, y_max],
         title=f"L1 values in the base model (per construction, across agents)",
+        y_label="Energy",
+        n=n,
+        **kwargs,
+    )
+
+
+def plot_energy_std_per_ctx_per_dim(
+    data: model.model.ReductionModel | List[List[float]],
+    attributes: str,
+    y_max: int,
+    n: int,
+    num_dims: int = 10,
+    **kwargs: Any,
+) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
+    """Plot the energy standard deviation for each construction of a given parameter combination, but show the dimensionality too
+
+    Args:
+        data (List[float]): Energy per construction. Wrapped in a list because you never know
+        attributes (str): The column to fetch data from. Always supply, even if input data is not a model, so dimensionality of the data can be assessed.
+        step (int): Step to get the data from. On the scale of the datacollector.
+        attribute (str): The name of the series to model.
+
+    Returns:
+        Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]: The finished graph
+    """
+
+    return visualisation.core.plot_error_bar_horizontal(
+        data,
+        attributes,
+        [str(i) for i in range(0, n)],
+        x=[str(i) for i in range(0, num_dims)],
+        ylim=[0, np.round(y_max / num_dims)],
+        title=f"Energy deviation (per construction, across agents)",
         y_label="Energy",
         n=n,
         **kwargs,
