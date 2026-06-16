@@ -10,6 +10,15 @@ if TYPE_CHECKING:
     from model.model import ReductionModel
 
 
+def scores_to_entropy(log_scores: np.ndarray):
+    score_probabilities = np.exp(log_scores)
+    decision_entropy = model.entropy.compute_entropy(
+        score_probabilities / np.sum(score_probabilities)
+    )
+
+    return decision_entropy
+
+
 class ReductionAgent(mesa.Agent):
     """A speaker in the model"""
 
@@ -65,12 +74,14 @@ class ReductionAgent(mesa.Agent):
             reduced_vector = vector
 
         reentrance_used = False
-        if self.model.params.reentrance:
+        if self.model.params.reentrance_entropy_floor > 0:
             win_index, log_scores = self.get_construction_winner(reduced_vector)
+            decision_entropy = scores_to_entropy(log_scores)
+            self.model.tracker.register_decision_entropy_reentrance(decision_entropy)
 
             # If the win index does not match the chosen construction index,
             # we do not understand ourselves and we reverse the reduction
-            if win_index != chosen_construction_index:
+            if decision_entropy >= self.model.params.reentrance_entropy_floor:
                 reduced_vector = vector
                 do_reduction = False
                 reentrance_used = True
@@ -112,10 +123,7 @@ class ReductionAgent(mesa.Agent):
 
         # The entropy of the current decision
         # How certain are we making this decision?
-        score_probabilities = np.exp(log_scores)
-        decision_entropy = model.entropy.compute_entropy(
-            score_probabilities / np.sum(score_probabilities)
-        )
+        decision_entropy = scores_to_entropy(log_scores)
         self.model.tracker.register_decision_entropy(decision_entropy)
 
         if self.model.params.do_update:

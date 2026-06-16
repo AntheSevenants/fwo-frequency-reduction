@@ -64,6 +64,7 @@ class Tracker:
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
         self.decision_entropy = []
+        self.decision_entropy_reentrance = []
         self.vector_differences = []
 
     def register_construction_chosen(self, construction_index: int):
@@ -101,6 +102,9 @@ class Tracker:
 
     def register_decision_entropy(self, decision_entropy: float):
         self.decision_entropy.append(decision_entropy)
+
+    def register_decision_entropy_reentrance(self, decision_entropy: float):
+        self.decision_entropy_reentrance.append(decision_entropy)
 
     def get_global(self, property_name):
         return getattr(self, property_name)
