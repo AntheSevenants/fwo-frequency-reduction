@@ -34,6 +34,7 @@ class Parameters:
     # ----
     num_constructions: int = 100
     num_dims: int = 10
+    batch_size: int = 20
 
     value_floor: int = 5
     initial_sigma: int = 5

@@ -26,6 +26,10 @@ class Vocabulary:
         )
         self.log_priors: np.ndarray = np.log(self.priors)
 
+        # Temporary memory to store batches of interactions
+        # Key: construction_index, Value: list of vectors observed
+        self.batch_memory = {i: [] for i in range(self.num_words)}
+
     def get_construction_vector(
         self, word_index: int, random: np.random.Generator | None = None
     ) -> np.ndarray:
@@ -58,30 +62,34 @@ class Vocabulary:
 
         return self.log_priors + log_likelihoods
 
+    def observe_utterance(self, word_index: int, vector: np.ndarray) -> None:
+        self.batch_memory[word_index].append(vector)
+
     def update_distribution(
         self,
         index: int,
-        vector: np.ndarray,
         weight: float = 1,
         learning_rate: float = 0.2,
     ) -> None:
         # Adjust learning rate for weight
         alpha = learning_rate * weight
-        # sigma_alpha = learning_rate *
 
-        # First, update the means
-        old_means = self.means[index, :].copy()
-        self.means[index, :] = (1 - alpha) * old_means + alpha * vector
+        # Pool together observations
+        observations = self.batch_memory[index]
+        batch_matrix = np.array(observations)
 
-        # Now, update sigma
-        squared_errors = (vector - old_means) ** 2
-        old_variance = self.sigmas[index, :] ** 2
-        new_variance = (1 - alpha) * old_variance + alpha * squared_errors
-        self.sigmas[index, :] = np.sqrt(new_variance)
+        batch_mean = np.mean(batch_matrix, axis=0)
+        batch_sigma = np.std(batch_matrix, axis=0, ddof=1)
 
+        self.means[index, :] = (1 - alpha) * self.means[index, :] + alpha * batch_mean
+        self.sigmas[index, :] = (1 - alpha) * self.sigmas[
+            index, :
+        ] + alpha * batch_sigma
         self.sigmas[index, :] = np.maximum(
             self.sigmas[index, :], 1
         )  # Prevent sigma from hitting 0
+
+        self.batch_memory[index] = []
 
     @property
     def __means__(self) -> np.ndarray:
