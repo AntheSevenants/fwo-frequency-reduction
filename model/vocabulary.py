@@ -22,7 +22,7 @@ class Vocabulary:
 
     def __post_init__(self):
         self.sigmas: np.ndarray = np.array(
-            [[self.initial_sigma] * self.num_dims] * self.num_words
+            [[self.initial_sigma] * self.num_dims] * self.num_words, dtype=np.float64
         )
         self.log_priors: np.ndarray = np.log(self.priors)
 
