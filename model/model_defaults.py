@@ -87,7 +87,8 @@ class Parameters:
             means=vectors,
             priors=self.priors.tolist(),
             display_names=display_names,
-            # value floor = minimum value for vector
-            # value max = maximum generation value
-            valid_range=[self.value_floor, self.vector_bounds[1]],
+            # value floor = minimum legal value for vector
+            # value max = maximum saved value
+            value_floor=self.value_floor,
+            valid_range=[1, self.vector_bounds[1]],
         )
