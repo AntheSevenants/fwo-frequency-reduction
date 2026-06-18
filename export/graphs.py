@@ -470,7 +470,7 @@ def generate_graphs(
     run_infos = export.sweeps.get_run_infos(sweeps_dir, selected_sweep)
     run_infos = run_infos[run_infos["combination_id"].isin(_combination_ids)]
     y_max = np.max(np.array(run_infos["vector_bounds"].tolist())[:, 1])
-    y_min = np.min(np.array(run_infos["reduction"].tolist())[0]["value_floor"])
+    y_min = 1  # TODO ??
 
     data: Union[dict[str, Any], pd.DataFrame]
     # If only a single combination_id is given, this is a single graph
