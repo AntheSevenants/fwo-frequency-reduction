@@ -12,6 +12,7 @@ class Vocabulary:
     initial_sigma: int
 
     valid_range: List[int]
+    value_floor: float
 
     means: np.ndarray
 
@@ -82,6 +83,9 @@ class Vocabulary:
         batch_sigma = np.std(batch_matrix, axis=0, ddof=1)
 
         self.means[index, :] = (1 - alpha) * self.means[index, :] + alpha * batch_mean
+        # Cap at minimum value
+        self.means[index, :] = np.maximum(self.means[index, :], self.value_floor)
+
         self.sigmas[index, :] = (1 - alpha) * self.sigmas[
             index, :
         ] + alpha * batch_sigma
