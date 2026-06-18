@@ -74,7 +74,7 @@ class ReductionAgent(mesa.Agent):
             reduced_vector = vector
 
         reentrance_used = False
-        if self.model.params.reentrance_entropy_floor > 0:
+        if self.model.params.reentrance_entropy_floor > 0 and do_reduction:
             win_index, log_scores = self.get_construction_winner(reduced_vector)
             decision_entropy = scores_to_entropy(log_scores)
             self.model.tracker.register_decision_entropy_reentrance(decision_entropy)
