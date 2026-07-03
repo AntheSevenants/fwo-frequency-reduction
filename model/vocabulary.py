@@ -84,7 +84,10 @@ class Vocabulary:
 
         self.means[index, :] = (1 - alpha) * self.means[index, :] + alpha * batch_mean
         # Cap at minimum value
-        self.means[index, :] = np.maximum(self.means[index, :], self.value_floor)
+        # self.means[index, :] = np.maximum(self.means[index, :], self.value_floor)
+
+        # Round?
+        self.means[index, :] = np.round(self.means[index, :])
 
         self.sigmas[index, :] = (1 - alpha) * self.sigmas[
             index, :

@@ -92,6 +92,9 @@ class ReductionAgent(mesa.Agent):
                 reentrance_used = True
         self.model.tracker.register_reentrance_usage(int(reentrance_used))
 
+        # Round?
+        reduced_vector = np.round(reduced_vector)
+
         # Now, the other agent "hears" the construction that we just chose
         hearer_agent.receive_construction(
             reduced_vector, chosen_construction_index, do_reduction, reentrance_used
