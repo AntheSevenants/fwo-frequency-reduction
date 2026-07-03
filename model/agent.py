@@ -67,6 +67,11 @@ class ReductionAgent(mesa.Agent):
         do_reduction = (
             self.model.params.nprandom.random() < self.model.params.reduction_prob
         )
+        # Check if we're already at value floor. If not, do not reduce any further!
+        # Else we make sigma explode
+        if np.mean(vector <= self.model.params.value_floor):
+            do_reduction = False  # no further reduction please!
+
         # If so, reduce with the specified reduction method, else pass
         if do_reduction:
             reduced_vector = self.model.params.reduction.get_reduced_vector(vector)
