@@ -137,18 +137,6 @@ class ReductionAgent(mesa.Agent):
         if self.model.params.do_update:
             if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
                 pass
-
-                # This is currently broken
-                # Update category representations!
-                # for ctx_index, weight in zip(
-                #     self.model.params.construction_indices, weights
-                # ):
-                #     self.atts.vocabulary.update_distribution(
-                #         ctx_index,
-                #         heard_vector,
-                #         weight,
-                #         learning_rate=self.model.params.learning_rate,
-                #     )
             elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
                 # Update only the winner with full weights
                 self.atts.vocabulary.observe_utterance(int(win_index), heard_vector)
