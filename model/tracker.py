@@ -1,5 +1,6 @@
 import mesa
 import model.enums
+import model.success
 import numpy as np
 
 
@@ -33,7 +34,7 @@ def get_nested_attr(obj: object, attr_path: str) -> Any:
 class Tracker:
     """The tracker is the facilitates keeping track of the current model state."""
 
-    def __init__(self, model: "ReductionModel"):
+    def __init__(self, reduction_model: "ReductionModel"):
         """Initialise a Tracker by supplying the reduction model.
 
         Args:
@@ -41,28 +42,20 @@ class Tracker:
         """
 
         # This will break pickling the model forever. Good :-)
-        self.model = model
+        self.model = reduction_model
+        self.communicative_success = model.success.CommunicativeSuccess(reduction_model)
 
         self.reset()
 
     # Per step!
     def reset(self):
+        self.communicative_success.reset()
+
         self.chosen_constructions = np.zeros(self.model.params.num_constructions)
-        self.reduction_outcomes = np.zeros(
-            len(model.enums.to_dict(model.enums.CommunicationResult))
-        )
-        self.communication_results = np.zeros(
-            len(model.enums.to_dict(model.enums.CommunicationResult))
-        )
-        self.reentrance_usage = np.zeros(
-            len(model.enums.to_dict(model.enums.ReentranceUsage))
-        )
-        self.reentrance_outcomes = np.full(
-            len(model.enums.to_dict(model.enums.CommunicationResult)), np.nan
-        )
         self.confusion_matrix = np.zeros(
             (self.model.params.num_constructions, self.model.params.num_constructions)
         )
+
         self.decision_entropy = []
         self.decision_entropy_reentrance = []
         self.vector_differences = []
@@ -76,24 +69,8 @@ class Tracker:
 
         self.chosen_constructions[construction_index] += 1
 
-    def register_communication_result(self, communication_result: int):
-        self.communication_results[communication_result] += 1
-
-    def register_reduction_outcome(self, communication_result: int):
-        self.reduction_outcomes[communication_result] += 1
-
-    def register_reentrance_outcome(self, communication_result: int):
-        # Now that we are registering an outcome, set all outcomes to zero
-        if np.isnan(self.reentrance_outcomes).any():
-            self.reentrance_outcomes[:] = 0
-
-        self.reentrance_outcomes[communication_result] += 1
-
     def register_win_index(self, win_index: int, true_index: int):
         self.confusion_matrix[true_index][win_index] += 1
-
-    def register_reentrance_usage(self, reentrance_usage_index: int):
-        self.reentrance_usage[reentrance_usage_index] += 1
 
     def register_vector_difference(
         self, true_index: int, vector_difference: np.ndarray
@@ -106,23 +83,59 @@ class Tracker:
     def register_decision_entropy_reentrance(self, decision_entropy: float):
         self.decision_entropy_reentrance.append(decision_entropy)
 
+    @property
+    def __any_outcomes__(self):
+        return self.communicative_success.outcomes[
+            model.success.CommunicationContext.ANY
+        ]
+
+    @property
+    def __regular_outcomes__(self):
+        return self.communicative_success.outcomes[
+            model.success.CommunicationContext.NOT_REDUCING_NOT_REENTRANT
+        ]
+
+    @property
+    def __reduction_outcomes__(self):
+        return self.communicative_success.outcomes[
+            model.success.CommunicationContext.REDUCING
+        ]
+
+    @property
+    def __reentrance_outcomes__(self):
+        return self.communicative_success.outcomes[
+            model.success.CommunicationContext.REENTRANCE
+        ]
+
+    @property
+    def __reentrance_usage__(self):
+        return self.communicative_success.reentrance_usage
+
     def get_global(self, property_name):
         return getattr(self, property_name)
 
-    def get_global_property_percentages(self, property_name: str, enum_length: int):
+    def get_global_property_percentages(
+        self, property_name: str, aggregate: bool = False
+    ):
         # Get the value of this property
         counts = getattr(self, property_name)
 
-        # Division by zero check
-        if np.sum(counts) == 0:
-            return counts
+        if aggregate and len(counts.shape) > 1:
+            counts = np.sum(counts, axis=0)
 
         # Turn into percentages
-        shares = counts / counts.sum()
+        with np.errstate(divide="ignore", invalid="ignore"):
+            if aggregate:
+                shares_per_ctx = np.true_divide(counts, np.sum(counts))
+                shares_per_ctx = np.nan_to_num(shares_per_ctx)
+            else:
+                shares_per_ctx = np.true_divide(
+                    counts, np.sum(counts, axis=1, keepdims=True)
+                )
 
         # For now I'm only returning the shares as-is.
         # The legend is added afterwards anyway
-        return shares
+        return shares_per_ctx
 
     def get_global_property_mean(self, property_name: str):
         value = getattr(self, property_name)
@@ -200,3 +213,15 @@ class Tracker:
         agent_property_dist = self.get_property_per_agent(property_name, index=index)
 
         return np.median(agent_property_dist, axis=0)
+
+    def get_percentage_macro_mean(self, property_name: str):
+        percentage_share = self.get_global_property_percentages(property_name)
+
+        mean = np.nanmean(percentage_share, axis=0)
+        return np.nan_to_num(mean)
+
+    def get_percentage_macro_median(self, property_name: str):
+        percentage_share = self.get_global_property_percentages(property_name)
+
+        median = np.nanmedian(percentage_share, axis=0)
+        return np.nan_to_num(median)

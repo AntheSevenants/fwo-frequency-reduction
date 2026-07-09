@@ -163,6 +163,12 @@ def make_legend_label(agent_type_index: int, construction_index: int | None = No
         return agent_type_translation[agent_type_index]
 
 
+def make_legend_suffix(micro_macro_index: int) -> str:
+    legend = ["(MICRO)", "(MACRO)"]
+
+    return f" {legend[micro_macro_index]}"
+
+
 def make_legend_label_by_group_context(
     attribute_idx: int,
     construction_index: int | None = None,
@@ -382,13 +388,9 @@ def plot_value(
     multi_group_context = get_multi_group_context(aggregate_extension_x is not None)
 
     for attribute_idx, value_list in enumerate(value_lists):
-        # Line colour stays constant with conservator/innovator
         # Across parameter combinations, different colours fit better
-        line_colour = (
-            COLOURS[0]
-            if multi_group_context == MultiGroupContext.CONSERVATOR_INNOVATOR
-            else COLOURS[attribute_idx]
-        )
+        line_colour = COLOURS[attribute_idx]
+        # I'm attributing line style to micro/macro
         line_style = get_line_style_by_group_context(
             attribute_idx, num_groups, multi_group_context
         )
@@ -493,48 +495,73 @@ def plot_ratio(
     multi_group_context = get_multi_group_context(aggregate_extension_x is not None)
 
     for attribute_idx, matrix in enumerate(value_lists):
-        start_index = 0
-        if filter_dimension is not None:
-            start_index = filter_dimension
-        for i in range(start_index, matrix.shape[1]):
-            # Line colour normally indicates the construction
-            # Across parameter combinations, we only show the innovative construction
-            # so here line colour can encode a specific parameter value
-            line_colour = COLOURS[attribute_idx]
-            line_style = get_line_style_by_group_context(
-                attribute_idx, num_groups, multi_group_context
-            )
+        is_micro_macro = matrix.ndim == 3
+        start_idx = filter_dimension if filter_dimension is not None else 0
+
+        # if there is a micro macro layer first, there is another dimension
+        # inbetween time and the different properties
+
+        # Determine the range of the iteration based on dimensionality
+        # If 2D: iterate over columns (dim 1)
+        # If 3D: iterate over properties (dim 2)
+        iter_dim = 2 if is_micro_macro else 1
+        max_iter = matrix.shape[iter_dim]
+
+        for i in range(start_idx, max_iter):
+            # Determine label once per 'i' iteration
+            # TODO add micro/macro labels
             legend_label = (
                 enum_translation[i]
                 if aggregate_extension_x is None
                 else aggregate_extension_x[attribute_idx]
             )
 
-            ax.plot(
-                matrix[:, i],
-                color=line_colour,
-                linestyle=line_style,
-                label=legend_label,
-            )
-
-            # Plot the shaded area between min and max values
-            if _min_data is not None and _max_data is not None:
-                ax.fill_between(
-                    x=range(matrix.shape[0]),
-                    y1=_min_data[attribute_idx, :, i],
-                    y2=_max_data[attribute_idx, :, i],
-                    color=line_colour,
-                    alpha=0.2,
+            if not is_micro_macro:
+                # --- 2D CASE ---
+                line_style = get_line_style_by_group_context(
+                    attribute_idx, num_groups, multi_group_context
                 )
 
-            # Only print one dimension
+                ax.plot(
+                    matrix[:, i],
+                    color=COLOURS[attribute_idx],
+                    linestyle=line_style,
+                    label=legend_label,
+                )
+
+                if _min_data is not None and _max_data is not None:
+                    ax.fill_between(
+                        x=range(matrix.shape[0]),
+                        y1=_min_data[attribute_idx, :, i],
+                        y2=_max_data[attribute_idx, :, i],
+                        color=COLOURS[attribute_idx],
+                        alpha=0.2,
+                    )
+            else:
+                # --- 3D CASE ---
+                # We iterate through the secondary dimension (j)
+                for j in range(matrix.shape[1]):
+                    line_style = LINE_STYLES[j]
+
+                    ax.plot(
+                        matrix[:, j, i],
+                        color=COLOURS[attribute_idx],
+                        linestyle=line_style,
+                        label=legend_label + make_legend_suffix(j),
+                    )
+
+                    if _min_data is not None and _max_data is not None:
+                        ax.fill_between(
+                            x=range(matrix.shape[0]),
+                            y1=_min_data[attribute_idx, :, j, i],
+                            y2=_max_data[attribute_idx, :, j, i],
+                            color=COLOURS[attribute_idx],
+                            alpha=0.2,
+                        )
+
+            # If we are filtering, we only process the first valid index and move on
             if filter_dimension is not None:
                 break
-
-            # Only show the innovative form in an aggregate extension graph
-            # TODO: currently broken
-            # if multi_group_context == MultiGroupContext.AGGREGATE_EXTENSION:
-            #     break
 
     if title is not None and not disable_title:
         ax.set_title(title)

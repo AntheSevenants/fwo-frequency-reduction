@@ -211,7 +211,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "communicative_success": GraphConfig(
         reporter_name="communication_results_go",
         model_reporter=True,
-        reporter_type=model.reporters_model.ReporterType.PERCENT,
+        reporter_type=model.reporters_model.ReporterType.PERCENT_MICROMACRO,
         plot_func=visualisation.communication.plot_communication,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
@@ -223,7 +223,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "reduction_outcomes": GraphConfig(
         reporter_name="reduction_outcomes_go",
         model_reporter=True,
-        reporter_type=model.reporters_model.ReporterType.PERCENT,
+        reporter_type=model.reporters_model.ReporterType.PERCENT_MICROMACRO,
         plot_func=visualisation.communication.plot_communication,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
@@ -236,7 +236,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "reentrance_outcomes": GraphConfig(
         reporter_name="reentrance_outcomes_go",
         model_reporter=True,
-        reporter_type=model.reporters_model.ReporterType.PERCENT,
+        reporter_type=model.reporters_model.ReporterType.PERCENT_MICROMACRO,
         plot_func=visualisation.communication.plot_communication,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
@@ -249,7 +249,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
     "reentrance_usage": GraphConfig(
         reporter_name="reentrance_usage_go",
         model_reporter=True,
-        reporter_type=model.reporters_model.ReporterType.PERCENT,
+        reporter_type=model.reporters_model.ReporterType.PERCENT_MICROMACRO,
         plot_func=visualisation.communication.plot_reentrance,
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={

@@ -1,5 +1,6 @@
 import numpy as np
 import model.enums
+import model.success
 
 from dataclasses import dataclass, asdict, field
 from typing import Any, Dict, List, Callable, TYPE_CHECKING
@@ -19,7 +20,9 @@ class ModelReporter:
 # What needs to be done with the tracked data?
 class ReporterType:
     AS_IS = 0
-    PERCENT = 1
+    PERCENT_MICRO = 1
+    PERCENT_MACRO = 4
+    PERCENT_MICROMACRO = 5
     MEAN = 2
     MEDIAN = 3
 
@@ -29,23 +32,23 @@ model_reporters_base = {
         property_name="chosen_constructions", reporter_types=[ReporterType.AS_IS]
     ),
     "communication_results_go": ModelReporter(
-        property_name="communication_results",
-        reporter_types=[ReporterType.PERCENT],
-        associated_enum=model.enums.CommunicationResult,
+        property_name="__any_outcomes__",
+        reporter_types=[ReporterType.PERCENT_MICROMACRO],
+        associated_enum=model.success.CommunicationResult,
     ),
     "reduction_outcomes_go": ModelReporter(
-        property_name="reduction_outcomes",
-        reporter_types=[ReporterType.PERCENT],
-        associated_enum=model.enums.CommunicationResult,
+        property_name="__reduction_outcomes__",
+        reporter_types=[ReporterType.PERCENT_MICROMACRO],
+        associated_enum=model.success.CommunicationResult,
     ),
     "reentrance_outcomes_go": ModelReporter(
-        property_name="reentrance_outcomes",
-        reporter_types=[ReporterType.PERCENT],
-        associated_enum=model.enums.CommunicationResult,
+        property_name="__reentrance_outcomes__",
+        reporter_types=[ReporterType.PERCENT_MICROMACRO],
+        associated_enum=model.success.CommunicationResult,
     ),
     "reentrance_usage_go": ModelReporter(
-        property_name="reentrance_usage",
-        reporter_types=[ReporterType.PERCENT],
+        property_name="__reentrance_usage__",
+        reporter_types=[ReporterType.PERCENT_MICROMACRO],
         associated_enum=model.enums.ReentranceUsage,
     ),
     "decision_entropy_go": ModelReporter(
@@ -68,7 +71,10 @@ model_reporters_base = {
 # For the reporter keys
 reporter_type_translation = {
     ReporterType.AS_IS: "",
-    ReporterType.PERCENT: "_share",
+    ReporterType.PERCENT_MICRO: "_share_micro",
+    # speaking of which, ik mis de makro. rip makro
+    ReporterType.PERCENT_MACRO: "_share_macro",
+    ReporterType.PERCENT_MICROMACRO: "_share_micromacro",
     ReporterType.MEAN: "_mean",
     ReporterType.MEDIAN: "_median",
 }
@@ -99,10 +105,35 @@ def get_global_reporter_function(property_name: str):
     return reporter_function
 
 
-def get_percentage_reporter_function(property_name: str, enum_length: int):
+def get_micro_percentage_reporter_function(property_name: str):
     reporter_function: Callable[["ReductionModel"], np.ndarray] = (
         lambda model: model.tracker.get_global_property_percentages(
-            property_name, enum_length=enum_length
+            property_name, aggregate=True
+        )
+    )
+
+    return reporter_function
+
+
+def get_macro_percentage_reporter_function(property_name: str):
+    reporter_function: Callable[["ReductionModel"], np.ndarray] = (
+        lambda model: model.tracker.get_percentage_macro_mean(property_name)
+    )
+
+    return reporter_function
+
+
+def get_micromacro_percentage_reporter_function(property_name: str):
+    # first dimension = micro mean
+    # second dimension = macro mean
+    reporter_function: Callable[["ReductionModel"], np.ndarray] = (
+        lambda model: np.stack(
+            [
+                model.tracker.get_global_property_percentages(
+                    property_name, aggregate=True
+                ),
+                model.tracker.get_percentage_macro_mean(property_name),
+            ]
         )
     )
 
@@ -139,17 +170,17 @@ def get_model_reporters() -> Dict[str, Callable[["ReductionModel"], np.ndarray |
             reporter_function = lambda model: "ballekes"
             if reporter_type == ReporterType.AS_IS:
                 reporter_function = get_global_reporter_function(property_name)
-            elif reporter_type == ReporterType.PERCENT:
-                if model_reporter_config.associated_enum is None:
-                    raise ValueError(
-                        "Associated enum cannot be None for PERCENT reporter type"
-                    )
-
-                enum_length = len(
-                    model.enums.to_dict(model_reporter_config.associated_enum)
+            elif reporter_type == ReporterType.PERCENT_MICRO:
+                reporter_function = get_micro_percentage_reporter_function(
+                    property_name
                 )
-                reporter_function = get_percentage_reporter_function(
-                    property_name, enum_length
+            elif reporter_type == ReporterType.PERCENT_MACRO:
+                reporter_function = get_macro_percentage_reporter_function(
+                    property_name
+                )
+            elif reporter_type == ReporterType.PERCENT_MICROMACRO:
+                reporter_function = get_micromacro_percentage_reporter_function(
+                    property_name
                 )
             elif reporter_type == ReporterType.MEAN:
                 reporter_function = get_mean_reporter_function(property_name)

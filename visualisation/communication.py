@@ -4,6 +4,7 @@ import matplotlib.figure
 
 import model.model
 import model.enums
+import model.success
 import model.entropy
 import visualisation.core
 
@@ -35,7 +36,7 @@ def plot_communication(
     return visualisation.core.plot_ratio(
         data,
         attributes,
-        model.enums.to_dict(model.enums.CommunicationResult),
+        model.enums.to_dict(model.success.CommunicationResult),
         title=title,
         **kwargs,
     )

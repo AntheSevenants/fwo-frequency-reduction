@@ -5,6 +5,7 @@ import model.enums
 import model.entropy
 
 from typing import Self, TYPE_CHECKING, Tuple
+from model.success import CommunicationContext
 
 if TYPE_CHECKING:
     from model.model import ReductionModel
@@ -90,7 +91,9 @@ class ReductionAgent(mesa.Agent):
                 reduced_vector = vector
                 do_reduction = False
                 reentrance_used = True
-        self.model.tracker.register_reentrance_usage(int(reentrance_used))
+        self.model.tracker.communicative_success.register_reentrance_usage(
+            int(reentrance_used), chosen_construction_index
+        )
 
         # Round?
         reduced_vector = np.round(reduced_vector)
@@ -154,13 +157,23 @@ class ReductionAgent(mesa.Agent):
         # TODO: add uncertainty step if needed
 
         communication_successful = true_construction_index == win_index
-        self.model.tracker.register_communication_result(int(communication_successful))
+        self.model.tracker.communicative_success.register_communication_outcome(
+            int(communication_successful),
+            true_construction_index,
+            CommunicationContext.ANY,
+        )
         self.model.tracker.register_win_index(int(win_index), true_construction_index)
 
         if is_reduced:
-            self.model.tracker.register_reduction_outcome(int(communication_successful))
+            self.model.tracker.communicative_success.register_communication_outcome(
+                int(communication_successful),
+                true_construction_index,
+                CommunicationContext.REDUCING,
+            )
 
         if reentrance_used:
-            self.model.tracker.register_reentrance_outcome(
-                int(communication_successful)
+            self.model.tracker.communicative_success.register_communication_outcome(
+                int(communication_successful),
+                true_construction_index,
+                CommunicationContext.REENTRANCE,
             )
