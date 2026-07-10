@@ -35,6 +35,7 @@ class Parameters:
     num_constructions: int = 100
     num_dims: int = 10
     batch_size: int = 20
+    priors_enabled: bool = True
 
     value_floor: int = 5
     initial_sigma: int = 5
@@ -86,6 +87,7 @@ class Parameters:
             initial_sigma=self.initial_sigma,
             means=vectors,
             priors=self.priors.tolist(),
+            priors_enabled=self.priors_enabled,
             display_names=display_names,
             # value floor = minimum legal value for vector
             # value max = maximum saved value

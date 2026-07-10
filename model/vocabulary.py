@@ -17,6 +17,7 @@ class Vocabulary:
     means: np.ndarray
 
     priors: List[float]
+    priors_enabled: bool
 
     # Names to use for the words
     display_names: List[str]
@@ -61,7 +62,10 @@ class Vocabulary:
     def calculate_log_score(self, input_vector: np.ndarray) -> np.ndarray:
         log_likelihoods = self.calculate_log_likelihood(input_vector)
 
-        return self.log_priors + log_likelihoods
+        if self.priors_enabled:
+            return self.log_priors + log_likelihoods
+        else:
+            return log_likelihoods
 
     def observe_utterance(self, word_index: int, vector: np.ndarray) -> None:
         self.batch_memory[word_index].append(vector)
