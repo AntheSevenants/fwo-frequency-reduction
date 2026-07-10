@@ -158,11 +158,11 @@ class AggregateSettings:
         )
         self.parameter_values = [
             str(item)
-            for item in sorted(
-                run_infos[run_infos["combination_id"].isin(combination_ids)][parameter]
-                .unique()
-                .tolist()
-            )
+            for item in run_infos[run_infos["combination_id"].isin(combination_ids)][
+                parameter
+            ]
+            .unique()
+            .tolist()
         ]
 
         self.combination_data = (
@@ -480,12 +480,14 @@ def generate_graphs(
         data = export.combinations.get_combination_data(
             sweeps_dir, selected_sweep, combination_id
         )
+    # Single run graph
     elif (
         isinstance(combination_ids, int)
         and aggregate is None
         and single_run is not None
     ):
         data = export.runs.get_run_data(sweeps_dir, selected_sweep, single_run)
+    # Aggregate graph
     elif isinstance(combination_ids, list) and aggregate is not None:
         # Get the combination infos dataframe
         combination_infos = export.sweeps.get_combination_infos(
