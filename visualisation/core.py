@@ -442,6 +442,7 @@ def plot_ratio(
     attributes: Union[str, List[str]],
     enum_translation: Dict[int, str],
     filter_dimension: int | None = None,
+    filter_matrix_dimension: int | None = None,
     ylim: List[float] = [0, 1],
     x_scale_factor: int = 1,
     ax: Optional[matplotlib.axes.Axes] = None,
@@ -460,6 +461,7 @@ def plot_ratio(
         attributes (Union[str, List[str]]): The names of the series to model. Always supply, even if input data is not a model, so dimensionality of the data can be assessed.
         enum_translation (Dict[int, str]): Provide the translation for the dimensions in the array.
         filter_dimension (int | None): Only plot one specific dimension of the array. Defaults to None.
+        filter_matrix_dimension (int | None): Only plot one specific dimension of the inner matrix. Defaults to None.
         ylim (List[float], optional): The expected range of values, will be the y axis. Defaults to [0, 1].
         x_scale_factor (int, optional): The factor to scale the x axis ticks by. Defaults to 1.
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
@@ -509,7 +511,6 @@ def plot_ratio(
 
         for i in range(start_idx, max_iter):
             # Determine label once per 'i' iteration
-            # TODO add micro/macro labels
             legend_label = (
                 enum_translation[i]
                 if aggregate_extension_x is None
@@ -538,9 +539,15 @@ def plot_ratio(
                         alpha=0.2,
                     )
             else:
+                start_idx_j = (
+                    filter_matrix_dimension
+                    if filter_matrix_dimension is not None
+                    else 0
+                )
+
                 # --- 3D CASE ---
                 # We iterate through the secondary dimension (j)
-                for j in range(matrix.shape[1]):
+                for j in range(start_idx_j, matrix.shape[1]):
                     line_style = LINE_STYLES[j]
 
                     ax.plot(
@@ -558,6 +565,10 @@ def plot_ratio(
                             color=COLOURS[attribute_idx],
                             alpha=0.2,
                         )
+
+                    # If we are filtering, we only process the first valid index and move on
+                    if filter_matrix_dimension is not None:
+                        break
 
             # If we are filtering, we only process the first valid index and move on
             if filter_dimension is not None:

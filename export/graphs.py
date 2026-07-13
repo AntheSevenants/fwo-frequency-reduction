@@ -216,6 +216,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
             "filter_dimension": 1,
+            "filter_matrix_dimension": 0,
         },
         interactive_args=["step"],
         aggregate_extension=True,
@@ -228,6 +229,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
             "filter_dimension": 1,
+            "filter_matrix_dimension": 0,
             "title_override": "Communication outcome when reducing, across agents",
         },
         interactive_args=["step"],
@@ -241,6 +243,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
             "filter_dimension": 1,
+            "filter_matrix_dimension": 0,
             "title_override": "Communication outcome after re-entrance used, across agents",
         },
         interactive_args=["step"],
@@ -254,6 +257,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         common_args=["x_scale_factor", "min_data", "max_data"],
         extra_args={
             "filter_dimension": 1,
+            "filter_matrix_dimension": 0,
         },
         interactive_args=["step"],
         aggregate_extension=True,
