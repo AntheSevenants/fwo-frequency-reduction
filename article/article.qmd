@@ -498,8 +498,9 @@ $$
 &P: \text{The size of the initial pool} \\
 \\
 &\textbf{Output:} \\
-&\text{A set of } n \text{ vectors that maximise mutual distinctiveness} \\
+&\text{Set } Selected \text{ of } V \text{ vectors that maximise mutual distinctiveness} \\
 \\
+&\textbf{Algorithm:} \\
 &Pool \leftarrow \text{unique}(\text{random integers in } [v_{\min}, v_{\max}] \text{ with shape } (P, D)) \\
 &Selected \leftarrow \emptyset \\
 &v_{start} \leftarrow \text{randomly select vector from } Pool \\
@@ -508,7 +509,7 @@ $$
 &Distances \leftarrow \{ \text{dist}^2(p, v_{start}) \mid p \in Pool \} \\
 \\
 &\textbf{for } i = 1 \textbf{ to } V - 1 \textbf{ do} \\
-&\hspace{1cm} v_{next} \leftarrow \text{the vector in } Pool \text{ that maximizes } Distances \\
+&\hspace{1cm} v_{next} \leftarrow \text{the vector in } Pool \text{ that maximises } Distances \\
 &\hspace{1cm} Selected \leftarrow Selected \cup \{v_{next}\} \\
 &\hspace{1cm} Pool \leftarrow Pool \setminus \{v_{next}\} \\
 &\hspace{1cm} Distances \leftarrow Distances \setminus \{ \text{the distance corresponding to } v_{next} \} \\
