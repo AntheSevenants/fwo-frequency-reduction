@@ -482,7 +482,44 @@ Furthermore, our model currently does not account for the co-existence of reduce
 
 Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study [i.e. like @kirby_cumulative_2008]. In this way, it can be investigated if and how the simulation study might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
 
-## Appendix {#sec-appendix-metrics}
+## Appendix
+
+### Vector generation {#sec-appendix-vector}
+
+The vectors used in our computer model are generated in such a way that they are maximally distinct from each other. The way we ensure both randomness and distinctness is as follows: first, we generate a matrix of random numbers of size $P x D$, with $D$ the required number of dimensions and $P$ the pool size. The pool size is typically set to a very large number (50,000), which means we have a large pool of distinctive vectors to sample from. To sample the $V$ constructions we need for the simulations, we first pick a random vector to start with and compute its squared distance to the rest of the pool. We choose the vector that has the highest squared distance from our starting vector -- this vector is the furthest removed from our starting vector -- and add it to our sample. Next, we check whether the vector we just added is closer to the rest of the pool than our starting vector. If so, we take it as the starting point for choosing the next furthest vector in the pool, else we retain our starting vector. We then repeat the sampling process until all $V$ constructions have been sampled. A pseudocode rendition is given in @lst-vector-generation.
+
+::: {#lst-vector-generation}
+$$
+\begin{aligned}
+&\textbf{Input:} \\
+&V: \text{The number of vectors to generate} \\
+&D: \text{The dimensionality of the vectors} \\
+&v_{\min}, v_{\max}: \text{The inclusive integer range for vector elements} \\
+&P: \text{The size of the initial pool} \\
+\\
+&\textbf{Output:} \\
+&\text{A set of } n \text{ vectors that maximise mutual distinctiveness} \\
+\\
+&Pool \leftarrow \text{unique}(\text{random integers in } [v_{\min}, v_{\max}] \text{ with shape } (P, D)) \\
+&Selected \leftarrow \emptyset \\
+&v_{start} \leftarrow \text{randomly select vector from } Pool \\
+&Selected \leftarrow Selected \cup \{v_{start}\} \\
+&Pool \leftarrow Pool \setminus \{v_{start}\} \\
+&Distances \leftarrow \{ \text{dist}^2(p, v_{start}) \mid p \in Pool \} \\
+\\
+&\textbf{for } i = 1 \textbf{ to } V - 1 \textbf{ do} \\
+&\hspace{1cm} v_{next} \leftarrow \text{the vector in } Pool \text{ that maximizes } Distances \\
+&\hspace{1cm} Selected \leftarrow Selected \cup \{v_{next}\} \\
+&\hspace{1cm} Pool \leftarrow Pool \setminus \{v_{next}\} \\
+&\hspace{1cm} Distances \leftarrow Distances \setminus \{ \text{the distance corresponding to } v_{next} \} \\
+&\hspace{1cm} Distances_{new} \leftarrow \{ \text{dist}^2(p, v_{next}) \mid p \in Pool \} \\
+&\hspace{1cm} Distances \leftarrow \min(Distances, Distances_{new}) \\
+&\textbf{end for}
+\end{aligned}
+$$
+:::
+
+### Metrics {#sec-appendix-metrics}
 
 In order to keep track of the simulation course, we computed the following metrics at each step:
 
