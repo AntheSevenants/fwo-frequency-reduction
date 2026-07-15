@@ -520,6 +520,10 @@ $$
 $$
 :::
 
+We mentioned before that all vector values are initialised between a specific range, in the case of our simulations a range between 70 and 100. This range is arbitrary, but motivated. First of all, it is clear that all numbers in a vector cannot be the *same* number; the contrasts between the values in the vector dimensions guarantee the unique acoustic identity of a construction. A range from 70 to 100 guarantees a range of 30 for variability between vectors and among dimensions within vectors, guaranteeing ample bandwidth for variation[^bandwith-explanation]. Of course, it could have been possible to have our value initialisation take place between 60 and 100, 50 and 70, or any other combination of values in our scale of 0 to 100. Recall, however, that our model aims to simulate how "full", unreduced forms can reduce incrementally to more sparse representations. This implies that there should be room for the representations to reduce towards a less complex representation -- so towards zero. So, in summary, our choice is dictated by a need for variation among vector values and the possibility for vectors to still be able to reduce.
+
+[^bandwith-explanation]: More specifically, we need to avoid the situation in which two vectors are identical except for a value difference of one in just one dimension. To guarantee that two vectors are "different enough", we need ample room for variation. Hence our choice for a range of 30.
+
 ### Metrics {#sec-appendix-metrics}
 
 In order to keep track of the simulation course, we computed the following metrics at each step:
