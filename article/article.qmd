@@ -192,7 +192,7 @@ Note that we deliberately left out any feedback mechanism from the language game
 
 ## Evaluation
 
-In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether the minimal assumptions from @sec-underspecification-filling lead to the occurrence of the reducing effect as defined by @bybee_usage_2006.
+In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether a simulation model leads the reducing effect as defined by @bybee_usage_2006.
 
 ### Expected behaviour {#sec-expected-behaviour}
 
@@ -202,9 +202,7 @@ We will consider a set of preconditions to be conducive to the reducing effect i
 
 If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour sufficiently similar to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect. 
 
-If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect.
-
-In order to check whether a specification of assumptions is also the minimal specification, we will apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumably the most likely one. Therefore, we will disable each precondition iteratively and check whether the simpler conditions can also produce the expected reducing effect behaviour. If a simpler specification produces equivalent behaviour, we have found a new minimal specification. If no simpler specification produces equivalent behaviour, our initial specification was already the minimal one.
+If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect. To check this, we apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumably the most likely one. We do this by incrementally adding assumptions. We start by drawing the assumed minimal assumptions from the literature, and will build upon these if it proves needed. In this way, we build towards the minimum viable set of assumptions.
 
 ### Parameters {#sec-parameters}
 
