@@ -230,19 +230,11 @@ In the following sections, we will present the results of several different para
 
 In this section, we will go over the results produced by the model operationalised according to the requirements detailed in the previous sections. More specifically, we will check if the model behaviour adheres to the expected behaviour defined in @sec-expected-behaviour.
 
-### Base model {#sec-base-model}
+### Testing the importance of frequency priors {#sec-priors-no-priors-model}
 
-First, we tested the simulation model with all minimal assumptions from @sec-underspecification-filling. As a reminder, this minimal specification is as follows:
+In this first section, we test whether the inclusion of category priors suffices to combat the expected ambiguity during the reduction of acoustic representations. We saw in @sec-introduction-frequency that, when challenging conditions arise, linguistic knowledge is said to become important during parsing by the hearer. We will test this by comparing the results of two types of models: in one model, we add the prior of the construction to the predicted score for each construction, in the other, we do not (see @sec-language-game). We then compare their respective behaviour of the simulation according to the rules defined in @sec-expected-behaviour. The formulas at the basis of all visualisations can be found in the Appendix (@sec-appendix-metrics).
 
-1. Zipfian frequency difference between constructions
-2. No association between frequency and the speaker's inclination to reduce
-3. No ambiguity avoidance mechanism
-
-We will discuss the behaviour of the simulation by going over the "checklist" defined in @sec-expected-behaviour, viz.: 
-
-{{< include snippets/expected-behaviour-conditions.qmd >}}
-
-The formulas at the basis of all visualisations can be found in the Appendix.
+TODO AANVULLEN
 
 With respect to (1), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph).
 
