@@ -208,7 +208,7 @@ If any specification of assumptions produces behaviour which fully falls within 
 
 ### Parameters {#sec-parameters}
 
-In this section, we will run through the different parameters the model has and what values we chose for them. Parameters control specific aspects of our model, like how many agents inhabit our virtual world or how likely reduction is. An important limitation to our parameter settings is computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts and large constructions counts all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we had to keep number of agents and constructions modest. This is standard practice in agent-based simulation [cf. @dale_understanding_2012, 5]. Review @tbl-parameters for an overview of our choices.
+In this section, we will run through the different parameters the model has and what values we chose for them. Parameters control specific aspects of our model, like how many agents inhabit our virtual world or how likely reduction is. An important limitation to our parameter settings is computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts and large constructions counts all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we had to keep number of agents and constructions modest. This is standard practice in agent-based simulation [cf. @dale_understanding_2012, 5]. Review @tbl-parameters for an overview of our choices. Our parameter value choices for the vectors in our model are explained in @sec-appendix-vector.
 
 | Parameter | Explanation | Value |
 | --- | --- | --- |
@@ -216,6 +216,7 @@ In this section, we will run through the different parameters the model has and 
 | $V$ | Number of constructions | 100 |
 | $D$ | Number of vector dimensions | 10 |
 | $P$ | Number of constructions from which we sample | 50,000 |
+| $v_{\min}, v_{\max}$ | The inclusive value range in between which vectors are initialised | 70, 100 |
 | $R$ | Threshold floor value. If the mean of all values in a vector falls below this floor value, no reduction takes place. | 5 |
 | $\eta$ | Homogenisation factor during reduction | 0.1 |
 | $\lambda$ | Decay factor during reduction | 0.95 |
@@ -502,6 +503,8 @@ $$
 :::
 
 We mentioned before that all vector values are initialised between a specific range, in the case of our simulations a range between 70 and 100. This range is arbitrary, but motivated. First of all, it is clear that all numbers in a vector cannot be the *same* number; the contrasts between the values in the vector dimensions guarantee the unique acoustic identity of a construction. A range from 70 to 100 guarantees a range of 30 for variability between vectors and among dimensions within vectors, guaranteeing ample bandwidth for variation[^bandwith-explanation]. Of course, it could have been possible to have our value initialisation take place between 60 and 100, 50 and 70, or any other combination of values in our scale of 0 to 100. Recall, however, that our model aims to simulate how "full", unreduced forms can reduce incrementally to more sparse representations. This implies that there should be room for the representations to reduce towards a less complex representation -- so towards zero. So, in summary, our choice is dictated by a need for variation among vector values and the possibility for vectors to still be able to reduce.
+
+Similar logic applies to our floor $R$ with value 5. Vectors can only be reduced to a mean value of 5 because this generally is the lowest value $\mu$ can have without the associated normal distribution underflowing below zero. Of course, it would be possible to set this value to 10 or even 50. We picked the lowest applicable value, leaving plenty room for constructions to reduce from their full representations.
 
 [^bandwith-explanation]: More specifically, we need to avoid the situation in which two vectors are identical except for a value difference of one in just one dimension. To guarantee that two vectors are "different enough", we need ample room for variation. Hence our choice for a range of 30.
 
