@@ -188,7 +188,7 @@ $$ {#eq-zipfian_distribution}
 
 [^outlier-infuence]: More specifically, by using batch memory, we prevent one-off outlier values from affecting $\mu$ and $\sigma$ directly. Cognitively, using batch memory can be seen as hearers updating their internal representations gradually, instead of shifting them dramatically when a new, perhaps strange form is encountered.
 
-![A schematic overview of the language game played by the speaker and hearer.](tikz/language_game.svg){#fig-model_design_language_game}
+![A schematic overview of the language game played by the speaker and hearer.](tikz/language_game_bayes.svg){#fig-model_design_language_game}
 
 Note that we deliberately left out any feedback mechanism from the language game, as we are looking for the absolute minimal specification that is conducive to the reducing effect. Since including feedback implies adding an extra assumption, our initial aim is to attempt to model the reducing effect without a feedback mechanism. In addition, nowhere in our language game is there a built-in assumption which dictates that frequent constructions should reduce faster and to a larger extent than less frequent constructions. Rather, this is the emergent behaviour that needs to occur naturally out of the agents' interactions.
 
