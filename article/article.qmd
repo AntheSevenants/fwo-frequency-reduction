@@ -216,7 +216,7 @@ In this section, we will run through the different parameters the model has and 
 | $V$ | Number of constructions | 100 |
 | $D$ | Number of vector dimensions | 10 |
 | $P$ | Number of constructions from which we sample | 50,000 |
-| $v_{\min}, v_{\max}$ | The inclusive value range in between which vectors are initialised | 70, 100 |
+| $v_{\min}, v_{\max}$ | The inclusive value range in between which vector values are initialised | 70, 100 |
 | $R$ | Threshold floor value. If the mean of all values in a vector falls below this floor value, no reduction takes place. | 5 |
 | $\eta$ | Homogenisation factor during reduction | 0.1 |
 | $\lambda$ | Decay factor during reduction | 0.95 |
