@@ -66,10 +66,9 @@ execute:
 
 ## Introduction {#sec-introduction}
 
-One of the prime usage-based mechanisms of language change is the reducing effect [@bybee_usage_2006]. The reducing effect states that, as constructions are used often, their phonetic representations become more sparse.
-This entails that high frequency constructions reduce at a faster rate [@bybee_phonology_2003], and as a result experience more severe reduction compared to low-frequency constructions. 
+One of the prime usage-based mechanisms of language change is the reducing effect [@bybee_usage_2006]. The reducing effect states that high-frequency constructions tend to be more phonetically reduced than low-frequency constructions, the result of so-called "neuromotor automation" [@bybee_frequency_2007]: as speakers continually repeat a construction, the articulatory gestures of that construction become more and more condensed. Since high-frequency constructions are used more, this automation process has a higher opportunity of occurring than in low-frequency constructions.
 
-The process of reduction is assumed to be the result of two adjacent processes: temporal reduction and substantive reduction [@mowrey_articulatory_1987]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one (i.e. assimilation or cluster simplification), while substantive reduction entails the reduction in magnitude of an articulatory gesture (i.e. vowel reduction to schwa). The combined effect of these two processes is then known under the more general term "reduction". We assume both these effects when we further use the term "reduction".
+The neuromotor automation process manifests itself in two ways: temporal reduction and substantive reduction [@mowrey_articulatory_1987]. Temporal reduction entails the compression of several articulatory gestures[^gesture] into one (i.e. assimilation or cluster simplification), while substantive reduction entails the reduction in magnitude of an articulatory gesture (i.e. vowel reduction to schwa). The combined effect of these two processes is then known under the more general term "reduction". We assume both these effects when we further use the term "reduction".
 
 [^gesture]: An articulatory gesture can be defined as a movement of an articulator with an observable effect [@browman_articulatory_2009].
 
@@ -79,31 +78,15 @@ The existence of the reducing effect has been demonstrated through several studi
 
 In addition, several other synchronic factors have been found to influence the rate of reduction. In her overview of reduction, @ernestus_acoustic_2014 mentions the phenomenon to be influenced by phonological context (e.g. assimilation to ease the overlap of articulatory gestures), speech rate (reducing the number of gestures to be able to speak faster) and predictability [reducing the number of gestures because they are predictable from the context, independent from frequency, @bell_predictability_2009]. While we agree that these factors are also important in "on-line" reduction, in this study, we focus frequency of reduction in a wider diachronic context.
 
-### Unknowns in the cause of the reducing effect {#sec-underspecification}
+### Context against ambiguity and the role of frequency {#sec-introduction-frequency}
 
-While we know from corpus studies that reduction patterns can indeed be found in speech data, what we cannot glean from corpora is the causality of these patterns. As a corpus only shows the resulting *effect* of language use on a large scale, we cannot see the decisions on the level of the individual that caused there to be a reducing effect in the first place. In this section, we will discuss three unknowns in reduction theory, the specifics of which have remained opaque in corpus studies.
+One important question in reduction theory is how hearers deal with the ambiguity that naturally comes with reduced speech. As constructions reduce, they take up increasingly sparse phonetic representations, which can hinder recognition. Usually, however, hearers make use of rich contextual clues to recover the intended mapping. @mattys_speech_2012 [959-960] argue that contextual support is thus much more important in challenging conditions, like for example reduced speech: as the acoustic signal becomes harder to parse, hearers will have to rely more on their knowledge about language to corrently interpret what the speaker intended.
 
-The first unknown pertains to the frequency difference between the different constructions that undergo reduction. We know from Bybee's theory that high-frequency constructions reduce differently from low-frequency constructions [@bybee_phonology_2003, 11]. This implies that a frequency difference between constructions is necessary, but it is unspecified how that frequency difference needs to be realised. This leads to our first research question:
+One example of contextual knowledge is frequency. Many "units" in language (constructions, sounds ...) are distributed according to Zipf's Law [@zipf_psycho-biology_1965], a power law in which rank is inversely related to frequency. This means that the first item in a Zipfian distribution is twice as frequent as the second item, three times as frequent as the third item, and so on. In practice, this leads to an extremely unbalanced distribution with few highly frequent items, and a long tail of infrequent items. This uneven distribution is also called an "A-curve" by @kretzschmar_language_2015.
 
-1. What frequency distribution do constructions in language have to follow for the reducing effect to arise as expected?[^expected]
+In theory, hearers should thus be able to rely on this skewed frequency information when choosing an interpretation in ambiguous circumstances. Of course, there are many more contextual clues than frequency alone, but frequency can be regarded as one of the most constant contextual factors; unlike other contextual factors, frequency is inherent to language [which is apparent in processes like entrenchment, @langacker_foundations_1987, 59; also grammaticalisation, @hopper_grammaticalization_2003]. Additionally, frequency is regarded as a strong influential factor in decision making in general [@hasher_automatic_1984].
 
-The second unknown revolves around a built-in link between frequency and the speaker's inclination to reduce. @bybee_phonology_2003 [11] states:
-
-> If sound changes are the result of phonetic processes that apply in real time as words are used, then those words that are used more often have more opportunity to be affected by phonetic processes.
-
-The expectation by Bybee is that frequency in itself should be enough for reduction to arise organically. This implies there is no need for a built-in link that causes speakers to reduce more in high-frequency constructions than in low-frequency constructions. As this premise has not been tested, it is more an assumption rather than a finding. Therefore, our second research question is as follows:
-
-2. Does there need to be a built-in link between frequency and the speaker's inclination to reduce for the reducing effect to arise as expected?
-
-Finally, existing theory on reduction also does not interact with the prospect of possible ambiguity. Reduction is, in essence, the act of expressing the same content in a narrower acoustic representation. Gradually, however, that also means that these representations will start looking more alike. It is currently unclear whether that implies some ambiguity avoidance mechanism is required to make sure that communicative confusion is avoided. Our final research question, then, is as follows:
-
-3. Does there need to be an ambiguity avoidance mechanism for the reducing effect to arise as expected?
-
-[^expected]: For the reducing effect to arise "as expected", we mean that it should display the same properties as those we find in corpus data. Please see @sec-expected-behaviour for an explicit definition of expected reduction behaviour.
-
-It is impossible to change reality in order to trace any cascading effects in the long term in corpus data. To find the requirements of the reducing effect in spite of this, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules [@steels_modeling_2011; @dekker_conversational_2024]. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reducing effect. Our goal in this article is to investigate which specification of assumptions is needed for the language in our computer model to exhibit the reducing effect, displaying the same properties as those found in corpus data. Because we work with computer simulations, we can assume several outlooks on reality and the reducing effect, and try several assumptions in order to find the minimal requirements needed for the reducing effect to occur.
-
-While the real world is far messier and noisier than the idealised world represented in our simulations, simulation results can nevertheless "suggest that such underlying principles may operate in the real world as well" [@stanford_revisiting_2013, 122]. In our specific case, a simulation might show that typical reducing effect behaviour does not arise out of the preconditions that are presupposed in the literature, or that additional preconditions are required. Such outcomes can be theoretically interesting, since they make the various aspects of reducing effect theory more explicit, and since they can function as a stepping stone for further experimental or empirical research.
+While we know that contextual factors can aid recognition, it is difficult to assess to what extent. In addition, it is unclear whether frequency alone is enough to avoid ambiguity-related communication difficulties. Since frequency sensitivity is an automatic direct and indirect process in humans [@jonides_estimating_1987] and therefore cannot be easily sidestepped, we turn to computer simulations. Computer simulations allow one to virtualise reality into a model in which virtual language users ("agents") communicate with each other on the basis of simple, local rules [@steels_modeling_2011; @dekker_conversational_2024]. The idea is that the interplay of their interactions leads to emergent linguistic behaviour, which in our case is the reducing effect. Our goal in this article is to investigate which specification of assumptions is needed for the language in our computer model to exhibit the reducing effect, displaying the same properties as those found in corpus data, without communicative confusion among agents. Because we work with computer simulations, we can assume several outlooks on reality and the reducing effect, and try several assumptions in order to find the minimal requirements needed for the reducing effect to occur. We start with the minimal assumptions inferred from the literature, and will build upon these if it proves needed. Such outcomes can be theoretically interesting, since they make the various aspects of reducing effect theory more explicit, and since they can function as a stepping stone for further experimental or empirical research. While the real world is far messier and noisier than the idealised world represented in our simulations, simulation results can nevertheless "suggest that such underlying principles may operate in the real world as well" [@stanford_revisiting_2013, 122].
 
 ## Model design
 
@@ -113,9 +96,15 @@ In this section, we will first discuss the core architecture of the simulation. 
 
 ### Formalisation of speech {#sec-speech-formalisation}
 
-For our reducing effect simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Since this model pertains to oral communication, having vector representations comparable to those found in the speech recognition field is especially interesting given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [@kong_frequency_2019]. Reduction on such levels cannot be encoded in a typical written form, but they can be using vectors if we assume that the vectors encode phonetic information on all levels; the vector dimensions can be thought of as representing different acoustic frequency ranges, with the vector values representing the energy in those ranges.
+For our reducing effect simulation, we made the decision to model speech using vector representations. Such vector representations are popular in the field of machine learning, both to represent meaning [@mikolov_efficient_2013] and acoustic information [@baevski_wav2vec_2020]. Our vector representations are formalised abstractions of an acoustic signal and are comparable to the sequences of "frames" found in speech recognition applications, i.e. short snapshots of the acoustic spectrum that are transformed to account for human hearing ["Mel scale", @pedersen_mel_1965]. To keep our architecture as straightforward as possible, we use a single vector representations to represent the acoustic features associated with a construction.
 
-For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times D$, with $V$ being the number of constructions[^ctx] in the vocabulary of the agents and $D$ being the number of dimensions. The values of the vectors are randomly generated natural numbers between 70 and 100. The vectors are generated in such a way that, at the starting point of the simulations, they sit far enough apart not to be confused with each other. Of course, once the vectors start reducing, this will change. An example of the vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples. Note that the representations in agents' memories will have additional noise added to these vectors (see @sec-agent-memory).
+Our vector representations are constrained in several ways that are unlike representations of, for example, meaning. Firstly, the values in our vectors can only be positive. This constraint stems from the acoustic nature of our representations: we intend our vectors to encode the presence of acoustic energy, and "negative presence" does not apply in this context. The minimum theoretical value in any of our vectors is, therefore, zero (no energy). Semantic vectors, by comparison, can have negative values, since there is no straightforward explanation of what the axes in a semantic vector actually represent. As such, they are not bound to similar constraints. In addition, we chose to cap the maximum value in our acoustic vectors at 100. Other maximum values at other scales are possible, but we chose this value specifically because it is easy to interpret.
+
+Our representations are also similar to semantic vectors in several ways. Just like semantic vectors, our acoustic vectors are distributed representations, i.e. representations consisting of multiple dimensions, while other models of sound change often use atomic values to represent sounds across just one axis [e.g. @stanford_revisiting_2013; @todd_word_2019]. Constructions are thus represented by unique combinations of numbers across several dimensions, rather than just a single numbers. Though there is no intrinsic sequentiality to the dimensions in the vectors, they do determine vector identity itself: $\begin{bmatrix} 58 & 96 & 34 \end{bmatrix}$ is a different vector from $\begin{bmatrix} 34 & 96 & 58 \end{bmatrix}$, even though they have the same total energy. This would not be possible using a single number. It is clear that the acoustic identity of a construction becomes much simpler once the contrasts between different dimensions disappear: $\begin{bmatrix} 50 & 50 & 50 \end{bmatrix}$ is a much less complex representation than $\begin{bmatrix} 58 & 96 & 34 \end{bmatrix}$. When two vectors have similar values across the same dimensions, they are assumed to sound similar to one another. 
+
+Using vector representations over characters representations to represent the acoustic forms associated with constructions is worthwile given the fact that reduction can also happen on a tonal level, e.g. in Mandarin [@kong_frequency_2019]. Such distinctions can be assumed to be encoded across our distributed representations, along with other sub-phonemic information that would be hard to encode using characters alone. 
+
+For the basis of our vectors, we made the deliberate decision not to use any data from actual natural languages, since we wanted our model to be maximally language agnostic. Instead, we opted to use randomly generated speech representations, generating a matrix of $V \times D$, with $V$ being the number of constructions[^ctx] in the vocabulary of the agents and $D$ being the number of dimensions. The values of the vectors are randomly generated natural numbers between 70 and 100. The vectors are generated in such a way that, at the starting point of the simulations, their mutual distances apart are as similar as possible. Of course, once the vectors start reducing, this will change. An example of the vector representations for the constructions in our model is given in @tbl-model_design_speech_vector_examples. The exact algorithm used to generate the vectors is clarified in @sec-appendix-todo, along with our reasoning for generating only values between a specific interval.
 
 [^ctx]: By 'constructions', we mean pairings of meaning and forms learnt by language users [@goldberg_constructions_2006, 6], as these can be thought of as the most general units within usage-based linguistics that are eligible for undergoing reduction. 
 
@@ -132,97 +121,82 @@ Note also that, since we are interested in the reduction of the form of construc
 
 ### Agent memory {#sec-agent-memory}
 
-The agents in our model have a memory which can store multiple realisations for each construction, a so-called exemplar memory [from exemplar theory, @bybee_usage_2006]. This allows for variation among those constructions, e.g. different realisations of *yes*: *yeah*, *yep*, *yup*, *ye* ... The same realisation can be stored in the exemplar memory multiple times as a result of more frequent exposure. Therefore, the typical realisation of a specific construction can naturally evolve as new realisations are added, i.e. reduced realisations.
+The agents in our model do not store encountered realisations in memory *as-is*. Rather, we model [exemplar theory @bybee_usage_2006] through a series of normal distributions, inspired by the Bayesian robust speech perception model by @kleinschmidt_robust_2015. Each agent stores for each construction and each vector dimension a normal distribution, encoded as parameters $\mu$ and $\sigma$[^population]. The variation that these distributions allow for can encode, for example, the different realisations of *yes*: *yeah*, *yep*, *yup*, *ye* ... At the model initialisation stage, we take the vector representations generated for each construction and use those values as the initial values for $\mu$. $\sigma$ is initialised at value 5 for each dimension in each vector representation.
 
-There are two possible implementations for agent memory. The first possibility is an implementation where memory slots are not tied to specific constructions. All constructions compete for the same memory slots, which means that the number of exemplars per construction can evolve during the course of the simulation. The second implementation is an implementation where memory slots are pre-allocated to specific constructions. This makes the number of exemplars for each construction fixed for an entire simulation run. Theoretically, it seems best to choose the first implementation: usage-based theories of language generally take a very broad view on memory, with memory conceptualised as a large space that is shared by all sounds or constructions at once [i.e. @pierrehumbert_exemplar_2001]. As exemplar memory is said to reflect the observed speaking frequencies ["probability matching" in @labov_principles_1994], distributions between constructions will arise naturally, so there should be no need to predetermine which how many exemplars each construction can have in memory. Unfortunately, it is computationally intractable to equip agents with memories tallying hundreds of thousands of exemplars, which forces us to use a modest memory size. The issue with this unavoidable memory size concession is that in low memory contexts, new variants of high frequency constructions push out exemplars of low frequency constructions too easily, leading to those low-frequency constructions developing very few, unreliable representations. To guarantee the cognitive plausibility of our model, we therefore chose implementation two. Even though we use only a limited memory size, low-frequency constructions are still guaranteed a share of the total memory size in this implementation.
-
-In our model, each agent has a memory of $L$ exemplars. This memory can be thought of as a matrix of size $L \times D$. The $L$ available slots in memory are pre-assigned to specific constructions according to a frequency distribution, with a lower limit of $F$. @fig-memory_distribution shows an example distribution with a memory of size 40, four constructions and a lower limit of $F$ = 5 exemplars per construction, organised according to a Zipfian distribution [@zipf_psycho-biology_1965]. Note how the number of exemplars in memory taper off as the constructions become less frequent. This does not entail that all exemplars belonging to a single construction are identical: more and less reduced vectors can co-exist together. An example of an agent's memory with different vector associations can be found in @tbl-model_design_agent_memory_example.
-
-![An example of the distribution of four constructions in an agent memory of size 40 with a lower limit of 5, organised according to a Zipfian distribution. The first construction appears 19 times, the second construction ten times, the third construction six times and the fourth construction five times.](tikz/memory_distribution.svg){#fig-memory_distribution}
-
-|  Exemplar  | Dim 1 | Dim 2 | Dim 3 | ... | Dim $D$ | Associated construction |
-| ---------- | ----- | ----- | ----- | --- | ----- | ------ |
-| Exemplar 1 | 31    | 42    | 100    | ...   | 15    | Construction 1 |
-| ... | | | | |
-| Exemplar 16 | 27    | 37    | 27    | ...   | 97    | Construction 2 |
-| Exemplar 17 | 24    | 35    | 29    | ...   | 96    | Construction 2 |
-| ... | | | | |
-| Exemplar $L$ | 44    | 39    | 69    | ...   | 80    | Construction $V$ |
-
-: Example agent memory consisting of vector representations belonging to different constructions. {#tbl-model_design_agent_memory_example}
-
-At the model initialisation stage, we fill each of the pre-assigned memory slots with vector representations from @tbl-model_design_speech_vector_examples. In this model initialisation stage, vector representations are not copied to an agent's memory one-to-one. Instead, noise is added in order to account for the natural variation in different speakers' idiomatic patterns. This noise added is drawn from a normal distribution with $\mu = 5$ and $\sigma = 1$, after which each value in the resulting vector is rounded to the nearest natural number. Substantially larger noise patterns would cause the distinctions between the exemplars of different constructions to become lost. Noise is added to each exemplar individually. If an agent starts with five exemplars of a specific construction in their memory, all five will be slightly different.
-
-Because an agent's memory is limited to size $L$, whenever a new exemplar needs to be stored, an older exemplar needs to be removed or "forgotten". We apply the logic that the oldest exemplar of the construction in question is replaced. An example of the forgetting mechanic for a given construction is given in @tbl-model_design_forgetting_example.
-
-|  Exemplar  | Age in model iterations | 
-| ---- | ----- |
-| ~~Exemplar 1~~ | 5920 |
-| Exemplar 2 | 4780 |
-| Exemplar 3 | 3009 |
-| Exemplar 4 | 1231 |
-| Exemplar 5 | 895 |
-
-: An example of how "forgetting" an exemplar of a specific construction works in the model. Exemplar 1 is the oldest exemplar for this construction, so it will be removed and make place for a new exemplar. {#tbl-model_design_forgetting_example}
+[^population]: Despite our use of $\mu$ and $\sigma$, it is difficult to speak of "population-level" parameters here. Still, we use this notation to align with the notation found in @kleinschmidt_robust_2015.
 
 ### Language game and course of the simulation {#sec-language-game}
 
-We mentioned that we estimate that the interaction between agents, given specific preconditions, is naturally conducive to reducing behaviour. In this section, we will explain this interactional behaviour of our virtual speakers and hearers in more detail.
+In this section, we will explain the interactional behaviour of our virtual speakers and hearers in more detail.
 
 At each step in the simulation, each agent in the simulation enters into a "conversation" at random with another randomly selected agent. The agent initiating the conversation functions as the speaker, the other agent functions as the hearer. In this conversation, speaker and hearer play a so-called "language game" [@smith_models_2014], the core of our simulation. The goal of the language game is for the speaker to communicate a specific construction to the hearer, which the hearer then has to understand successfully. An overview of the game can be found in @fig-model_design_language_game. The language game goes as follows:
 
 **Speaker**
 
-1. The speaker is assigned a construction to utter from the $V$ constructions available. The probability of each construction being assigned is determined by the chosen frequency distribution (see @sec-underspecification-filling).[^zipfian-note]
-2. The speaker randomly chooses an exemplar vector representation to utter for that construction. This exemplar is retrieved from the agent's memory. This means that if a specific neighbourhood area in the vector space contains more exemplars, there is a higher probability of the chosen exemplar coming from that area.
-3. With a probability of $p$, reduction is applied. A set reduction value $R$ is removed from all dimensions of the vector at once, with $R$ also being the floor value for any dimension of a vector. Without the floor value $R$, vectors would be able to reduce all the way to zero, which is an acoustic representation of silence. Of course, communication through silence is also possible, but this contextually derivative situation is beyond the scope of our model. A schematic representation of reduction is given in @fig-model_design_reduction.
-4. The (potentially reduced) vector is communicated to the hearer.
+1. The speaker is assigned a construction to utter from the $V$ constructions available. The probability of each construction being assigned is determined by the Zipfian distribution (see @sec-underspecification-filling).[^zipfian-note] For our implementation of Zipf's Law, we chose the standard Zipfian equation (shown in @eq-zipfian_distribution). While other iterations of the Zipfian equation, devised to improve alignment with empirical data, exist [i.e. the Zipf-Mandelbrot equation, @mandelbrot_information_1966], these improved alignments are not perfect either [@montemurro_beyond_2001]. Most notably for our use case, the more involved Zipfian distribution equations require more parameters, which makes our search for the smallest set of assumptions conducive to the reducing effect more difficult. The only parameter in the original Zipfian equation is $\beta$, which we set to 1. Note that the priors are slightly skewed to correct for our limited number of exemplars (see @sec-appendix-priors).
+$$
+\operatorname{freq}(x) = \frac{1}{x^\beta}
+$$ {#eq-zipfian_distribution}
+2. The speaker generates an exemplar vector representation $v$ to utter for that construction by iteratively sampling from the normal distributions saved for each dimension of that construction:
+  $$
+  \begin{align}
+    &\text{For a construction } c: \\
+    \\
+    &\mathbf{v_c} = \begin{bmatrix} 
+    v_{c, 1} \\ v_{c, 2} \\ \vdots \\ v_{c, D}
+    \end{bmatrix}, \quad 
+    \text{where } v_{c,j} \sim \mathcal{N}(\mu_{c,j}, \sigma_{c,j}) \text{ for } j = 1, \dots, D
+  \end{align}
+  $$
+  Values centred around $\mu$ are more likely to be sampled. 
+3. With a probability of $p$, reduction is applied. We assume that, when possible, hearers will attempt to conserve as much energy as possible when speaking on grounds of the "Principle of Least Effort" [@zipf_human_1949]. In order to model both temporal and substantive reduction, we apply two operations. For temporal reduction, we pull all values in the vector towards each other. This is done by adding a small proportion of the difference with the mean to the vector. This operation is comparable to the compression of articulatory gestures in the reduction process, and, in a similar vein, weakens the acoustic identity of the representation. The compression operation is regulated by a homogenisation factor $\eta$. For substantive reduction, we multiply all vector values by a fixed decay parameter $\lambda$, comparable to the reduction in magnitude of articulatory gestures. If the mean of all values in a vector falls below floor value $R$, no reduction takes place. Without the floor value $R$, the normal distribution would be able to underflow below zero, which goes against our vector constraints (see @sec-appendix-vector):
+  $$
+  \begin{align}
+    \mathbf{v}^{reduced} = \lambda \left( \mathbf{v} + \eta \left( \bar{v} - \mathbf{v} \right) \right)
+  \end{align}
+  $$
+4. All vector values are rounded to the nearest integer (see @sec-perception-todo).
+5. The (potentially reduced) vector is communicated to the hearer.
 
 **Hearer**
 
 1. The hearer "hears" the vector communicated by the speaker.
-2. The hearer interprets the vector representation of the speaker. They calculate the Manhattan distance (see @eq-manhattan_distance) between the spoken vector and their entire exemplar memory (normalised for the number of dimensions) and select all exemplars lower or equal to threshold $n$. The constructions associated with those exemplars are tallied, and the most frequent construction is accepted as the understood construction. In the case of a tie, communication fails and the game immediately ends. In the case that no exemplars were selected, communication fails and the game immediately ends. 
-3. If communication succeeds, the exemplar heard is saved in the hearer's memory and is associated with the understood construction.
+2. The hearer interprets the vector representation of the speaker. Classification works in a generative way, as in @kleinschmidt_robust_2015 [151]. The hearer checks how likely the communicated vector is given their knowledge about the acoustic realisations of the different constructions. For each construction, for each dimension, the likelihood of the heard vector's value is computed. Crucially, if enabled, the prior likelihood of the construction is taken into account as well, i.e. the contextual linguistic knowledge from @sec-introduction-frequency. All values are log-transformed to make computations faster. The construction with the highest score is accepted as the understood construction:
+  $$
+  \begin{align}
+    \operatorname{Score}(\mathbf{v}^{\text{heard}} \mid c) &= 
+    \begin{cases} 
+      \ln(p(c)) + \sum_{j=1}^{D} \ln \left( \mathcal{N}(\mathbf{v}^{\text{heard}}_{j} \mid \mu_{c_{j}}, \sigma_{c_{j}}) \right) & \text{if priors enabled} \\
+      \sum_{j=1}^{D} \ln \left( \mathcal{N}(\mathbf{v}^{\text{heard}}_{j} \mid \mu_{c_{j}}, \sigma_{c_{j}}) \right) & \text{otherwise}
+    \end{cases} \\
+    \hat{c} &= \arg\max_{c \in C} \left[ \operatorname{Score}(\mathbf{v}^{\text{heard}} \mid c )\right]
+  \end{align}
+  $$
+3. Parameters $\mu$ and $\sigma$ are updated for the heard construction according to an Exponential Moving Average formula, modified for batches. We use a batch memory instead of updating $\mu$ and $\sigma$ immediately in order to ensure the parameters remain stable.[^outlier-infuence] The heard vector is saved in a batch memory of size $B$. Once that batch memory has $B$ exemplars, the mean and variance of the batch memory are computed, and $\mu$ and $\sigma$ are updated according to a weighted average. $\alpha$ regulates the learning rate. The final result is rounded to the nearest integer. $\sigma$ has a minimum value of 1:
+  $$
+  \begin{align}
+    &\mathbf{X}_c = \{\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_B\} = \text{ batch memory for construction } C \\
+    \\
+    &\text{For each dimension } j \in \{1, \dots, D\}: \\
+    &\hspace{1cm} \mathbf{\mu}^{\text{batch}}_{c,j} = \frac{1}{B} \sum_{i=1}^{B} \mathbf{x}_{c,i,j} \quad , 
+    \quad \mathbf{\sigma}^{\text{batch}}_{c,j} = \sqrt{\frac{1}{B-1} \sum_{i=1}^{B} (\mathbf{x}_{c,i,j} - \mathbf{\mu}^{\text{batch}}_{c,j})^2} \\
+    &\hspace{1cm} \mu_{c,j}^{\text{new}} = \text{round}\left( (1 - \alpha) \cdot \mu_{c,j}^{\text{old}} + \alpha \cdot \mu^{\text{batch}}_{c,j} \right) \\
+    &\hspace{1cm} \sigma_{c,j}^{\text{new}} = \max\left( 1, \,\, (1 - \alpha) \cdot \sigma_{c,j}^{\text{old}} + \alpha \cdot \sigma^{\text{batch}}_{c,j} \right)
+  \end{align}
+  $$
+  After the update, the batch memory is emptied.
 
-[^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through the assumed frequency distribution. For our model, the addition of an outside world with events would not have any added value, which is why we implemented events about the world in this way.
+[^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through the Zipfian distribution. For our model, the addition of an outside world with events would not have any added value, which is why we implemented events about the world in this way.
 
-![A schematic overview of the language game played by the speaker and hearer.](tikz/language_game.svg){#fig-model_design_language_game}
+[^outlier-infuence]: More specifically, by using batch memory, we prevent one-off outlier values from affecting $\mu$ and $\sigma$ directly. Cognitively, using batch memory can be seen as hearers updating their internal representations gradually, instead of shifting them dramatically when a new, perhaps strange form is encountered.
 
-![How reduction works in our simulation. In this case, $R = 5$. The left vector shows the original vector as retrieved from memory. The right shows the result of reduction; 5 has been subtracted from all dimensions, except for the last, since its value is already at our floor value $R$.](tikz/reduction.svg){#fig-model_design_reduction}
+![A schematic overview of the language game played by the speaker and hearer.](tikz/language_game_bayes.svg){#fig-model_design_language_game}
 
-$$
-\begin{aligned}
-d(X, Y) &= \frac{\sum_{i=1}^{D} |x_i - y_i|}{D} \\
-& \text{where } D = \text{ number of dimensions}
-\end{aligned}
-$$ {#eq-manhattan_distance}
-
-Note that we deliberately left out any feedback mechanism from the language game, as we are looking for the absolute minimal specification that is conducive to the reducing effect. Since including feedback implies adding an extra assumption, our initial aim is to attempt to model the reducing effect without a feedback mechanism.
-
-### Moving away from the unknowns {#sec-underspecification-filling}
-
-We saw in @sec-underspecification that several aspects of reducing effect theory are unknown or underspecified. Through our computer simulations, we will attempt to move away from these unknowns and build a minimal set of assumptions that leads to the reducing effect with all its properties. Our strategy throughout is to start with minimal but motivated assumptions. If these prove to be insufficient, we will make the specification more complex. As a reminder, these are the three unknowns defined in @sec-underspecification:
-
-1. What frequency difference is required between different constructions?
-2. Does there need to be a built-in association between frequency and the speaker's inclination to reduce?
-3. Does there need to be an ambiguity avoidance mechanism?
-
-As for (1), the minimal, motivated assumption can be inferred easily from corpus data. Indeed, constructions language follow Zipf's Law [@zipf_psycho-biology_1965]. Zipf's Law dictates that many "units" in language (constructions, sounds ...) naturally occur according to a power law in which rank is inversely related to frequency. This means that the first item in a Zipfian distribution is twice as frequent as the second item, three times as frequent as the third item, and so on. In practice, this leads to an extremely unbalanced distribution with few highly frequent items, and a long tail of infrequent items. This uneven distribution is also called an "A-curve" by @kretzschmar_language_2015. For our simulation, the frequency distribution is effective in the construction choice step. In addition, the exemplars in an agent's memory will also follow the Zipfian distribution ["probability matching" in @labov_principles_1994].
-
-For our implementation of Zipf's Law, we chose the standard Zipfian equation (shown in @eq-zipfian_distribution). While other iterations of the Zipfian equation, devised to improve alignment with empirical data, exist [i.e. the Zipf-Mandelbrot equation, @mandelbrot_information_1966], these improved alignments are not perfect either [@montemurro_beyond_2001]. Most notably for our use case, the more involved Zipfian distribution equations require more parameters, which makes our search for the smallest set of assumptions conducive to the reducing effect more difficult. The only parameter in the original Zipfian equation is $\alpha$, which we set to 1.
-$$
-\operatorname{freq}(x) = \frac{1}{x^\alpha}
-$$ {#eq-zipfian_distribution}
-
-As for (2), we suppose the most minimal option and initially assume there not to be a built-in relation between frequency and the speaker's inclination to reduce. This assumption can be defended theoretically, as the "Principle of Least Effort" [@zipf_human_1949] dictates that, when possible, language users will attempt to conserve as much energy as possible when speaking. Initially, then, we assume that this principle holds universally, regardless of frequency.
-
-As for (3), we also start minimal and assume that no ambiguity avoidance mechanism is required. We have no theoretical grounds for this assumption, other than the fact that this is the most minimal assumption possible.
-
-Note that there is no built-in assumption which dictates that frequent constructions should reduce faster and to a larger extent than less frequent constructions. Rather, this is the emergent behaviour that needs to occur naturally out of the interplay of the different assumptions.
+Note that we deliberately left out any feedback mechanism from the language game, as we are looking for the absolute minimal specification that is conducive to the reducing effect. Since including feedback implies adding an extra assumption, our initial aim is to attempt to model the reducing effect without a feedback mechanism. In addition, nowhere in our language game is there a built-in assumption which dictates that frequent constructions should reduce faster and to a larger extent than less frequent constructions. Rather, this is the emergent behaviour that needs to occur naturally out of the agents' interactions.
 
 ## Evaluation
 
-In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether the minimal assumptions from @sec-underspecification-filling lead to the occurrence of the reducing effect as defined by @bybee_usage_2006.
+In this section, we will explain how we will analyse the simulation behaviour, and how we will evaluate the model as a whole, particularly how we test whether a simulation model leads the reducing effect as defined by @bybee_usage_2006.
 
 ### Expected behaviour {#sec-expected-behaviour}
 
@@ -232,46 +206,42 @@ We will consider a set of preconditions to be conducive to the reducing effect i
 
 If the behaviour of a simulation corresponds with any of these three statements not being true, then we will say that that simulation does not produce behaviour sufficiently similar to the behaviour found in corpus studies. The assumptions of that simulation are then said not to be conducive to the reducing effect. 
 
-If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect.
-
-In order to check whether a specification of assumptions is also the minimal specification, we will apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumably the most likely one. Therefore, we will disable each precondition iteratively and check whether the simpler conditions can also produce the expected reducing effect behaviour. If a simpler specification produces equivalent behaviour, we have found a new minimal specification. If no simpler specification produces equivalent behaviour, our initial specification was already the minimal one.
+If any specification of assumptions produces behaviour which fully falls within the expected behaviour detailed in the previous section, then we can say that that specification is conducive to the reducing effect. The next question is whether this set is the *minimal* specification required to produce the reducing effect. To check this, we apply the principle of Occam's Razor [@blythe_s-curves_2012]. This principle dictates that the simplest explanation for a phenomenon is presumably the most likely one. We apply this principle by adding assumptions incrementally. We start by drawing the assumed minimal assumptions from the literature, and will build upon these if it proves needed. In this way, we build towards the minimum viable set of assumptions.
 
 ### Parameters {#sec-parameters}
 
-In this section, we will run through the different parameters the model has and what values we chose for them. Parameters control specific aspects of our model, like how many agents inhabit our virtual world or how likely reduction is. An important limitation to our parameter settings is computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts, large constructions counts and large memory sizes all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we had to keep number of agents and constructions modest. This is standard practice in agent-based simulation [cf. @dale_understanding_2012, 5]. Review @tbl-parameters for an overview of our choices.
+In this section, we will run through the different parameters the model has and what values we chose for them. Parameters control specific aspects of our model, like how many agents inhabit our virtual world or how likely reduction is. An important limitation to our parameter settings is computational tractability. Because we work with vector representations, and interpretation hinges on vector computations on an agent's entire exemplar memory, large agent counts, high dimension counts and large constructions counts all cause the time it takes to run a single simulation to balloon, even on powerful server hardware. Therefore, we had to keep number of agents and constructions modest. This is standard practice in agent-based simulation [cf. @dale_understanding_2012, 5]. Review @tbl-parameters for an overview of our choices. Our parameter value choices for the vectors in our model are explained in @sec-appendix-vector.
 
 | Parameter | Explanation | Value |
 | --- | --- | --- |
-| $N$ | Number of agents | 25 |
+| $N$ | Number of agents | 10 |
 | $V$ | Number of constructions | 100 |
-| $S$ | Number of constructions from which we sample | 130000 |
 | $D$ | Number of vector dimensions | 10 |
-| $L$ | Number of exemplars in memory | 1000 |
-| $F$ | Minimum number of exemplars per construction | 5 |
-| $R$ | Value subtracted from exemplar vector at reduction time. Also functions as threshold floor value. A vector dimension cannot reduce below this point. | 5 |
-| $n$ | Neighbourhood size. Only exemplars within this range count towards the interpretation of a vector. | 5 |
+| $P$ | Number of vectors from which we sample | 50,000 |
+| $v_{\min}, v_{\max}$ | The inclusive value range in between which vector values are initialised | 70, 100 |
+| $R$ | Threshold floor value. If the mean of all values in a vector falls below this floor value, no reduction takes place. | 5 |
+| $\eta$ | Homogenisation factor during reduction | 0.1 |
+| $\lambda$ | Decay factor during reduction | 0.95 |
+| $B$ | Number of exemplars held in batch memory | 20 |
+| $\alpha$ | Learning rate used to update $\mu$ and $\sigma$ | 0.2 |
 | $p$ | Reduction probability at speech time | 0.5 |
+| $\beta$ | Steepness of the Zipfian distribution | 1 |
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
-In the following sections, we will present the results of several different parameter combinations ("specifications") of our reducing effect model. Because our model is partially probabilistic, each specification is run 100 times. Any graph shown is an aggregate of the behaviour of those 100 runs. We make this aggregate by taking the mean across all runs of a specification.
+In the following sections, we will present the results of several different parameter combinations ("specifications") of our reducing effect model. Because our model is partially probabilistic, each specification is run 100 times. Any graph shown is an aggregate of the behaviour of those 100 runs. We make this aggregate by taking the median across all runs of a specification. We take the median specifically to prevent outlier results from influencing the results.
 
 ## Results
 
 In this section, we will go over the results produced by the model operationalised according to the requirements detailed in the previous sections. More specifically, we will check if the model behaviour adheres to the expected behaviour defined in @sec-expected-behaviour.
 
-### Base model {#sec-base-model}
+### Testing the importance of frequency priors {#sec-priors-no-priors-model}
 
-First, we tested the simulation model with all minimal assumptions from @sec-underspecification-filling. As a reminder, this minimal specification is as follows:
+In this first section, we test whether the inclusion of category priors suffices to combat the expected ambiguity during the reduction of acoustic representations. We saw in @sec-introduction-frequency that, when challenging conditions arise, linguistic knowledge is said to become important during parsing by the hearer. We will test this by comparing the results of two types of models: in one model, we add the prior of the construction to the predicted score for each construction, in the other, we do not (see @sec-language-game). We then compare their respective behaviour of the simulation according to the rules defined in @sec-expected-behaviour. The formulas at the basis of all visualisations can be found in the Appendix (@sec-appendix-metrics).
 
-1. Zipfian frequency difference between constructions
-2. No association between frequency and the speaker's inclination to reduce
-3. No ambiguity avoidance mechanism
+TODO AANVULLEN
 
-We will discuss the behaviour of the simulation by going over the "checklist" defined in @sec-expected-behaviour, viz.: 
-
-{{< include snippets/expected-behaviour-conditions.qmd >}}
-
-The formulas at the basis of all visualisations can be found in the Appendix.
+- priors helpen, zonder priors minder performance
+- maar: nog altijd slecht -> laten zien hoe vectoren over elkaar schuiven
 
 With respect to (1), @fig-base-model-l1-per-construction shows the average L1 of each construction separately. Recall that we expect frequent constructions to reduce a great extent, and faster as well. We indeed see that, generally speaking, frequent constructions (at the left of the graph) have lower L1 values than less frequent constructions (at the right of the graph).
 
@@ -304,33 +274,13 @@ We see in @fig-base-model-success that overall, communicative success in the mod
 An overview of the different simulation behaviour metrics and their evolutions for the base model.
 :::
 
-### Funnel model {#sec-cone-model}
-
-The main reason why we cannot reliably investigate the cause of confusion in the base model stems from the high dimensionality of the vectors. Because we work in a 10-dimensional space, there is no straightforward way to see how the vectors evolve over time. Unfortunately, dimensionality reduction techniques obscure a large share of the variation in the vectors, and are therefore unreliable to estimate the actual course of the acoustic representations.
-
-The solution seems simple: reducing the number of dimensions to just two, which allows you to plot the acoustic representations accurately and reliably. This is indeed the solution we opted for, but with a few adjustments. We chose to represent the acoustic space as a funnel, because this brings the properties of a two-dimensional space closer to the behaviour of the multi-dimensional space: all representations have a straight path to the apex (there is no need to go "through" another representation), and the phonetic space becomes more sparse as one nears the apex. Other adjustments are mechanical adaptations to the funnel shape: all exemplars now reduce by moving at a straight angle towards the apex, and all constructions start at an equal radius of 100 from the apex. We limit ourselves to just ten constructions for this demonstration.[^frequency-truncation]
-
-[^frequency-truncation]: For the frequency distribution of these ten items, we use the first ten frequencies from the larger, 100-construction Zipfian distribution found in the base model.
-
-@fig-cone-model-group shows the vector space both at the beginning of the simulation and after 700 iterations. @fig-cone-model-angle-vocabulary-plot-2d-begin shows that, at the start of the simulation, the exemplars of different constructions are well spaced out. However, as the acoustic representations become sparser (i.e. move closer towards point 0,0), the space *between* representations also becomes smaller. This has the side-effect that the proximity of the exemplars of more frequent constructions will start to disturb the interpretation process described in @sec-language-game. Because our interpretation system hinges on frequency, the presence of a more frequent construction in the neighbourhood will skew this system, with the more frequent exemplars dominating perception. Mishearings of the associated constructions are the consequence. As the acoustic space becomes sparser and exemplars move even closer towards each other, more frequent constructions will iteratively start to overtake less frequent constructions until the most frequent form dominates the entire acoustic space. We see this in @fig-cone-model-angle-vocabulary-plot-2d-end: where the second and third most frequent constructions (green and blue respectively) first outnumber other constructions in their proximity, they become outnumbered once their interpretation neighbourhood becomes influenced by the most frequent construction (red).
-
-The reason why we do not see this iterative process reflected in the base model is again the high dimensionality of the vectors. In the funnel model, there are only two dimensions in which constructions can inch closer together. In the higher dimensional model, the most frequent construction can be the closest neighbours of multiple constructions at once. The mechanics behind the confusion, however, are the same. A possible solution for these mishearings is given in the next section.
-
-::: {#fig-cone-model-group layout-ncol=2}
-![A flattened representation of the exemplar locations of a random agent in the funnel model (starting situation, 0 iterations). The x and y axes show the values of each representation directly. Each colour stands for a construction, with each triangle being an exemplar of a construction. All ten constructions are shown. The closer an exemplar is situated to the lower left corner, the more reduced it is. The interpretation neighbourhood is shown as a circle on a randomly selected exemplar and shows the range in which exemplars influence the classification of an exemplar at this location.](figures/fig-cone-model-angle-vocabulary-plot-2d-begin.png){#fig-cone-model-angle-vocabulary-plot-2d-begin}
-
-![A flattened representation of the exemplar locations of a random agent in the funnel model (700 iterations). The x and y axes show the values of each representation directly. Each colour stands for a construction, with each triangle being an exemplar of a construction. All ten constructions are shown. The closer an exemplar is situated to the lower left corner, the more reduced it is. The interpretation neighbourhood is shown as a circle on a randomly selected exemplar and shows the range in which exemplars influence the classification of an exemplar at this location.](figures/fig-cone-model-angle-vocabulary-plot-2d-end.png){#fig-cone-model-angle-vocabulary-plot-2d-end}
-
-An overview of the exemplar vector locations and their evolutions for the funnel model.
-:::
-
 ### Re-entrance model {#sec-reentrance-model}
 
 Now that we can see the mishearings happen in real time, the question arises how they can be avoided. A complicating factor is that we intentionally did not incorporate a feedback mechanism in our simulation: hearers cannot know that they are mistaking a construction for another, so they cannot say "come again?". Vice versa, a speaker cannot know whether a reduced form will cause a mishearing on behalf of the hearer, as they do not have access to the acoustic representations of the latter. As such, our model design without any feedback mechanism seems to lead to a linguistic catch 22.
 
 Nevertheless, a solution within this design is possible on behalf of the speaker. Since speech production is a complex process, self-monitoring is an important part of speech production models [@hartsuiker_error_2001]. Psycholinguistic experiments such as @ferreira_how_2005 show empirical evidence for "comprehension monitoring", indicating that speakers can monitor their articulatory loop and preemptively avoid errors and ambiguities. It is in this light that @steels_language_2003 has coined the term "re-entrance". Re-entrance can be understood as the application of a speaker's reception subsystem to their own linguistic utterances, to serve as a means of incomprehension prevention or repair. Re-entrance is mechanically straightforward: a speaker's intended production is routed through their own reception mechanism, and its adequacy is subsequently assessed. It is in exactly this way that we have implemented this mechanism in our simulation. If a speaker reduces an acoustic representation, we first let them reflect on whether they would understand the uttered form correctly themselves. If they would, communication can continue as planned. If they would not, reduction is reversed, and the unreduced form is communicated.
 
-![A schematic overview of the language game played by the speaker and hearer, with re-entrance. Before speaking, the speaker checks whether they would understand the uttered form themselves. If they do, reduction is kept, but if they do not, reduction is reversed. The new elements in the overview are indicated in teal.](tikz/language_game_reentrance.svg){#fig-model_design_language_game_reentrance}
+![A schematic overview of the language game played by the speaker and hearer, with re-entrance. Before speaking, the speaker checks whether they would understand the uttered form themselves. If they do, reduction is kept, but if they do not, reduction is reversed. The new elements in the overview are indicated in teal.](tikz/language_game_bayes_reentrance.svg){#fig-model_design_language_game_reentrance}
 
 With this new precondition added to our basic assumptions, the model now behaves as expected. @fig-reentrance-model-l1-general shows an increase in sparsity, @fig-reentrance-model-l1-per-construction and @fig-reentrance-model-half-life-per-construction show reduction extent and speed to be influenced by frequency, @fig-reentrance-model-success shows adequate communicative success and @fig-reentrance-model-matrix and @fig-reentrance-model-confusion-ratio show little to no confusion.[^remaining-confusion] Therefore, it seems that an ambiguity avoidance mechanism is indeed required to obtain simulation results comparable with corpus data, leading to the following specification:
 
@@ -493,7 +443,77 @@ Furthermore, our model currently does not account for the co-existence of reduce
 
 Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study [i.e. like @kirby_cumulative_2008]. In this way, it can be investigated if and how the simulation study might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
 
-## Appendix {#sec-appendix-metrics}
+## Appendix
+
+### Priors sampling {#sec-appendix-priors}
+
+In our simulations, agents sample constructions according to a Zipfian distribution (@eq-zipfian_distribution). Due to computational reasons, however, our agents only have 100 constructions to choose from, which does not guarantee enough contrast between high-frequency and low-frequency constructions.  To solve this issue, the priors for the 100 constructions are sampled from a larger Zipfian distribution. First, the priors are computed for a much larger distribution of size $S = 130,000$. Then, using those priors, 100 priors are sampled. The resulting priors are renormalised to sum to one and are used by the agents to sample constructions. A pseudocode rendition is given in @lst-priors-sampling.
+
+::: {#lst-priors-sampling}
+$$
+\begin{aligned}
+&\textbf{Input:} \\
+&V: \text{The number of priors to sample} \\
+&S: \text{The size of the large priors distribution} \\
+&\beta: \text{Steepness of the Zipfian distribution} \\
+\\
+&\textbf{Output:} \\
+&\text{Set } SamplePriors \text{ of size } V \\
+\\
+&\textbf{Algorithm:} \\
+&Ranks \leftarrow \{1, 2, \dots, S\} \\
+&FullPriors \leftarrow \{ \frac{1}{x^\beta} \mid x \in S\} \\
+ \\
+&SamplePriors \leftarrow \operatorname{sample}_{\text{weighted}}(FullPriors, n=V, \text{no replacement}) \\
+&SamplePriors \leftarrow sort(SamplePriors) \\
+&SamplePriors \leftarrow \frac{SamplePriors}{\sum SamplePriors}
+\end{aligned}
+$$
+:::
+
+### Vector generation {#sec-appendix-vector}
+
+The vectors used in our computer model are generated in such a way that they are maximally distinct from each other. The way we ensure both randomness and distinctness is as follows: first, we generate a matrix of random numbers within range of size $P x D$, with $D$ the required number of dimensions and $P$ the pool size. The pool size is typically set to a very large number (50,000), which means we have a large pool of distinctive vectors to sample from. To sample the $V$ constructions we need for the simulations, we first pick a random vector to start with and compute its squared distance to the rest of the pool. We choose the vector that has the highest squared distance from our starting vector -- this vector is the furthest removed from our starting vector -- and add it to our sample. Next, we check whether the vector we just added is closer to the rest of the pool than our starting vector. If so, we take it as the starting point for choosing the next furthest vector in the pool, else we retain our starting vector. We then repeat the sampling process until all $V$ constructions have been sampled. A pseudocode rendition is given in @lst-vector-generation.
+
+::: {#lst-vector-generation}
+$$
+\begin{aligned}
+&\textbf{Input:} \\
+&V: \text{The number of vectors to generate} \\
+&D: \text{The dimensionality of the vectors} \\
+&v_{\min}, v_{\max}: \text{The inclusive integer range for vector elements} \\
+&P: \text{The size of the initial pool} \\
+\\
+&\textbf{Output:} \\
+&\text{Set } Selected \text{ of } V \text{ vectors that maximise mutual distinctiveness} \\
+\\
+&\textbf{Algorithm:} \\
+&Pool \leftarrow \text{unique}(\text{random integers in } [v_{\min}, v_{\max}] \text{ with shape } (P, D)) \\
+&Selected \leftarrow \emptyset \\
+&v_{start} \leftarrow \text{randomly select vector from } Pool \\
+&Selected \leftarrow Selected \cup \{v_{start}\} \\
+&Pool \leftarrow Pool \setminus \{v_{start}\} \\
+&Distances \leftarrow \{ \text{dist}^2(p, v_{start}) \mid p \in Pool \} \\
+\\
+&\textbf{for } i = 1 \textbf{ to } V - 1 \textbf{ do} \\
+&\hspace{1cm} v_{next} \leftarrow \text{the vector in } Pool \text{ that maximises } Distances \\
+&\hspace{1cm} Selected \leftarrow Selected \cup \{v_{next}\} \\
+&\hspace{1cm} Pool \leftarrow Pool \setminus \{v_{next}\} \\
+&\hspace{1cm} Distances \leftarrow Distances \setminus \{ \text{the distance corresponding to } v_{next} \} \\
+&\hspace{1cm} Distances_{new} \leftarrow \{ \text{dist}^2(p, v_{next}) \mid p \in Pool \} \\
+&\hspace{1cm} Distances \leftarrow \min(Distances, Distances_{new}) \\
+&\textbf{end for}
+\end{aligned}
+$$
+:::
+
+We mentioned before that all vector values are initialised between a specific range, in the case of our simulations a range between 70 and 100. This range is arbitrary, but motivated. First of all, it is clear that all numbers in a vector cannot be the *same* number; the contrasts between the values in the vector dimensions guarantee the unique acoustic identity of a construction. A range from 70 to 100 guarantees a range of 30 for variability between vectors and among dimensions within vectors, guaranteeing ample bandwidth for variation[^bandwith-explanation]. Of course, it could have been possible to have our value initialisation take place between 60 and 100, 50 and 70, or any other combination of values in our scale of 0 to 100. Recall, however, that our model aims to simulate how "full", unreduced forms can reduce incrementally to more sparse representations. This implies that there should be room for the representations to reduce towards a less complex representation -- so towards zero. So, in summary, our choice is dictated by a need for variation among vector values and the possibility for vectors to still be able to reduce.
+
+Similar logic applies to our floor $R$ with value 5. Vectors can only be reduced to a mean value of 5 because this generally is the lowest value $\mu$ can have without the associated normal distribution underflowing below zero. Of course, it would be possible to set this value to 10 or even 50. We picked the lowest applicable value, leaving plenty room for constructions to reduce from their full representations.
+
+[^bandwith-explanation]: More specifically, we need to avoid the situation in which two vectors are identical except for a value difference of one in just one dimension. To guarantee that two vectors are "different enough", we need ample room for variation. Hence our choice for a range of 30.
+
+### Metrics {#sec-appendix-metrics}
 
 In order to keep track of the simulation course, we computed the following metrics at each step:
 
