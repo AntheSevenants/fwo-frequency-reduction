@@ -103,4 +103,5 @@ export.render.prerender_profile_graphs(
     aggregate_parameter=aggregate,
     selected_run=None,
     selected_step=selected_step,
+    exporting=True,
 )
