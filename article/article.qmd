@@ -223,7 +223,9 @@ In this section, we will run through the different parameters the model has and 
 | $\eta$ | Homogenisation factor during reduction | 0.1 |
 | $\lambda$ | Decay factor during reduction | 0.95 |
 | $B$ | Number of exemplars held in batch memory | 20 |
+| $\alpha$ | Learning rate used to update $\mu$ and $\sigma$ | 0.2 |
 | $p$ | Reduction probability at speech time | 0.5 |
+| $\beta$ | Steepness of the Zipfian distribution | 1 |
 : An overview of all parameters in the simulation and their values. {#tbl-parameters}
 
 In the following sections, we will present the results of several different parameter combinations ("specifications") of our reducing effect model. Because our model is partially probabilistic, each specification is run 100 times. Any graph shown is an aggregate of the behaviour of those 100 runs. We make this aggregate by taking the median across all runs of a specification. We take the median specifically to prevent outlier results from influencing the results.
