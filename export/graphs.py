@@ -64,6 +64,10 @@ class GraphConfig:
     )
     context: int = GraphContext.EXPORT  # In what context should this graph be shown?
 
+    allow_legend_override: bool = (
+        False  # Can the legend be overriden manually for this graph?
+    )
+
     # Allow setting data columns directly if needed
     disable_autogenerate_columns: bool = False
 
@@ -438,7 +442,8 @@ def generate_graphs(
     aggregate: Optional[AggregateSettings] = None,
     single_run: Optional[int] = None,
     selected_step: int | None = None,
-    disable_title=False,
+    disable_title: bool = False,
+    legend_title: str | None = None,
 ) -> Dict[str, matplotlib.figure.Figure]:
     """Generate the specified graphs depending on the given sweep
 
@@ -451,6 +456,7 @@ def generate_graphs(
         single_run (int, optional): ID of the single run to generate a graph for. Defaults to None.
         selected_step (int). Number of the step being inspected. Defaults to None for the default step.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
+        legend_title (str, optional): Set a legend title when aggregating. Defaults to None.
 
     Raises:
         ValueError: Raised if a supplied graph name does not have an associated graph
@@ -537,6 +543,7 @@ def generate_graphs(
         y_max=y_max,
         y_min=y_min,
         disable_title=disable_title,
+        legend_title=legend_title,
     )
 
 
@@ -550,6 +557,7 @@ def generate_graphs_inner(
     y_max: int = 100,
     y_min: int = 0,
     disable_title: bool = False,
+    legend_title: str | None = None,
 ) -> Dict[str, matplotlib.figure.Figure]:
 
     # Now, we can build the desired graphs and save them
@@ -594,6 +602,7 @@ def generate_graphs_inner(
                         y_max=y_max,
                         y_min=y_min,
                         disable_title=disable_title,
+                        legend_title=legend_title,
                     )
                     inner_functions.append(graph_function)
 
@@ -616,6 +625,7 @@ def generate_graphs_inner(
                 y_max=y_max,
                 y_min=y_min,
                 disable_title=disable_title,
+                legend_title=legend_title,
             )(ax=None)
 
         graphs_output[graph_name] = figure
@@ -634,6 +644,7 @@ def generate_inner_lambda(
     aggregate_config: Optional[AggregateSettings] = None,
     parent_extra_args: Dict[str, Any] | None = None,
     disable_title: bool = False,
+    legend_title: str | None = None,
 ) -> Callable:
     """Generate the function which builds the graph specified by the graph name
 
@@ -645,6 +656,7 @@ def generate_inner_lambda(
         aggregate_config (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
         parent_extra_args (Dict[str, Any] | None): Extra arguments supplied by the parent mosaic. Defaults to None.
         disable_title (bool): Whether to show a title for this graph. Defaults to False.
+        legend_title (str, optional): Set a legend title when aggregating. Defaults to None.
 
     Raises:
         TypeError: Raised if the graph name is associated with a mosaic function
@@ -776,6 +788,7 @@ def generate_inner_lambda(
             kwargs["max_data"] = max_data
         if aggregate_extension_x is not None:
             kwargs["aggregate_extension_x"] = aggregate_extension_x
+            kwargs["legend_title"] = legend_title
 
         kwargs["attributes"] = config.data_columns
 

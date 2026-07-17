@@ -349,6 +349,7 @@ def plot_value(
     max_data: List[float] | List[List[float]] | None = None,
     step: int | float | None = None,
     title: Optional[str] = None,
+    legend_title: Optional[str] = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
     plot_mean: bool = False,
@@ -366,6 +367,7 @@ def plot_value(
         max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
         step (int | float): Step to highlighted in the graph (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to None (= no highlight).
         title (Optional[str], optional): The title for the graph. Defaults to None.
+        legend_title (Optional[str], optional): The title for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
         plot_mean (bool, optional): Whether to indicate the mean. Defaults to False.
@@ -431,6 +433,9 @@ def plot_value(
     if num_groups > 1:
         ax.legend()
 
+        if legend_title is not None:
+            ax.legend().set_title(legend_title)
+
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
 
@@ -451,6 +456,7 @@ def plot_ratio(
     max_data: List[float] | List[List[float]] | None = None,
     step: int | float | None = None,
     title: Optional[str] = None,
+    legend_title: Optional[str] = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
@@ -470,6 +476,7 @@ def plot_ratio(
         max_data (List[float] | List[List[float]] | None, optional): List of maximal values. Needs to be defined together with min_data. Defaults to None.
         step (int | float): Step to highlighted in the graph (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to None (= no highlight).
         title (Optional[str], optional): The title for the graph. Defaults to None.
+        legend_title (Optional[str], optional): The title for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
 
@@ -593,6 +600,9 @@ def plot_ratio(
 
     # if num_groups > 1:
     ax.legend()
+
+    if legend_title is not None:
+        ax.legend().set_title(legend_title)
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
@@ -764,6 +774,7 @@ def plot_error_bar(
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
     title: Optional[str] = None,
+    legend_title: Optional[str] = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
@@ -782,6 +793,7 @@ def plot_error_bar(
         x_label (Optional[str], optional): The label for the X axis. Defaults to None.
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
+        legend_title (Optional[str], optional): The title for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str] | None, optional): Labels for aggregate values, to be used as group labels. Defaults to None.
 
@@ -864,6 +876,9 @@ def plot_error_bar(
     if num_groups > 1:
         ax.legend()
 
+        if legend_title is not None:
+            ax.legend().set_title(legend_title)
+
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
 
@@ -884,6 +899,7 @@ def plot_error_bar_horizontal(
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
     title: Optional[str] = None,
+    legend_title: Optional[str] = None,
     disable_title: bool = False,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
     """Plot a bar chart with values from a model run
@@ -902,6 +918,7 @@ def plot_error_bar_horizontal(
         x_label (Optional[str], optional): The label for the X axis. Defaults to None.
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
+        legend_title (Optional[str], optional): The title for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
 
     Returns:
@@ -981,6 +998,9 @@ def plot_error_bar_horizontal(
 
     if num_groups > 1:
         ax.legend()
+
+        if legend_title is not None:
+            ax.legend().set_title(legend_title)
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)

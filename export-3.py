@@ -23,6 +23,12 @@ parser.add_argument(
     "--step", type=int, help="Inspect the model at a specific step", default=None
 )
 parser.add_argument(
+    "--legend_title",
+    type=str,
+    help="Set a legend title when aggregating over a specific parameter",
+    default=None,
+)
+parser.add_argument(
     "export_dir", type=str, help="Directory where figures will be stored"
 )
 parser.add_argument(
@@ -108,4 +114,5 @@ export.render.prerender_profile_graphs(
     selected_step=selected_step,
     exporting=True,
     disable_title=args.disable_titles,
+    legend_title_override=args.legend_title,
 )
