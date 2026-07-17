@@ -299,7 +299,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         # common_args=["x_scale_factor"],
         extra_args={"n": 35},
         interactive_args=["step"],
-        aggregate_extension=True,
+        aggregate_extension=False,
     ),
     "ctx_energy_per_dim": GraphConfig(
         reporter_name="means",
