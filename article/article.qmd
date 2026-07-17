@@ -133,7 +133,7 @@ At each step in the simulation, each agent in the simulation enters into a "conv
 
 **Speaker**
 
-1. The speaker is assigned a construction to utter from the $V$ constructions available. The probability of each construction being assigned is determined by the Zipfian distribution (see @sec-underspecification-filling).[^zipfian-note] For our implementation of Zipf's Law, we chose the standard Zipfian equation (shown in @eq-zipfian_distribution). While other iterations of the Zipfian equation, devised to improve alignment with empirical data, exist [i.e. the Zipf-Mandelbrot equation, @mandelbrot_information_1966], these improved alignments are not perfect either [@montemurro_beyond_2001]. Most notably for our use case, the more involved Zipfian distribution equations require more parameters, which makes our search for the smallest set of assumptions conducive to the reducing effect more difficult. The only parameter in the original Zipfian equation is $\beta$, which we set to 1.
+1. The speaker is assigned a construction to utter from the $V$ constructions available. The probability of each construction being assigned is determined by the Zipfian distribution (see @sec-underspecification-filling).[^zipfian-note] For our implementation of Zipf's Law, we chose the standard Zipfian equation (shown in @eq-zipfian_distribution). While other iterations of the Zipfian equation, devised to improve alignment with empirical data, exist [i.e. the Zipf-Mandelbrot equation, @mandelbrot_information_1966], these improved alignments are not perfect either [@montemurro_beyond_2001]. Most notably for our use case, the more involved Zipfian distribution equations require more parameters, which makes our search for the smallest set of assumptions conducive to the reducing effect more difficult. The only parameter in the original Zipfian equation is $\beta$, which we set to 1. Note that the priors are slightly skewed to correct for our limited number of exemplars (see @sec-appendix-priors).
 $$
 \operatorname{freq}(x) = \frac{1}{x^\beta}
 $$ {#eq-zipfian_distribution}
@@ -461,6 +461,32 @@ Furthermore, our model currently does not account for the co-existence of reduce
 Finally, it would be valuable to bring the results of this simulation study into the real world by means of an experimental study [i.e. like @kirby_cumulative_2008]. In this way, it can be investigated if and how the simulation study might be translated into the context of real people. In this regard, our findings *in silico* can serve as headlights to make the transition to research *in vivo* more straightforward.
 
 ## Appendix
+
+### Priors sampling {#sec-appendix-priors}
+
+In our simulations, agents sample constructions according to a Zipfian distribution (@eq-zipfian_distribution). Due to computational reasons, however, our agents only have 100 constructions to choose from, which does not guarantee enough contrast between high-frequency and low-frequency constructions.  To solve this issue, the priors for the 100 constructions are sampled from a larger Zipfian distribution. First, the priors are computed for a much larger distribution of size $S = 130,000$. Then, using those priors, 100 priors are sampled. The resulting priors are renormalised to sum to one and are used by the agents to sample constructions. A pseudocode rendition is given in @lst-priors-sampling.
+
+::: {#lst-priors-sampling}
+$$
+\begin{aligned}
+&\textbf{Input:} \\
+&V: \text{The number of priors to sample} \\
+&S: \text{The size of the large priors distribution} \\
+&\beta: \text{Steepness of the Zipfian distribution} \\
+\\
+&\textbf{Output:} \\
+&\text{Set } SamplePriors \text{ of size } V \\
+\\
+&\textbf{Algorithm:} \\
+&Ranks \leftarrow \{1, 2, \dots, S\} \\
+&FullPriors \leftarrow \{ \frac{1}{x^\beta} \mid x \in S\} \\
+ \\
+&SamplePriors \leftarrow \operatorname{sample}_{\text{weighted}}(FullPriors, n=V, \text{no replacement}) \\
+&SamplePriors \leftarrow sort(SamplePriors) \\
+&SamplePriors \leftarrow \frac{SamplePriors}{\sum SamplePriors}
+\end{aligned}
+$$
+:::
 
 ### Vector generation {#sec-appendix-vector}
 
