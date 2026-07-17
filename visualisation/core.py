@@ -550,11 +550,15 @@ def plot_ratio(
                 for j in range(start_idx_j, matrix.shape[1]):
                     line_style = LINE_STYLES[j]
 
+                    legend_label_suffixed = legend_label
+                    if filter_matrix_dimension is None:
+                        legend_label_suffixed += make_legend_suffix(j)
+
                     ax.plot(
                         matrix[:, j, i],
                         color=COLOURS[attribute_idx],
                         linestyle=line_style,
-                        label=legend_label + make_legend_suffix(j),
+                        label=legend_label_suffixed,
                     )
 
                     if _min_data is not None and _max_data is not None:
