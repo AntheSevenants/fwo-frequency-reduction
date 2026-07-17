@@ -123,7 +123,7 @@ Note also that, since we are interested in the reduction of the form of construc
 
 The agents in our model do not store encountered realisations in memory *as-is*. Rather, we model [exemplar theory @bybee_usage_2006] through a series of normal distributions, inspired by the Bayesian robust speech perception model by @kleinschmidt_robust_2015. Each agent stores for each construction and each vector dimension a normal distribution, encoded as parameters $\mu$ and $\sigma$[^population]. The variation that these distributions allow for can encode, for example, the different realisations of *yes*: *yeah*, *yep*, *yup*, *ye* ... At the model initialisation stage, we take the vector representations generated for each construction and use those values as the initial values for $\mu$. $\sigma$ is initialised at value 5 for each dimension in each vector representation.
 
-[^population]: Despite our use of $\mu$ and \$sigma$, it is difficult to speak of "population-level" parameters here. Still, we use this notation to align with the notation found in @kleinschmidt_robust_2015.
+[^population]: Despite our use of $\mu$ and $\sigma$, it is difficult to speak of "population-level" parameters here. Still, we use this notation to align with the notation found in @kleinschmidt_robust_2015.
 
 ### Language game and course of the simulation {#sec-language-game}
 
