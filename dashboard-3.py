@@ -207,6 +207,7 @@ def show_interface(live: bool = False):
             selected_sweep,
             combination_ids,
             graphs,
+            PROFILE_NAME,
             aggregate_parameter=aggregate,
             selected_run=selected_run,
             selected_step=selected_step,

@@ -16,12 +16,17 @@ parser.add_argument(
     action="append",
     help="Filter by parameter name and value. Can be used multiple times. Format: key=value",
 )
-parser.add_argument("aggregate", type=str, help="Aggregate over a specific parameter")
 parser.add_argument(
-    "step", type=int, help="Inspect the model at a specific step", default=-1
+    "--aggregate", type=str, help="Aggregate over a specific parameter", default=None
+)
+parser.add_argument(
+    "--step", type=int, help="Inspect the model at a specific step", default=None
 )
 parser.add_argument(
     "export_dir", type=str, help="Directory where figures will be stored"
+)
+parser.add_argument(
+    "output_profile", type=str, help="Name of the profile, will be output prefix"
 )
 parser.add_argument(
     "--disable_titles", action="store_true", help="Remove titles from the graphs"
@@ -31,7 +36,9 @@ args = parser.parse_args()
 sweeps = export.sweeps.get_sweeps(args.sweeps_dir)
 selected_sweep = args.selected_sweep
 aggregate = args.aggregate
-selected_step = int(args.selected_step)
+selected_step = None
+if args.step is not None:
+    selected_step = int(args.step)
 
 selected_parameters = {}
 if args.filter:
@@ -47,7 +54,7 @@ combination_ids = None
 run_infos = export.sweeps.get_run_infos(
     args.sweeps_dir, selected_sweep, hashable_safe=True
 )
-sweep_info = export.sweeps.get_sweep_info(args.sweep_dir, selected_sweep)
+sweep_info = export.sweeps.get_sweep_info(args.sweeps_dir, selected_sweep)
 
 parameter_mapping, constants_mapping = export.parameters.build_mapping(run_infos)
 
@@ -92,6 +99,7 @@ export.render.prerender_profile_graphs(
     selected_sweep,
     combination_ids,
     GRAPHS,
+    args.output_profile,
     aggregate_parameter=aggregate,
     selected_run=None,
     selected_step=selected_step,

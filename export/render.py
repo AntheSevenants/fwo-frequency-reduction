@@ -11,10 +11,10 @@ def prerender_profile_graphs(
     selected_sweep: str,
     combination_ids: Union[int, List[int]],
     graphs: List[str],
+    PROFILE_NAME: str,
     aggregate_parameter: str | None = None,
     selected_run: int | None = None,
     selected_step: int | None = None,
-    PROFILE_NAME: str = "ballekes",
 ) -> None:
     if selected_run is not None and aggregate_parameter is not None:
         raise ValueError(
