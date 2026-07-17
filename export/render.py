@@ -15,6 +15,7 @@ def prerender_profile_graphs(
     aggregate_parameter: str | None = None,
     selected_run: int | None = None,
     selected_step: int | None = None,
+    disable_title: bool = False,
     exporting: bool = True,
 ) -> None:
     if selected_run is not None and aggregate_parameter is not None:
@@ -81,6 +82,7 @@ def prerender_profile_graphs(
             single_run=selected_run,
             selected_step=selected_step,
             aggregate=aggregate_settings,
+            disable_title=disable_title,
         )
 
         # Save the files to disk!

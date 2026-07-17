@@ -29,7 +29,10 @@ parser.add_argument(
     "output_profile", type=str, help="Name of the profile, will be output prefix"
 )
 parser.add_argument(
-    "--disable_titles", action="store_true", help="Remove titles from the graphs"
+    "--disable_titles",
+    action="store_true",
+    help="Remove titles from the graphs",
+    default=False,
 )
 args = parser.parse_args()
 
@@ -104,4 +107,5 @@ export.render.prerender_profile_graphs(
     selected_run=None,
     selected_step=selected_step,
     exporting=True,
+    disable_title=args.disable_titles,
 )

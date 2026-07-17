@@ -536,6 +536,7 @@ def generate_graphs(
         scale_factor,
         y_max=y_max,
         y_min=y_min,
+        disable_title=disable_title,
     )
 
 
@@ -548,6 +549,7 @@ def generate_graphs_inner(
     scale_factor: int = 1,
     y_max: int = 100,
     y_min: int = 0,
+    disable_title: bool = False,
 ) -> Dict[str, matplotlib.figure.Figure]:
 
     # Now, we can build the desired graphs and save them
@@ -591,6 +593,7 @@ def generate_graphs_inner(
                         parent_extra_args=parent_extra_args,
                         y_max=y_max,
                         y_min=y_min,
+                        disable_title=disable_title,
                     )
                     inner_functions.append(graph_function)
 
@@ -612,6 +615,7 @@ def generate_graphs_inner(
                 selected_step=selected_step,
                 y_max=y_max,
                 y_min=y_min,
+                disable_title=disable_title,
             )(ax=None)
 
         graphs_output[graph_name] = figure
@@ -629,6 +633,7 @@ def generate_inner_lambda(
     selected_step: int | None = None,
     aggregate_config: Optional[AggregateSettings] = None,
     parent_extra_args: Dict[str, Any] | None = None,
+    disable_title: bool = False,
 ) -> Callable:
     """Generate the function which builds the graph specified by the graph name
 
@@ -638,7 +643,8 @@ def generate_inner_lambda(
         single_run (int, optional): ID of the single run to plot. Defaults to None.
         selected_step (int). Number of the step being inspected. Defaults to None for the default step.
         aggregate_config (AggregateSettings, optional): Configuration for aggregate graphs. Defaults to None.
-        extra_args (Dict[str, Any] | None): Extra arguments supplied by the parent mosaic. Defaults to None.
+        parent_extra_args (Dict[str, Any] | None): Extra arguments supplied by the parent mosaic. Defaults to None.
+        disable_title (bool): Whether to show a title for this graph. Defaults to False.
 
     Raises:
         TypeError: Raised if the graph name is associated with a mosaic function
@@ -774,7 +780,9 @@ def generate_inner_lambda(
         kwargs["attributes"] = config.data_columns
 
         # Make the plot function
-        return lambda ax: config.plot_func(central_data, **kwargs, ax=ax)
+        return lambda ax: config.plot_func(
+            central_data, **kwargs, ax=ax, disable_title=disable_title
+        )
     # Aggregate graph
     else:
         # To satisfy the type checker
@@ -816,4 +824,5 @@ def generate_inner_lambda(
             parameter=aggregate_config.parameter,
             **kwargs,
             ax=ax,
+            disable_title=disable_title,
         )
