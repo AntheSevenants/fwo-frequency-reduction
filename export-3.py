@@ -29,6 +29,12 @@ parser.add_argument(
     default=None,
 )
 parser.add_argument(
+    "--legend_labels",
+    nargs="+",
+    help="List of legend labels to override. Must match number of groups plotted.",
+    default=None,
+)
+parser.add_argument(
     "export_dir", type=str, help="Directory where figures will be stored"
 )
 parser.add_argument(
@@ -115,4 +121,5 @@ export.render.prerender_profile_graphs(
     exporting=True,
     disable_title=args.disable_titles,
     legend_title_override=args.legend_title,
+    legend_labels_override=args.legend_labels,
 )

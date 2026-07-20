@@ -17,6 +17,7 @@ def prerender_profile_graphs(
     selected_step: int | None = None,
     disable_title: bool = False,
     legend_title_override: str | None = None,
+    legend_labels_override: List[str] | None = None,
     exporting: bool = True,
 ) -> None:
     if selected_run is not None and aggregate_parameter is not None:
@@ -85,6 +86,7 @@ def prerender_profile_graphs(
             aggregate=aggregate_settings,
             disable_title=disable_title,
             legend_title=legend_title_override,
+            legend_labels=legend_labels_override,
         )
 
         # Save the files to disk!

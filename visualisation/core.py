@@ -350,6 +350,7 @@ def plot_value(
     step: int | float | None = None,
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
+    legend_labels: List[str] | None = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
     plot_mean: bool = False,
@@ -368,6 +369,7 @@ def plot_value(
         step (int | float): Step to highlighted in the graph (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to None (= no highlight).
         title (Optional[str], optional): The title for the graph. Defaults to None.
         legend_title (Optional[str], optional): The title for the legend. Defaults to None.
+        legend_labels (List[str], optional): The labels for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
         plot_mean (bool, optional): Whether to indicate the mean. Defaults to False.
@@ -396,9 +398,12 @@ def plot_value(
         line_style = get_line_style_by_group_context(
             attribute_idx, num_groups, multi_group_context
         )
-        legend_label = make_legend_label_by_group_context(
-            attribute_idx, aggregate_extension_x=aggregate_extension_x
-        )
+        if legend_labels is None:
+            legend_label = make_legend_label_by_group_context(
+                attribute_idx, aggregate_extension_x=aggregate_extension_x
+            )
+        else:
+            legend_label = legend_labels[attribute_idx]
 
         ax.plot(value_list, color=line_colour, linestyle=line_style, label=legend_label)
 
@@ -431,10 +436,12 @@ def plot_value(
         ax.set_title(title)
 
     if num_groups > 1:
-        ax.legend()
+        legend_kwargs = {}
 
         if legend_title is not None:
-            ax.legend().set_title(legend_title)
+            legend_kwargs["title"] = legend_title
+
+        ax.legend(**legend_kwargs)
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
@@ -457,6 +464,7 @@ def plot_ratio(
     step: int | float | None = None,
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
+    legend_labels: List[str] | None = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
@@ -477,6 +485,7 @@ def plot_ratio(
         step (int | float): Step to highlighted in the graph (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to None (= no highlight).
         title (Optional[str], optional): The title for the graph. Defaults to None.
         legend_title (Optional[str], optional): The title for the legend. Defaults to None.
+        legend_labels (List[str], optional): The labels for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
 
@@ -518,11 +527,14 @@ def plot_ratio(
 
         for i in range(start_idx, max_iter):
             # Determine label once per 'i' iteration
-            legend_label = (
-                enum_translation[i]
-                if aggregate_extension_x is None
-                else aggregate_extension_x[attribute_idx]
-            )
+            if legend_labels is None:
+                legend_label = (
+                    enum_translation[i]
+                    if aggregate_extension_x is None
+                    else aggregate_extension_x[attribute_idx]
+                )
+            else:
+                legend_label = legend_labels[attribute_idx]
 
             if not is_micro_macro:
                 # --- 2D CASE ---
@@ -599,10 +611,12 @@ def plot_ratio(
     ax.set_yticks(np.arange(ylim[0], ylim[1] + 0.1, 0.1))
 
     # if num_groups > 1:
-    ax.legend()
+    legend_kwargs = {}
 
     if legend_title is not None:
-        ax.legend().set_title(legend_title)
+        legend_kwargs["title"] = legend_title
+
+    ax.legend(**legend_kwargs)
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
@@ -775,6 +789,7 @@ def plot_error_bar(
     y_label: Optional[str] = None,
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
+    legend_labels: List[str] | None = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
@@ -794,6 +809,7 @@ def plot_error_bar(
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
         legend_title (Optional[str], optional): The title for the legend. Defaults to None.
+        legend_labels (List[str], optional): The labels for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str] | None, optional): Labels for aggregate values, to be used as group labels. Defaults to None.
 
@@ -843,9 +859,12 @@ def plot_error_bar(
         )
 
         line_colour = get_colour(attribute_idx)
-        legend_label = make_legend_label_by_group_context(
-            attribute_idx, aggregate_extension_x=aggregate_extension_x
-        )
+        if legend_labels is None:
+            legend_label = make_legend_label_by_group_context(
+                attribute_idx, aggregate_extension_x=aggregate_extension_x
+            )
+        else:
+            legend_label = legend_labels[attribute_idx]
 
         ax.errorbar(
             _x,
@@ -874,10 +893,12 @@ def plot_error_bar(
         ax.set_title(title)
 
     if num_groups > 1:
-        ax.legend()
+        legend_kwargs = {}
 
         if legend_title is not None:
-            ax.legend().set_title(legend_title)
+            legend_kwargs["title"] = legend_title
+
+        ax.legend(**legend_kwargs)
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
@@ -900,6 +921,7 @@ def plot_error_bar_horizontal(
     y_label: Optional[str] = None,
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
+    legend_labels: List[str] | None = None,
     disable_title: bool = False,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
     """Plot a bar chart with values from a model run
@@ -919,6 +941,7 @@ def plot_error_bar_horizontal(
         y_label (Optional[str], optional): The label for the Y axis. Defaults to None.
         title (Optional[str], optional): The title for the graph. Defaults to None.
         legend_title (Optional[str], optional): The title for the legend. Defaults to None.
+        legend_labels (List[str], optional): The labels for the legend. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
 
     Returns:
@@ -968,7 +991,10 @@ def plot_error_bar_horizontal(
         )
 
         line_colour = get_colour(attribute_idx)
-        legend_label = group_labels[attribute_idx]
+        if legend_labels is None:
+            legend_label = group_labels[attribute_idx]
+        else:
+            legend_label = legend_labels[attribute_idx]
 
         ax.errorbar(
             _x,
@@ -997,10 +1023,12 @@ def plot_error_bar_horizontal(
         ax.set_title(title)
 
     if num_groups > 1:
-        ax.legend()
+        legend_kwargs = {}
 
         if legend_title is not None:
-            ax.legend().set_title(legend_title)
+            legend_kwargs["title"] = legend_title
+
+        ax.legend(**legend_kwargs)
 
     output_fig = get_ax_figure(ax)
     plt.close(output_fig)
