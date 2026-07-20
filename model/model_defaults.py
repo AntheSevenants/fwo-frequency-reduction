@@ -9,7 +9,9 @@ from dataclasses import dataclass, asdict, field
 from typing import List, Optional, Dict, Type, Any, Tuple
 
 # Mapping of parameter names to their enum classes
-PARAMETER_ENUM_MAPPING: Dict[str, Type] = {}
+PARAMETER_ENUM_MAPPING: Dict[str, Type] = {
+    "feedback_type": model.enums.FeedbackTypes,
+}
 
 
 @dataclass
