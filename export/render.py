@@ -18,7 +18,7 @@ def prerender_profile_graphs(
     disable_title: bool = False,
     legend_title_override: str | None = None,
     legend_labels_override: List[str] | None = None,
-    exporting: bool = True,
+    exporting: bool = False,
 ) -> None:
     if selected_run is not None and aggregate_parameter is not None:
         raise ValueError(
