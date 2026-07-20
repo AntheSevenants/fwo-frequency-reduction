@@ -13,7 +13,7 @@ parser.add_argument("sweeps_dir", help="Directory where all sweeps are stored")
 parser.add_argument("selected_sweep", type=str, help="Name of the sweep")
 parser.add_argument(
     "--filter",
-    action="append",
+    nargs="+",
     help="Filter by parameter name and value. Can be used multiple times. Format: key=value",
 )
 parser.add_argument(
