@@ -13,6 +13,7 @@ def prerender_profile_graphs(
     graphs: List[str],
     PROFILE_NAME: str,
     aggregate_parameter: str | None = None,
+    overlay_ids: List[int] | None = None,
     selected_run: int | None = None,
     selected_step: int | None = None,
     disable_title: bool = False,
@@ -70,6 +71,7 @@ def prerender_profile_graphs(
                     selected_sweep,
                     combination_ids,
                     aggregate_parameter,
+                    overlay_ids=overlay_ids,
                 )
             else:
                 raise ValueError(

@@ -142,6 +142,7 @@ class AggregateSettings:
         selected_sweep: str,
         combination_ids: List[int],
         parameter: str,
+        overlay_ids: List[int] | None = None,
     ):
         """Initialise an aggregate configuration.
 
@@ -150,10 +151,14 @@ class AggregateSettings:
             selected_sweep (str): The name of the sweep of interest
             combination_ids (List[int]): Unique IDs for the selected parameter combinations
             parameter (str): The parameter of which the permutations are currently under scrutiny
+            overlay_ids (List[int]): Unique IDs for the selected overlay combinations
         """
 
         self.combination_ids = combination_ids
         self.parameter = parameter
+
+        if overlay_ids is not None:
+            self.combination_ids += overlay_ids
 
         # We want to know what possible values are they for the parameter that is being expanded
         # So then for each parameter value, we will check what the outcomes are from that combination
@@ -168,6 +173,12 @@ class AggregateSettings:
             .unique()
             .tolist()
         ]
+
+        if overlay_ids is not None:
+            overlay_labels = [
+                f"Overlay #{index + 1}" for index, overlay_id in enumerate(overlay_ids)
+            ]
+            self.parameter_values += overlay_labels
 
         self.combination_data = (
             None  # by default, we do not send along combination data

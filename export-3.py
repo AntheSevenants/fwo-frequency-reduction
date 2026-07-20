@@ -1,5 +1,7 @@
 import os
+import sys
 import argparse
+from typing import Any, Dict, List
 
 import pandas as pd
 
@@ -8,16 +10,45 @@ import export.parameters
 import export.graphs
 import export.render
 
+
+def parse_kv_pair(s: str):
+    """
+    Helper to parse key=value strings into a dictionary
+    """
+
+    try:
+        key, value = s.split("=", 1)
+        return (key, value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"Filter must be in 'key=value' format: {s}")
+
+
+def kv_pair_to_dict(pairs: List[Dict[str, str]]) -> Dict[str, str]:
+    selected_parameters = {}
+    for key, value in pairs:
+        selected_parameters[key] = value
+
+    return selected_parameters
+
+
 parser = argparse.ArgumentParser(description="export - signed, sealed, delivered")
 parser.add_argument("sweeps_dir", help="Directory where all sweeps are stored")
 parser.add_argument("selected_sweep", type=str, help="Name of the sweep")
 parser.add_argument(
     "--filter",
     nargs="+",
+    type=parse_kv_pair,
     help="Filter by parameter name and value. Can be used multiple times. Format: key=value",
 )
 parser.add_argument(
     "--aggregate", type=str, help="Aggregate over a specific parameter", default=None
+)
+parser.add_argument(
+    "--overlay",
+    nargs="+",
+    action="append",
+    type=parse_kv_pair,
+    help="Manually add an overlay group to an aggregate graph. Can be used multiple times. Format: key=value",
 )
 parser.add_argument(
     "--step", type=int, help="Inspect the model at a specific step", default=None
@@ -57,12 +88,12 @@ if args.step is not None:
 
 selected_parameters = {}
 if args.filter:
-    for item in args.filter:
-        if "=" in item:
-            k, v = item.split("=", 1)
-            selected_parameters[k] = v
-        else:
-            print(f"Warning: Skipping invalid filter '{item}'")
+    selected_parameters = kv_pair_to_dict(args.filter)
+
+overlays: List[Dict[str, str]] = []
+if args.overlay:
+    for overlay in args.overlay:
+        overlays.append(kv_pair_to_dict(overlay))
 
 combination_ids = None
 
@@ -89,12 +120,28 @@ if selected_runs.shape[0] == 0:
     raise ValueError("No runs found with the selected parameter combination")
 
 unique_combination_ids = selected_runs["combination_id"].unique().tolist()
+overlay_ids = None
 if len(unique_combination_ids) > 1 and aggregate is None:
     raise ValueError(
         "Parameter selection does not single out a unique parameter combination"
     )
 elif len(unique_combination_ids) > 1 and aggregate is not None:
     combination_ids = unique_combination_ids
+    overlay_ids = []
+
+    # Also get the unique IDs for overlays
+    for overlay_idx, overlay in enumerate(overlays):
+        overlay_runs = export.parameters.find_eligible_runs(
+            run_infos=run_infos, selected_parameters=overlay
+        )
+
+        if overlay_runs.shape[0] == 0:
+            raise ValueError(
+                f"Overlay #{overlay_idx} does not single out a single parameter combination"
+            )
+
+        selected_overlays = overlay_runs["combination_id"].unique().tolist()
+        overlay_ids += selected_overlays
 else:
     combination_ids = unique_combination_ids[0]
     # Get the IDs of all runs which belong to the search results
@@ -116,6 +163,7 @@ export.render.prerender_profile_graphs(
     GRAPHS,
     args.output_profile,
     aggregate_parameter=aggregate,
+    overlay_ids=overlay_ids,
     selected_run=None,
     selected_step=selected_step,
     exporting=True,
