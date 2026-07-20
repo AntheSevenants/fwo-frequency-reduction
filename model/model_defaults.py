@@ -56,7 +56,12 @@ class Parameters:
     # ----
     value_floor: int = 5
     reduction_prob: float = 0.5
+
+    # ----
+    # Communication
+    # ----
     reentrance_entropy_floor: float = 0.0
+    feedback_type: int = model.enums.FeedbackTypes.NO_FEEDBACK
 
     def __post_init__(self):
         # Initialise random number generator
