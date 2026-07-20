@@ -137,26 +137,35 @@ class ReductionAgent(mesa.Agent):
         decision_entropy = scores_to_entropy(log_scores)
         self.model.tracker.register_decision_entropy(decision_entropy)
 
+        communication_successful = true_construction_index == win_index
+
         if self.model.params.do_update:
             if self.model.params.to_update == model.enums.ToUpdate.DISTRIBUTED:
                 pass
             elif self.model.params.to_update == model.enums.ToUpdate.WINNER_ONLY:
-                # Update only the winner with full weights
-                self.atts.vocabulary.observe_utterance(int(win_index), heard_vector)
-
+                # If feedback is enabled, do not update when communication is not successful
                 if (
-                    len(self.atts.vocabulary.batch_memory[win_index])
-                    >= self.model.params.batch_size
+                    self.model.params.feedback_type
+                    == model.enums.FeedbackTypes.FEEDBACK
+                    and not communication_successful
                 ):
-                    self.atts.vocabulary.update_distribution(
-                        win_index, learning_rate=self.model.params.learning_rate
-                    )
+                    pass
+                else:
+                    # Update only the winner with full weights
+                    self.atts.vocabulary.observe_utterance(int(win_index), heard_vector)
+
+                    if (
+                        len(self.atts.vocabulary.batch_memory[win_index])
+                        >= self.model.params.batch_size
+                    ):
+                        self.atts.vocabulary.update_distribution(
+                            win_index, learning_rate=self.model.params.learning_rate
+                        )
             else:
                 raise ValueError("Unknown update destination")
 
         # TODO: add uncertainty step if needed
 
-        communication_successful = true_construction_index == win_index
         self.model.tracker.communicative_success.register_communication_outcome(
             int(communication_successful),
             true_construction_index,
