@@ -151,8 +151,16 @@ class ReductionAgent(mesa.Agent):
                 ):
                     pass
                 else:
-                    # Update only the winner with full weights
-                    self.atts.vocabulary.observe_utterance(int(win_index), heard_vector)
+                    # Discriminatory force implementation
+                    if (
+                        decision_entropy
+                        < self.model.params.discriminatory_entropy_floor
+                        or self.model.params.discriminatory_entropy_floor == 0
+                    ):
+                        # Update only the winner with full weights
+                        self.atts.vocabulary.observe_utterance(
+                            int(win_index), heard_vector
+                        )
 
                     if (
                         len(self.atts.vocabulary.batch_memory[win_index])
@@ -163,8 +171,6 @@ class ReductionAgent(mesa.Agent):
                         )
             else:
                 raise ValueError("Unknown update destination")
-
-        # TODO: add uncertainty step if needed
 
         self.model.tracker.communicative_success.register_communication_outcome(
             int(communication_successful),
