@@ -172,7 +172,7 @@ $$ {#eq-zipfian_distribution}
     \hat{c} &= \arg\max_{c \in C} \left[ \operatorname{Score}(\mathbf{v}^{\text{heard}} \mid c )\right]
   \end{align}
   $$
-3. Parameters $\mu$ and $\sigma$ are updated for the heard construction according to an Exponential Moving Average formula, modified for batches. We use a batch memory instead of updating $\mu$ and $\sigma$ immediately in order to ensure the parameters remain stable.[^outlier-infuence] The heard vector is saved in a batch memory of size $B$. Once that batch memory has $B$ exemplars, the mean and variance of the batch memory are computed, and $\mu$ and $\sigma$ are updated according to a weighted average. $\alpha$ regulates the learning rate. The final result is rounded to the nearest integer. $\sigma$ has a minimum value of 1:
+3. Parameters $\mu$ and $\sigma$ are updated for the heard construction according to an Exponential Moving Average formula, modified for batches. We use a batch memory instead of updating $\mu$ and $\sigma$ immediately in order to ensure the parameters remain stable.[^outlier-infuence] The heard vector is saved in a batch memory of size $B$. Once that batch memory is actually filled with $B$ exemplars, the mean and variance of the batch memory are computed, and $\mu$ and $\sigma$ are updated according to a weighted average. $\alpha$ regulates the learning rate. The final result is rounded to the nearest integer. $\sigma$ has a minimum value of 1:
   $$
   \begin{align}
     &\mathbf{X}_c = \{\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_B\} = \text{ batch memory for construction } C \\
