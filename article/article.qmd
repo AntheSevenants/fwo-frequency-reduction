@@ -280,7 +280,7 @@ In this article, we attempted to find the minimal conditions necessary to produc
 
 By enabling and disabling specific mechanisms in our model, we found the following minimal set of conditions to suffice for the reducing effect to emerge in our simulations:
 
-1. Frequency-informed priors during exemplar interpretation (see @sec-sec-priors-no-priors-model)
+1. Frequency-informed priors during exemplar interpretation (see @sec-priors-no-priors-model)
 1. An ambiguity avoidance mechanism (see @sec-reentrance-model)
 1. A sufficiently skewed distribution (see @sec-no-zipfian-feedback-model)
 
