@@ -131,7 +131,7 @@ The agents in our model do not store encountered realisations in memory *as-is*.
 
 In this section, we will explain the interactional behaviour of our virtual speakers and hearers in more detail.
 
-At each step in the simulation, each agent in the simulation enters into a "conversation" at random with another randomly selected agent. The agent initiating the conversation functions as the speaker, the other agent functions as the hearer. In this conversation, speaker and hearer play a so-called "language game" [@smith_models_2014], the core of our simulation. The goal of the language game is for the speaker to communicate a specific construction to the hearer, which the hearer then has to understand successfully. An overview of the game can be found in @fig-model_design_language_game. The language game goes as follows:
+At each step in the simulation, each agent in the simulation enters into a "conversation" at random with another randomly selected agent. The agent initiating the conversation functions as the speaker, the other agent functions as the hearer. In this conversation, speaker and hearer play a so-called "language game" [@smith_models_2014], the core of our simulation. The goal of the language game is for the speaker to communicate a specific construction to the hearer, which the hearer then has to understand successfully. This is also why we have to minimally assume our representations are part of constructions with meaning (see @sec-meaning). An overview of the game can be found in @fig-model_design_language_game. The language game goes as follows:
 
 **Speaker**
 
