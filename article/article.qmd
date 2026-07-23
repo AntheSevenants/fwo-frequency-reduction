@@ -117,7 +117,9 @@ For the basis of our vectors, we made the deliberate decision not to use any dat
 
 : Example base vector representations for the constructions in the simulation model. These are the "original" vector representations that will have noise added to them once the agents' memories are initialised. {#tbl-model_design_speech_vector_examples}
 
-Note also that, since we are interested in the reduction of the form of constructions, the meaning of constructions is not explicitly modelled in our simulations. Instead, we implicitly assume that all meanings remain constant across different exemplars of the same constructions, even if the form becomes strongly reduced. This drive towards simplicity is in accordance with best practices in agent-based modelling [@landsbergen_cultural_2009; @beuls_agent-based_2013; @pijpops_lectal_2022].
+### The place of meaning {#sec-meaning}
+
+Since reduction is assumed to only be the result of the automation of pronunciation [@bybee_frequency_2007], a reasonable expectation would be that meaning does not play a role in the workings of reduction, and thus also not in this simulation. @gahl_time_2008 has found, however, that homophone pairs with different meanings do not necessarily have the same word duration: more frequent words have shorter durations than less frequent words, even when controlling for other influential factors [a more detailed inquiry into this phenomenon is given in @gahl_time_2024]. The consequences for our simulation are limited: we assume that our acoustic representations are part of constructions with a distinct meanings. As is customary in simulation research, we focus on a subset of the problem first [@landsbergen_cultural_2009; @beuls_agent-based_2013; @pijpops_lectal_2022]. The problem statement can then be expanded later once the smaller subset is understood (see @sec-further-research).
 
 ### Agent memory {#sec-agent-memory}
 
@@ -310,7 +312,7 @@ One of the cruxes of usage-based theories of language is a relatively straightfo
 
 More generally, our findings show that the "theoretical water" in usage-based linguistics is deeper than one might think. While the reducing effect, on paper, seems quite straightforward, our simulations show that in practice, its inner workings might be more intricate. As corpus results do not show causation, it could be theoretically interesting to investigate more usage-based theories in linguistics using computer simulations.
 
-### Further research
+### Further research {#sec-further-research}
 
 There are several ways in which our model could be extended. The most obvious extension would be the inclusion of even richer context. Indeed, while it was the very goal of our simulation to focus on the role of frequency only, in real life situations, context contributes to how far a specific construction's representation can be reduced. If a construction is predictable from either its linguistic or its (real-life) situational context, there is a lesser need to express it fully. In this regard, it would be appropriate to turn our reducing effect model into a model of *probability* rather than one of frequency (although both are, of course, closely related).
 
