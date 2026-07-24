@@ -324,32 +324,6 @@ hier nog iets om te eindigen
 
 ## Appendix
 
-### Priors sampling {#sec-appendix-priors}
-
-In our simulations, agents sample constructions according to a Zipfian distribution (@eq-zipfian_distribution). Due to computational reasons, however, our agents only have 100 constructions to choose from, which does not guarantee enough contrast between high-frequency and low-frequency constructions.  To solve this issue, the priors for the 100 constructions are sampled from a larger Zipfian distribution. First, the priors are computed for a much larger distribution of size $S = 130,000$. Then, using those priors, 100 priors are sampled. The resulting priors are renormalised to sum to one and are used by the agents to sample constructions. A pseudocode rendition is given in @lst-priors-sampling.
-
-::: {#lst-priors-sampling}
-$$
-\begin{aligned}
-&\textbf{Input:} \\
-&V: \text{The number of priors to sample} \\
-&S: \text{The size of the large priors distribution} \\
-&\beta: \text{Steepness of the Zipfian distribution} \\
-\\
-&\textbf{Output:} \\
-&\text{Set } SamplePriors \text{ of size } V \\
-\\
-&\textbf{Algorithm:} \\
-&Ranks \leftarrow \{1, 2, \dots, S\} \\
-&FullPriors \leftarrow \{ \frac{1}{x^\beta} \mid x \in S\} \\
- \\
-&SamplePriors \leftarrow \operatorname{sample}_{\text{weighted}}(FullPriors, n=V, \text{no replacement}) \\
-&SamplePriors \leftarrow sort(SamplePriors) \\
-&SamplePriors \leftarrow \frac{SamplePriors}{\sum SamplePriors}
-\end{aligned}
-$$
-:::
-
 ### Vector generation {#sec-appendix-vector}
 
 The vectors used in our computer model are generated in such a way that they are maximally distinct from each other. The way we ensure both randomness and distinctness is as follows: first, we generate a matrix of random numbers within range of size $P x D$, with $D$ the required number of dimensions and $P$ the pool size. The pool size is typically set to a very large number (50,000), which means we have a large pool of distinctive vectors to sample from. To sample the $V$ constructions we need for the simulations, we first pick a random vector to start with and compute its squared distance to the rest of the pool. We choose the vector that has the highest squared distance from our starting vector -- this vector is the furthest removed from our starting vector -- and add it to our sample. Next, we check whether the vector we just added is closer to the rest of the pool than our starting vector. If so, we take it as the starting point for choosing the next furthest vector in the pool, else we retain our starting vector. We then repeat the sampling process until all $V$ constructions have been sampled. A pseudocode rendition is given in @lst-vector-generation.
@@ -391,6 +365,32 @@ We mentioned before that all vector values are initialised between a specific ra
 Similar logic applies to our floor $R$ with value 5. Vectors can only be reduced to a mean value of 5 because this generally is the lowest value $\mu$ can have without the associated normal distribution underflowing below zero. Of course, it would be possible to set this value to 10 or even 50. We picked the lowest applicable value, leaving plenty room for constructions to reduce from their full representations.
 
 [^bandwith-explanation]: More specifically, we need to avoid the situation in which two vectors are identical except for a value difference of one in just one dimension. To guarantee that two vectors are "different enough", we need ample room for variation. Hence our choice for a range of 30.
+
+### Priors sampling {#sec-appendix-priors}
+
+In our simulations, agents sample constructions according to a Zipfian distribution (@eq-zipfian_distribution). Due to computational reasons, however, our agents only have 100 constructions to choose from, which does not guarantee enough contrast between high-frequency and low-frequency constructions.  To solve this issue, the priors for the 100 constructions are sampled from a larger Zipfian distribution. First, the priors are computed for a much larger distribution of size $S = 130,000$. Then, using those priors, 100 priors are sampled. The resulting priors are renormalised to sum to one and are used by the agents to sample constructions. A pseudocode rendition is given in @lst-priors-sampling.
+
+::: {#lst-priors-sampling}
+$$
+\begin{aligned}
+&\textbf{Input:} \\
+&V: \text{The number of priors to sample} \\
+&S: \text{The size of the large priors distribution} \\
+&\beta: \text{Steepness of the Zipfian distribution} \\
+\\
+&\textbf{Output:} \\
+&\text{Set } SamplePriors \text{ of size } V \\
+\\
+&\textbf{Algorithm:} \\
+&Ranks \leftarrow \{1, 2, \dots, S\} \\
+&FullPriors \leftarrow \{ \frac{1}{x^\beta} \mid x \in S\} \\
+ \\
+&SamplePriors \leftarrow \operatorname{sample}_{\text{weighted}}(FullPriors, n=V, \text{no replacement}) \\
+&SamplePriors \leftarrow sort(SamplePriors) \\
+&SamplePriors \leftarrow \frac{SamplePriors}{\sum SamplePriors}
+\end{aligned}
+$$
+:::
 
 ### Metrics {#sec-appendix-metrics}
 
