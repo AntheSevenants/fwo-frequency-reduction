@@ -404,35 +404,15 @@ In order to keep track of the simulation course, we computed the following metri
 10. **Communicative success (macro average):**  
   Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
   $$
-  \frac{1}{V} \sum_{t=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } t}}
+  \frac{1}{V} \sum_{c=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } c}}
   $$
-4. **Average L1 of agents' memories:**  
-  Number expressing the average L1 norm of exemplars, across all agents.  
+4. **Average acoustic strength in agents' memories:**  
+  Number expressing for each construction $c$ the average acoustic strength in its distributions, across all agents.
   $$
-  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{L} \sum_{j=1}^{L}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{j,k}}}{D} \right] } \right]}
-  $$
-5. **Average L1 :**  
-  Number expressing for each construction $c$ the average L1 norm of its exemplars, across all agents.
-  $$
-  \begin{align}
-  & \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c} \sum_{j=1}^{L^c}{ \left[ \frac{\sum_{k=1}^{D}{ \text{agent}_i.\text{memory}_{j,k}}}{D} \right] } \right] } \\
-  & \text{with~} L^c = \text{\# exemplars associated with construction~} c 
-  \end{align}
+  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{V} \sum_{c=1}^{V}{ \left[ \frac{1}{D} \sum_{j=1}^{D}{\mu_{i,c,j}} \right] } \right]}
   $$
 6. **Confusion matrix:**  
   Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
-11. **Correct interpretation ratio:**  
-  Ratio expressing for each construction $c$ how many exemplars come from successful speaking turns.  
-  $$
-  \begin{align}
-  & \frac{1}{N} \sum_{i=1}^{N}{ \left[ \frac{1}{L^c_i} \sum_{j=1}^{L^c_i}{ \operatorname{good origin}(L^c_i) } \right] } \\
-  & \text{with~} L^c = \text{\# exemplars associated with construction~} c \\
-  & \text{and} \operatorname{good origin}(\text{exemplar}) = \begin{cases}
-0 & \text{if from failed speaking turn} \\
-1 & \text{if from successful speaking turn}
-\end{cases}
-  \end{align}
-  $$
 12. **Half life time:**  
   Number expressing for each construction $c$ the timestep at which half of its original energy was reached.  
   $$
