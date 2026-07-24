@@ -52,7 +52,7 @@
                 {% if not live %}
                 <div class="card mb-3">
                     <div class="card-header text-white">
-                        <div class="wrapper"><i class="bi bi-collection"></i></div> Sweep selection
+                        <div class="wrapper"><i class="bi bi-folder"></i></div> Sweep selection
                     </div>
                     <div class="card-body">
                         <div class="form-floating">
@@ -69,7 +69,33 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if selected_sweep is not none and not live %}
+                {% if selected_sweep is not none and parameter_sets is not none and
+                not
+                live %}
+                <div class="card mb-3">
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-collection"></i></div> Parameter set filter
+                    </div>
+                    <div class="card-body">
+                        <div class="form-floating">
+                            <select name="parameter_set" class="form-select mb-2 interactive"
+                                aria-label="Dropdown external variable selection" id="select_parameter_set">
+                                <option {{ "selected" if selected_run is none }} value="none">Select a parameter set
+                                </option>
+                                {% for parameter_set in parameter_sets %}
+                                <option value="{{ parameter_set }}" {{ "selected" if
+                                    selected_parameter_set==parameter_set }}>{{
+                                    parameter_set }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="select_parameter_set">Available parameter sets:</label>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if selected_sweep is not none and (selected_parameter_set is not none or parameter_sets is none) and
+                not
+                live %}
                 <div class="card mb-3">
                     <div class="card-header text-white">
                         <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run filter

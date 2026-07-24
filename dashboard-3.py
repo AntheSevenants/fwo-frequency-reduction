@@ -48,6 +48,8 @@ def show_interface(live: bool = False):
     sweeps = export.sweeps.get_sweeps(args.sweeps_dir)
     # "selected sweep" = one of those batch runs
     selected_sweep = request.args.get("sweep")
+    # "selected params set" = a subset of general parameters
+    selected_parameter_set = request.args.get("parameter_set")
     # You can filter for specific graphs
     selected_filter = request.args.get("filter")
     # You can filter for a specific run
@@ -83,6 +85,8 @@ def show_interface(live: bool = False):
     GRAPHS = []
     matched_run_ids = []
 
+    parameter_sets = None
+
     # There are keywords used by the application, these do not appear as parameters
     # We filter to check whether the user has made an actual parameter selection
     no_selection = (
@@ -110,10 +114,14 @@ def show_interface(live: bool = False):
 
     # Run selection logic
     if selected_sweep is not None:
-        # Get information about all runs in the sweep as a  dataframe
+        # Get information about all runs in the sweep as a dataframe
         run_infos = export.sweeps.get_run_infos(
             args.sweeps_dir, selected_sweep, hashable_safe=True
         )
+
+        # Get all parameter sets that span across runs in a sweep
+        if "parameter_set" in run_infos:
+            parameter_sets = run_infos["parameter_set"].unique().tolist()
 
         sweep_info = export.sweeps.get_sweep_info(args.sweeps_dir, selected_sweep)
         # Set ticks for time expansion
@@ -121,6 +129,26 @@ def show_interface(live: bool = False):
         ticks = list(
             range(0, int(sweep_info["num_steps"]) + tick_step, tick_step),
         )
+
+        if parameter_sets is not None:
+            if selected_parameter_set is None:
+                # Redirect to first available parameter set
+                return redirect(
+                    url_for(
+                        "index",
+                        sweep=selected_sweep,
+                        parameter_set=parameter_sets[0],
+                        _external=False,
+                    )
+                )
+            else:
+                # Filter run_infos by selected parameter set
+                if selected_parameter_set not in parameter_sets:
+                    raise ValueError("Parameter set not in available parameter sets")
+
+                run_infos = run_infos[
+                    run_infos["parameter_set"] == selected_parameter_set
+                ]
 
         parameter_mapping, constants_mapping = export.parameters.build_mapping(
             run_infos
@@ -138,7 +166,9 @@ def show_interface(live: bool = False):
                 )
 
         # If no parameter combination was made, create a parameter selection ourselves
-        if no_selection:
+        # Now that we have parameter sets, it is possible that the only parameter left is in an aggregation
+        # So no selection is OK if aggregate is defined
+        if no_selection and aggregate is None:
             for parameter in parameter_mapping:
                 selected_parameters[parameter] = parameter_mapping[parameter][0]
 
@@ -148,6 +178,8 @@ def show_interface(live: bool = False):
                 )
             else:
                 no_selection = False
+        elif no_selection and aggregate is not None:
+            no_selection = False
 
         # These are runs that adhere to the parameter selection made
         selected_runs = export.parameters.find_eligible_runs(
@@ -231,6 +263,8 @@ def show_interface(live: bool = False):
         "index.html",
         sweeps=sweeps,
         selected_sweep=selected_sweep,
+        parameter_sets=parameter_sets,
+        selected_parameter_set=selected_parameter_set,
         combination_id=cache_combination_id,
         aggregate_parameter=aggregate,
         selected_parameters=selected_parameters,
