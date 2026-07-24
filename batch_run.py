@@ -7,7 +7,7 @@ import argparse
 import dataclasses
 import json
 
-import batch.profiles
+import model.profiles
 import batch.sweep_info
 import batch.messaging
 import export.sweeps
@@ -37,7 +37,7 @@ sweep_info = batch.sweep_info.SweepInfo(
 
 SWEEPS_DIR = "sweeps/"
 
-if not args.profile in batch.profiles.params:
+if not args.profile in model.profiles.params:
     raise ValueError("Unrecognised profile")
 
 webhook = None
@@ -54,7 +54,7 @@ if args.webhook_info is not None:
         webhook_info["endpoint"], webhook_info["api_key"], webhook_info["payload"]
     )
 
-params = batch.profiles.params[args.profile]
+params = model.profiles.params[args.profile]
 
 if __name__ == "__main__":
     now = datetime.now()  # current date and time
