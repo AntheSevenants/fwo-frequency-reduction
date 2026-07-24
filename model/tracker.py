@@ -90,6 +90,12 @@ class Tracker:
         ]
 
     @property
+    def __any_n35_outcomes__(self):
+        return self.communicative_success.outcomes[
+            model.success.CommunicationContext.ANY, :35, :
+        ]
+
+    @property
     def __regular_outcomes__(self):
         return self.communicative_success.outcomes[
             model.success.CommunicationContext.NOT_REDUCING_NOT_REENTRANT

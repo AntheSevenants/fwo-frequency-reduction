@@ -36,6 +36,11 @@ model_reporters_base = {
         reporter_types=[ReporterType.PERCENT_MICROMACRO],
         associated_enum=model.success.CommunicationResult,
     ),
+    "communication_results_n35_go": ModelReporter(
+        property_name="__any_n35_outcomes__",
+        reporter_types=[ReporterType.PERCENT_MICROMACRO],
+        associated_enum=model.success.CommunicationResult,
+    ),
     "reduction_outcomes_go": ModelReporter(
         property_name="__reduction_outcomes__",
         reporter_types=[ReporterType.PERCENT_MICROMACRO],
