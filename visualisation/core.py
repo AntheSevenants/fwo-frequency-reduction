@@ -351,6 +351,8 @@ def plot_value(
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
     legend_labels: List[str] | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
     plot_mean: bool = False,
@@ -370,6 +372,8 @@ def plot_value(
         title (Optional[str], optional): The title for the graph. Defaults to None.
         legend_title (Optional[str], optional): The title for the legend. Defaults to None.
         legend_labels (List[str], optional): The labels for the legend. Defaults to None.
+        x_label (str, optional): The label for the X axis. Defaults to None.
+        y_label (str, optional): The label for the Y axis. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
         plot_mean (bool, optional): Whether to indicate the mean. Defaults to False.
@@ -432,6 +436,11 @@ def plot_value(
     if ylim is not None:
         ax.set_ylim(*ylim)
 
+    if x_label is not None:
+        ax.set_xlabel(x_label)
+    if y_label is not None:
+        ax.set_ylabel(y_label)
+
     if title is not None and not disable_title:
         ax.set_title(title)
 
@@ -465,6 +474,8 @@ def plot_ratio(
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
     legend_labels: List[str] | None = None,
+    x_label: str | None = None,
+    y_label: str | None = None,
     disable_title: bool = False,
     aggregate_extension_x: List[str] | None = None,
 ) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
@@ -486,6 +497,8 @@ def plot_ratio(
         title (Optional[str], optional): The title for the graph. Defaults to None.
         legend_title (Optional[str], optional): The title for the legend. Defaults to None.
         legend_labels (List[str], optional): The labels for the legend. Defaults to None.
+        x_label (str, optional): The label for the X axis. Defaults to None.
+        y_label (str, optional): The label for the Y axis. Defaults to None.
         disable_title (bool, optional): Whether to show a title for this graph. Defaults to False.
         aggregate_extension_x (List[str], optional): A list of values for the legend of an aggregate extension graph. Defaults to None.
 
@@ -609,6 +622,11 @@ def plot_ratio(
 
     ax.set_ylim(*ylim)
     ax.set_yticks(np.arange(ylim[0], ylim[1] + 0.1, 0.1))
+
+    if x_label is not None:
+        ax.set_xlabel(x_label)
+    if y_label is not None:
+        ax.set_ylabel(y_label)
 
     # if num_groups > 1:
     legend_kwargs = {}

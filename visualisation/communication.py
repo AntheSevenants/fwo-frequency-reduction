@@ -38,6 +38,8 @@ def plot_communication(
         attributes,
         model.enums.to_dict(model.success.CommunicationResult),
         title=title,
+        x_label="Steps in the simulation",
+        y_label=r"% successful turns",
         **kwargs,
     )
 
@@ -87,6 +89,8 @@ def plot_reentrance(
         attributes,
         model.enums.to_dict(model.enums.ReentranceUsage),
         title="Re-entrance usage across agents",
+        x_label="Steps in the simulation",
+        y_label=r"% re-entrance activated",
         **kwargs,
     )
 
@@ -114,5 +118,7 @@ def plot_decision_entropy(
         attributes,
         ylim=[0, model.entropy.compute_maximum_entropy(num_constructions)],
         title="Decision entropy across agents",
+        x_label="Steps in the simulation",
+        y_label="Decision entropy",
         **kwargs,
     )
