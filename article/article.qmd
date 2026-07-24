@@ -174,7 +174,7 @@ $$ {#eq-zipfian_distribution}
     \hat{c} &= \arg\max_{c \in C} \left[ \operatorname{Score}(\mathbf{v}^{\text{heard}} \mid c )\right]
   \end{align}
   $$
-3. Parameters $\mu$ and $\sigma$ are updated for the heard construction according to an Exponential Moving Average formula, modified for batches. We use a batch memory instead of updating $\mu$ and $\sigma$ immediately in order to ensure the parameters remain stable.[^outlier-infuence] The heard vector is saved in a batch memory of size $B$. Once that batch memory is actually filled with $B$ exemplars, the mean and variance of the batch memory are computed, and $\mu$ and $\sigma$ are updated according to a weighted average. $\alpha$ regulates the learning rate. The final result is rounded to the nearest integer (see @sec-theory-implications). $\sigma$ has a minimum value of 1:
+3. Parameters $\mu$ and $\sigma$ are updated for the heard construction according to an Exponential Moving Average formula, modified for batches. We use a batch memory instead of updating $\mu$ and $\sigma$ immediately in order to ensure the parameters remain stable.[^outlier-infuence] The heard vector is saved in a batch memory of size $B$. Once that batch memory is actually filled with $B$ exemplars, the mean and variance of the batch memory are computed, and $\mu$ and $\sigma$[^sigma-computation] are updated according to a weighted average. $\alpha$ regulates the learning rate. The final result is rounded to the nearest integer (see @sec-theory-implications). $\sigma$ has a minimum value of 1:
   $$
   \begin{align}
     &\mathbf{X}_c = \{\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_B\} = \text{ batch memory for construction } C \\
@@ -189,6 +189,8 @@ $$ {#eq-zipfian_distribution}
   After the update, the batch memory is emptied.
 
 [^zipfian-note]: Note that we do not explicitly model a world or ground. The extralinguistic world is assumed through the Zipfian distribution. For our model, the addition of an outside world with events would not have any added value, which is why we implemented events about the world in this way.
+
+[^sigma-computation]: We apply Bessel's correction and divide by $B - 1$ to make an unbiased estimation of $\sigma$. If we divide by just $B$, $\sigma$ has a tendency to shrink.
 
 [^outlier-infuence]: More specifically, by using batch memory, we prevent one-off outlier values from affecting $\mu$ and $\sigma$ directly. Cognitively, using batch memory can be seen as hearers updating their internal representations gradually, instead of shifting them dramatically when a new, perhaps strange form is encountered.
 
