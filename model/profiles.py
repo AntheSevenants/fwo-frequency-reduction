@@ -29,11 +29,21 @@ params = {
             "discriminatory-force": {
                 "discriminatory_entropy_floor": [0, 0.01, 0.025, 0.05],
             },
-            "no-zipfian": {
+            "no-zipfian-reentrance": {
                 "reentrance_entropy_floor": 0.05,
                 "sampling_type": [
                     model.sampling.ZipfianSampling(zipf_param=1),
                     model.sampling.ZipfianSampling(zipf_param=0.6),
+                    model.sampling.ZipfianSampling(zipf_param=0.2),
+                    model.sampling.ZipfianSampling(zipf_param=0.01),
+                ],
+            },
+            "no-zipfian-discriminatory-force": {
+                "discriminatory_entropy_floor": 0.05,
+                "sampling_type": [
+                    model.sampling.ZipfianSampling(zipf_param=1),
+                    model.sampling.ZipfianSampling(zipf_param=0.6),
+                    model.sampling.ZipfianSampling(zipf_param=0.2),
                     model.sampling.ZipfianSampling(zipf_param=0.01),
                 ],
             },
@@ -42,6 +52,7 @@ params = {
                 "sampling_type": [
                     model.sampling.ZipfianSampling(zipf_param=1),
                     model.sampling.ZipfianSampling(zipf_param=0.6),
+                    model.sampling.ZipfianSampling(zipf_param=0.2),
                     model.sampling.ZipfianSampling(zipf_param=0.01),
                 ],
                 "feedback_type": model.enums.FeedbackTypes.FEEDBACK,
