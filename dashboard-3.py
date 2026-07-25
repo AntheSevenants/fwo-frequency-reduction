@@ -187,10 +187,12 @@ def show_interface(live: bool = False):
         )
 
         if selected_runs.shape[0] == 0:
+            return redirect_on_error(selected_sweep, selected_parameter_set)
             raise ValueError("No runs found with the selected parameter combination")
 
         unique_combination_ids = selected_runs["combination_id"].unique().tolist()
         if len(unique_combination_ids) > 1 and aggregate is None:
+            return redirect_on_error(selected_sweep, selected_parameter_set)
             raise ValueError(
                 "Parameter selection does not single out a unique parameter combination"
             )
@@ -283,6 +285,14 @@ def show_interface(live: bool = False):
         get_enum_name=get_enum_name,
         enum_mapping=model.model_defaults.PARAMETER_ENUM_MAPPING,
     )
+
+
+def redirect_on_error(selected_sweep, selected_parameter_set):
+    extra_parameters = {"sweep": selected_sweep}
+    if selected_parameter_set is not None:
+        extra_parameters["parameter_set"] = selected_parameter_set
+
+    return redirect(url_for("index", **extra_parameters, _external=False))
 
 
 @app.route(
