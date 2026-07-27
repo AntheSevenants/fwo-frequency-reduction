@@ -265,9 +265,7 @@ We see in @fig-todo that, as the ceiling parameters become smaller, communicativ
 
 For completeness' sake, we also show in @fig-todo that more frequent constructions display starker reduction than less frequent constructions, just as is expected for the reducing effect. 
 
-![A schematic overview of the language game played by the speaker and hearer, with re-entrance. Before speaking, the speaker checks whether they would understand the uttered form themselves. If they do, reduction is kept, but if they do not, reduction is reversed. The new elements in the overview are indicated in teal.](tikz/language_game_bayes_reentrance.svg){#fig-model_design_language_game_reentrance}
-
-TODO bij schema ook discriminatory force toevoegen
+![A schematic overview of the language game played by the speaker and hearer, with re-entrance and discriminatory force. For re-entrance, the speaker checks whether the ambiguity when hearing themselves speak is not too high. If it is, reduction is reversed. Else, it is kept. For discriminatory force, the hearer checks if their parsed output was not too ambiguous. If it was, the form is not saved to batch memory. Else, it is. The new elements in the overview are indicated in teal. Both mechanisms are never active at the same time.](tikz/language_game_bayes_reentrance.svg){#fig-model_design_language_game_reentrance}
 
 ### Testing the impact of the Zipfian distribution {#sec-no-zipfian-feedback-model}
 
