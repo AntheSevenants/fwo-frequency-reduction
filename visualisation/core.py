@@ -76,6 +76,10 @@ def check_ax(
     if disable_title:
         plt.tight_layout()
 
+        # Make sure axis titles do not clip
+        if isinstance(fig, matplotlib.figure.Figure):
+            fig.set_layout_engine("tight")
+
     return fig, ax
 
 
