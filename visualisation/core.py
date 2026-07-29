@@ -13,7 +13,7 @@ import scipy.stats
 
 from typing import Dict, List, Optional, Union, Any, Tuple, Dict
 
-COLOURS = ["blue", "orange", "green", "red", "purple"]
+COLOURS = ["blue", "orange", "green", "red", "purple", "brown"]
 LINE_STYLES = ["-", "dotted", "dashdot", "dashed"]
 
 
