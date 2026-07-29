@@ -79,8 +79,8 @@
 \node[modelstep] (reverse_reduction) [below=of reentrance.west,anchor=west, fill=teal!20] {Reverse reduction};
 \node[modelstep] (keep_reduction) [right=0.25cm of reverse_reduction.east,anchor=west, fill=teal!20] {Keep reduction};
 
-\draw[step_arrow] ([yshift=+2mm]reentrance.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small] {Check  failed} ([yshift=-2mm]reverse_reduction.north west);
-\draw[step_arrow] ([yshift=+2mm]reentrance.south east) .. controls +(right:2mm) and +(up:7mm) .. node[very near end, left, font=\small]  {Check OK}([xshift=8mm]keep_reduction.north);
+\draw[step_arrow] ([yshift=+2mm]reentrance.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small] {Ambiguity above $\epsilon$} ([yshift=-2mm]reverse_reduction.north west);
+\draw[step_arrow] ([yshift=+2mm]reentrance.south east) .. controls +(right:2mm) and +(up:7mm) .. node[very near end, left, font=\small]  {Ambiguity below $\epsilon$}([xshift=8mm, yshift=-0.2mm]keep_reduction.north);
 
 \matrix[vector, below=1cm of reverse_reduction.west, anchor=west, xshift=0.15cm] (output_vector)
 {
@@ -119,15 +119,19 @@
 \node[exemplar_location] (exemplar_score_5) [below=0.65 cm of exemplar_5.center,anchor=center] {75};
 \draw[thick] ($(exemplar_5.south) + (0,0)$) -- ($(exemplar_score_5.north) + (0.0,0)$); 
 
-\node[modelstep] (save_form) [below=of exemplar_score_1.west,anchor=west] {3. Add ``heard'' exemplar to \\\ \ \ \ winner's batch memory};
+\node[modelstep] (discriminatory_force) [below=of exemplar_score_1.west,anchor=west, fill=teal!20] {3. Check for ambiguity};
+  
+\draw[step_arrow] ([yshift=+2mm]interpret_form.south west) .. controls +(left:7mm) and +(left:7mm) .. (discriminatory_force.west);
+
+\node[modelstep] (save_form) [below=1.5cm of discriminatory_force.west,anchor=west] {4. Add ``heard'' exemplar to \\\ \ \ \ winner's batch memory};
 
 \draw[step_arrow] ([xshift=+1.1mm, yshift=+1mm]output_vector.south east) .. controls +(right:40mm) and +(left:25mm) .. ([yshift=-2mm]hear_form.north west);
-\draw[step_arrow] ([yshift=+2mm]hear_form.south west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]interpret_form.north west);
-\draw[step_arrow] ([yshift=+2mm]interpret_form.south west) .. controls +(left:7mm) and +(left:7mm) .. (save_form.west);
 
-\node[modelstep] (do_not_save_form) [below=1.5cm of save_form.west,anchor=west] {4. Update $\mu$ and $\sigma$};
+\draw[step_arrow] ([yshift=+2mm]discriminatory_force.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small, yshift=1mm, xshift=3mm] {If ambiguity below threshold $\epsilon$} (save_form.west);
+  
+\node[modelstep] (update_parameters) [below=1.5cm of save_form.west,anchor=west] {5. Update $\mu$ and $\sigma$};
 
-\draw[step_arrow] ([yshift=+2mm]save_form.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small, xshift=3mm] {If winner's batch exemplar count $= B$} (do_not_save_form.west);
+\draw[step_arrow] ([yshift=+2mm]save_form.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small, xshift=3mm] {If winner's batch exemplar count $= B$} (update_parameters.west);
 
 \path let \p1=($(save_form.east)-(save_form.west)$) in \pgfextra{\global\hearerwidth=\x1};
 \node[participant, above=of hear_form.west, anchor=west, text width=\hearerwidth] (hearer) {\textbf{Hearer}};
