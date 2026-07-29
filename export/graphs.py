@@ -371,6 +371,15 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         aggregate_extension=False,
         context=GraphContext.ANY,
     ),
+    "plot_energy_per_ctx_per_dim_norm_article": GraphConfig(
+        reporter_name=["means", "sigmas"],
+        plot_func=visualisation.energy.plot_energy_per_ctx_per_dim_norm,
+        common_args=["y_max", "y_min"],
+        extra_args={"n": 5, "dims_to_plot": [0, 3, 5], "auto_xlim": True},
+        interactive_args=["step"],
+        aggregate_extension=False,
+        context=GraphContext.ANY,
+    ),
     "vector_difference": GraphConfig(
         reporter_name="vector_differences_go",
         plot_func=visualisation.energy.plot_energy_differences,

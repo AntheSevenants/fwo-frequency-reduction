@@ -1,3 +1,5 @@
+import math
+
 import model.model
 import model.reporters_model
 import model.reporters_agent
@@ -1193,6 +1195,7 @@ def plot_norm_dist_pass(
     attributes: List[str],
     xlim: List[float],
     ylim: List[float] | None = None,
+    auto_xlim: bool = False,
     ax: Optional[matplotlib.axes.Axes] = None,
     step: int | float = -1,
     n: int | None = None,
@@ -1205,8 +1208,9 @@ def plot_norm_dist_pass(
     Args:
         data (Union[model.model.ReductionModel, List[List[float]]): Either a model instance or a list of values
         attributes (List[str]): The names of the series to model.
-        xlim (List[float]): The expected range of values for x axis.
+        xlim (List[float]): The expected range of values for x axis. Defaults to None.
         ylim (List[float] | None, optional): The expected range of values for y axis. Defaults to None.
+        auto_xlim (bool): Automatically set the xlim. Defaults to False.
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Please do not pass any axes currently. Defaults to None.
         step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to -1.
         n (int | None): Maximum number of items in the value lists to be plotted. Can be used for limiting the number of distributions plotted. Defaults to None (= show all items).
@@ -1252,13 +1256,16 @@ def plot_norm_dist_pass(
     _n = n if n is not None else value_lists[0][0].shape[0]
 
     fig, axes = plt.subplots(
-        nrows=num_dims, ncols=1, figsize=(10, 2.5 * num_dims), sharex=True
+        nrows=num_dims, ncols=1, figsize=(6, 2.5 * num_dims), sharex=True
     )
 
     # Possible vector values
     x = np.arange(xlim[0], xlim[1] + 1, 1)
 
     THRESHOLD = 0.001
+
+    current_min = math.inf
+    current_max = -math.inf
 
     for i, _ax in enumerate(fig.axes):
         for ctx_index in range(_n):
@@ -1271,14 +1278,26 @@ def plot_norm_dist_pass(
             # Mask values below the threshold by replacing them with NaN
             y[y < THRESHOLD] = np.nan
 
+            # Get border values
+            is_nan = np.isnan(y)
+            changes = np.diff(is_nan.astype(int))
+            start_nan_indices = np.where(changes == -1)[0][0]
+            end_nan_indices = np.where(changes == 1)[0][0]
+
+            lowest = x[start_nan_indices]
+            highest = x[end_nan_indices + 1]
+
+            if lowest < current_min:
+                current_min = lowest
+            if highest > current_max:
+                current_max = highest
+
             colour = get_colour(ctx_index)
             label = f"Ctx {ctx_index + 1}"
 
             _ax.plot(x, y, color=colour, label=label)
             _ax.fill_between(x, y, color=colour, alpha=0.2)
 
-            if xlim is not None:
-                _ax.set_xlim(*xlim)
             _ax.set_title(f"Dimension {dim_index + 1}", loc="left")
             # _ax.set_xticks([])
             _ax.grid(True)
@@ -1290,6 +1309,15 @@ def plot_norm_dist_pass(
     fig.axes[0].set_ylabel("Density")
     fig.axes[0].set_ylabel("Energy")
     # fig.axes[0].invert_yaxis()
+
+    if auto_xlim:
+        current_min = 5 * (math.floor(current_min / 5))
+        current_max = 5 * (math.ceil(current_max / 5))
+        xlim = [current_min, current_max]
+
+    for i, _ax in enumerate(fig.axes):
+        if xlim is not None:
+            _ax.set_xlim(*xlim)
 
     plt.legend()
 
