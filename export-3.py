@@ -47,6 +47,12 @@ parser.add_argument(
     help="Filter by parameter name and value. Can be used multiple times. Format: key=value",
 )
 parser.add_argument(
+    "--run",
+    type=int,
+    help="Filter a specific, single run",
+    default=None,
+)
+parser.add_argument(
     "--aggregate", type=str, help="Aggregate over a specific parameter", default=None
 )
 parser.add_argument(
@@ -89,6 +95,7 @@ sweeps = export.sweeps.get_sweeps(args.sweeps_dir)
 selected_sweep = args.selected_sweep
 aggregate = args.aggregate
 parameter_set = args.parameter_set
+selected_run = args.run
 selected_step = None
 if args.step is not None:
     selected_step = int(args.step)
@@ -184,7 +191,7 @@ export.render.prerender_profile_graphs(
     args.output_profile,
     aggregate_parameter=aggregate,
     overlay_ids=overlay_ids,
-    selected_run=None,
+    selected_run=selected_run,
     selected_step=selected_step,
     exporting=True,
     disable_title=args.disable_titles,
