@@ -35,6 +35,12 @@ parser = argparse.ArgumentParser(description="export - signed, sealed, delivered
 parser.add_argument("sweeps_dir", help="Directory where all sweeps are stored")
 parser.add_argument("selected_sweep", type=str, help="Name of the sweep")
 parser.add_argument(
+    "--parameter_set",
+    type=str,
+    help="Specify the parameter set to export graphs for. Not required.",
+    default=None,
+)
+parser.add_argument(
     "--filter",
     nargs="+",
     type=parse_kv_pair,
@@ -82,6 +88,7 @@ args = parser.parse_args()
 sweeps = export.sweeps.get_sweeps(args.sweeps_dir)
 selected_sweep = args.selected_sweep
 aggregate = args.aggregate
+parameter_set = args.parameter_set
 selected_step = None
 if args.step is not None:
     selected_step = int(args.step)
@@ -102,6 +109,10 @@ run_infos = export.sweeps.get_run_infos(
 )
 sweep_info = export.sweeps.get_sweep_info(args.sweeps_dir, selected_sweep)
 
+# Get all parameter sets that span across runs in a sweep
+if "parameter_set" in run_infos:
+    parameter_sets = run_infos["parameter_set"].unique().tolist()
+
 parameter_mapping, constants_mapping = export.parameters.build_mapping(run_infos)
 
 if aggregate is not None:
@@ -112,8 +123,17 @@ if aggregate is not None:
             )
         )
 
+if parameter_set is not None:
+    # Filter run_infos by selected parameter set
+    if parameter_set not in parameter_sets:
+        raise ValueError("Parameter set not in available parameter sets")
+
+    selected_runs = run_infos[run_infos["parameter_set"] == parameter_set]
+else:
+    selected_runs = run_infos
+
 selected_runs = export.parameters.find_eligible_runs(
-    run_infos=run_infos, selected_parameters=selected_parameters
+    run_infos=selected_runs, selected_parameters=selected_parameters
 )
 
 if selected_runs.shape[0] == 0:
