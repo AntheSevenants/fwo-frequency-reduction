@@ -158,8 +158,22 @@ elif len(unique_combination_ids) > 1 and aggregate is not None:
 
     # Also get the unique IDs for overlays
     for overlay_idx, overlay in enumerate(overlays):
+        if "parameter_set" in overlay:
+            if overlay["parameter_set"] not in parameter_sets:
+                raise ValueError(
+                    "Overlay parameter set not in available parameter sets"
+                )
+
+            overlay_runs = run_infos[
+                run_infos["parameter_set"] == overlay["parameter_set"]
+            ]
+
+            del overlay["parameter_set"]
+        else:
+            overlay_runs = run_infos
+
         overlay_runs = export.parameters.find_eligible_runs(
-            run_infos=run_infos, selected_parameters=overlay
+            run_infos=overlay_runs, selected_parameters=overlay
         )
 
         if overlay_runs.shape[0] == 0:
