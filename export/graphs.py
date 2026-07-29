@@ -26,6 +26,7 @@ class GraphContext:
 
     EXPORT = 0
     DASHBOARD = 1
+    ANY = 2
 
 
 @dataclass
@@ -368,7 +369,7 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         extra_args={"n": 5},
         interactive_args=["step"],
         aggregate_extension=False,
-        context=GraphContext.DASHBOARD,
+        context=GraphContext.ANY,
     ),
     "vector_difference": GraphConfig(
         reporter_name="vector_differences_go",
@@ -398,7 +399,10 @@ def get_graph_names(context: int, is_single_run: bool = False) -> List[str]:
     return [
         graph_config
         for graph_config in list(graph_configs.keys())
-        if graph_configs[graph_config].context == context
+        if (
+            graph_configs[graph_config].context == context
+            or graph_configs[graph_config].context == GraphContext.ANY
+        )
         and not graph_configs[graph_config].aggregate
         and (not is_single_run or graph_configs[graph_config].single_run_sensible)
     ]
@@ -417,7 +421,10 @@ def get_aggregate_graph_names(context: int) -> List[str]:
     return [
         graph_config
         for graph_config in list(graph_configs.keys())
-        if graph_configs[graph_config].context == context
+        if (
+            graph_configs[graph_config].context == context
+            or graph_configs[graph_config].context == GraphContext.ANY
+        )
         and (
             graph_configs[graph_config].aggregate
             or graph_configs[graph_config].aggregate_extension
