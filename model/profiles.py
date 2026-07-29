@@ -34,6 +34,7 @@ params = {
                 "sampling_type": [
                     model.sampling.ZipfianSampling(zipf_param=1),
                     model.sampling.ZipfianSampling(zipf_param=0.6),
+                    model.sampling.ZipfianSampling(zipf_param=0.4),
                     model.sampling.ZipfianSampling(zipf_param=0.2),
                     model.sampling.ZipfianSampling(zipf_param=0.01),
                 ],
@@ -43,16 +44,21 @@ params = {
                 "sampling_type": [
                     model.sampling.ZipfianSampling(zipf_param=1),
                     model.sampling.ZipfianSampling(zipf_param=0.6),
+                    model.sampling.ZipfianSampling(zipf_param=0.4),
                     model.sampling.ZipfianSampling(zipf_param=0.2),
                     model.sampling.ZipfianSampling(zipf_param=0.01),
                 ],
             },
-            "no-zipfian-feedback": {
+            "no-zipfian-reentrance-feedback": {
                 "reentrance_entropy_floor": 0.05,
                 "sampling_type": [
-                    model.sampling.ZipfianSampling(zipf_param=1),
-                    model.sampling.ZipfianSampling(zipf_param=0.6),
-                    model.sampling.ZipfianSampling(zipf_param=0.2),
+                    model.sampling.ZipfianSampling(zipf_param=0.01),
+                ],
+                "feedback_type": model.enums.FeedbackTypes.FEEDBACK,
+            },
+            "no-zipfian-discriminatory-force-feedback": {
+                "discriminatory_entropy_floor": 0.05,
+                "sampling_type": [
                     model.sampling.ZipfianSampling(zipf_param=0.01),
                 ],
                 "feedback_type": model.enums.FeedbackTypes.FEEDBACK,
