@@ -1196,6 +1196,7 @@ def plot_norm_dist_pass(
     ax: Optional[matplotlib.axes.Axes] = None,
     step: int | float = -1,
     n: int | None = None,
+    dims_to_plot: List[int] | None = None,
     title: Optional[str] = None,
     disable_title: Optional[bool] = False,
 ) -> Tuple[matplotlib.figure.Figure, None]:
@@ -1204,11 +1205,12 @@ def plot_norm_dist_pass(
     Args:
         data (Union[model.model.ReductionModel, List[List[float]]): Either a model instance or a list of values
         attributes (List[str]): The names of the series to model.
-        xlim (List[float]): The expected range of values for y axis.
+        xlim (List[float]): The expected range of values for x axis.
         ylim (List[float] | None, optional): The expected range of values for y axis. Defaults to None.
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Please do not pass any axes currently. Defaults to None.
         step (float): Step to get the data from (on the scale of the datacollector). Can also be a fraction, will be converted to an absolute step. Defaults to -1.
         n (int | None): Maximum number of items in the value lists to be plotted. Can be used for limiting the number of distributions plotted. Defaults to None (= show all items).
+        dims_to_plot (List[int] | None). List of dimensions that should be plotted. Defaults to all (= None).
         title (Optional[str], optional): The title for the graph. Defaults to None.
         disable_title (Optional[bool], optional): Whether to show a title for this graph. Defaults to False.
 
@@ -1238,13 +1240,20 @@ def plot_norm_dist_pass(
     # layer 3: matrix, dim 0 = #ctxs, dim 1 = #vector dims
 
     # num_dimensions = shape 1
-    num_dims = value_lists[0][0].shape[1]
+    if dims_to_plot is None:
+        num_dims = value_lists[0][0].shape[1]
+        dims_to_plot = list(range(0, num_dims))
+    else:
+        num_dims = len(dims_to_plot)
+
     # Convert to absolute step
     _step = convert_step(step, len(value_lists[0]))
     # How many constructions to plot?
     _n = n if n is not None else value_lists[0][0].shape[0]
 
-    fig, axes = plt.subplots(nrows=num_dims, ncols=1, figsize=(10, 25), sharex=True)
+    fig, axes = plt.subplots(
+        nrows=num_dims, ncols=1, figsize=(10, 2.5 * num_dims), sharex=True
+    )
 
     # Possible vector values
     x = np.arange(xlim[0], xlim[1] + 1, 1)
@@ -1253,8 +1262,10 @@ def plot_norm_dist_pass(
 
     for i, _ax in enumerate(fig.axes):
         for ctx_index in range(_n):
-            mu = value_lists[0][_step][ctx_index, i]
-            sigma = value_lists[1][_step][ctx_index, i]
+            dim_index = dims_to_plot[i]
+
+            mu = value_lists[0][_step][ctx_index, dim_index]
+            sigma = value_lists[1][_step][ctx_index, dim_index]
 
             y = scipy.stats.norm.pdf(x, mu, sigma)
             # Mask values below the threshold by replacing them with NaN
@@ -1268,7 +1279,7 @@ def plot_norm_dist_pass(
 
             if xlim is not None:
                 _ax.set_xlim(*xlim)
-            _ax.set_title(f"Dimension {i + 1}", loc="left")
+            _ax.set_title(f"Dimension {dim_index + 1}", loc="left")
             # _ax.set_xticks([])
             _ax.grid(True)
 
@@ -1276,11 +1287,18 @@ def plot_norm_dist_pass(
             for spine in _ax.spines.values():
                 spine.set_visible(False)
 
-    fig.axes[0].set_ylabel("Time steps in the simulation")
+    fig.axes[0].set_ylabel("Density")
+    fig.axes[0].set_ylabel("Energy")
     # fig.axes[0].invert_yaxis()
 
     plt.legend()
 
     plt.close(fig)
+
+    if title is not None and not disable_title:
+        fig.suptitle(title)
+
+    if disable_title:
+        fig.tight_layout()
 
     return (fig, None)
