@@ -40,7 +40,7 @@ alike. We would like to address the concerns by reviewer 1 and reviewer 2 jointl
 
 ## Theoretical shortcomings and consequences for the model
 
-Reviewer 2 remarked that our article did not engage enough with literature on the effects of frequency on speech production and perception, and that therefore there were also issues with our model itself and our subsequent analysis as a result of our models being too simple. We agree partially with this view. Our literature review was rooted too much in usage-based linguistics, and we did not engage enough with production/perception literature. We have worked to rectify these theoretical shortcomings, and we now explicitly focus on the importance of contextual information in adverse conditions, like in reduced speech. This shifted focus also shows in our starting research question, more on which below.
+Reviewer 2 remarked that our article did not engage enough with literature on the effects of frequency on speech production and perception, and that therefore there were also issues with our model itself and our subsequent analysis as a result of our models being too simple. We agree partially with this view. Our literature review was rooted too much in usage-based linguistic theory, and we did not engage enough with production/perception literature. We have worked to rectify these theoretical shortcomings, and we now explicitly focus on the importance of contextual information in adverse conditions, like in reduced speech. This shifted focus also shows in our starting research question, more on which below.
 
 While we agree with the assessment that our initial theoretical discussion was lacking, we do not agree with the idea that our models are uniformative about communication because they lack rich layers of linguistic structure that listeners can use to recover communicative intent. First of all, as reviewer 2 also states themselves, computer simulations are necessary simplifications. Theoretically, it is all the more interesting to be able to disable mechanisms that are otherwise so self-evident in real life. If we are able to start from a very basic situation, poor in linguistic structure, we can attempt to understand the causality of this scenario, and from there on build upon these insights [@beuls_agent-based_2013]. Furthermore, we are convinced frequency information is *also* contextual information, especially because it is one of the strongest heuristics in cognition [@hasher_automatic_1984]. Frequency knowledge exists outside of the acoustic signal itself and can inform the hearer and influence their decision when parsing an acoustic signal. Of course, frequency is not as rich a context as other contextual factors, but this is precisely the point of our "core" simulation specification. It is in this light that we have reworked our starting research question as follows: is this contextual frequency information, that exists outside of the acoustic signal, enough to keep communication stable in conditions where there might be confusion because of reduced speech? We can afford to ask this question as a result of our reworked Bayesian perception architecture, which allows us to separate linguistic probability from acoustic probability. More on this further down.
 
@@ -55,11 +55,13 @@ Both reviewer 1 and reviewer 2 showed particular interest in the role of meaning
 ## Formalisation of speech
 
 Reviewer 1 had several questions about how exactly our formalisation of speech works. We have updated our manuscript with much more elaborate explanations on the design of our vectors. Most notably, we detail:
+
 1. exactly how the vectors are generated
 2. how our vectors compare with semantic vectors
 3. why we chose our initialisation values and lower limits
 4. what the purpose is of the multi-dimensionality of ouir vectors
 5. what our representations aim to capture
+
 To keep our body text readable, some of these explanations can be found in the Appendix.
 
 ## Little focus on temporal reduction
@@ -76,7 +78,7 @@ To address the evaluation criticism, however, we have designed new graphs which 
 
 ## Re-entrance incompatible with reduction
 
-Reviewer 2 mentioned that re-entrance is, in theory, incompatible with reduction. Re-entrance is a reflection on inner speech, while neuromotor automation occurs after this process. @steels_language_2003 defines re-entrance quite broadly, leaving open the possibility that it is a process that is applied after pronunciation itself. Another ambiguity avoidance mechanism that comes from speech perception literature, however, is "discriminatory force" from @todd_word_2019. The idea here is that exemplars that are too ambiguous at parse time are not saved into a hearer's memory. In fact, this mechanism is a mirrored version of re-entrance, but at the side of the hearer. To take a maximalist perspective, we implemented both mechanisms in more or less the same way and found both to perform similarly.
+Reviewer 2 mentioned that re-entrance is, in theory, incompatible with reduction. Re-entrance is a reflection on inner speech, while neuromotor automation occurs after this process. @steels_language_2003 defines re-entrance quite broadly, leaving open the possibility that it is a process that is applied after pronunciation itself. Another ambiguity avoidance mechanism that comes from speech perception literature, however, is "discriminability force" from @todd_word_2019. The idea here is that exemplars that are too ambiguous at parse time are not saved into a hearer's memory. In fact, this mechanism is a mirrored version of re-entrance, but at the side of the hearer. To take a maximalist perspective, we implemented both mechanisms in more or less the same way and found both to perform similarly.
 
 ## Purpose of changing the frequency distribution of constructions
 
