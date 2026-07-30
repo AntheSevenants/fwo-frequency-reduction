@@ -271,16 +271,19 @@ Our exact implementations are as follows. For discriminability force, we added a
 
 We see in @fig-ambiguity-avoidance-reduction_outcomes that, with ambiguity avoidance mechanisms enabled, communicative success improves. Both solutions perform roughly similarly; the underperformance of discriminability force can be explained by how both mechanisms work. Discriminability force prevents ambiguous exemplars (that are likely erroneously parsed) from affecting a hearer's internal representations, but communication still fails before the mechanism kicks in. In contrast, re-entrance prevents potentially problematic exemplars from being communicated in the first place, which avoids communicative failure.
 
-::: {#fig-re-entrance layout-ncol=2}
 ![Communication outcome when reducing, across agents, for models with and without ambiguity avoidance. Priors are always enabled.](figures/fig-ambiguity-avoidance-reduction_outcomes.png){#fig-ambiguity-avoidance-reduction_outcomes}
+
+In @fig-re-entrance-unique-plot_energy_per_ctx_per_dim_norm_article, again show the median normal distributions across agents in three dimensions of the acoustic vectors associated with the five most frequent constructions, now for a random run in the simulations with re-entrance enabled. While the some distributions still overlap, they are distributed more erratically: sometimes they completely overlap, sometimes they do not, etc. In this way, disambiguation is still possible. Distributions cannot overlap to the extent of communicative failure, because the ambiguity avoidance mechanisms prevent this.
+
+For completeness' sake, we also show in @fig-re-entrance-ctx_energy_mean that more frequent constructions display starker reduction than less frequent constructions, just as is expected for the reducing effect: since higher frequency constructions receive more practice, their reduction is stronger than for lower frequency constructions. Note that floor value $R$ is never reached, because the reduction mechanism has a higher natural stopping point due to the interaction of rounding to the nearest integer and the substantive reduction mechanism.
+
+::: {#fig-re-entrance-vectors layout-ncol=2}
+![Median normal distribution across agents in three dimensions of vectors associated with the top five most frequent constructions, for a random run in the simulations with re-entrance.](figures/fig-re-entrance-unique-plot_energy_per_ctx_per_dim_norm_article.png){#fig-re-entrance-unique-plot_energy_per_ctx_per_dim_norm_article}
 
 ![Median total energy in constructions vectors' at the end of the simulation, across agents, for the re-entrance model.](figures/fig-re-entrance-ctx_energy_mean.png){#fig-re-entrance-ctx_energy_mean}
 
-
-Comparison of communicative success between models with and without an ambiguity avoidance mechanism, and an overview of the total energy in construction's vectors.
+Comparison of the vector distribution in a re-entrance model run, and an overview of the total energy in construction's vectors.
 :::
-
-For completeness' sake, we also show in @fig-re-entrance-ctx_energy_mean that more frequent constructions display starker reduction than less frequent constructions, just as is expected for the reducing effect: since higher frequency constructions receive more practice, their reduction is stronger than for lower frequency constructions. Note that floor value $R$ is never reached, because the reduction mechanism has a higher natural stopping point due to the interaction of rounding to the nearest integer and the substantive reduction mechanism.
 
 ### Testing the impact of the Zipfian distribution {#sec-no-zipfian-feedback-model}
 
