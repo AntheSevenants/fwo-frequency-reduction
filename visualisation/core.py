@@ -6,6 +6,7 @@ import model.reporters_agent
 
 import matplotlib.figure
 import matplotlib.axes
+import matplotlib.ticker as mtick
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -53,6 +54,14 @@ def scale_x_axis(ax: matplotlib.axes.Axes, scale: int = 100):
         return
 
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=scale))
+
+
+def set_y_axis_percent(ax: matplotlib.axes.Axes, scale: int = 100):
+    # Do nothing if scale is 1
+    if scale == 1:
+        return
+
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
 
 
 def check_ax(
@@ -628,6 +637,8 @@ def plot_ratio(
 
     ax.set_ylim(*ylim)
     ax.set_yticks(np.arange(ylim[0], ylim[1] + 0.1, 0.1))
+
+    set_y_axis_percent(ax)
 
     if x_label is not None:
         ax.set_xlabel(x_label)
