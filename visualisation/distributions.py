@@ -48,8 +48,10 @@ def visualise_priors(
     if legend_title is not None:
         ax.legend().set_title(legend_title)
 
-    ax.set_ylabel("Density")
+    ax.set_ylabel("Probability")
     ax.set_xlabel("Rank")
+
+    visualisation.core.set_y_axis_percent(ax)
 
     output_fig = visualisation.core.get_ax_figure(ax)
     plt.close(output_fig)
