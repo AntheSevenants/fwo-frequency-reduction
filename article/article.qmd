@@ -27,6 +27,7 @@ format:
   html:
     toc: true
     css: style.css
+    reference-location: margin
   docx:
     toc: false
   latex:
@@ -55,7 +56,6 @@ toc-location: left
 tbl-cap-location: bottom
 fig-cap-location: bottom
 number-sections: true
-reference-location: margin
 csl: chicago-author-date.csl
 df-print: kable
 abstract: |
