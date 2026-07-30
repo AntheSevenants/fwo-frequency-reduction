@@ -1328,7 +1328,7 @@ def plot_norm_dist_pass(
                 spine.set_visible(False)
 
     fig.axes[0].set_ylabel("Density")
-    fig.axes[0].set_ylabel("Energy")
+    fig.axes[0].set_xlabel("Energy")
     # fig.axes[0].invert_yaxis()
 
     if auto_xlim:
