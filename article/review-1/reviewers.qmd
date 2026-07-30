@@ -86,12 +86,6 @@ Reviewer 2 had reservations about the use of different frequent distributions in
 
 Reviewer 2 preferred we do not use acoustic concepts in our article, since our vectors are theoretical and do not refer to physical values. We still believe the use of acoustic terminology is warranted since our vectors are made to reflect real-life properties of speech signals. While we do not explicitly use terminology such as syllable, pitch, amplitude, etc., we do believe the use of "acoustic energy" is appropriate, as our representations attempt to capture these concepts in the dimensions of our vectors.
 
-## Mass confusion
-
-to be understood from the perspective of top n constructions
-
-beter uitwerken wanneer simulatiles klaar zijn
-
 ## Article structure
 
 Reviewer 1 had several questions about the structure of our article. They found that the connection between research questions, preconditions and model variations was not always clear. Therefore, we decided to only mention these preconditions at the *end* of the article, after we have shown in the body text why certain preconditions are necessary. Furthermore, we have tried to structure our article in an incremental way, where we start with a very simple comparison between a priors-informed and non-priors informed model, and then build upon our findings. Because of our switch to a Bayesian reasoning model, we can now also show how the values in our representations tend to overlap without an ambiguity avoidance mechanism without having to devise an entirely separate model to show this. In short, our article is now more streamlined and has better focus, which should make it more pleasant to read.
