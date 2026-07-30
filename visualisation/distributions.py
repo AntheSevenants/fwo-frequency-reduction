@@ -1,0 +1,69 @@
+from typing import List, Tuple
+
+import numpy as np
+import matplotlib.axes
+import matplotlib.figure
+import matplotlib.pyplot as plt
+import model.sampling
+import visualisation.core
+import visualisation.distributions
+
+
+def visualise_priors(
+    priors: np.ndarray,
+    ax: matplotlib.axes.Axes | None = None,
+    legend_title: str | None = None,
+    legend_values: List[str] | None = None,
+    disable_title: bool = False,
+) -> Tuple[matplotlib.figure.Figure, matplotlib.axes.Axes]:
+    rng = np.random.default_rng(123456)
+
+    fig, ax = visualisation.core.check_ax(ax, disable_title)
+
+    if len(priors.shape) != 2:
+        raise ValueError("Input matrix dimensions should be 2D")
+
+    num_priors_list = priors.shape[0]
+    num_constructions = priors.shape[1]
+
+    for index in range(num_priors_list):
+        priors_i = priors[index, :]
+
+        label = None
+        if legend_values is not None:
+            label = legend_values[index]
+
+        ax.plot(
+            list(range(0, num_constructions)),
+            priors_i,
+            color=visualisation.core.COLOURS[index],
+            label=label,
+        )
+        ax.set_ylim(0, 0.35)
+
+    if legend_title is not None:
+        ax.legend().set_title(legend_title)
+
+    output_fig = visualisation.core.get_ax_figure(ax)
+    plt.close(output_fig)
+
+    return (output_fig, ax)
+
+
+def plot_priors_graph(
+    zipf_params: List[float], legend_title: str, legend_values: List[str]
+):
+    rng = np.random.default_rng(123456)
+
+    priors_matrix = np.array(
+        [
+            model.sampling.ZipfianSampling(zipf_param=zipf_param).get_priors(rng)[1]
+            for zipf_param in zipf_params
+        ]
+    )
+
+    return visualisation.distributions.visualise_priors(
+        priors_matrix,
+        legend_title=legend_title,
+        legend_values=legend_values,
+    )[0]
