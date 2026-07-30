@@ -141,21 +141,21 @@ $$
 $$ {#eq-zipfian_distribution}
 2. The speaker generates an exemplar vector representation $\mathbf{v_c}$ to utter for that construction $c$ by iteratively sampling from the normal distributions saved for each dimension of that construction:
   $$
-  \begin{align}
+  \begin{aligned}
     &\text{For a construction } c: \\
     \\
     &\mathbf{v_c} = \begin{bmatrix} 
     v_{c, 1} \\ v_{c, 2} \\ \vdots \\ v_{c, D}
     \end{bmatrix}, \quad 
     \text{where } v_{c,j} \sim \mathcal{N}(\mu_{c,j}, \sigma_{c,j}) \text{ for } j = 1, \dots, D
-  \end{align}
+  \end{aligned}
   $$
   Values centred around $\mu$ are more likely to be sampled. 
 3. With a probability of $p$, reduction is applied. We assume that, when possible, hearers will attempt to conserve as much energy as possible when speaking on grounds of the "Principle of Least Effort" [@zipf_human_1949]. While we do not model neuromotor automation directly, we model its effects: temporal and substantive reduction. For this, we apply two operations. For temporal reduction, we pull all values in the vector towards each other. This is done by adding a small proportion of the difference with the mean to the vector. This operation is comparable to the compression of articulatory gestures in the reduction process, and, in a similar vein, weakens the acoustic identity of the representation. The compression operation is regulated by a homogenisation factor $\eta$. For substantive reduction, we multiply all vector values by a fixed decay parameter $\lambda$, comparable to the reduction in magnitude of articulatory gestures. If the mean of all values in a vector falls below floor value $R$, no reduction takes place. Without the floor value $R$, the normal distribution would be able to underflow below zero, which goes against our vector constraints (see @sec-appendix-vector):
   $$
-  \begin{align}
+  \begin{aligned}
     \mathbf{v}^{reduced} = \lambda \left( \mathbf{v} + \eta \left( \bar{v} - \mathbf{v} \right) \right)
-  \end{align}
+  \end{aligned}
   $$
 4. All vector values are rounded to the nearest integer (see @sec-theory-implications).
 5. The (potentially reduced) vector is communicated to the hearer.
@@ -165,18 +165,18 @@ $$ {#eq-zipfian_distribution}
 1. The hearer "hears" the vector communicated by the speaker.
 2. The hearer interprets the vector representation of the speaker. Classification works in a generative way, as in @kleinschmidt_robust_2015 [151]. The hearer checks how likely the communicated vector is given their knowledge about the acoustic realisations of the different constructions. For each construction, for each dimension, the likelihood of the heard vector's value is computed. Crucially, if enabled, the prior likelihood of the construction is taken into account as well, i.e. the contextual linguistic knowledge from @sec-introduction-frequency. All values are log-transformed to make computations faster. The construction with the highest score is accepted as the understood construction:
   $$
-  \begin{align}
+  \begin{aligned}
     \operatorname{Score}(\mathbf{v}^{\text{heard}} \mid c) &= 
     \begin{cases} 
       \ln(p(c)) + \sum_{j=1}^{D} \ln \left( \mathcal{N}(\mathbf{v}^{\text{heard}}_{j} \mid \mu_{c_{j}}, \sigma_{c_{j}}) \right) & \text{if priors enabled} \\
       \sum_{j=1}^{D} \ln \left( \mathcal{N}(\mathbf{v}^{\text{heard}}_{j} \mid \mu_{c_{j}}, \sigma_{c_{j}}) \right) & \text{otherwise}
     \end{cases} \\
     \hat{c} &= \arg\max_{c \in C} \left[ \operatorname{Score}(\mathbf{v}^{\text{heard}} \mid c )\right]
-  \end{align}
+  \end{aligned}
   $$
 3. Parameters $\mu$ and $\sigma$ are updated for the heard construction according to an Exponential Moving Average formula, modified for batches. We use a batch memory instead of updating $\mu$ and $\sigma$ immediately in order to ensure the parameters remain stable.[^outlier-infuence] The heard vector is saved in a batch memory of size $B$. Once that batch memory is actually filled with $B$ exemplars, the mean and variance of the batch memory are computed, and $\mu$ and $\sigma$[^sigma-computation] are updated according to a weighted average. $\alpha$ regulates the learning rate. The final result is rounded to the nearest integer (see @sec-theory-implications). $\sigma$ has a minimum value of 1:
   $$
-  \begin{align}
+  \begin{aligned}
     &\mathbf{X}_c = \{\mathbf{x}_1, \mathbf{x}_2, \dots, \mathbf{x}_B\} = \text{ batch memory for construction } C \\
     \\
     &\text{For each dimension } j \in \{1, \dots, D\}: \\
@@ -184,7 +184,7 @@ $$ {#eq-zipfian_distribution}
     \quad \mathbf{\sigma}^{\text{batch}}_{c,j} = \sqrt{\frac{1}{B-1} \sum_{i=1}^{B} (\mathbf{x}_{c,i,j} - \mathbf{\mu}^{\text{batch}}_{c,j})^2} \\
     &\hspace{1cm} \mu_{c,j}^{\text{new}} = \text{round}\left( (1 - \alpha) \cdot \mu_{c,j}^{\text{old}} + \alpha \cdot \mu^{\text{batch}}_{c,j} \right) \\
     &\hspace{1cm} \sigma_{c,j}^{\text{new}} = \max\left( 1, \,\, (1 - \alpha) \cdot \sigma_{c,j}^{\text{old}} + \alpha \cdot \sigma^{\text{batch}}_{c,j} \right)
-  \end{align}
+  \end{aligned}
   $$
   After the update, the batch memory is emptied.
 
