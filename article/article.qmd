@@ -280,7 +280,7 @@ We see in @fig-ambiguity-avoidance-reduction_outcomes that, with ambiguity avoid
 Comparison of communicative success between models with and without an ambiguity avoidance mechanism, and an overview of the total energy in construction's vectors.
 :::
 
-For completeness' sake, we also show in @fig-re-entrance-ctx_energy_mean that more frequent constructions display starker reduction than less frequent constructions, just as is expected for the reducing effect: since higher frequency constructions receive more practice, their reduction is stronger than for lower frequency constructions.
+For completeness' sake, we also show in @fig-re-entrance-ctx_energy_mean that more frequent constructions display starker reduction than less frequent constructions, just as is expected for the reducing effect: since higher frequency constructions receive more practice, their reduction is stronger than for lower frequency constructions. Note that floor value $R$ is never reached, because the reduction mechanism has a higher natural stopping point due to the interaction of rounding to the nearest integer and the substantive reduction mechanism.
 
 ### Testing the impact of the Zipfian distribution {#sec-no-zipfian-feedback-model}
 
