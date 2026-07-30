@@ -392,17 +392,6 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
             "plot_mean": True,
         },
     ),
-    "priors_graph": GraphConfig(
-        reporter_name="dummy",
-        disable_autogenerate_columns=True,
-        plot_func=visualisation.distributions.plot_priors_graph,
-        context=GraphContext.EXPORT,
-        extra_args={
-            "zipf_params": [1, 0.6, 0.4, 0.2, 0.01],
-            "legend_title": r"Zipfian parameter $\beta$",
-            "legend_values": ["1", "0.6", "0.4", "0.2", "0.01"],
-        },
-    ),
 }
 
 

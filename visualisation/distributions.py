@@ -12,6 +12,7 @@ import visualisation.distributions
 def visualise_priors(
     priors: np.ndarray,
     ax: matplotlib.axes.Axes | None = None,
+    title: str | None = None,
     legend_title: str | None = None,
     legend_values: List[str] | None = None,
     disable_title: bool = False,
@@ -41,8 +42,14 @@ def visualise_priors(
         )
         ax.set_ylim(0, 0.35)
 
+    if title is not None and not disable_title:
+        ax.set_title(title)
+
     if legend_title is not None:
         ax.legend().set_title(legend_title)
+
+    ax.set_ylabel("Density")
+    ax.set_xlabel("Rank")
 
     output_fig = visualisation.core.get_ax_figure(ax)
     plt.close(output_fig)
@@ -51,7 +58,11 @@ def visualise_priors(
 
 
 def plot_priors_graph(
-    zipf_params: List[float], legend_title: str, legend_values: List[str]
+    zipf_params: List[float],
+    title: str,
+    legend_title: str,
+    legend_values: List[str],
+    disable_title: bool = False,
 ):
     rng = np.random.default_rng(123456)
 
@@ -64,6 +75,8 @@ def plot_priors_graph(
 
     return visualisation.distributions.visualise_priors(
         priors_matrix,
+        title=title,
         legend_title=legend_title,
         legend_values=legend_values,
+        disable_title=disable_title,
     )[0]
