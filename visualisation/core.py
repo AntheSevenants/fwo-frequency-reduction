@@ -56,12 +56,8 @@ def scale_x_axis(ax: matplotlib.axes.Axes, scale: int = 100):
     ax.xaxis.set_major_formatter(lambda x, pos: formatter(x, pos, scale=scale))
 
 
-def set_y_axis_percent(ax: matplotlib.axes.Axes, scale: int = 100):
-    # Do nothing if scale is 1
-    if scale == 1:
-        return
-
-    ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
+def set_y_axis_percent(ax: matplotlib.axes.Axes):
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1, decimals=0))
 
 
 def check_ax(
