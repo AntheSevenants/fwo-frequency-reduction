@@ -818,6 +818,7 @@ def plot_error_bar(
     n: int | None = None,
     x_label: Optional[str] = None,
     y_label: Optional[str] = None,
+    x_label_interval: int | None = None,
     title: Optional[str] = None,
     legend_title: Optional[str] = None,
     legend_labels: List[str] | None = None,
@@ -830,6 +831,7 @@ def plot_error_bar(
         data (model.model.ReductionModel | List[float] | List[List[float]]): A list of values
         attributes (Optional[str], optional): The name of the series to model.
         x (List[str]): A list of values for the X axis
+        x_interval (int): Interval for showing the X axis ticks. Defaults to disabled (= None).
         ylim (Optional[List[float]], optional): The expected range of values for y axis. Defaults to None.
         ax (Optional[matplotlib.axes.Axes], optional): A pre-existing axis. Pass if you are building a multi-plot. Defaults to None.
         min_data (List[float] | List[List[float]] | None, optional): List of minimal values. Needs to be defined together with max_data. Defaults to None.
@@ -879,7 +881,7 @@ def plot_error_bar(
             __max_data = _max_data[attribute_idx][step, :]
 
         if x is None:
-            _x = [str(x) for x in list(range(len(value_list)))]
+            _x = [str(x + 1) for x in list(range(len(value_list)))]
         else:
             _x = x
 
@@ -908,6 +910,18 @@ def plot_error_bar(
             elinewidth=1.5,
             label=legend_label,
         )
+
+        if x_label_interval is not None:
+            max_tick_n = len(_x) - 1
+            for index, label in enumerate(ax.xaxis.get_ticklabels()):
+                if (index + 1) % x_label_interval == 0:
+                    continue
+                elif index == 0:
+                    continue
+                elif index == max_tick_n:
+                    continue
+
+                label.set_visible(False)
 
         if (attribute_idx + 1) >= _n:
             break

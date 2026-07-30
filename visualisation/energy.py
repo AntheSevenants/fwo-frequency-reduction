@@ -60,6 +60,7 @@ def plot_energy_per_ctx(
         ylim=[0, y_max],
         title=f"Average L1 value in the base model (per construction, across agents",
         y_label="Energy",
+        x_label="Rank",
         step=step,
         **kwargs,
     )

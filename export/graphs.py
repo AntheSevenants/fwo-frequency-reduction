@@ -305,6 +305,9 @@ graph_configs: Dict[str, GraphConfig | MosaicConfig] = {
         # TODO: re-introduce min_data and max_data once the graph type has been changed
         common_args=["min_data", "max_data", "y_max"],
         interactive_args=["step"],
+        extra_args={
+            "x_label_interval": 10,
+        },
         aggregate_extension=True,
     ),
     "communicative_confusion": GraphConfig(
