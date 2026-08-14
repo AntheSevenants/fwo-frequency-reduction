@@ -1,0 +1,47 @@
+---
+title: "Letter to the editors"
+format:
+  html:
+    toc: false
+  latex:
+    theme: default
+    standalone: true
+    cite-method: biblatex
+    filters: []
+    documentclass: article
+    toc: false
+    reference-location: document
+    wrap: none
+    hyperrefoptions:
+      - hidelinks=true
+      - colorlinks=false
+    no-highlight: true
+    variables:
+      tight-list: false
+    tbl-cap-location: top
+    template: template.tex
+editor: source
+title-block-banner: true
+bibliography: ../references.bib
+tbl-cap-location: bottom
+fig-cap-location: bottom
+number-sections: true
+reference-location: margin
+csl: ../chicago-author-date.csl
+df-print: kable
+execute:
+  echo: false
+---
+
+Dear editor-in-chief,
+
+We are very grateful for the input we received from the two anonymous reviewers with regards to our article "Speak less, say more. Finding the preconditions for the reducing effect with an agent-based model". We agree with several fundamental remarks we received, and we have adapted our article in order to accommodate those remarks. For example, we have introduced a Bayesian decision-making architecture in our model. For one crucial point, however, we have chosen not to deviate from our initial premise, which is to keep the simulation as simple as possible. We acknowledge that, in the real word, reduction phenomena are embedded in a complex, multi-layered linguistic reality, and that context plays an important role in the occurrence of reduction. However, we do not conclude from this that simulations must also incorporate all this complexity in order to be informative. On the contrary, we continue to endorse the principle that it is best to keep simulations as simple as possible, and only make them as complex as necessary. On this basis, our article offers an interesting contribution to the journal: we show that, in our agent-based simulation, the "simple" reducing effect nonetheless requires elaborate cognitive underpinnings in order to guarantee a stable communication system. We are convinced that our contribution can help researchers become more aware that seemingly simple phenomena, such as the reducing effect, might be more cognitively involved when actually implemented. 
+
+To return to our belief that computer simulations should be as simple as possible: the fact that we do not simulate rich linguistic structures is the crux of our simulations. We want to forego the self-evident mechanisms found in real life to focus on the basics of mechanisms such as the reducing effect. Later, when we understand how the basics work, we can expand upon this knowledge. At the same time, we believe frequency should also be understood as linguistic context, as it exists outside of the acoustic signal itself and is informative to the hearer to make an interpretation of that acoustic signal. Although the fundamental objective of our study remains unchanged, i.e. to identify the minimum conditions that must be met in order to successfully achieve the reducing effect, in light of the reviewer's feedback and our enhanced, Bayesian implementation of perception, we have been able to additionally focus on the contribution of frequency information specifically: is frequency information in itself enough to keep communication stable in ambiguous circumstances? We then further build upon our findings to look into more cognitively elaborate ambiguity avoidance mechanisms.
+
+Furthermore, we want to stress that our visual analysis follows the standard procedure in agent-based simulation research. While experimental studies rely on inferential statistics to generalise from limited datasets, computer simulations can approximate infinite trials to exhaustively explore a parameter search space [@ohmer_communication_2025]. In this sense, a concept like "significance" loses its meaning, and this is also why we do not rely on inferential statistics to interpret our results. We have, however, condensed the most important comparisons in much more informative graphs which explicitly compare model behaviour across different parameters. This should make the differences in behaviour between these models more clear.
+
+Finally, our article has further been improved in several ways: we implemented another ambiguity avoidance mechanism from speech perception literature [@todd_word_2019], simplified the frequency distribution variations, updated our reduction mechanism, addressed the role of meaning, and improved the overall structure of the article. We have fewer model variations, less repetition and, in general, a much more readable paper.
+
+Many thanks in advance,  
+Anthe Sevenants, Dirk Speelman, Freek Van de Velde and Dirk Pijpops

@@ -8,13 +8,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
     {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"><!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-        rel="stylesheet"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"
+        integrity="sha512-f0VlzJbcEB6KiW8ZVtL+5HWPDyW1+nJEjguZ5IVnSQkvZbwBt2RfCBY0CBO1PsMAqxxrG4Di6TfsCPP3ZRwKpA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css"
+        integrity="sha512-3q8fi8M0VS+X/3n64Ndpp6Bit7oXSiyCnzmlx6IDBLGlY5euFySyJ46RUlqIVs0DPCGOypqP8IRk/EyPvU28mQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- D3 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.4.0/d3.min.js"
@@ -29,54 +35,103 @@
 
 <body>
     <main class="d-flex flex-nowrap">
-        <form class="d-flex flex-column flex-shrink-0 p-3 sidebar" action="/" method="GET" id="form_select_run">
-            <input name="aggregate" type="hidden" id="aggregate_input" value="{{ aggregate_parameter if aggregate_parameter is not none else '' }}">
+        <form class="d-flex flex-column flex-shrink-0 p-3 sidebar" action="/" method="GET" id="form_select_sweep">
+            <input name="aggregate" type="hidden" id="aggregate_input"
+                value="{{ aggregate_parameter if aggregate_parameter is not none else '' }}">
+            <input name="step" type="hidden" id="step_input"
+                value="{{ selected_step if selected_step is not none else '' }}">
             <a href="./" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <img class="bi pe-none me-2" width="32" height="32" src="{{ url_for('static', filename='dash.png') }}" alt="Rainbow Dash">
+                <img class="bi pe-none me-2" width="32" height="32" src="{{ url_for('static', filename='dash.png') }}"
+                    alt="Rainbow Dash">
                 <span class="fs-4">Dashboard</span>
             </a>
             <div>
                 <hr>
             </div>
             <div class="flex-column mb-auto">
-            {% if not live %}
-            <div class="card mb-3">
+                {% if not live %}
+                <div class="card mb-3">
                     <div class="card-header text-white">
-                        <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run selection
+                        <div class="wrapper"><i class="bi bi-folder"></i></div> Sweep selection
+                    </div>
+                    <div class="card-body">
+                        <div class="form-floating">
+                            <select name="sweep" class="form-select mb-2 interactive"
+                                aria-label="Dropdown external variable selection" id="select_external">
+                                <option disabled {{ "selected" if selected_sweep is none }}>Choose sweep</option>
+                                {% for sweep in sweeps %}
+                                <option value="{{ sweep }}" {{ "selected" if selected_sweep==sweep }}>{{ sweep }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <label for="select_external">Available sweeps:</label>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if selected_sweep is not none and parameter_sets is not none and
+                not
+                live %}
+                <div class="card mb-3">
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-collection"></i></div> Parameter set filter
+                    </div>
+                    <div class="card-body">
+                        <div class="form-floating">
+                            <select name="parameter_set" class="form-select mb-2 interactive"
+                                aria-label="Dropdown external variable selection" id="select_parameter_set">
+                                <option {{ "selected" if selected_run is none }} value="none">Select a parameter set
+                                </option>
+                                {% for parameter_set in parameter_sets %}
+                                <option value="{{ parameter_set }}" {{ "selected" if
+                                    selected_parameter_set==parameter_set }}>{{
+                                    parameter_set }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="select_parameter_set">Available parameter sets:</label>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if selected_sweep is not none and (selected_parameter_set is not none or parameter_sets is none) and
+                not
+                live %}
+                <div class="card mb-3">
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-person-walking"></i></div> Run filter
                     </div>
                     <div class="card-body">
                         <div class="form-floating">
                             <select name="run" class="form-select mb-2 interactive"
-                                aria-label="Dropdown external variable selection" id="select_external">
-                                <option disabled {{ "selected" if selected_run is none }}>Choose run</option>
+                                aria-label="Dropdown external variable selection" id="select_run">
+                                <option {{ "selected" if selected_run is none }} value="none">Combine all runs</option>
                                 {% for run in runs %}
                                 <option value="{{ run }}" {{ "selected" if selected_run==run }}>{{ run }}</option>
                                 {% endfor %}
                             </select>
-                            <label for="select_external">Available runs:</label>
+                            <label for="select_run">Available runs:</label>
                         </div>
                     </div>
-            </div>
-            {% endif %}
-            {% if selected_run is not none %}
-            <div class="card mb-3">
-                <div class="card-header text-white">
-                    <div class="wrapper"><i class="bi bi-funnel-fill"></i></div> Filter graphs
                 </div>
-                <div class="card-body">
-                    <div class="form-floating">
-                        <select name="filter" class="form-select mb-2 interactive"
-                            aria-label="Dropdown external variable selection" id="select_external">
-                            <option value="none" {{ "selected" if selected_filter is none }}>All graphs</option>
-                            {% for graph_name in all_graphs %}
-                            <option value="{{ graph_name }}" {{ "selected" if selected_filter==graph_name }}>{{ graph_name }}</option>
-                            {% endfor %}
-                        </select>
-                        <label for="select_external">Available graphs:</label>
+                <div class="card mb-3">
+                    <div class="card-header text-white">
+                        <div class="wrapper"><i class="bi bi-funnel-fill"></i></div> Filter graphs
+                    </div>
+                    <div class="card-body">
+                        <div class="form-floating">
+                            <select name="filter" class="form-select mb-2 interactive"
+                                aria-label="Dropdown external variable selection" id="select_external">
+                                <option value="none" {{ "selected" if selected_filter is none }}>All graphs</option>
+                                {% for graph_name in all_graphs %}
+                                <option value="{{ graph_name }}" {{ "selected" if selected_filter==graph_name }}>{{
+                                    graph_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="select_external">Available graphs:</label>
+                        </div>
                     </div>
                 </div>
-            </div>
-            {% if not live %}
+                {% if not live %}
                 {% if aggregate_parameter is not none %}
                 <div class="card mb-3">
                     <div class="card-header text-white">
@@ -85,7 +140,7 @@
                     <div class="card-body">
                         <div class="form-floating">
                             <input id="aggregate_select" disabled class="form-control mb-2 interactive"
-                            aria-label="Aggregate parameter selection" value="{{ aggregate_parameter }}">
+                                aria-label="Aggregate parameter selection" value="{{ aggregate_parameter }}">
                             <label for="aggregate_select">Selected parameter:</label>
                         </div>
                     </div>
@@ -96,7 +151,8 @@
                         <div class="wrapper"><i class="bi bi-sliders"></i></div> Parameter selection
                     </div>
                     <div class="card-body">
-                        {% for parameter in parameter_mapping if parameter_mapping[parameter] | length > 1  %}
+                        {% for parameter in parameter_mapping if parameter_mapping[parameter] | length > 1 and parameter
+                        != aggregate_parameter %}
                         <div class="input-group">
                             <div class="form-floating flex-grow-1">
                                 <select class="form-select mb-2 interactive" name="{{ parameter }}"
@@ -105,17 +161,21 @@
                                     {% set friendly_name = value %}
                                     {% set selected_index = 0 %}
                                     {% if parameter in selected_parameters %}
-                                        {% set selected_index = parameter_mapping[parameter].index(selected_parameters[parameter]) %}
+                                    {% set selected_index =
+                                    parameter_mapping[parameter].index(selected_parameters[parameter]) %}
                                     {% endif %}
                                     {% if parameter in enum_mapping %}
-                                        {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
+                                    {% set friendly_name = get_enum_name(parameter, value) %}
                                     {% endif %}
-                                    <option value="{{ value }}" {{ "selected" if loop.index0 == selected_index }}>{{ friendly_name }}</option>
+                                    <option value="{{ value }}" {{ "selected" if loop.index0==selected_index }}>{{
+                                        friendly_name }}</option>
                                     {% endfor %}
                                 </select>
                                 <label for="select_external">{{ parameter }}:</label>
                             </div>
-                            <button class="btn btn-outline-light mb-2" type="button" title="Chart possible property values across another outcome variable" onclick="doAggregate('{{ parameter }}')">
+                            <button class="btn btn-outline-light mb-2" type="button"
+                                title="Chart possible property values across another outcome variable"
+                                onclick="doAggregate('{{ parameter }}')">
                                 <i class="bi bi-graph-up-arrow"></i>
                             </button>
                         </div>
@@ -129,12 +189,11 @@
                     <div class="card-body">
                         {% for parameter in constants_mapping %}
                         <div class="form-floating">
-                            <select class="form-select mb-2" disabled
-                                aria-label="Dropdown external variable selection">
+                            <select class="form-select mb-2" disabled aria-label="Dropdown external variable selection">
                                 {% set value = constants_mapping[parameter] %}
                                 {% set friendly_name = constants_mapping[parameter] %}
                                 {% if parameter in enum_mapping %}
-                                    {% set friendly_name = get_enum_name(enum_mapping[parameter], value) %}
+                                {% set friendly_name = get_enum_name(parameter, value) %}
                                 {% endif %}
                                 <option value="{{ value }}">{{ friendly_name }}</option>
                             </select>
@@ -144,7 +203,7 @@
                     </div>
                 </div>
                 {% endif %}
-            {% endif %}
+                {% endif %}
             </div>
             <div class="text-white">
                 <hr>

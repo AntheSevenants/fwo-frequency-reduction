@@ -1,0 +1,98 @@
+---
+title: "Letter to reviewers"
+format:
+  html:
+    toc: false
+  latex:
+    theme: default
+    standalone: true
+    cite-method: biblatex
+    filters: []
+    documentclass: article
+    toc: false
+    reference-location: document
+    wrap: none
+    hyperrefoptions:
+      - hidelinks=true
+      - colorlinks=false
+    no-highlight: true
+    variables:
+      tight-list: false
+    tbl-cap-location: top
+    template: template.tex
+editor: source
+title-block-banner: true
+bibliography: ../references.bib
+tbl-cap-location: bottom
+fig-cap-location: bottom
+number-sections: true
+reference-location: margin
+csl: ../chicago-author-date.csl
+df-print: kable
+execute:
+  echo: false
+---
+
+Dear editor and reviewers,
+
+First, we would like to thank you for your elaborate feedback on our manuscript. We agree that there were several areas our work could be improved in, and in this light, we have taken your comments seriously and worked on improving all aspects of the manuscript and analysis 
+alike. We would like to address the concerns by reviewer 1 and reviewer 2 jointly. To make it more clear which parts of the manuscript have been changed, we have highlighted all new or adapted parts of the text in blue.
+
+## Theoretical shortcomings and consequences for the model
+
+Reviewer 2 remarked that our article did not engage enough with literature on the effects of frequency on speech production and perception, and that therefore there were also issues with our model itself and our subsequent analysis as a result of our models being too simple. We agree partially with this view. Our literature review was rooted too much in usage-based linguistic theory, and we did not engage enough with production/perception literature. We have worked to rectify these theoretical shortcomings, and we now explicitly focus on the importance of contextual information in adverse conditions, like in reduced speech. This shifted focus also shows in our starting research question, more on which below.
+
+While we agree with the assessment that our initial theoretical discussion was lacking, we do not agree with the idea that our models are uninformative about communication because they lack rich layers of linguistic structure that listeners can use to recover communicative intent. First of all, as reviewer 2 also states themselves, computer simulations are necessary simplifications. Theoretically, it is all the more interesting to be able to disable mechanisms that are otherwise so self-evident in real life. If we are able to start from a very basic situation, poor in linguistic structure, we can attempt to understand the causality of this scenario, and from there on build upon these insights [@beuls_agent-based_2013]. Furthermore, we do not share the idea that *all* context is missing from our implementation. We are convinced that frequency information is *also* contextual information, especially because it is one of the strongest heuristics in cognition [@hasher_automatic_1984]. Frequency knowledge exists outside of the acoustic signal itself and can inform the hearer and influence their decision when parsing an acoustic signal: it is information which is, following exposure to numerous instances of a construction, encoded within its representation in the constructicon. Of course, frequency information is not as rich a context as other contextual factors, but this is precisely the point of our "core" simulation specification. Although the fundamental objective of our study remains unchanged, i.e. to identify the minimum conditions that must be met in order to successfully achieve the reducing effect, in light of the feedback we received and our enhanced, Bayesian implementation of perception, we have been able to additionally focus on the contribution of frequency information specifically: is this contextual frequency information, that exists outside of the acoustic signal, enough to keep communication stable in conditions where there might be confusion because of reduced speech?
+
+## Model design and Bayesian focus
+
+Reviewer 2 asked for "a more reasonable model of a listener", with Bayesian reasoning. We have replaced our implementation based on explicit exemplars in its entirety with a new system based on @kleinschmidt_robust_2015. Each representation is now made up of a series of normal distributions. This change simplifies many aspects of our model (memory, forgetting, updating), and allows us to formalise our mechanisms mathematically. Our perception model can now be separated into frequency-influenced priors and the interpretation of the acoustic signal itself, allowing us see how speakers fare without any knowledge of frequency. Still, the implemented theory remains exemplar based, but the exemplars are no longer separately identifiable entities. Our new implementation of the update mechanism is based on Estimated Moving Average (EMA), and updates the current shape of an acoustic distribution based on recently encountered exemplars.
+
+## The role of meaning
+
+Both reviewer 1 and reviewer 2 showed particular interest in the role of meaning in our simulations, for different reasons. Reviewer 1 wanted to know to what extent some meaning or grounding was present in our simulation in general, while reviewer 2 referred to @gahl_time_2008, a study in which it is found that homophones with different meanings and frequencies display different degrees of reduction. This would argue against the idea that reduction is the result of neuromotor automation, since seemingly identical neuromotor routines do not reduce in the same way. However, we can assume that neuromotor automation works on a per *lemma* basis, rather than per *form*, an assumption also hinted at in the discussion of @gahl_time_2008 -- semantic factors are also found to be important in the follow up study @gahl_time_2024. For us, then, we assume that our acoustic representations are part of constructions with distinct meanings. We do not model these meanings explicitly as this is beyond the scope of the current model, but it would be very interesting as an expansion.
+
+## Formalisation of speech
+
+Reviewer 1 had several questions about how exactly our formalisation of speech works. We have updated our manuscript with much more elaborate explanations on the design of our vectors. Most notably, we detail:
+
+1. exactly how the vectors are generated
+2. how our vectors compare to semantic vectors
+3. why we chose our initialisation values and lower limits
+4. what the purpose is of the multi-dimensionality of oui vectors
+5. what our representations aim to capture
+
+To keep our body text readable, some of these explanations can be found in the Appendix.
+
+## Little focus on temporal reduction
+
+Reviewer 1 remarked that, while we discuss that reduction is the result of both temporal and substantive reduction, our reduction mechanism itself was moreso focussed on substantive reduction only. To rectify this, we have modified our implementation of reduction. While we still lower the values in each dimension of a vector to reduce it (= substantive reduction), we now also gradually bring the values across dimensions closer towards each other, to mimick the assimilation processes found at the basis of temporal reduction. Our manuscript details this operation in mathematical terms.
+
+To add to this, the probability of occurrence of reduction is still "hard-coded", i.e. one in two times. Our assumption remains that speakers will, generally, conserve energy when speaking, as predicted on grounds of the "Principle of Least Effort" [@zipf_human_1949].
+
+## No quantification
+
+Reviewer 2 criticises our model evaluation for providing no quantification, and only showing graphical interpretations. Visual inspection, however, is crucial to the assessment of agent-based models, and is in fact the preferred evaluation method. By qualitatively comparing model metrics, we can assess to what extent models with different parameters behave differently. We understand that it might seem "odd" not to provide statistical comparisons between model variations, but using statistics on simulation output would go against the assumptions of inferential statistics [@ohmer_communication_2025]: while experimental studies rely on inferential statistics to generalise from limited datasets, computer simulations can approximate infinite trials to exhaustively explore a parameter search space. In this sense, a concept like "significance" loses its meaning.
+
+To address the evaluation criticism, however, we have designed new graphs which make comparison across model variations easier. Our graphs show the median evolution of a specific metric over time, including Q1 and Q3 upper and lower ranges, and this for each separate permutation. This should show behavioural differences more clearly.
+
+## Re-entrance incompatible with reduction
+
+Reviewer 2 mentioned that re-entrance is, in theory, incompatible with reduction. Re-entrance is a reflection on inner speech, while neuromotor automation occurs after this process. @steels_language_2003 defines re-entrance quite broadly, leaving open the possibility that it is a process that is applied after pronunciation itself. Another ambiguity avoidance mechanism that comes from speech perception literature, however, is "discriminability force" from @todd_word_2019. The idea here is that exemplars that are too ambiguous at parse time are not saved into a hearer's memory. In fact, this mechanism is a mirrored version of re-entrance, but at the side of the hearer. To take a maximalist perspective, we implemented both mechanisms in more or less the same way and found both to perform similarly.
+
+## Purpose of changing the frequency distribution of constructions
+
+Reviewer 2 had reservations about the use of different frequency distributions in the previous version of the article, as these frequency distributions do not appear in real life. We want to stress that it is an *opportunity* to be able to exchange the default frequency distribution from real life for another one: it is in this way that we learn what its contribution could be to a phenomenon such as the reducing effect. To simplify the model and the article itself, however, we no longer use the uniform or exponential distributions and just vary the parameter in the Zipfian distributions to shrink the frequency contrasts between constructions. This has the same effect without having to introduce completely new frequency distributions.
+
+## Use of acoustic terminology
+
+Reviewer 2 preferred we do not use acoustic concepts in our article, since our vectors are theoretical and do not refer to physical values. We still believe the use of acoustic terminology is warranted since our vectors are made to reflect real-life properties of speech signals. While we do not explicitly use terminology such as syllable, pitch, amplitude, etc., we do believe the use of "acoustic energy" is appropriate, as our representations attempt to capture these concepts in the dimensions of our vectors.
+
+## Article structure
+
+Reviewer 1 had several questions about the structure of our article. They found that the connection between research questions, preconditions and model variations was not always clear. Therefore, we decided to only mention these preconditions at the *end* of the article, after we have shown in the body text why certain preconditions are necessary. Furthermore, we have tried to structure our article in an incremental way, where we start with a very simple comparison between a priors-informed and non-priors informed model, and then build upon our findings. Because of our switch to a Bayesian reasoning model, we can now also show how the values in our representations tend to overlap without an ambiguity avoidance mechanism without us having to devise an entirely separate model to show this. In short, our article is now more streamlined and has better focus, which should make it more pleasant to read.
+
+Again our thanks for the helpful comments. We have put in considerable effort to improve our model and manuscript, and we hope our changes are satisfactory.
+
+All the best,  
+The authors

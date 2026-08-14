@@ -1,0 +1,140 @@
+\documentclass[tikz,border=3.14mm]{standalone}
+\usepackage{tikzpeople}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\newdimen\speakerwidth
+\newdimen\hearerwidth
+
+\begin{document}
+\begin{tikzpicture}[
+		participant/.style={text, align=center},
+    modelstep/.style={draw, rounded corners, fill=yellow!30, anchor=west, align=left, minimum width=2cm},
+    exemplar/.style={draw, rectangle, fill=orange!30, anchor=west, align=left, minimum width=0.5cm, minimum height=0.55cm,
+    								 text depth=0.25ex, text height=1.5ex, dashed},
+    exemplar_location/.style={draw, circle, fill=orange!30, minimum size=0.5cm, inner sep=0pt, outer sep=0pt, text depth=0.3ex, text height=1.8ex, dashed},
+    vector/.style={matrix of math nodes, inner sep=2pt, left delimiter={[}, right delimiter={]},
+        					 nodes={inner sep=2pt, text height=1.5ex, text depth=.25ex, anchor=center}},
+    mycircle/.style={draw, circle, minimum size=2cm, align=center, fill=yellow!30},
+    mytext/.style={text width=2cm, align=center},
+    step_arrow/.style={->, >=stealth, very thick},
+    dist_arrow/.style={->, >=stealth},
+]
+
+% Nodes for the steps (speaker)
+\node[modelstep] (choose_concept) [anchor=west] {1. Choose construction};
+\node[modelstep] (choose_exemplar) [below=of choose_concept.west,anchor=west] {2. Generate exemplar for construction};
+\draw[step_arrow] (choose_concept.west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]choose_exemplar.north west);
+
+
+\begin{scope}[shift={(choose_exemplar.south west)}, anchor=west, yshift=-0.65cm, xshift=0.45cm]
+    \draw[thick, orange!30] (0, 0) -- (0, 0.37);
+    \draw[thick, scale=0.25] plot[domain=-1.5:1.5, smooth, variable=\x] ({\x}, {1.5 * exp(-\x*\x)});
+    \draw[dist_arrow] (0, -0.1) -- (0, -0.4);
+\end{scope}
+
+\begin{scope}[shift={(choose_exemplar.south west)}, anchor=west, yshift=-0.65cm, xshift=1.45cm]
+    \draw[thick, orange!30] (0.15, 0) -- (0.15, 0.25);
+    \draw[thick, scale=0.25] plot[domain=-1.5:1.5, smooth, variable=\x] ({\x}, {1.5 * exp(-\x*\x)});
+    \draw[dist_arrow] (0, -0.1) -- (0, -0.4);
+\end{scope}
+
+\begin{scope}[shift={(choose_exemplar.south west)}, anchor=west, yshift=-0.65cm, xshift=2.45cm]
+    \draw[thick, orange!30] (-0.07, 0) -- (-0.07, 0.35);
+    \draw[thick, scale=0.25] plot[domain=-1.5:1.5, smooth, variable=\x] ({\x}, {1.5 * exp(-\x*\x)});
+    \draw[dist_arrow] (0, -0.1) -- (0, -0.4);
+\end{scope}
+
+\node[below=0.1cm of choose_exemplar.south west, yshift=-0.2cm, xshift=3.45cm, font=\Large] {\dots};
+
+\begin{scope}[shift={(choose_exemplar.south west)}, anchor=west, yshift=-0.65cm, xshift=4.45cm]
+    \draw[thick, orange!30] (-0.15, 0) -- (-0.15, 0.25);
+    \draw[thick, scale=0.25] plot[domain=-1.5:1.5, smooth, variable=\x] ({\x}, {1.5 * exp(-\x*\x)});
+    \draw[dist_arrow] (0, -0.1) -- (0, -0.4);
+\end{scope}
+
+\matrix[vector, below=1.55cm of choose_exemplar.south west, anchor=west, xshift=0.15cm] (output_vector)
+{
+85 & \hspace{0.33cm} & 67 & \hspace{0.5cm} 78  & \hspace{0.3cm} & \dots & \hspace{0.4cm} & 75  \\
+};
+
+%\node[exemplar] (exemplar_yes) [below=0.75cm of choose_exemplar.west,anchor=west] {yes};
+%\node[exemplar, solid] (exemplar_yeah) [right=0.25cm of exemplar_yes] {yeah};
+%\node[exemplar] (exemplar_ye) [right=0.25cm of exemplar_yeah] {ye};
+%\node[exemplar] (exemplar_yes2) [right=0.25cm of exemplar_ye] {yes};
+%\node[exemplar] (exemplar_yes3) [right=0.25cm of exemplar_yes2] {yes};
+
+\node[modelstep] (do_reduction) [below=2.8cm of choose_exemplar.west,anchor=west] {3. (Apply reduction)};
+
+\draw[step_arrow] ([yshift=+2mm]choose_exemplar.south west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]do_reduction.north west);
+
+%\fill [teal!50,opacity=0.20] ([xshift=-3pt, yshift=1.9pt]output_vector.north west) rectangle
+     %    ([xshift=3pt, yshift=0.25pt]output_vector.south east);
+         
+%\draw[step_arrow] ([yshift=+2mm]do_reduction.south west) .. controls +(left:7mm) and +(left:7mm) .. ([xshift=-1.1mm]output_vector.west);
+
+
+\node[modelstep] (reentrance) [below=of do_reduction.west,anchor=west, fill=teal!20] {4. Check for self-intelligibility};
+\draw[step_arrow] ([yshift=+2mm]do_reduction.south west) .. controls +(left:7mm) and +(left:7mm) .. ([yshift=-2mm]reentrance.north west);
+\node[modelstep] (reverse_reduction) [below=of reentrance.west,anchor=west, fill=teal!20] {Reverse reduction};
+\node[modelstep] (keep_reduction) [right=0.25cm of reverse_reduction.east,anchor=west, fill=teal!20] {Keep reduction};
+
+\draw[step_arrow] ([yshift=+2mm]reentrance.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small] {Ambiguity above $\epsilon$} ([yshift=-2mm]reverse_reduction.north west);
+\draw[step_arrow] ([yshift=+2mm]reentrance.south east) .. controls +(right:2mm) and +(up:7mm) .. node[very near end, left, font=\small]  {Ambiguity below $\epsilon$}([xshift=8mm, yshift=-0.2mm]keep_reduction.north);
+
+\matrix[vector, below=1cm of reverse_reduction.west, anchor=west, xshift=0.15cm] (output_vector)
+{
+73 & \hspace{0.33cm} & 65 & \hspace{0.5cm} 72  & \hspace{0.3cm} & \dots & \hspace{0.4cm} & 71  \\
+};
+
+\draw[step_arrow] ([yshift=+2mm]reverse_reduction.south west) .. controls +(left:7mm) and +(left:7mm) .. ([xshift=-1.1mm]output_vector.west);
+\draw[step_arrow] ([xshift=8mm]keep_reduction.south) .. controls +(down:2mm) and +(right:7mm) .. ([xshift=1.1mm]output_vector.east);
+
+% Headers
+\path let \p1=($(choose_exemplar.east)-(choose_exemplar.west)$) in \pgfextra{\global\speakerwidth=\x1};
+\node[participant, above=of choose_concept.west, anchor=west, text width=\speakerwidth] (speaker) {\textbf{Speaker}};
+
+
+% Nodes for the steps (hearer)
+\node[modelstep] (interpret_form) [right=1.5cm of choose_exemplar.east,anchor=west] {2. Given exemplar, predict \\\ \ \ \ scores for each construction};
+\node[modelstep] (hear_form) [above=of interpret_form.west, anchor=west] {1. Hear exemplar};
+
+\node[exemplar] (exemplar_1) [below=0.95 cm of interpret_form.west,anchor=west] {I};
+\node[exemplar_location] (exemplar_score_1) [below=0.65 cm of exemplar_1.center,anchor=center] {89};
+\draw[thick, dotted] ($(exemplar_1.south) + (0,0)$) -- ($(exemplar_score_1.north) + (0.0,0)$); 
+
+\node[exemplar, solid] (exemplar_2) [right=0.25 cm of exemplar_1] {yes};
+\node[exemplar_location, solid] (exemplar_score_2) [below=0.65 cm of exemplar_2.center,anchor=center] {411};
+\draw[thick] ($(exemplar_2.south) + (0,0)$) -- ($(exemplar_score_2.north) + (0.0,0)$); 
+
+\node[exemplar] (exemplar_3) [right=0.25 cm of exemplar_2] {the};
+\node[exemplar_location] (exemplar_score_3) [below=0.65 cm of exemplar_3.center,anchor=center] {256};
+\draw[thick] ($(exemplar_3.south) + (0,0)$) -- ($(exemplar_score_3.north) + (0.0,0)$); 
+
+\node[exemplar] (exemplar_4) [right=0.25 cm of exemplar_3] {...};
+\node[exemplar_location] (exemplar_score_4) [below=0.65 cm of exemplar_4.center,anchor=center] {...};
+\draw[thick] ($(exemplar_4.south) + (0,0)$) -- ($(exemplar_score_4.north) + (0.0,0)$); 
+
+\node[exemplar] (exemplar_5) [right=0.25 cm of exemplar_4] {day};
+\node[exemplar_location] (exemplar_score_5) [below=0.65 cm of exemplar_5.center,anchor=center] {75};
+\draw[thick] ($(exemplar_5.south) + (0,0)$) -- ($(exemplar_score_5.north) + (0.0,0)$); 
+
+\node[modelstep] (discriminatory_force) [below=of exemplar_score_1.west,anchor=west, fill=teal!20] {3. Check for ambiguity};
+  
+\draw[step_arrow] ([yshift=+2mm]interpret_form.south west) .. controls +(left:7mm) and +(left:7mm) .. (discriminatory_force.west);
+
+\node[modelstep] (save_form) [below=1.5cm of discriminatory_force.west,anchor=west] {4. Add ``heard'' exemplar to \\\ \ \ \ winner's batch memory};
+
+\draw[step_arrow] ([xshift=+1.1mm, yshift=+1mm]output_vector.south east) .. controls +(right:40mm) and +(left:25mm) .. ([yshift=-2mm]hear_form.north west);
+
+\draw[step_arrow] ([yshift=+2mm]discriminatory_force.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small, yshift=1mm, xshift=3mm] {If ambiguity below threshold $\epsilon$} (save_form.west);
+  
+\node[modelstep] (update_parameters) [below=1.5cm of save_form.west,anchor=west] {5. Update $\mu$ and $\sigma$};
+
+\draw[step_arrow] ([yshift=+2mm]save_form.south west) .. controls +(left:7mm) and +(left:7mm) ..  node[midway, right, font=\small, xshift=3mm] {If winner's batch exemplar count $= B$} (update_parameters.west);
+
+\path let \p1=($(save_form.east)-(save_form.west)$) in \pgfextra{\global\hearerwidth=\x1};
+\node[participant, above=of hear_form.west, anchor=west, text width=\hearerwidth] (hearer) {\textbf{Hearer}};
+
+\end{tikzpicture}
+\end{document}

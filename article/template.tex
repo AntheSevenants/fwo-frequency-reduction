@@ -1,0 +1,65 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+% Useful packages
+\usepackage{amsmath,amssymb}
+
+\usepackage[normalem]{ulem}
+\usepackage[format=hang]{subfig}
+\newcommand{\subfigureautorefname}{\figureautorefname}
+\usepackage{floatrow}
+\usepackage{appendix}
+\floatsetup[table]{capposition=top}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{csquotes}
+\usepackage{scalerel}
+\usepackage{array}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{tabularx}
+\usepackage{listings}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage[natbib=true,
+            datamodel=biblatex-dm,
+            backend=biber,
+            style=unified,
+            maxcitenames=2,
+            maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+\usepackage{endnotes}
+\usepackage{titlesec}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{positioning,calc,matrix,decorations.pathreplacing}
+
+% Tikz fun
+\newdimen\speakerwidth
+\newdimen\hearerwidth
+
+\def\tightlist{}
+
+% Quarto bs
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{soul}
+
+\addto\extrasenglish{
+\renewcommand\sectionautorefname{Section}
+\renewcommand\subsectionautorefname{Section}
+\renewcommand\subsubsectionautorefname{Section}
+\renewcommand\appendixautorefname{Appendix}
+}
+
+\begin{document}
+
+$body$
+
+\printbibliography
+
+\end{document}

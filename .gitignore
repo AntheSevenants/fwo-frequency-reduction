@@ -171,3 +171,8 @@ cython_debug/
 .pypirc
 
 models/
+*.ipynb
+sweeps/
+test/
+webhook.json
+*.sh
