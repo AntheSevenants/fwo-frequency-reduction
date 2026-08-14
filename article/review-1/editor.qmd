@@ -44,4 +44,4 @@ Furthermore, we want to stress that our visual analysis follows the standard pro
 Finally, our article has further been improved in several ways: we implemented another ambiguity avoidance mechanism from speech perception literature [@todd_word_2019], simplified the frequency distribution variations, updated our reduction mechanism, addressed the role of meaning, and improved the overall structure of the article. We have fewer model variations, less repetition and, in general, a much more readable paper.
 
 Many thanks in advance,  
-Anthe Sevenants, Freek Van de Velde and Dirk Speelman
+Anthe Sevenants, Dirk Speelman, Freek Van de Velde and Dirk Pijpops
