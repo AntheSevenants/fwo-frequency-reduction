@@ -425,29 +425,13 @@ $$
 
 In order to keep track of the simulation course, we computed the following metrics at each step:
 
-1. **Communicative success:**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly.  
+1. **Median communicative success:**  
+  Ratio expressing in how many speaking turns the hearer understood the speaker correctly, median across all agents.
   $$
-  \frac{\text{\# successful turns}}{\text{\# turns}}
+  \text{median}_{i=1}^{N} \left[ \frac{\text{\# successful turns}}{\text{\# turns}} \right]
   $$
-10. **Communicative success (macro average):**  
-  Ratio expressing in how many speaking turns the hearer understood the speaker correctly. Macro averaged to disable Zipfian skew.
+4. **Median acoustic strength in agents' memories:**  
+  Number expressing for each construction $c$ the median acoustic strength in its distributions, across all agents.
   $$
-  \frac{1}{V} \sum_{c=1}^{V}{\frac{\text{\# successful turns}}{\text{\# turns for construction } c}}
-  $$
-4. **Average acoustic strength in agents' memories:**  
-  Number expressing for each construction $c$ the average acoustic strength in its distributions, across all agents.
-  $$
-  \frac{1}{N} \sum_{i=1}^{N}{\left[ \frac{1}{V} \sum_{c=1}^{V}{ \left[ \frac{1}{D} \sum_{j=1}^{D}{\mu_{i,c,j}} \right] } \right]}
-  $$
-6. **Confusion matrix:**  
-  Confusion matrix tallying intended and understood constructions across all agents. Matrix of size $V \times V$.
-12. **Half life time:**  
-  Number expressing for each construction $c$ the timestep at which half of its original energy was reached.  
-  $$
-  \begin{aligned}
-  & \operatorname{min}(t) : E^c[t] \leq \frac{E^c[0]}{2} \\
-  & \text{with~} t = \text{time step in the model} \\
-  & \text{and~} E^c = \text{list of L1 values per time step in the model for construction~} c
-  \end{aligned}
+  \text{median}_{i=1}^{N} \left[ \text{median}_{c=1}^{V}{ \left[ \text{median}_{j=1}^{D} \left[ {\mu_{i,c,j}} \right] \right] } \right]
   $$
