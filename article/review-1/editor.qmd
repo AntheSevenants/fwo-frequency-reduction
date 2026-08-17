@@ -1,5 +1,5 @@
 ---
-title: "Letter to the editors"
+title: "Letter to the editor"
 format:
   html:
     toc: false
