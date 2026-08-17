@@ -45,3 +45,5 @@ Finally, our article has further been improved in several ways: we implemented a
 
 Many thanks in advance,  
 Anthe Sevenants, Dirk Speelman, Freek Van de Velde and Dirk Pijpops
+
+## References
