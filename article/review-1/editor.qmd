@@ -3,6 +3,7 @@ title: "Letter to the editors"
 format:
   html:
     toc: false
+    reference-location: margin
   latex:
     theme: default
     standalone: true
@@ -26,7 +27,6 @@ bibliography: ../references.bib
 tbl-cap-location: bottom
 fig-cap-location: bottom
 number-sections: true
-reference-location: margin
 csl: ../chicago-author-date.csl
 df-print: kable
 execute:
