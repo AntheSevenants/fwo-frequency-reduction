@@ -30,7 +30,7 @@ def plot_energy(
         data,
         attributes,
         ylim=[0, y_max],
-        title=f"Mean construction energy across agents",
+        title=f"Mean construction acoustic information across agents",
         **kwargs,
     )
 
@@ -58,8 +58,8 @@ def plot_energy_per_ctx(
         data,
         attributes,
         ylim=[0, y_max],
-        title=f"Average L1 value in the base model (per construction, across agents",
-        y_label="Energy",
+        title=f"Average L1 value in the base model (per construction, across agents)",
+        y_label="Acoustic information",
         x_label="Rank",
         step=step,
         **kwargs,
@@ -93,7 +93,7 @@ def plot_energy_per_ctx_per_dim(
         x=[str(i) for i in range(0, num_dims)],
         ylim=[0, y_max],
         title=f"L1 values in the base model (per construction, across agents)",
-        y_label="Energy",
+        y_label="Acoustic information",
         n=n,
         **kwargs,
     )
@@ -125,8 +125,8 @@ def plot_energy_std_per_ctx_per_dim(
         [str(i) for i in range(0, n)],
         x=[str(i) for i in range(0, num_dims)],
         ylim=[0, np.round(y_max / num_dims)],
-        title=f"Energy deviation (per construction, across agents)",
-        y_label="Energy",
+        title=f"Acoustic information deviation (per construction, across agents)",
+        y_label="Acoustic information",
         n=n,
         **kwargs,
     )
@@ -181,6 +181,6 @@ def plot_energy_differences(
         data,
         attributes,
         ylim=[-0.1, 0.1],
-        title=f"Mean vector difference energy",
+        title=f"Mean vector difference in acoustic information",
         **kwargs,
     )
