@@ -1,0 +1,47 @@
+---
+title: "Letter to the editor"
+format:
+  html:
+    toc: false
+    reference-location: margin
+  latex:
+    theme: default
+    standalone: true
+    cite-method: biblatex
+    filters: []
+    documentclass: article
+    toc: false
+    reference-location: document
+    wrap: none
+    hyperrefoptions:
+      - hidelinks=true
+      - colorlinks=false
+    no-highlight: true
+    variables:
+      tight-list: false
+    tbl-cap-location: top
+    template: ../review-1/template.tex
+editor: source
+title-block-banner: true
+bibliography: ../references.bib
+tbl-cap-location: bottom
+fig-cap-location: bottom
+number-sections: true
+csl: ../chicago-author-date.csl
+df-print: kable
+execute:
+  echo: false
+---
+
+Dear editor-in-chief,
+
+We were happy to receive the positive comments from the reviewers on our article "Speak less, say more. Finding the preconditions for the reducing effect with an agent-based model". The remaining comments from reviewer 2 involved two terminological issues: the use of the terms "neuromotor automation" and "acoustic energy".
+
+For "neuromotor automation", we decided to follow the reviewer's suggestion to "leave things a little more open", and we no longer refer to this process explicitly. Indeed, we are not particularly concerned with the exact articulatory workings of reduction itself, so this underspecification does not impact the intent of article.
+
+Additionally, we understand that "acoustic energy" is not a neutral term within phonetics. In order to avoid any confusion, we decided to replace this term with "acoustic information". This is more true to the abstracted nature of our vector representations, and calls more to the field of information theory, which we think is a welcome association.
+
+With these changes, we hope our paper is ready for acceptance.
+
+Many thanks in advance,  
+Anthe Sevenants, Dirk Speelman, Freek Van de Velde and Dirk Pijpops
